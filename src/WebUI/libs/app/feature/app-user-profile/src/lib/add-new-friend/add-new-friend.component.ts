@@ -1,5 +1,14 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
+import {
+	AsyncPipe,
+	DatePipe,
+	NgClass,
+	NgForOf,
+	NgIf,
+	NgStyle,
+	NgSwitch,
+	NgSwitchCase,
+} from '@angular/common'
 import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/core'
 
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -16,7 +25,12 @@ import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
 import { AuthStoreService } from '@auth/data-access'
 
-import { AppUserLinkModel, AuthUserModel, IUserModel, UserToUserStatus } from '@shared/data-access/models'
+import {
+	AppUserLinkModel,
+	AppUserModel,
+	IUserModel,
+	UserToUserStatus,
+} from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable, tap } from 'rxjs'
@@ -28,88 +42,87 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { UsersStoreService } from '@app/data-access/users'
 
 @Component({
-  selector: 'app-add-new-friend-component',
-  templateUrl: './add-new-friend.component.html',
-  styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    AsyncPipe,
-    NgForOf,
-    NgStyle,
-    MatListModule,
-    ScrollingModule,
-    NgIf,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ShowHideComponent,
-    NgClass,
-    MatCardModule,
-    NgSwitch,
-    NgSwitchCase,
-    DatePipe,
-    MatTabsModule,
-    FriendsComponent,
-    ChatroomsComponent,
-    TimeDifferenceFromNowPipe,
-    GetFullUrlPipe,
-    GetCdnUrlStringPipe,
-    MatProgressBarModule,
-    LetDirective,
-    MatProgressSpinnerModule,
-  ],
-  standalone: true,
-  providers: [DatePipe],
+	selector: 'app-add-new-friend-component',
+	templateUrl: './add-new-friend.component.html',
+	styles: [],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [
+		MatDialogModule,
+		MatButtonModule,
+		AsyncPipe,
+		NgForOf,
+		NgStyle,
+		MatListModule,
+		ScrollingModule,
+		NgIf,
+		MatIconModule,
+		MatFormFieldModule,
+		MatInputModule,
+		FormsModule,
+		ReactiveFormsModule,
+		ShowHideComponent,
+		NgClass,
+		MatCardModule,
+		NgSwitch,
+		NgSwitchCase,
+		DatePipe,
+		MatTabsModule,
+		FriendsComponent,
+		ChatroomsComponent,
+		TimeDifferenceFromNowPipe,
+		GetFullUrlPipe,
+		GetCdnUrlStringPipe,
+		MatProgressBarModule,
+		LetDirective,
+		MatProgressSpinnerModule,
+	],
+	standalone: true,
+	providers: [DatePipe],
 })
 export class AddNewFriendComponent {
-  private authStore = inject(AuthStoreService)
-  private usersStore = inject(UsersStoreService)
-  private route = inject(ActivatedRoute)
-  readonly UserToUserStatus = UserToUserStatus
-  // readonly ToUserStatus: ToUserStatus
-  // readonly MessageFrom = MessageFrom
-  userNameControl = new FormControl('')
-  searching = false
-  isDialog$ = this.route.url.pipe(
-    map((paths) => {
-      return paths[0].path !== 'messages'
-    }),
-  )
-  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
-  searchedUser$?: Observable<AppUserLinkModel | undefined>
-  latestSearch?: string
+	private authStore = inject(AuthStoreService)
+	private usersStore = inject(UsersStoreService)
+	private route = inject(ActivatedRoute)
+	readonly UserToUserStatus = UserToUserStatus
+	// readonly ToUserStatus: ToUserStatus
+	// readonly MessageFrom = MessageFrom
+	userNameControl = new FormControl('')
+	searching = false
+	isDialog$ = this.route.url.pipe(
+		map((paths) => {
+			return paths[0].path !== 'messages'
+		}),
+	)
+	user$: Observable<AppUserModel | undefined> = this.authStore.select.user$
+	searchedUser$?: Observable<AppUserLinkModel | undefined>
+	latestSearch?: string
 
-  constructor(
-    private dialogRef: MatDialogRef<AddNewFriendComponent>,
-    @Inject(MAT_DIALOG_DATA) data: { user: IUserModel },
-  ) {
-  }
+	constructor(
+		private dialogRef: MatDialogRef<AddNewFriendComponent>,
+		@Inject(MAT_DIALOG_DATA)
+		data: {
+			user: IUserModel
+		},
+	) {}
 
-  sendFriendRequest(userName: string | undefined | null) {
-    if (!userName) return
-    this.usersStore.dispatch.sendFriendRequest(userName)
-  }
+	sendFriendRequest(userName: string | undefined | null) {
+		if (!userName) return
+		this.usersStore.dispatch.sendFriendRequest(userName)
+	}
 
-  search() {
-    if (!this.userNameControl.value) return
-    this.searching = true
-    this.latestSearch = this.userNameControl.value
-    this.searchedUser$ = this.usersStore.select
-                             .queryAppUser$(this.userNameControl.value)
-                             .pipe(tap(() => (this.searching = false)))
-    // this.searching = false
-  }
+	search() {
+		if (!this.userNameControl.value) return
+		this.searching = true
+		this.latestSearch = this.userNameControl.value
+		this.searchedUser$ = this.usersStore.select
+			.queryAppUser$(this.userNameControl.value)
+			.pipe(tap(() => (this.searching = false)))
+		// this.searching = false
+	}
 
-  viewProfile(userName: string) {
-  }
+	viewProfile(userName: string) {}
 
-  acceptFriend(userName: string) {
-  }
+	acceptFriend(userName: string) {}
 
-  cancelRequest(userName: string) {
-  }
+	cancelRequest(userName: string) {}
 }

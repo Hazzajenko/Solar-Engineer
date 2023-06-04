@@ -10,6 +10,14 @@ public static class MassTransitExtensions
         services.AddMassTransit(x =>
         {
             x.SetKebabCaseEndpointNameFormatter();
+            x.SetInMemorySagaRepositoryProvider();
+
+            var assembly = typeof(IIdentityApplicationAssemblyMarker).Assembly;
+
+            x.AddConsumers(assembly);
+            x.AddSagaStateMachines(assembly);
+            x.AddSagas(assembly);
+            x.AddActivities(assembly);
 
             x.UsingRabbitMq((context, cfg) =>
             {

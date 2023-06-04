@@ -28,7 +28,7 @@ public static class BogusGenerators
     public static Faker<AppUserProject> GetAppUserProjectGenerator(Guid projectId)
     {
         return new Faker<AppUserProject>()
-            .RuleFor(x => x.ProjectUserId, f => Guid.NewGuid())
+            .RuleFor(x => x.AppUserId, f => Guid.NewGuid())
             .RuleFor(x => x.ProjectId, f => projectId)
             .RuleFor(x => x.Role, f => f.PickRandom("Admin", "Member"))
             .RuleFor(x => x.CanCreate, f => f.Random.Bool())
@@ -52,7 +52,7 @@ public static class BogusGenerators
                     {
                         new()
                         {
-                            ProjectUserId = Guid.NewGuid(),
+                            AppUserId = Guid.NewGuid(),
                             Role = "Admin",
                             CanCreate = true,
                             CanDelete = true,

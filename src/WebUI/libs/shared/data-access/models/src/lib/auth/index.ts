@@ -1,4 +1,4 @@
-export * from './auth-user.model'
+export * from './app-user.model'
 export * from './user.model'
 export * from './web-user.model'
 export * from './error.model'

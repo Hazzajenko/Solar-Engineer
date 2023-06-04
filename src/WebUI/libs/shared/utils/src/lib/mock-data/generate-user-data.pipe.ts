@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { AuthUserModel } from '@shared/data-access/models'
+import { AppUserModel } from '@shared/data-access/models'
 import { generateMockData } from './generate-mock-data'
 import { faker } from '@faker-js/faker'
 
@@ -14,7 +14,7 @@ export class GenerateUserDataPipe implements PipeTransform {
 		}
 		// const userName = faker.internet.userName()
 		// const photoUrl = `https://robohash.org/${userName}.png?size=30x30`
-		return generateMockData<AuthUserModel>(value, {
+		return generateMockData<AppUserModel>(value, {
 			id: () => faker.datatype.uuid(),
 			userName: () => faker.internet.userName(),
 			displayName: () => `${faker.name.firstName()} ${faker.name.lastName().at(0)}`,

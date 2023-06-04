@@ -1,13 +1,13 @@
 import { faker } from '@faker-js/faker'
 import { randomIntFromInterval } from '../random-number'
 import { generateProfilePicture } from '../profile-picture'
-import { AuthUserModel } from '@shared/data-access/models'
+import { AppUserModel } from '@shared/data-access/models'
 
 export function generateDisplayName(): string {
 	return `${faker.name.firstName()} ${faker.name.lastName()[0]}`
 }
 
-export function generateUserModel(): AuthUserModel {
+export function generateUserModel(): AppUserModel {
 	const gender = randomIntFromInterval(0, 1) === 0 ? 'male' : 'female'
 	const firstName = faker.name.firstName(gender)
 	const lastName = faker.name.lastName(gender)
@@ -20,7 +20,7 @@ export function generateUserModel(): AuthUserModel {
 	const displayName = `${firstName} ${lastNameInitial}`
 
 	return {
-		id: faker.datatype.uuid(),
+		id: faker.datatype.uuid() as AppUserModel['id'],
 		userName: userName,
 		displayName: displayName,
 		firstName: firstName,
@@ -30,8 +30,8 @@ export function generateUserModel(): AuthUserModel {
 	}
 }
 
-export function generateManyUserModels(amount: number): AuthUserModel[] {
-	const models: AuthUserModel[] = []
+export function generateManyUserModels(amount: number): AppUserModel[] {
+	const models: AppUserModel[] = []
 	for (let i = 0; i < amount; i++) {
 		models.push(generateUserModel())
 	}

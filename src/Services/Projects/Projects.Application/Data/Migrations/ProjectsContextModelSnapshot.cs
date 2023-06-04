@@ -17,14 +17,14 @@ namespace Projects.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.4")
+                .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Projects.Domain.Entities.AppUserProject", b =>
                 {
-                    b.Property<Guid>("ProjectUserId")
+                    b.Property<Guid>("AppUserId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ProjectId")
@@ -56,7 +56,7 @@ namespace Projects.API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("ProjectUserId", "ProjectId");
+                    b.HasKey("AppUserId", "ProjectId");
 
                     b.HasIndex("ProjectId");
 
@@ -226,6 +226,10 @@ namespace Projects.API.Data.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
+                    b.Property<string>("Colour")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
 
@@ -242,36 +246,6 @@ namespace Projects.API.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("Projects.Domain.Entities.ProjectUser", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("LastModifiedTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("PhotoUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProjectUsers");
                 });
 
             modelBuilder.Entity("Projects.Domain.Entities.String", b =>
@@ -319,15 +293,7 @@ namespace Projects.API.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Projects.Domain.Entities.ProjectUser", "ProjectUser")
-                        .WithMany("AppUserProjects")
-                        .HasForeignKey("ProjectUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Project");
-
-                    b.Navigation("ProjectUser");
                 });
 
             modelBuilder.Entity("Projects.Domain.Entities.Panel", b =>
@@ -428,11 +394,6 @@ namespace Projects.API.Data.Migrations
                     b.Navigation("Panels");
 
                     b.Navigation("Strings");
-                });
-
-            modelBuilder.Entity("Projects.Domain.Entities.ProjectUser", b =>
-                {
-                    b.Navigation("AppUserProjects");
                 });
 
             modelBuilder.Entity("Projects.Domain.Entities.String", b =>

@@ -1,10 +1,10 @@
-import { AuthUserModel } from '@shared/data-access/models'
+import { AppUserModel } from '@shared/data-access/models'
 
 export interface SignInResponse {
-  user: AuthUserModel
+	user: AppUserModel
 }
 
 export interface SignInResponseWithToken {
-  user: AuthUserModel
-  token: string
+	user: AppUserModel
+	token: string
 }

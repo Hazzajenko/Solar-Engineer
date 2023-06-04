@@ -1,5 +1,6 @@
 import { createActionGroup } from '@ngrx/store'
 import { getObjectPropertyKeys } from '../objects'
+import { $ElementType } from 'utility-types'
 
 export type ActionGroup = ReturnType<typeof createActionGroup>
 
@@ -11,6 +12,33 @@ export type GetActionParametersByActionKey<
 	TActions extends ActionGroup,
 	TKey extends keyof TActions,
 > = TKey extends keyof TActions ? GetActionParametersByAction<TActions[TKey]> : never
+
+export type GetActionParametersByActionKeyDeep<
+	TActions extends ActionGroup,
+	TKey extends keyof TActions,
+> = GetActionParametersByActionKey<TActions, TKey> extends object
+	? $ElementType<
+			GetActionParametersByActionKey<TActions, TKey>,
+			keyof GetActionParametersByActionKey<TActions, TKey>
+	  >
+	: never
+
+/*
+ const what: GetActionParametersByActionKey<typeof AppStateActions, 'setDragBoxState'> = {
+ dragBox: {
+ state: 'NoDragBox',
+ },
+ }
+
+ type NameType = $ElementType<GetActionParametersByActionKey<typeof AppStateActions, 'setDragBoxState'>, 'dragBox'>;
+
+ const asdasd: NameType = {
+ state: 'NoDragBox',
+ }
+
+ const what2: GetActionParametersByActionKeyDeep<typeof AppStateActions, 'setDragBoxState'> = {
+ state: 'NoDragBox',
+ }*/
 
 export function getAllActions(actionGroup: ActionGroup) {
 	return getObjectPropertyKeys(actionGroup)

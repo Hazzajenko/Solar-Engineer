@@ -1,10 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Projects.Domain.Entities;
+﻿namespace Projects.Application.Data.Config;
 
-namespace Projects.Application.Data.Config;
-
-public class ProjectUsersConfig : IEntityTypeConfiguration<ProjectUser>
+/*public class ProjectUsersConfig : IEntityTypeConfiguration<ProjectUser>
 {
     public void Configure(EntityTypeBuilder<ProjectUser> builder)
     {
@@ -13,8 +9,8 @@ public class ProjectUsersConfig : IEntityTypeConfiguration<ProjectUser>
         builder
             .HasMany(u => u.AppUserProjects)
             .WithOne(m => m.ProjectUser)
-            .HasForeignKey(x => x.ProjectUserId)
+            .HasForeignKey(x => x.AppUserId)
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
     }
-}
+}*/

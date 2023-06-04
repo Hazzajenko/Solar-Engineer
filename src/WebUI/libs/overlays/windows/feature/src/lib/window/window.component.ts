@@ -13,14 +13,9 @@ import {
 	Renderer2,
 	ViewChild,
 } from '@angular/core'
-import { RenderService, WindowsStore } from '@design-app/data-access'
-import { DraggableWindow } from '@design-app/shared'
-import { updateObjectByIdForStore } from '@design-app/utils'
-import { EVENT_TYPE, Point } from '@shared/data-access/models'
+import { DraggableWindow, Point } from '@shared/data-access/models'
 import { ShowSvgComponent, ShowSvgV2Component } from '@shared/ui'
-import { updateObjectForStore } from 'deprecated/design-app/feature-design-canvas'
-import { map, Observable } from 'rxjs'
-
+import { Observable } from 'rxjs'
 
 @Component({
 	selector: 'app-window[windowId]',
@@ -39,48 +34,46 @@ import { map, Observable } from 'rxjs'
 export class WindowComponent implements AfterViewInit {
 	private _ngZone = inject(NgZone)
 	private _renderer = inject(Renderer2)
-	private _render = inject(RenderService)
-	private _windows = inject(WindowsStore)
+	// private _render = inject(RenderService)
+	// private _windows = inject(WindowsStore)
 	private _elementRef = inject(ElementRef)
-
-	protected readonly WINDOW_RESIZER = WINDOW_RESIZER
 	@ViewChild('windowBar', { static: true }) windowBar!: ElementRef<HTMLDivElement>
 	isOpen = true
-
 	window$!: Observable<DraggableWindow | undefined>
 	location!: Point
+	@Output() minimiseEvent = new EventEmitter<boolean>()
 
 	// @Input() location!: Point
 	// @Input() draggableWindow!: DraggableWindow
+	protected readonly WINDOW_RESIZER = WINDOW_RESIZER
 
 	@Input() set windowId(windowId: string) {
-		this.window$ = this._windows.select.windowById$(windowId).pipe(
-			map((window) => {
-				if (!window) return
-				this.location = window.location
-				return window
-			}),
-		)
+		/*	this.window$ = this._windows.select.windowById$(windowId).pipe(
+		 map((window) => {
+		 if (!window) return
+		 this.location = window.location
+		 return window
+		 }),
+		 )*/
 	}
 
-	@Output() minimiseEvent = new EventEmitter<boolean>()
-
 	ngAfterViewInit(): void {
-		this._ngZone.runOutsideAngular(() => {
-			this._renderer.listen(this._elementRef.nativeElement, EVENT_TYPE.POINTER_ENTER, () => {
-				this._render.renderCanvasApp()
-			})
-		})
+		console.log('windowBar', this.windowBar)
+		/*this._ngZone.runOutsideAngular(() => {
+		 this._renderer.listen(this._elementRef.nativeElement, EVENT_TYPE.POINTER_ENTER, () => {
+		 this._render.renderCanvasApp()
+		 })
+		 })*/
 	}
 
 	dragExited(event: CdkDragEnd, draggableWindow: DraggableWindow) {
-		console.log('dragExited', event)
-		const location = {
-			x: event.source.getFreeDragPosition().x,
-			y: event.source.getFreeDragPosition().y,
-		}
-		const update = updateObjectByIdForStore(draggableWindow.id, { location })
-		this._windows.dispatch.updateWindow(update)
+		/*console.log('dragExited', event)
+		 const location = {
+		 x: event.source.getFreeDragPosition().x,
+		 y: event.source.getFreeDragPosition().y,
+		 }
+		 const update = updateObjectByIdForStore(draggableWindow.id, { location })
+		 this._windows.dispatch.updateWindow(update)*/
 	}
 
 	openWindow() {
@@ -89,14 +82,14 @@ export class WindowComponent implements AfterViewInit {
 	}
 
 	closeWindow() {
-		this._renderer.setStyle(this._elementRef.nativeElement, 'display', 'none')
-		this._windows.dispatch.deleteWindow(this.windowId)
+		/*	this._renderer.setStyle(this._elementRef.nativeElement, 'display', 'none')
+		 this._windows.dispatch.deleteWindow(this.windowId)*/
 	}
 
 	minimiseWindow(draggableWindow: DraggableWindow) {
-		this.minimiseEvent.emit(true)
-		this.isOpen = false
-		const update = updateObjectForStore(draggableWindow, { isOpen: false })
-		this._windows.dispatch.updateWindow(update)
+		/*this.minimiseEvent.emit(true)
+		 this.isOpen = false
+		 const update = updateObjectForStore(draggableWindow, { isOpen: false })
+		 this._windows.dispatch.updateWindow(update)*/
 	}
 }

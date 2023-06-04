@@ -1,5 +1,5 @@
-import { AuthUserModel } from '@shared/data-access/models'
+import { AppUserModel } from '@shared/data-access/models'
 
 export interface GetUserResponse {
-  user: AuthUserModel
+	user: AppUserModel
 }

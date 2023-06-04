@@ -68,6 +68,7 @@ export class MultiplePanelsMenuComponent implements OnInit {
 
 	movePanelsToString() {
 		this._uiStore.dispatch.openDialog({
+			// component: DIALOG_COMPONENT_TYPE.MOVE_PANELS_TO_STRING,
 			component: DIALOG_COMPONENT.MOVE_PANELS_TO_STRING,
 			data: {
 				panelIds: this.panelIds,

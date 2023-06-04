@@ -1,10 +1,11 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { ProjectId, ProjectModel } from '@entities/shared'
+import { CreateProjectRequest, ProjectId, ProjectModel } from '@entities/shared'
 
 export const ProjectsActions = createActionGroup({
 	source: 'Projects Store',
 	events: {
+		'Create Project Http': props<CreateProjectRequest>(),
 		'Select Project': props<{
 			projectId: ProjectId
 		}>(),

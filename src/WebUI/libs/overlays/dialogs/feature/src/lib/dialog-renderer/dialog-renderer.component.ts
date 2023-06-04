@@ -8,21 +8,15 @@ import {
 	OnDestroy,
 	Renderer2,
 } from '@angular/core'
-import {
-	ContextMenuInput,
-	DIALOG_COMPONENT,
-	DialogInput,
-	injectUiStore,
-} from '@overlays/ui-store/data-access'
+import { DIALOG_COMPONENT, DialogInput, injectUiStore } from '@overlays/ui-store/data-access'
 import { NgComponentOutlet, NgIf } from '@angular/common'
-import {
-	AppSettingsDialogComponent,
-	MovePanelsToStringDialogComponent,
-	ProfileSettingsDialogComponent,
-	SignInDialogComponent,
-} from '@overlays/dialogs/feature'
+import { AppSettingsDialogComponent } from '../app-settings-dialog'
+import { MovePanelsToStringDialogComponent } from '../move-panels-to-string-dialog/move-panels-to-string-dialog.component'
+import { ProfileSettingsDialogComponent } from '../profile-settings-dialog/profile-settings-dialog.component'
+import { SignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.component'
+import { DialogCreateProjectComponent } from '../dialog-create-project'
 
-export const dialogInputInjectionToken = new InjectionToken<ContextMenuInput>('')
+export const dialogInputInjectionToken = new InjectionToken<DialogInput>('')
 
 @Component({
 	selector: 'app-dialog-renderer',
@@ -47,6 +41,7 @@ export class DialogRendererComponent implements OnDestroy {
 
 	dialogInjector: Injector | undefined
 
+	// component: DialogInput['component'] | undefined
 	component: ReturnType<typeof this.switchFn> | undefined
 
 	// @ViewChild() ngComponentOutlet!: NgComponentOutlet
@@ -57,6 +52,7 @@ export class DialogRendererComponent implements OnDestroy {
 				return
 			}
 
+			// this.component = this.dialog.component
 			this.component = this.switchFn(this.dialog.component)
 
 			this.dialogInjector = Injector.create({
@@ -103,8 +99,18 @@ export class DialogRendererComponent implements OnDestroy {
 				return ProfileSettingsDialogComponent
 			case DIALOG_COMPONENT.SIGN_IN:
 				return SignInDialogComponent
+			case DIALOG_COMPONENT.CREATE_PROJECT:
+				return DialogCreateProjectComponent
 			default:
-				throw new Error('Unknown context menu component')
+				return throwBadDialogInput(component)
+			// throw new Error('Unknown context menu component')
 		}
 	}
+}
+
+// Externally-visible signature
+function throwBadDialogInput(component: never): never
+// Implementation signature
+function throwBadDialogInput(component: DialogInput['component']) {
+	throw new Error('Unknown component kind: ' + component)
 }

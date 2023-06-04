@@ -16,7 +16,7 @@ public static class ProjectsMapping
             {
                 new()
                 {
-                    ProjectUserId = projectUserId,
+                    AppUserId = projectUserId,
                     Role = "Admin",
                     CanCreate = true,
                     CanDelete = true,
@@ -44,10 +44,11 @@ public static class ProjectsMapping
         {
             Id = request.Id.ToString(),
             Name = request.Name,
+            Colour = request.Colour,
             CreatedById = request.CreatedById.ToString(),
             CreatedTime = request.CreatedTime,
             LastModifiedTime = request.LastModifiedTime,
-            MemberIds = request.AppUserProjects.Select(x => x.ProjectUserId.ToString())
+            MemberIds = request.AppUserProjects.Select(x => x.AppUserId.ToString())
         };
     }
 }

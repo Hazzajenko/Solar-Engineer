@@ -1,9 +1,4 @@
 import {
-	AppSettingsDialogComponent,
-	MovePanelsToStringDialogComponent,
-	ProfileSettingsDialogComponent,
-} from '@overlays/dialogs/feature'
-import {
 	ComponentRef,
 	Directive,
 	effect,
@@ -14,7 +9,7 @@ import {
 	ViewContainerRef,
 } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
-import { DIALOG_COMPONENT, DialogInput, UiStoreService } from '@overlays/ui-store/data-access'
+import { UiStoreService } from '@overlays/ui-store/data-access'
 
 @Directive({
 	selector: '[appDynamicDialog]',
@@ -38,7 +33,8 @@ export class DynamicDialogDirective implements OnDestroy {
 				return
 			}
 			this._viewContainerRef.clear()
-			this.dialogRef = this.componentSwitch(this.dialog.currentDialog)
+			// this._viewContainerRef.createComponent()
+			// this.dialogRef = this.componentSwitch(this.dialog.currentDialog)
 			this._ngZone.runOutsideAngular(() => {
 				this._killEvent = this.renderer.listen('document', 'click', (event: MouseEvent) => {
 					if (!this.dialogRef) {
@@ -73,32 +69,32 @@ export class DynamicDialogDirective implements OnDestroy {
 		this._uiStore.dispatch.closeDialog()
 	}
 
-	private componentSwitch(dialog: DialogInput) {
-		switch (dialog.component) {
-			case DIALOG_COMPONENT.MOVE_PANELS_TO_STRING:
-				return (() => {
-					const ref = this._viewContainerRef.createComponent<MovePanelsToStringDialogComponent>(
-						MovePanelsToStringDialogComponent,
-					)
-					ref.instance.data = dialog.data
-					return ref
-				})()
-			case DIALOG_COMPONENT.APP_SETTINGS:
-				return (() => {
-					return this._viewContainerRef.createComponent<AppSettingsDialogComponent>(
-						AppSettingsDialogComponent,
-					)
-				})()
-			case DIALOG_COMPONENT.PROFILE_SETTINGS:
-				return (() => {
-					return this._viewContainerRef.createComponent<ProfileSettingsDialogComponent>(
-						ProfileSettingsDialogComponent,
-					)
-				})()
-			default:
-				return (() => {
-					throw new Error('Invalid dialog component')
-				})()
-		}
-	}
+	/*		private componentSwitch(dialog: DialogInput) {
+	 switch (dialog.component) {
+	 case DIALOG_COMPONENT.MOVE_PANELS_TO_STRING:
+	 return (() => {
+	 const ref = this._viewContainerRef.createComponent<MovePanelsToStringDialogComponent>(
+	 MovePanelsToStringDialogComponent,
+	 )
+	 ref.instance.data = dialog.data
+	 return ref
+	 })()
+	 case DIALOG_COMPONENT.APP_SETTINGS:
+	 return (() => {
+	 return this._viewContainerRef.createComponent<AppSettingsDialogComponent>(
+	 AppSettingsDialogComponent,
+	 )
+	 })()
+	 case DIALOG_COMPONENT.PROFILE_SETTINGS:
+	 return (() => {
+	 return this._viewContainerRef.createComponent<ProfileSettingsDialogComponent>(
+	 ProfileSettingsDialogComponent,
+	 )
+	 })()
+	 default:
+	 return (() => {
+	 throw new Error('Invalid dialog component')
+	 })()
+	 }
+	 }*/
 }

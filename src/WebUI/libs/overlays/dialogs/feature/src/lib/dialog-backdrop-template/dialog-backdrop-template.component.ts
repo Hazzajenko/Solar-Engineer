@@ -10,7 +10,6 @@ import {
 	ViewChild,
 } from '@angular/core'
 import { UiStoreService } from '@overlays/ui-store/data-access'
-import { AppStateStoreService } from '@canvas/app/data-access'
 
 @Component({
 	selector: 'dialog-backdrop-template-component',
@@ -28,7 +27,7 @@ import { AppStateStoreService } from '@canvas/app/data-access'
 export class DialogBackdropTemplateComponent implements AfterViewInit {
 	private _renderer = inject(Renderer2)
 	private _ngZone = inject(NgZone)
-	private _appStore = inject(AppStateStoreService)
+	// private _appStore = inject(AppStateStoreService)
 	private _uiStore = inject(UiStoreService)
 	private _dispose: ReturnType<typeof this._renderer.listen> | undefined = undefined
 	// private mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
@@ -55,6 +54,5 @@ export class DialogBackdropTemplateComponent implements AfterViewInit {
 		console.log('closeDialog')
 		this._dispose?.()
 		this._uiStore.dispatch.closeDialog()
-		// this._uiStore.dispatch.updateDialog({ id: this.dialogId, changes: { open: false } })
 	}
 }

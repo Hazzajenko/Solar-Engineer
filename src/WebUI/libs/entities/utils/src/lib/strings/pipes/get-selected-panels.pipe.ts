@@ -31,6 +31,7 @@ export class GetSelectedPanelsPipe implements PipeTransform {
 				 })*/
 				const dialogInput: DialogInput = {
 					// id: getGuid(),
+					// component: DIALOG_COMPONENT_TYPE.MOVE_PANELS_TO_STRING, // open: true, // component: MovePanelsToStringV4Component,
 					component: DIALOG_COMPONENT.MOVE_PANELS_TO_STRING, // open: true, // component: MovePanelsToStringV4Component,
 					data: {
 						panelIds: menu.ids,

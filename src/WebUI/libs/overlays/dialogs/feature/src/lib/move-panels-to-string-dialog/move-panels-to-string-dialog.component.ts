@@ -13,7 +13,7 @@ import { UiStoreService } from '@overlays/ui-store/data-access'
 import { createStringWithPanelsV2 } from '@entities/utils'
 
 @Component({
-	selector: 'dialog-move-panels-to-string-v4',
+	selector: 'dialog-move-panels-to-string',
 	templateUrl: 'move-panels-to-string-dialog.component.html',
 	standalone: true,
 	imports: [

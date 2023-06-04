@@ -49,6 +49,7 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
         var message = new UserLoggedIn(appUser.Id.ToGuid(), appUser.UserName, appUser.DisplayName, appUser.PhotoUrl);
         await _bus.Publish(message, cT);
+        // _bus.GetR
 
         Response.Token = token;
         Response.User = appUser;

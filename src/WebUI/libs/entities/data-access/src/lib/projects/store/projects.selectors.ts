@@ -18,6 +18,18 @@ export const selectProjectsEntities = createSelector(selectProjectsState, (state
 export const selectProjectById = (props: { id: string }) =>
 	createSelector(selectProjectsEntities, (projects: Dictionary<ProjectModel>) => projects[props.id])
 
+export const selectSelectedProjectId = createSelector(
+	selectProjectsState,
+	(state: ProjectsState) => state.selectedProjectId,
+)
+
+export const selectSelectedProject = createSelector(
+	selectProjectsEntities,
+	selectSelectedProjectId,
+	(projects: Dictionary<ProjectModel>, selectedProjectId: string | undefined) =>
+		selectedProjectId ? projects[selectedProjectId] : undefined,
+)
+
 export const selectProjectsByIdArray = (props: { ids: string[] }) =>
 	createSelector(selectAllProjects, (projects: ProjectModel[]) =>
 		projects.filter((project) => props.ids.includes(project.id)),

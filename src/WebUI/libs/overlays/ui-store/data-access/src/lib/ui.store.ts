@@ -1,7 +1,7 @@
 import { inject } from '@angular/core'
 import { MemoizedSelector, Store } from '@ngrx/store'
 import { UiActions, uiFeature, UiState } from '@overlays/ui-store/data-access'
-import { GetActionParametersByActionKey } from '@shared/utils'
+import { GetActionParametersByActionKey, GetActionParametersByActionKeyDeep } from '@shared/utils'
 
 export type UiStoreSelectors = Omit<typeof uiFeature, 'name' | 'reducer'>
 
@@ -106,7 +106,7 @@ export function injectUiStore() {
 	}
 
 	const dispatch = {
-		openDialog: ({ dialog }: GetActionParametersByActionKey<UiStoreActions, 'openDialog'>) =>
+		openDialog: (dialog: GetActionParametersByActionKeyDeep<UiStoreActions, 'openDialog'>) =>
 			store.dispatch(UiActions.openDialog({ dialog })),
 		closeDialog: () => store.dispatch(UiActions.closeDialog()),
 		openContextMenu: ({

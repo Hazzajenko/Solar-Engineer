@@ -1,6 +1,6 @@
-import { AuthUserModel } from '@shared/data-access/models'
+import { AppUserModel } from '@shared/data-access/models'
 
 export interface AuthorizeResponse {
-  token: string
-  user: AuthUserModel
+	token: string
+	user: AppUserModel
 }

@@ -1,11 +1,15 @@
-export type AuthUserModel = {
-	id: string
+export type AppUserModel = {
+	id: AppUserId
 	displayName: string
 	userName: string
 	firstName: string
 	lastName: string
 	photoUrl: string
 	email: string
+}
+
+export type AppUserId = string & {
+	readonly _type: 'appUserId'
 }
 
 /*export const GenerateUserData = (amount: number) =>

@@ -1,15 +1,18 @@
-﻿namespace Projects.Application.Extensions;
+﻿using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Projects.Application.Extensions;
 
 public static class MassTransitExtensions
 {
-    /*public static IServiceCollection InitMassTransit(this IServiceCollection services)
+    public static IServiceCollection InitMassTransit(this IServiceCollection services)
     {
-        /*services.AddMassTransit(x =>
+        services.AddMassTransit(x =>
         {
             x.SetKebabCaseEndpointNameFormatter();
             x.SetInMemorySagaRepositoryProvider();
 
-            var assembly = typeof(IApiAssemblyMarker).Assembly;
+            var assembly = typeof(IProjectsApplicationAssemblyMarker).Assembly;
 
             x.AddConsumers(assembly);
             x.AddSagaStateMachines(assembly);
@@ -27,6 +30,6 @@ public static class MassTransitExtensions
             });
         });
 
-        return services;#1#
-    }*/
+        return services;
+    }
 }

@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
-using Serilog.Formatting.Compact;
 
 namespace Infrastructure.Logging;
 
@@ -33,13 +32,13 @@ public static partial class LoggingExtensions
 
                 loggerConfig.WriteTo.Seq("http://localhost:5341");
 
-                loggerConfig.WriteTo.File(
+                /*loggerConfig.WriteTo.File(
                     new CompactJsonFormatter(),
                     "Logs/log.json",
                     LogEventLevel.Information,
                     rollingInterval: RollingInterval.Day,
                     retainedFileCountLimit: 5
-                );
+                );*/
 
                 loggerConfig.MinimumLevel
                     .Override("Microsoft", LogEventLevel.Information)

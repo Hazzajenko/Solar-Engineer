@@ -48,6 +48,8 @@
       <ProjectReference Include="..\..\..\BuildingBlocks\Domain\Domain.csproj" />
       <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus.csproj" />
       <ProjectReference Include="..\..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Projects\Projects.Contracts\Projects.Contracts.csproj" />
+      <ProjectReference Include="..\..\Projects\Projects.Domain\Projects.Domain.csproj" />
       <ProjectReference Include="..\Identity.Contracts\Identity.Contracts.csproj" />
       <ProjectReference Include="..\Identity.Domain\Identity.Domain.csproj" />
       <ProjectReference Include="..\Identity.SignalR\Identity.SignalR.csproj" />

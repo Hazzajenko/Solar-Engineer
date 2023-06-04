@@ -1,5 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { AuthUserModel } from '@shared/data-access/models'
+import { AppUserModel } from '@shared/data-access/models'
 
 export const AuthActions = createActionGroup({
 	source: 'Auth Store',
@@ -10,11 +10,11 @@ export const AuthActions = createActionGroup({
 		'Authorize Request': emptyProps(),
 		'Sign In Success': props<{
 			token: string
-			user: AuthUserModel
+			user: AppUserModel
 		}>(),
 		'Sign In Fetch User Success': props<{
 			token: string
-			user: AuthUserModel
+			user: AppUserModel
 		}>(),
 		'Sign In Error': props<{
 			error: string | null
@@ -22,22 +22,22 @@ export const AuthActions = createActionGroup({
 		'Get Token': emptyProps(),
 		'Get Current User': emptyProps(),
 		'Get Current User Success': props<{
-			user: AuthUserModel
+			user: AppUserModel
 		}>(),
 		'Get Current User Error': props<{
 			error: string | null
 		}>(),
 		'Login Success': props<{
-			user: AuthUserModel
+			user: AppUserModel
 		}>(),
 		'Login Error': props<{
 			error: string | null
 		}>(),
 		'Modified User': props<{
-			user: AuthUserModel
+			user: AppUserModel
 		}>(),
 		'Update User': props<{
-			update: Partial<AuthUserModel>
+			update: Partial<AppUserModel>
 		}>(),
 		'Add Error': props<{
 			error: string | null

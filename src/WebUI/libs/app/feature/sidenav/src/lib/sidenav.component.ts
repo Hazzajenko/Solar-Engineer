@@ -1,13 +1,13 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import {
-  AsyncPipe,
-  DatePipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
+	AsyncPipe,
+	DatePipe,
+	NgClass,
+	NgForOf,
+	NgIf,
+	NgStyle,
+	NgSwitch,
+	NgSwitchCase,
 } from '@angular/common'
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core'
 
@@ -26,7 +26,7 @@ import { AuthStoreService } from '@auth/data-access'
 import { LetDirective } from '@ngrx/component'
 import { ProjectsStoreService } from '@projects/data-access'
 
-import { AuthUserModel } from '@shared/data-access/models'
+import { AppUserModel } from '@shared/data-access/models'
 import { NotificationsStoreService } from '@app/data-access/notifications'
 import { OnlineFriendsPipe } from '@shared/pipes'
 import { ShowHideComponent } from '@shared/ui/show-hide'
@@ -35,68 +35,68 @@ import { Observable } from 'rxjs'
 import { SharedSidenavComponent } from '@shared/ui/sidenav'
 
 @Component({
-  selector: 'app-sidenav-component',
-  templateUrl: './sidenav.component.html',
-  styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    AsyncPipe,
-    NgForOf,
-    NgStyle,
-    MatListModule,
-    ScrollingModule,
-    NgIf,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ShowHideComponent,
-    NgClass,
-    MatCardModule,
-    NgSwitch,
-    NgSwitchCase,
-    DatePipe,
-    RouterLink,
-    LetDirective,
-    OnlineFriendsPipe,
-    SidenavComponent,
-    SidenavComponent,
-    SharedSidenavComponent,
-  ],
-  standalone: true,
+	selector: 'app-sidenav-component',
+	templateUrl: './sidenav.component.html',
+	styles: [],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [
+		MatDialogModule,
+		MatButtonModule,
+		AsyncPipe,
+		NgForOf,
+		NgStyle,
+		MatListModule,
+		ScrollingModule,
+		NgIf,
+		MatIconModule,
+		MatFormFieldModule,
+		MatInputModule,
+		FormsModule,
+		ReactiveFormsModule,
+		ShowHideComponent,
+		NgClass,
+		MatCardModule,
+		NgSwitch,
+		NgSwitchCase,
+		DatePipe,
+		RouterLink,
+		LetDirective,
+		OnlineFriendsPipe,
+		SidenavComponent,
+		SidenavComponent,
+		SharedSidenavComponent,
+	],
+	standalone: true,
 })
 export class SidenavComponent {
-  private notificationsStore = inject(NotificationsStoreService)
-  private authStore = inject(AuthStoreService)
-  private friendsService = inject(FriendsService)
-  private friendsStore = inject(FriendsStoreService)
-  private projectsStore = inject(ProjectsStoreService)
+	private notificationsStore = inject(NotificationsStoreService)
+	private authStore = inject(AuthStoreService)
+	private friendsService = inject(FriendsService)
+	private friendsStore = inject(FriendsStoreService)
+	private projectsStore = inject(ProjectsStoreService)
 
-  @Output() toggle = new EventEmitter<boolean>()
-  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
-  notifications$ = this.notificationsStore.select.notifications$
-  friends$ = this.friendsStore.select.friends$
-  projects$ = this.projectsStore.select.allProjects$
-  viewProjects = false
-  viewFriends = false
-  viewNotifications = false
+	@Output() toggle = new EventEmitter<boolean>()
+	user$: Observable<AppUserModel | undefined> = this.authStore.select.user$
+	notifications$ = this.notificationsStore.select.notifications$
+	friends$ = this.friendsStore.select.friends$
+	projects$ = this.projectsStore.select.allProjects$
+	viewProjects = false
+	viewFriends = false
+	viewNotifications = false
 
-  closeDrawer() {
-    this.toggle.emit(false)
-  }
+	closeDrawer() {
+		this.toggle.emit(false)
+	}
 
-  showProjects() {
-    this.viewProjects = !this.viewProjects
-  }
+	showProjects() {
+		this.viewProjects = !this.viewProjects
+	}
 
-  showFriends() {
-    this.viewFriends = !this.viewFriends
-  }
+	showFriends() {
+		this.viewFriends = !this.viewFriends
+	}
 
-  showNotifications() {
-    this.viewNotifications = !this.viewNotifications
-  }
+	showNotifications() {
+		this.viewNotifications = !this.viewNotifications
+	}
 }

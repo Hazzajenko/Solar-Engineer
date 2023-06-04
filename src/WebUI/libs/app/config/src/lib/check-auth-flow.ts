@@ -3,7 +3,7 @@ import { inject } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { AuthActions, AuthStore, injectAuthStore } from '@auth/data-access'
 import { JwtHelperService } from '@auth0/angular-jwt'
-import { injectUiStore, UiStore } from '@overlays/ui-store/data-access'
+import { DIALOG_COMPONENT, injectUiStore, UiStore } from '@overlays/ui-store/data-access'
 
 const { selectQueryParam } = getRouterSelectors()
 
@@ -30,9 +30,7 @@ export function checkAuthFlow() {
 
 	setTimeout(() => {
 		uiStore.dispatch.openDialog({
-			dialog: {
-				component: 'SignInDialogComponent',
-			},
+			component: DIALOG_COMPONENT.SIGN_IN,
 		})
 	}, 1000)
 	return false
@@ -47,9 +45,9 @@ function handleCheckLocalToken(authStore: AuthStore, jwt: JwtHelperService, uiSt
 			return true
 		}
 		uiStore.dispatch.openDialog({
-			dialog: {
-				component: 'SignInDialogComponent',
-			},
+			component: DIALOG_COMPONENT.SIGN_IN, // dialog: {
+			// component: DIALOG_COMPONENT_TYPE.SIGN_IN,
+			// },
 		})
 	}
 	return false

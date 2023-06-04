@@ -86,13 +86,14 @@ public static partial class WebApplicationExtensions
 
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseCookiePolicy(
+        // * Removed to fix google signin redirect issue
+        /*app.UseCookiePolicy(
             new CookiePolicyOptions
             {
                 Secure = CookieSecurePolicy.Always,
                 MinimumSameSitePolicy = SameSiteMode.Strict
             }
-        );
+        );*/
 
         app.MapEndpoints();
 

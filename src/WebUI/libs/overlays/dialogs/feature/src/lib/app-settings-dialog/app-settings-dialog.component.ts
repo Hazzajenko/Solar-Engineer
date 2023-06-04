@@ -1,13 +1,5 @@
 import { AsyncPipe, NgForOf, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common'
-import {
-	AfterViewInit,
-	Component,
-	ElementRef,
-	inject,
-	signal,
-	ViewChild,
-	ViewChildren,
-} from '@angular/core'
+import { AfterViewInit, Component, ElementRef, inject, signal, ViewChildren } from '@angular/core'
 import { LetDirective } from '@ngrx/component'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
 import { ShowSvgComponent, ShowSvgNoStylesComponent, ToggleSvgNoStylesComponent } from '@shared/ui'
@@ -50,7 +42,7 @@ import { IsTypeOfPanelPipe } from '@entities/utils'
 })
 export class AppSettingsDialogComponent implements AfterViewInit {
 	private _uiStore = inject(UiStoreService)
-	@ViewChild('dialog') dialog!: ElementRef<HTMLDivElement>
+	// @ViewChild('dialog') dialog!: ElementRef<HTMLDivElement>
 	@ViewChildren('accordion') accordions!: ElementRef<HTMLDivElement>[]
 
 	openedAccordions = signal(new Map<string, boolean>())

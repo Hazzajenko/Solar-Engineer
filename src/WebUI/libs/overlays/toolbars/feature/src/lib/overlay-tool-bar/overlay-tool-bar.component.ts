@@ -56,12 +56,15 @@ export class OverlayToolBarComponent {
 
 	openSettingsDialog() {
 		this._uiStore.dispatch.openDialog({
+			// component: DIALOG_COMPONENT_TYPE.APP_SETTINGS,
 			component: 'AppSettingsDialogComponent',
 		})
 	}
 
 	openProfileDialog() {
 		this._uiStore.dispatch.openDialog({
+			// component: DIALOG_COMPONENT_TYPE.PROFILE_SETTINGS,
+			// component: DIALOG_COMPONENT_TYPE.PROFILE_SETTINGS,
 			component: 'ProfileSettingsDialogComponent',
 		})
 	}

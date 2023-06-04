@@ -1,5 +1,14 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
+import {
+	AsyncPipe,
+	DatePipe,
+	NgClass,
+	NgForOf,
+	NgIf,
+	NgStyle,
+	NgSwitch,
+	NgSwitchCase,
+} from '@angular/common'
 import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -18,7 +27,7 @@ import { FriendsComponent } from '@app/feature/friends'
 // import { MessagesComponent } from '@app/data-access/messages'
 import { AuthStoreService } from '@auth/data-access'
 
-import { AppUserLinkModel, AuthUserModel, RecipientFriendModel } from '@shared/data-access/models'
+import { AppUserLinkModel, AppUserModel, RecipientFriendModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 // import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
@@ -32,76 +41,79 @@ import { GetCdnUrlStringPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 import { GetFriendRequestPipe, SortNotificationsPipe } from '@app/feature/notifications'
 
 @Component({
-  selector: 'app-recipient-user-profile-dialog',
-  templateUrl: './recipient-user-profile.component.html',
-  styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    AsyncPipe,
-    NgForOf,
-    NgStyle,
-    MatListModule,
-    ScrollingModule,
-    NgIf,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ShowHideComponent,
-    NgClass,
-    MatCardModule,
-    NgSwitch,
-    NgSwitchCase,
-    DatePipe,
-    SortNotificationsPipe,
-    GetFriendRequestPipe,
-    MatTabsModule,
-    FriendsComponent,
-    ChatroomsComponent,
-    TimeDifferenceFromNowPipe,
-    GetCdnUrlStringPipe,
-  ],
-  standalone: true,
-  providers: [DatePipe],
+	selector: 'app-recipient-user-profile-dialog',
+	templateUrl: './recipient-user-profile.component.html',
+	styles: [],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [
+		MatDialogModule,
+		MatButtonModule,
+		AsyncPipe,
+		NgForOf,
+		NgStyle,
+		MatListModule,
+		ScrollingModule,
+		NgIf,
+		MatIconModule,
+		MatFormFieldModule,
+		MatInputModule,
+		FormsModule,
+		ReactiveFormsModule,
+		ShowHideComponent,
+		NgClass,
+		MatCardModule,
+		NgSwitch,
+		NgSwitchCase,
+		DatePipe,
+		SortNotificationsPipe,
+		GetFriendRequestPipe,
+		MatTabsModule,
+		FriendsComponent,
+		ChatroomsComponent,
+		TimeDifferenceFromNowPipe,
+		GetCdnUrlStringPipe,
+	],
+	standalone: true,
+	providers: [DatePipe],
 })
 export class RecipientUserProfileComponent {
-  private authStore = inject(AuthStoreService)
-  private friendsStore = inject(FriendsStoreService)
-  private route = inject(ActivatedRoute)
-  private usersStore = inject(UsersStoreService)
-  private usersService = inject(UsersService)
-  private connectionsStore = inject(ConnectionsStoreService)
-  private routerFacade = inject(RouterFacade)
-  isDialog$ = this.route.url.pipe(
-    map((paths) => {
-      return paths[0].path !== 'messages'
-    }),
-  )
-  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
-  // userProfile$: Observable<WebUserModel | undefined>
+	private authStore = inject(AuthStoreService)
+	private friendsStore = inject(FriendsStoreService)
+	private route = inject(ActivatedRoute)
+	private usersStore = inject(UsersStoreService)
+	private usersService = inject(UsersService)
+	private connectionsStore = inject(ConnectionsStoreService)
+	private routerFacade = inject(RouterFacade)
+	isDialog$ = this.route.url.pipe(
+		map((paths) => {
+			return paths[0].path !== 'messages'
+		}),
+	)
+	user$: Observable<AppUserModel | undefined> = this.authStore.select.user$
+	// userProfile$: Observable<WebUserModel | undefined>
 
-  recipientUser$: Observable<AppUserLinkModel | undefined>
-  recipientFriends$: Observable<RecipientFriendModel[] | undefined>
+	recipientUser$: Observable<AppUserLinkModel | undefined>
+	recipientFriends$: Observable<RecipientFriendModel[] | undefined>
 
-  constructor(
-    private dialogRef: MatDialogRef<RecipientUserProfileComponent>,
-    @Inject(MAT_DIALOG_DATA) data: { appUser: AppUserLinkModel },
-  ) {
-    // this.userProfile$ = this.usersStore.select.webUserCombinedByUserName$(data.user.userName)
-    this.recipientUser$ = this.usersStore.select.queryAppUser$(data.appUser.displayName)
-    this.recipientFriends$ = this.usersStore.select.queryRecipientUserFriends$(
-      data.appUser.displayName,
-    )
-  }
+	constructor(
+		private dialogRef: MatDialogRef<RecipientUserProfileComponent>,
+		@Inject(MAT_DIALOG_DATA)
+		data: {
+			appUser: AppUserLinkModel
+		},
+	) {
+		// this.userProfile$ = this.usersStore.select.webUserCombinedByUserName$(data.user.userName)
+		this.recipientUser$ = this.usersStore.select.queryAppUser$(data.appUser.displayName)
+		this.recipientFriends$ = this.usersStore.select.queryRecipientUserFriends$(
+			data.appUser.displayName,
+		)
+	}
 
-  sendFriendRequest(userName: string) {
-    this.friendsStore.dispatch.sendFriendRequest(userName)
-  }
+	sendFriendRequest(userName: string) {
+		this.friendsStore.dispatch.sendFriendRequest(userName)
+	}
 
-  sendMessage(userName: string) {
-    this.dialogRef.close(userName)
-  }
+	sendMessage(userName: string) {
+		this.dialogRef.close(userName)
+	}
 }

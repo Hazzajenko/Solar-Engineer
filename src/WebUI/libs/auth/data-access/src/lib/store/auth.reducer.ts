@@ -1,9 +1,9 @@
 import { AuthActions } from './auth.actions'
 import { Action, createReducer, on } from '@ngrx/store'
-import { AuthUserModel } from '@shared/data-access/models'
+import { AppUserModel } from '@shared/data-access/models'
 
 export interface AuthState {
-	user?: AuthUserModel
+	user?: AppUserModel
 	error: string | null
 }
 

@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Common;
 using Projects.Domain.Common;
+using Projects.Domain.Contracts.Requests.Projects;
 
 namespace Projects.Domain.Entities;
 
@@ -7,7 +8,7 @@ public class AppUserProject : IEntityToEntity, IProjectItem
 {
     private AppUserProject(
         Project project,
-        Guid projectUserId,
+        Guid appUserId,
         string role,
         bool canCreate,
         bool canDelete,
@@ -17,7 +18,7 @@ public class AppUserProject : IEntityToEntity, IProjectItem
     {
         Project = project;
         ProjectId = project.Id;
-        ProjectUserId = projectUserId;
+        AppUserId = appUserId;
         Role = role;
         CanCreate = canCreate;
         CanDelete = canDelete;
@@ -27,7 +28,7 @@ public class AppUserProject : IEntityToEntity, IProjectItem
 
     private AppUserProject(
         Guid projectId,
-        Guid projectUserId,
+        Guid appUserId,
         string role,
         bool canCreate,
         bool canDelete,
@@ -36,7 +37,7 @@ public class AppUserProject : IEntityToEntity, IProjectItem
     )
     {
         ProjectId = projectId;
-        ProjectUserId = projectUserId;
+        AppUserId = appUserId;
         Role = role;
         CanCreate = canCreate;
         CanDelete = canDelete;
@@ -55,8 +56,10 @@ public class AppUserProject : IEntityToEntity, IProjectItem
     public bool CanInvite { get; set; }
 
     public bool CanKick { get; set; }
-    public Guid ProjectUserId { get; set; }
-    public ProjectUser ProjectUser { get; set; } = default!;
+
+    public Guid AppUserId { get; set; }
+
+    // public ProjectUser ProjectUser { get; set; } = default!;
     public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
     public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;
     public Guid ProjectId { get; set; }
@@ -83,10 +86,15 @@ public class AppUserProject : IEntityToEntity, IProjectItem
         );
     }
 
-    public static AppUserProject CreateAsOwner(string projectName, Guid projectUserId)
+    public static AppUserProject CreateAsOwner(Guid projectUserId, CreateProjectRequest request)
     {
+        var project = Project.Create(request.Name, request.Colour, projectUserId);
+
+        return new AppUserProject(project, projectUserId, "Owner", true, true, true, true);
+    }
+    /*{
         var project = Project.Create(projectName, projectUserId);
 
         return new AppUserProject(project, projectUserId, "Admin", true, true, true, true);
-    }
+    }*/
 }

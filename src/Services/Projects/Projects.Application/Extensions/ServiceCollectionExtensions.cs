@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAppUserProjectsRepository, AppUserProjectsRepository>();
         services.AddScoped<IProjectUsersRepository, ProjectUsersRepository>();
         services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
-        // services.InitMassTransit();
+        services.InitMassTransit();
         // services.AddAutoMapper(typeof(Program));
         services.AddMappings();
         // services.InitMediator();

@@ -1,6 +1,6 @@
 export const STRING_COLOR = {
 	RED: '#f94144',
-	PINK: '#FF99E6', // PINK: '#FF3380',
+	PINK: '#FF99E6',
 	ORANGE: '#f3722c',
 	YELLOW: '#f8961e',
 	GREEN: '#90be6d',

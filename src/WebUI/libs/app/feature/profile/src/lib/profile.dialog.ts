@@ -19,7 +19,7 @@ import { FriendsComponent } from '@app/feature/friends'
 // import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access'
 
-import { AuthUserModel, NotificationModel } from '@shared/data-access/models'
+import { AppUserModel, NotificationModel } from '@shared/data-access/models'
 import { NotificationsStoreService } from '@app/data-access/notifications'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
@@ -28,87 +28,87 @@ import { NotificationsComponent } from '@app/feature/notifications'
 import { ProfileComponent } from './component'
 
 @Component({
-  selector: 'app-notifications-dialog',
-  templateUrl: './profile.dialog.html',
-  styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    AsyncPipe,
-    NgForOf,
-    NgStyle,
-    MatListModule,
-    ScrollingModule,
-    NgIf,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ShowHideComponent,
-    NgClass,
-    MatCardModule,
-    NgSwitch,
-    NgSwitchCase,
-    DatePipe,
-    MatTabsModule,
-    NotificationsComponent,
-    FriendsComponent,
-    ProfileComponent,
-    ChatroomsComponent,
-  ],
-  standalone: true,
+	selector: 'app-notifications-dialog',
+	templateUrl: './profile.dialog.html',
+	styles: [],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [
+		MatDialogModule,
+		MatButtonModule,
+		AsyncPipe,
+		NgForOf,
+		NgStyle,
+		MatListModule,
+		ScrollingModule,
+		NgIf,
+		MatIconModule,
+		MatFormFieldModule,
+		MatInputModule,
+		FormsModule,
+		ReactiveFormsModule,
+		ShowHideComponent,
+		NgClass,
+		MatCardModule,
+		NgSwitch,
+		NgSwitchCase,
+		DatePipe,
+		MatTabsModule,
+		NotificationsComponent,
+		FriendsComponent,
+		ProfileComponent,
+		ChatroomsComponent,
+	],
+	standalone: true,
 })
 export class ProfileDialog {
-  private notificationsStore = inject(NotificationsStoreService)
-  private authStore = inject(AuthStoreService)
-  private friendsService = inject(FriendsService)
-  private friendsStore = inject(FriendsStoreService)
+	private notificationsStore = inject(NotificationsStoreService)
+	private authStore = inject(AuthStoreService)
+	private friendsService = inject(FriendsService)
+	private friendsStore = inject(FriendsStoreService)
 
-  selected = new FormControl(0)
-  notifications$: Observable<NotificationModel[]> = this.notificationsStore.select.notifications$
-  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
-  selectedNotification?: NotificationModel
+	selected = new FormControl(0)
+	notifications$: Observable<NotificationModel[]> = this.notificationsStore.select.notifications$
+	user$: Observable<AppUserModel | undefined> = this.authStore.select.user$
+	selectedNotification?: NotificationModel
 
-  change(event: MatSelectionListChange) {
-    // console.log(event)
-    this.selectedNotification = event.options[0].value
-    /*    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
-     this.readNotification()
-     }*/
-  }
+	change(event: MatSelectionListChange) {
+		// console.log(event)
+		this.selectedNotification = event.options[0].value
+		/*    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
+		 this.readNotification()
+		 }*/
+	}
 
-  acceptFriend(requestedByUsername: string) {
-    // console.log(requestedByUsername)
-    this.friendsStore.dispatch.acceptFriendRequest(requestedByUsername)
-  }
+	acceptFriend(requestedByUsername: string) {
+		// console.log(requestedByUsername)
+		this.friendsStore.dispatch.acceptFriendRequest(requestedByUsername)
+	}
 
-  readNotification() {
-    if (!this.selectedNotification) return
-    /*    const update: Update<NotificationModel> = {
-     id: this.selectedNotification.id,
-     changes: {
-     status: NotificationStatus.Read,
-     },
-     }*/
-    // this.notificationsStore.dispatch.updateNotification(update)
-  }
+	readNotification() {
+		if (!this.selectedNotification) return
+		/*    const update: Update<NotificationModel> = {
+		 id: this.selectedNotification.id,
+		 changes: {
+		 status: NotificationStatus.Read,
+		 },
+		 }*/
+		// this.notificationsStore.dispatch.updateNotification(update)
+	}
 
-  markAllNotificationsAsRead(notifications: NotificationModel[]) {
-    if (!notifications) return
-    /*    const unReadNotifications = notifications.filter(notification => notification.status === NotificationStatus.Unread)
-     if (!unReadNotifications) return
+	markAllNotificationsAsRead(notifications: NotificationModel[]) {
+		if (!notifications) return
+		/*    const unReadNotifications = notifications.filter(notification => notification.status === NotificationStatus.Unread)
+		 if (!unReadNotifications) return
 
-     const updates: Update<NotificationModel>[] = unReadNotifications.map(notification => {
-     const update: Update<NotificationModel> = {
-     id: notification.id,
-     changes: {
-     status: NotificationStatus.Read,
-     },
-     }
-     return update
-     })
-     this.notificationsStore.dispatch.updateManyNotifications(updates)*/
-  }
+		 const updates: Update<NotificationModel>[] = unReadNotifications.map(notification => {
+		 const update: Update<NotificationModel> = {
+		 id: notification.id,
+		 changes: {
+		 status: NotificationStatus.Read,
+		 },
+		 }
+		 return update
+		 })
+		 this.notificationsStore.dispatch.updateManyNotifications(updates)*/
+	}
 }

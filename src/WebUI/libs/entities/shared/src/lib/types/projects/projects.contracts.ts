@@ -6,6 +6,8 @@ import { ProjectId, ProjectModel } from './project.model'
 
 export type CreateProjectRequest = {
 	name: string
+	colour: string
+	memberIds: string[]
 }
 
 export type UpdateProjectRequest = {

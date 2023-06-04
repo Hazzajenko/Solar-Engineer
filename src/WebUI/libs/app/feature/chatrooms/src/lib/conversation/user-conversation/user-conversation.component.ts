@@ -1,16 +1,6 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { CdkTextareaAutosize } from '@angular/cdk/text-field'
-import {
-  AsyncPipe,
-  DatePipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-  NgTemplateOutlet,
-} from '@angular/common'
+import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase, NgTemplateOutlet } from '@angular/common'
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, inject, Input, ViewChild } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -29,7 +19,7 @@ import { SendMessageRequest, UserMessagesStoreService } from '@app/data-access/m
 import { AuthStoreService } from '@auth/data-access'
 import { LetDirective } from '@ngrx/component'
 
-import { AuthUserModel, MessageFrom, MessageWebUserModel, WebUserModel } from '@shared/data-access/models'
+import { AppUserModel, MessageFrom, MessageWebUserModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable } from 'rxjs'
@@ -44,157 +34,157 @@ import { UsersStoreService } from '@app/data-access/users'
 // import { UserMessagesStoreService } from '@app/data-access/messages'
 
 @Component({
-  selector: 'app-user-conversation-component',
-  templateUrl: './user-conversation.component.html',
-  styles: [
-    `
-      *::-webkit-scrollbar {
-        width: 12px;
-      }
+	selector: 'app-user-conversation-component',
+	templateUrl: './user-conversation.component.html',
+	styles: [
+		`
+			*::-webkit-scrollbar {
+				width: 12px;
+			}
 
-      ::-webkit-scrollbar-track {
-        background-color: transparent;
-      }
+			::-webkit-scrollbar-track {
+				background-color: transparent;
+			}
 
-      ::-webkit-scrollbar-thumb {
-        /*      background-color: #9b9fd8;
+			::-webkit-scrollbar-thumb {
+				/*      background-color: #9b9fd8;
             border-radius: 20px;
             border: 6px solid transparent;
             background-clip: content-box;*/
-        background-color: #60a1fa;
-        border-radius: 20px;
-        border: 1px solid #3e8bf5;
-      }
+				background-color: #60a1fa;
+				border-radius: 20px;
+				border: 1px solid #3e8bf5;
+			}
 
-      ::-webkit-scrollbar-thumb:hover {
-        background-color: #a8bbbf;
-      }
-    `,
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    AsyncPipe,
-    NgForOf,
-    NgStyle,
-    MatListModule,
-    ScrollingModule,
-    NgIf,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ShowHideComponent,
-    NgClass,
-    MatCardModule,
-    NgSwitch,
-    NgSwitchCase,
-    DatePipe,
+			::-webkit-scrollbar-thumb:hover {
+				background-color: #a8bbbf;
+			}
+		`,
+	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [
+		MatDialogModule,
+		MatButtonModule,
+		AsyncPipe,
+		NgForOf,
+		NgStyle,
+		MatListModule,
+		ScrollingModule,
+		NgIf,
+		MatIconModule,
+		MatFormFieldModule,
+		MatInputModule,
+		FormsModule,
+		ReactiveFormsModule,
+		ShowHideComponent,
+		NgClass,
+		MatCardModule,
+		NgSwitch,
+		NgSwitchCase,
+		DatePipe,
 
-    MatCheckboxModule,
-    LetDirective,
-    // MessagesComponent,
+		MatCheckboxModule,
+		LetDirective,
+		// MessagesComponent,
 
-    ScrollViewportDirective,
-    ConversationMessageDirective,
-    MessageBarComponent,
-    SortConversationMessagesPipe,
-    GetCdnUrlStringPipe,
-    YouOrUserNamePipe,
-    NgTemplateOutlet,
-    MessageItemComponent,
-    MessageOptionsBarComponent,
-  ],
-  standalone: true,
+		ScrollViewportDirective,
+		ConversationMessageDirective,
+		MessageBarComponent,
+		SortConversationMessagesPipe,
+		GetCdnUrlStringPipe,
+		YouOrUserNamePipe,
+		NgTemplateOutlet,
+		MessageItemComponent,
+		MessageOptionsBarComponent,
+	],
+	standalone: true,
 })
 export class UserConversationComponent implements AfterViewInit {
-  private messagesStore = inject(UserMessagesStoreService)
-  private authStore = inject(AuthStoreService)
-  private dialog = inject(MatDialog)
-  private router = inject(Router)
-  private route = inject(ActivatedRoute)
-  private usersStore = inject(UsersStoreService)
-  private elementRef = inject(ElementRef)
-  readonly MessageFrom = MessageFrom
+	private messagesStore = inject(UserMessagesStoreService)
+	private authStore = inject(AuthStoreService)
+	private dialog = inject(MatDialog)
+	private router = inject(Router)
+	private route = inject(ActivatedRoute)
+	private usersStore = inject(UsersStoreService)
+	private elementRef = inject(ElementRef)
+	readonly MessageFrom = MessageFrom
 
-  isDialog$ = this.route.url.pipe(
-    map((paths) => {
-      return paths[0].path !== 'messages'
-    }),
-  )
+	isDialog$ = this.route.url.pipe(
+		map((paths) => {
+			return paths[0].path !== 'messages'
+		}),
+	)
 
-  userMessages$?: Observable<MessageWebUserModel[]>
-  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
-  selectedConversationMessage?: MessageWebUserModel
-  unreadFilter = false
-  recipient?: string
-  recipientUser$?: Observable<WebUserModel>
-  scrollIndex = 0
-  elDistanceToTop = 0
-  elDistanceToBottom = 0
-  element!: any
-  yPosition = 0
-  idk = 0
+	userMessages$?: Observable<MessageWebUserModel[]>
+	user$: Observable<AppUserModel | undefined> = this.authStore.select.user$
+	selectedConversationMessage?: MessageWebUserModel
+	unreadFilter = false
+	recipient?: string
+	recipientUser$?: Observable<WebUserModel>
+	scrollIndex = 0
+	elDistanceToTop = 0
+	elDistanceToBottom = 0
+	element!: any
+	yPosition = 0
+	idk = 0
 
-  @ViewChild('autosize') autosize!: CdkTextareaAutosize
+	@ViewChild('autosize') autosize!: CdkTextareaAutosize
 
-  @Input() set recipientImport(recipient: string | undefined) {
-    if (!recipient) return
-    this.recipient = recipient
-    // this.userMessages$ = this.messagesStore.select.messagesWithUser2$(recipient)
-    this.userMessages$ = this.messagesStore.select.messagesWithUser$(recipient)
-    this.recipientUser$ = this.usersStore.select.webUserCombinedByUserName$(recipient)
-  }
+	@Input() set recipientImport(recipient: string | undefined) {
+		if (!recipient) return
+		this.recipient = recipient
+		// this.userMessages$ = this.messagesStore.select.messagesWithUser2$(recipient)
+		this.userMessages$ = this.messagesStore.select.messagesWithUser$(recipient)
+		this.recipientUser$ = this.usersStore.select.webUserCombinedByUserName$(recipient)
+	}
 
-  ngAfterViewInit() {
-    this.elDistanceToTop =
-      window.pageYOffset + this.elementRef.nativeElement.getBoundingClientRect().top
-    /*    this.elDistanceToTop =
-     window.pageYOffset +
-     this.elementRef.nativeElement.getBoundingClientRect().top -
-     this.elementRef.nativeElement.offsetTop*/
-    if (this.elementRef.nativeElement.offsetParent) {
-      this.idk =
-        this.elementRef.nativeElement.getBoundingClientRect().top +
-        this.elementRef.nativeElement.offsetParent
-    }
-    this.element = this.elementRef
-    while (this.element) {
-      //   xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
-      this.yPosition += this.element.offsetTop - this.element.scrollTop + this.element.clientTop
-      this.element = this.element.offsetParent
-    }
+	ngAfterViewInit() {
+		this.elDistanceToTop =
+			window.pageYOffset + this.elementRef.nativeElement.getBoundingClientRect().top
+		/*    this.elDistanceToTop =
+		 window.pageYOffset +
+		 this.elementRef.nativeElement.getBoundingClientRect().top -
+		 this.elementRef.nativeElement.offsetTop*/
+		if (this.elementRef.nativeElement.offsetParent) {
+			this.idk =
+				this.elementRef.nativeElement.getBoundingClientRect().top +
+				this.elementRef.nativeElement.offsetParent
+		}
+		this.element = this.elementRef
+		while (this.element) {
+			//   xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+			this.yPosition += this.element.offsetTop - this.element.scrollTop + this.element.clientTop
+			this.element = this.element.offsetParent
+		}
 
-    // return { x: xPosition, y: yPosition };
-    // this.elDistanceToTop = window.innerHeight / 2
-    this.elDistanceToBottom =
-      window.pageYOffset + this.elementRef.nativeElement.getBoundingClientRect().bottom
-  }
+		// return { x: xPosition, y: yPosition };
+		// this.elDistanceToTop = window.innerHeight / 2
+		this.elDistanceToBottom =
+			window.pageYOffset + this.elementRef.nativeElement.getBoundingClientRect().bottom
+	}
 
-  sendMessage(message: string) {
-    if (!this.recipient) return
+	sendMessage(message: string) {
+		if (!this.recipient) return
 
-    const request: SendMessageRequest = {
-      recipientUserId: this.recipient,
-      content: message,
-    }
+		const request: SendMessageRequest = {
+			recipientUserId: this.recipient,
+			content: message,
+		}
 
-    this.messagesStore.dispatch.sendMessageToUser(request)
-  }
+		this.messagesStore.dispatch.sendMessageToUser(request)
+	}
 
-  selectMessage(message: MessageWebUserModel) {
-    if (this.selectedConversationMessage && this.selectedConversationMessage.id === message.id) {
-      this.selectedConversationMessage = undefined
-      return
-    }
-    this.selectedConversationMessage = message
-    return
-  }
+	selectMessage(message: MessageWebUserModel) {
+		if (this.selectedConversationMessage && this.selectedConversationMessage.id === message.id) {
+			this.selectedConversationMessage = undefined
+			return
+		}
+		this.selectedConversationMessage = message
+		return
+	}
 
-  async toggleFullScreen() {
-    this.dialog.closeAll()
-    await this.router.navigateByUrl('messages')
-  }
+	async toggleFullScreen() {
+		this.dialog.closeAll()
+		await this.router.navigateByUrl('messages')
+	}
 }

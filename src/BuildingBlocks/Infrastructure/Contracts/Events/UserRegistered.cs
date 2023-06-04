@@ -1,4 +1,4 @@
 ﻿namespace Infrastructure.Contracts.Events;
 
-public record UserCreated(
+public record UserRegistered(
     Guid Id, string UserName, string DisplayName, string PhotoUrl);

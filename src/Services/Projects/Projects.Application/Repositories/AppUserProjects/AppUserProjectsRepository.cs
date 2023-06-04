@@ -20,13 +20,13 @@ public sealed class AppUserProjectsRepository
 
     public async Task<IEnumerable<AppUserProject>> GetByAppUserIdAsync(Guid appUserId)
     {
-        return await Queryable.Where(x => x.ProjectUserId == appUserId).ToListAsync();
+        return await Queryable.Where(x => x.AppUserId == appUserId).ToListAsync();
     }
 
     public async Task<IEnumerable<ProjectDto>> GetProjectsByAppUserIdAsync(Guid appUserId)
     {
         return await Queryable
-            .Where(x => x.ProjectUserId == appUserId)
+            .Where(x => x.AppUserId == appUserId)
             .Include(x => x.Project)
             .Select(x => x.ToDto())
             .ToListAsync();
@@ -39,7 +39,7 @@ public sealed class AppUserProjectsRepository
     {
         return await Queryable
             .Include(x => x.Project)
-            .SingleOrDefaultAsync(x => x.ProjectUserId == appUserId && x.ProjectId == projectId);
+            .SingleOrDefaultAsync(x => x.AppUserId == appUserId && x.ProjectId == projectId);
         /*return await Queryable
             .Include(x => x.Project)
             .ThrowHubExceptionIfNullSingleOrDefaultAsync(
@@ -54,7 +54,7 @@ public sealed class AppUserProjectsRepository
     )
     {
         return await Queryable
-            .Where(x => x.ProjectUserId == appUserId && x.ProjectId == projectId)
+            .Where(x => x.AppUserId == appUserId && x.ProjectId == projectId)
             .Include(x => x.Project)
             .Select(x => x.ToDto())
             .SingleOrDefaultAsync();
@@ -64,7 +64,7 @@ public sealed class AppUserProjectsRepository
     {
         return await Queryable
             .Where(x => x.ProjectId == projectId)
-            .Select(x => x.ProjectUserId.ToString())
+            .Select(x => x.AppUserId.ToString())
             .ToArrayAsync();
     }
 
@@ -73,30 +73,33 @@ public sealed class AppUserProjectsRepository
     )
     {
         return await Queryable
-            .Where(x => x.ProjectUserId == appUserId)
+            .Where(x => x.AppUserId == appUserId)
             .Include(x => x.Project)
             .ThenInclude(x => x.AppUserProjects)
-            .ThenInclude(x => x.ProjectUser)
+            // .ThenInclude(x => x.ProjectUser)
             .Select(
                 x =>
                     new ProjectDto
                     {
-                        Name = x.Project.Name,
                         Id = x.Project.Id.ToString(),
+                        Name = x.Project.Name,
+                        Colour = x.Project.Colour,
                         CreatedTime = x.Project.CreatedTime,
                         LastModifiedTime = x.Project.LastModifiedTime,
                         CreatedById = x.Project.CreatedById.ToString(),
                         MemberIds = x.Project.AppUserProjects.Select(
-                            z => z.ProjectUserId.ToString()
+                            z => z.AppUserId.ToString()
                         ),
                         Members = x.Project.AppUserProjects.Select(
                             z =>
                                 new ProjectUserDto
                                 {
-                                    Id = z.ProjectUserId.ToString(),
-                                    DisplayName = z.ProjectUser.DisplayName,
-                                    UserName = z.ProjectUser.UserName,
-                                    PhotoUrl = z.ProjectUser.PhotoUrl,
+                                    Id = z.AppUserId.ToString(),
+                                    Role = z.Role,
+                                    CanCreate = z.CanCreate,
+                                    CanDelete = z.CanDelete,
+                                    CanInvite = z.CanInvite,
+                                    CanKick = z.CanKick,
                                     JoinedAtTime = z.CreatedTime
                                 }
                         )

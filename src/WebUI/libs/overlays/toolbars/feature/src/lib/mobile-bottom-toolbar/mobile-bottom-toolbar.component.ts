@@ -32,7 +32,7 @@ import {
 import { injectAppStateStore, ModeState } from '@canvas/app/data-access'
 import { MobileBottomToolbarDirective } from './mobile-bottom-toolbar.directive'
 import { StringColor, stringColors } from '@entities/shared'
-import { UiStoreService } from '@overlays/ui-store/data-access'
+import { DIALOG_COMPONENT, UiStoreService } from '@overlays/ui-store/data-access'
 
 @Component({
 	selector: 'overlay-mobile-bottom-toolbar',
@@ -100,7 +100,8 @@ export class MobileBottomToolbarComponent {
 
 	openSettingsDialog() {
 		this._uiStore.dispatch.openDialog({
-			component: 'AppSettingsDialogComponent',
+			// component: DIALOG_COMPONENT_TYPE.APP_SETTINGS,
+			component: DIALOG_COMPONENT.APP_SETTINGS,
 		})
 		// heroAcademicCapSolid
 	}

@@ -1,15 +1,6 @@
-using EventBus.Common;
-using EventBus.Domain.AppUserEvents;
-using EventBus.Domain.AppUserEvents.Responses;
-using Infrastructure.Logging;
-using Marten;
-using Projects.Application.Data.UnitOfWork;
-using Projects.Domain.Entities;
-using Serilog;
-using Wolverine;
-
 namespace Projects.Application.Events;
 
+/*
 public static class AppUserEventHandler
 {
     public static ValueTask Handle(
@@ -73,7 +64,7 @@ public static class AppUserEventHandler
             message.User.PhotoUrl
         );
 
-        var res = new AppUserEventResponse(message.Id, EventResponseType.Created, null);*/
+        var res = new AppUserEventResponse(message.Id, EventResponseType.Created, null);#1#
 
         // return context.RespondToSenderAsync(res);
 
@@ -117,7 +108,7 @@ public static class AppUserEventHandler
                     message.Id,
                     EventResponseType.Created,
                     projectUserDto
-                );*/
+                );#1#
                 return context.RespondToSenderAsync(userCreated);
                 // return session.SaveChangesAsync();
                 // return context.RespondToSenderAsync(projectUserCreatedResponse);
@@ -136,7 +127,7 @@ public static class AppUserEventHandler
                 EventResponseType.NoChange,
                 exProjectUserDto
             );
-            return context.RespondToSenderAsync(projectUserCreatedResponseV2);*/
+            return context.RespondToSenderAsync(projectUserCreatedResponseV2);#1#
         }
 
         return ValueTask.CompletedTask;
@@ -149,4 +140,4 @@ public static class AppUserEventHandler
         // this use case
         // return context.RespondToSenderAsync(response);
     }
-}
+}*/

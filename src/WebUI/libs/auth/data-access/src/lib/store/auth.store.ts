@@ -1,7 +1,7 @@
 import { inject, Signal } from '@angular/core'
 import { AuthActions, authFeature, AuthState } from '@auth/data-access'
 import { MemoizedSelector, Store } from '@ngrx/store'
-import { AuthUserModel } from '@shared/data-access/models'
+import { AppUserModel } from '@shared/data-access/models'
 
 export type AuthStoreSelectors = Omit<typeof authFeature, 'name' | 'reducer'>
 
@@ -58,7 +58,7 @@ export type GetActionDispatchersByKey<T> = T extends keyof AuthStoreActions
 
 const idkksadd: GetActionDispatchersByKey<'signInSuccess'> = (props: {
 	token: string
-	user: AuthUserModel
+	user: AppUserModel
 }) => {}
 
 export type StoreActionDispatcherFunctions = GetActionDispatchers<AuthStoreActions>
@@ -101,7 +101,7 @@ export function injectAuthStore() {
 
 	const state = store.selectSignal(feature.selectAuthState) as Signal<AuthState>
 
-	const user = store.selectSignal(feature.selectUser) as Signal<AuthUserModel | undefined>
+	const user = store.selectSignal(feature.selectUser) as Signal<AppUserModel | undefined>
 
 	const select = {
 		state,

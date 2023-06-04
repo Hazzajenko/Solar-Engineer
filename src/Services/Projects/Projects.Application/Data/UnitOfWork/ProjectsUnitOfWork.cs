@@ -4,7 +4,6 @@ using Projects.Application.Repositories.PanelConfigs;
 using Projects.Application.Repositories.PanelLinks;
 using Projects.Application.Repositories.Panels;
 using Projects.Application.Repositories.Projects;
-using Projects.Application.Repositories.ProjectUsers;
 using Projects.Application.Repositories.Strings;
 
 namespace Projects.Application.Data.UnitOfWork;
@@ -16,7 +15,7 @@ public class ProjectsUnitOfWork : UnitOfWorkFactory<ProjectsContext>, IProjectsU
     {
     }
 
-    public IProjectUsersRepository ProjectUsersRepository => new ProjectUsersRepository(Context);
+    // public IProjectUsersRepository ProjectUsersRepository => new ProjectUsersRepository(Context);
     public IProjectsRepository ProjectsRepository => new ProjectsRepository(Context);
 
     public IAppUserProjectsRepository AppUserProjectsRepository =>

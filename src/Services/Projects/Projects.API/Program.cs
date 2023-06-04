@@ -5,9 +5,7 @@ using Infrastructure.Logging;
 using Infrastructure.OpenTelemetry;
 using Infrastructure.Swagger;
 using Infrastructure.Web;
-using MassTransit;
 using Microsoft.AspNetCore.HttpOverrides;
-using Projects.Application;
 using Projects.Application.Data;
 using Projects.Application.Extensions;
 
@@ -50,7 +48,7 @@ builder.Services.InitOpenTelemetry(config);
 /*builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });*/
 builder.Services.AddApplicationServices(config);
 
-builder.Services.AddMassTransit(x =>
+/*builder.Services.AddMassTransit(x =>
 {
     x.SetKebabCaseEndpointNameFormatter();
     x.SetInMemorySagaRepositoryProvider();
@@ -71,7 +69,7 @@ builder.Services.AddMassTransit(x =>
         });
         cfg.ConfigureEndpoints(context);
     });
-});
+});*/
 
 
 // Register(typeof(IUserIdProvider), () => new HubsUserIdProvider());

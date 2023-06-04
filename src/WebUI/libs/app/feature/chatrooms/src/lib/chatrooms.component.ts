@@ -1,5 +1,14 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
+import {
+	AsyncPipe,
+	DatePipe,
+	NgClass,
+	NgForOf,
+	NgIf,
+	NgStyle,
+	NgSwitch,
+	NgSwitchCase,
+} from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -16,7 +25,7 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access'
 import { LetDirective } from '@ngrx/component'
 
-import { AuthUserModel } from '@shared/data-access/models'
+import { AppUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable } from 'rxjs'
@@ -29,73 +38,73 @@ import { ChatRoomsService } from './services/chat-rooms.service'
 import { NewChatRoomComponent } from './new-chat-room/new-chat-room.component'
 
 @Component({
-  selector: 'app-chatrooms-component',
-  templateUrl: './chatrooms.component.html',
-  styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    AsyncPipe,
-    NgForOf,
-    NgStyle,
-    MatListModule,
-    ScrollingModule,
-    NgIf,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ShowHideComponent,
-    NgClass,
-    MatCardModule,
-    NgSwitch,
-    NgSwitchCase,
-    DatePipe,
-    MatCheckboxModule,
-    LetDirective,
-    ChatRoomListComponent,
-    GroupChatConversationComponent,
-    UserConversationComponent,
-    ChangeChatRoomDirective,
-    NewChatRoomComponent,
-  ],
-  standalone: true,
-  providers: [
-    {
-      provide: MatDialogRef,
-      useValue: {},
-    },
-  ],
+	selector: 'app-chatrooms-component',
+	templateUrl: './chatrooms.component.html',
+	styles: [],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [
+		MatDialogModule,
+		MatButtonModule,
+		AsyncPipe,
+		NgForOf,
+		NgStyle,
+		MatListModule,
+		ScrollingModule,
+		NgIf,
+		MatIconModule,
+		MatFormFieldModule,
+		MatInputModule,
+		FormsModule,
+		ReactiveFormsModule,
+		ShowHideComponent,
+		NgClass,
+		MatCardModule,
+		NgSwitch,
+		NgSwitchCase,
+		DatePipe,
+		MatCheckboxModule,
+		LetDirective,
+		ChatRoomListComponent,
+		GroupChatConversationComponent,
+		UserConversationComponent,
+		ChangeChatRoomDirective,
+		NewChatRoomComponent,
+	],
+	standalone: true,
+	providers: [
+		{
+			provide: MatDialogRef,
+			useValue: {},
+		},
+	],
 })
 export class ChatroomsComponent {
-  private authStore = inject(AuthStoreService)
-  private dialog = inject(MatDialog)
-  private router = inject(Router)
-  private route = inject(ActivatedRoute)
-  private chatRoomsService = inject(ChatRoomsService)
-  private matDialogRef = inject(MatDialogRef<ChatroomsComponent>)
-  height = window.innerHeight
+	private authStore = inject(AuthStoreService)
+	private dialog = inject(MatDialog)
+	private router = inject(Router)
+	private route = inject(ActivatedRoute)
+	private chatRoomsService = inject(ChatRoomsService)
+	private matDialogRef = inject(MatDialogRef<ChatroomsComponent>)
+	height = window.innerHeight
 
-  isCreatingGroupChat$ = this.chatRoomsService.creatingGroupChat$
+	isCreatingGroupChat$ = this.chatRoomsService.creatingGroupChat$
 
-  isDialog$ = this.route.url.pipe(
-    map((paths) => {
-      return paths[0].path !== 'messages'
-    }),
-  )
-  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
-  chatRoomToMessage$ = this.chatRoomsService.chatRoomToMessage$
+	isDialog$ = this.route.url.pipe(
+		map((paths) => {
+			return paths[0].path !== 'messages'
+		}),
+	)
+	user$: Observable<AppUserModel | undefined> = this.authStore.select.user$
+	chatRoomToMessage$ = this.chatRoomsService.chatRoomToMessage$
 
-  createNewChat = false
+	createNewChat = false
 
-  async toggleFullScreen() {
-    this.dialog.closeAll()
-    await this.router.navigateByUrl('messages')
-  }
+	async toggleFullScreen() {
+		this.dialog.closeAll()
+		await this.router.navigateByUrl('messages')
+	}
 
-  createNewChatRoom() {
-    this.createNewChat = true
-  }
+	createNewChatRoom() {
+		this.createNewChat = true
+	}
 }

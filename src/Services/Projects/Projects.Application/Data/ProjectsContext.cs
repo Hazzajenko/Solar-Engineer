@@ -12,7 +12,7 @@ public class ProjectsContext : DbContext, IDataContext
     {
     }
 
-    public DbSet<ProjectUser> ProjectUsers { get; set; } = default!;
+    // public DbSet<ProjectUser> ProjectUsers { get; set; } = default!;
     public DbSet<Project> Projects { get; set; } = default!;
     public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
     public DbSet<String> Strings { get; set; } = default!;

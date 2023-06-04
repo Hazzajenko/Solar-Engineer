@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { AuthActions } from '../store'
 import { Store } from '@ngrx/store'
-import { AuthUserModel } from '@shared/data-access/models'
+import { AppUserModel } from '@shared/data-access/models'
 
 @Injectable({
 	providedIn: 'root',
@@ -14,10 +14,10 @@ export class AuthRepository {
 	}
 
 	signInSuccess(token: string) {
-		this.store.dispatch(AuthActions.signInSuccess({ token, user: {} as AuthUserModel }))
+		this.store.dispatch(AuthActions.signInSuccess({ token, user: {} as AppUserModel }))
 	}
 
-	signInFetchUserSuccess(token: string, user: AuthUserModel) {
+	signInFetchUserSuccess(token: string, user: AppUserModel) {
 		this.store.dispatch(AuthActions.signInFetchUserSuccess({ token, user }))
 	}
 
