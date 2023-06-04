@@ -27,4 +27,16 @@ public sealed class PanelConfigsRepository
         return await Queryable.Where(x => x.Default).Take(1).SingleOrDefaultAsync()
                ?? throw new ArgumentNullException(nameof(PanelConfig));
     }
+
+    public async Task<PanelConfig> GetByFullName(string fullname)
+    {
+        return await Queryable.SingleOrDefaultAsync(x => x.FullName == fullname)
+               ?? throw new ArgumentNullException(nameof(PanelConfig));
+    }
+
+    public async Task<PanelConfig> GetByBrandAndModel(string brand, string model)
+    {
+        return await Queryable.SingleOrDefaultAsync(x => x.Brand == brand && x.Name == model)
+               ?? throw new ArgumentNullException(nameof(PanelConfig));
+    }
 }

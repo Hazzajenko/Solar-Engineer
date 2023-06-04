@@ -2,6 +2,7 @@ import { inject, Signal } from '@angular/core'
 import { AuthActions, authFeature, AuthState } from '@auth/data-access'
 import { MemoizedSelector, Store } from '@ngrx/store'
 import { AppUserModel } from '@shared/data-access/models'
+import { ActionReturnTypes } from '@shared/utils'
 
 export type AuthStoreSelectors = Omit<typeof authFeature, 'name' | 'reducer'>
 
@@ -14,9 +15,6 @@ export type AuthStoreSelectorsReturnTypes = SelectorReturnTypes<AuthStoreSelecto
 
  }*/
 export type AuthStoreActions = typeof AuthActions
-export type ActionReturnTypes<T> = {
-	[K in keyof T]: T[K] extends (...args: any[]) => infer R ? R : never
-}
 
 export type AuthStoreActionsReturnTypes = ActionReturnTypes<AuthStoreActions>
 

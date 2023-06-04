@@ -2,11 +2,11 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
 import { PanelsActions } from './panels.actions'
 import { map, tap } from 'rxjs'
-import { CreateManyPanelsRequest, DeleteManyPanelsRequest, DeletePanelRequest, SIGNALR_EVENT_ACTION, SIGNALR_EVENT_MODEL, SignalrEventRequest, UpdateManyPanelsRequest, UpdatePanelRequest } from '@entities/shared'
+import { DeleteManyPanelsRequest, SIGNALR_EVENT_ACTION, SIGNALR_EVENT_MODEL, SignalrEventRequest } from '@entities/shared'
 import { PanelsSignalrService } from '../services'
 import { ProjectsSignalrService } from '../../projects'
 import { assertNotNull, newGuidT } from '@shared/utils'
-import { addProjectId, injectCurrentProject } from '@entities/utils'
+import { addProjectId, createProjectSignalrEffect, injectCurrentProject } from '@entities/utils'
 
 /*export const addPanelSignalr$ = createEffect(
  (actions$ = inject(Actions), _panelsSignalr = inject(PanelsSignalrService)) => {
@@ -27,104 +27,144 @@ import { addProjectId, injectCurrentProject } from '@entities/utils'
  { functional: true, dispatch: false },
  )*/
 
-export const addPanelSignalr$ = createEffect(
+export const addPanelSignalr$ = createProjectSignalrEffect(
+	PanelsActions.addPanel,
+	({ panel }, projectId) => {
+		return {
+			requestId: newGuidT(),
+			projectId,
+			action: SIGNALR_EVENT_ACTION.CREATE,
+			model: SIGNALR_EVENT_MODEL.PANEL,
+			data: JSON.stringify(addProjectId(projectId, panel)),
+		} as Omit<SignalrEventRequest, 'timeStamp'>
+	},
+)
+
+/*export const addPanelSignalr$ = createEffect(
+ (
+ actions$ = inject(Actions),
+ projectsSignalr = inject(ProjectsSignalrService),
+ projectGetter = injectCurrentProject(),
+ ) => {
+ return actions$.pipe(
+ ofType(PanelsActions.addPanel),
+ map(({ panel }) => {
+ const project = projectGetter()
+ assertNotNull(project)
+ const request: Omit<SignalrEventRequest, 'timeStamp'> = {
+ requestId: newGuidT(),
+ projectId: project.id,
+ action: SIGNALR_EVENT_ACTION.CREATE,
+ model: SIGNALR_EVENT_MODEL.PANEL,
+ data: JSON.stringify(addProjectId(project, panel)),
+ }
+ return request
+ }),
+ tap((request) => projectsSignalr.invokeSignalrEvent(request)),
+ )
+ },
+ { functional: true, dispatch: false },
+ )*/
+
+export const addManyPanelsSignalr$ = createEffect(
 	(
 		actions$ = inject(Actions),
-		_projectsSignalr = inject(ProjectsSignalrService),
+		projectsSignalr = inject(ProjectsSignalrService),
 		projectGetter = injectCurrentProject(),
 	) => {
 		return actions$.pipe(
-			ofType(PanelsActions.addPanel),
-			map(({ panel }) => {
+			ofType(PanelsActions.addManyPanels),
+			map(({ panels }) => {
 				const project = projectGetter()
 				assertNotNull(project)
 				const request: Omit<SignalrEventRequest, 'timeStamp'> = {
-					// requestId: newGuid() as RequestId,
 					requestId: newGuidT(),
 					projectId: project.id,
-					action: SIGNALR_EVENT_ACTION.CREATE,
+					action: SIGNALR_EVENT_ACTION.CREATE_MANY,
 					model: SIGNALR_EVENT_MODEL.PANEL,
-					data: JSON.stringify(addProjectId(project, panel)),
+					data: JSON.stringify(addProjectId(project, panels)),
 				}
 				return request
 			}),
-			tap((request) => _projectsSignalr.invokeSignalrEvent(request)),
-		)
-	},
-	{ functional: true, dispatch: false },
-)
-
-export const addManyPanelsSignalr$ = createEffect(
-	(actions$ = inject(Actions), _panelsSignalr = inject(PanelsSignalrService)) => {
-		return actions$.pipe(
-			ofType(PanelsActions.addManyPanels),
-			map(({ panels }) => {
-				const request: CreateManyPanelsRequest = {
-					requestId: 'create-panel',
-					projectId: 'panel.projectId',
-					type: 'CreateManyPanels',
-					payload: panels,
-				}
-				return request
-			}),
-			tap((request) => _panelsSignalr.addManyPanels(request)),
+			tap((request) => projectsSignalr.invokeSignalrEvent(request)),
 		)
 	},
 	{ functional: true, dispatch: false },
 )
 
 export const updatePanelSignalr$ = createEffect(
-	(actions$ = inject(Actions), _panelsSignalr = inject(PanelsSignalrService)) => {
+	(
+		actions$ = inject(Actions),
+		projectsSignalr = inject(ProjectsSignalrService),
+		projectGetter = injectCurrentProject(),
+	) => {
 		return actions$.pipe(
 			ofType(PanelsActions.updatePanel),
 			map(({ update }) => {
-				const request: UpdatePanelRequest = {
-					requestId: 'create-panel',
-					projectId: 'panel.projectId',
-					type: 'UpdatePanel',
-					payload: update,
+				const project = projectGetter()
+				assertNotNull(project)
+				const request: Omit<SignalrEventRequest, 'timeStamp'> = {
+					requestId: newGuidT(),
+					projectId: project.id,
+					action: SIGNALR_EVENT_ACTION.UPDATE,
+					model: SIGNALR_EVENT_MODEL.PANEL,
+					data: JSON.stringify(addProjectId(project, update)),
 				}
 				return request
 			}),
-			tap((request) => _panelsSignalr.updatePanel(request)),
+			tap((request) => projectsSignalr.invokeSignalrEvent(request)),
 		)
 	},
 	{ functional: true, dispatch: false },
 )
 
 export const updateManyPanelsSignalr$ = createEffect(
-	(actions$ = inject(Actions), _panelsSignalr = inject(PanelsSignalrService)) => {
+	(
+		actions$ = inject(Actions),
+		projectsSignalr = inject(ProjectsSignalrService),
+		projectGetter = injectCurrentProject(),
+	) => {
 		return actions$.pipe(
 			ofType(PanelsActions.updateManyPanels),
 			map(({ updates }) => {
-				const request: UpdateManyPanelsRequest = {
-					requestId: 'create-panel',
-					projectId: 'panel.projectId',
-					type: 'UpdateManyPanels',
-					payload: updates,
+				const project = projectGetter()
+				assertNotNull(project)
+				const request: Omit<SignalrEventRequest, 'timeStamp'> = {
+					requestId: newGuidT(),
+					projectId: project.id,
+					action: SIGNALR_EVENT_ACTION.UPDATE_MANY,
+					model: SIGNALR_EVENT_MODEL.PANEL,
+					data: JSON.stringify(addProjectId(project, updates)),
 				}
 				return request
 			}),
-			tap((request) => _panelsSignalr.updateManyPanels(request)),
+			tap((request) => projectsSignalr.invokeSignalrEvent(request)),
 		)
 	},
 	{ functional: true, dispatch: false },
 )
 
 export const deletePanelSignalr$ = createEffect(
-	(actions$ = inject(Actions), _panelsSignalr = inject(PanelsSignalrService)) => {
+	(
+		actions$ = inject(Actions),
+		projectsSignalr = inject(ProjectsSignalrService),
+		projectGetter = injectCurrentProject(),
+	) => {
 		return actions$.pipe(
 			ofType(PanelsActions.deletePanel),
 			map(({ panelId }) => {
-				const request: DeletePanelRequest = {
-					requestId: 'create-panel',
-					projectId: 'panel.projectId',
-					type: 'DeletePanel',
-					payload: panelId,
+				const project = projectGetter()
+				assertNotNull(project)
+				const request: Omit<SignalrEventRequest, 'timeStamp'> = {
+					requestId: newGuidT(),
+					projectId: project.id,
+					action: SIGNALR_EVENT_ACTION.DELETE,
+					model: SIGNALR_EVENT_MODEL.PANEL,
+					data: JSON.stringify(addProjectId(project, panelId)),
 				}
 				return request
 			}),
-			tap((request) => _panelsSignalr.deletePanel(request)),
+			tap((request) => projectsSignalr.invokeSignalrEvent(request)),
 		)
 	},
 	{ functional: true, dispatch: false },

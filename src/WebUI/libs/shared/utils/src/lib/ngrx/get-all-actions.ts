@@ -8,6 +8,11 @@ export type GetActionParametersByAction<TAction> = TAction extends (params: infe
 	? P
 	: never
 
+export type GetActionParametersByActionDeep<TAction> =
+	GetActionParametersByAction<TAction> extends object
+		? $ElementType<GetActionParametersByAction<TAction>, keyof GetActionParametersByAction<TAction>>
+		: never
+
 export type GetActionParametersByActionKey<
 	TActions extends ActionGroup,
 	TKey extends keyof TActions,
@@ -22,6 +27,10 @@ export type GetActionParametersByActionKeyDeep<
 			keyof GetActionParametersByActionKey<TActions, TKey>
 	  >
 	: never
+
+export type ActionReturnTypes<T> = {
+	[K in keyof T]: T[K] extends (...args: any[]) => infer R ? R : never
+}
 
 /*
  const what: GetActionParametersByActionKey<typeof AppStateActions, 'setDragBoxState'> = {
