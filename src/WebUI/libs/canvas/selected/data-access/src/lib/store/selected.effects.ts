@@ -24,7 +24,7 @@ export const selectStringNotification$ = createEffect(
 		return actions$.pipe(
 			ofType(SelectedActions.selectString),
 			map(({ stringId }) => {
-				const string = stringsStore.getById(stringId)
+				const string = stringsStore.select.getById(stringId)
 				assertNotNull(string)
 				const notification: ActionNotificationModel = {
 					title: `${string.name} selected`,

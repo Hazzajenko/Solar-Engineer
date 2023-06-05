@@ -1,5 +1,6 @@
 export * from './panels.actions'
 export * from './panels.reducer'
+export * from './panels.feature'
 export * from './panels.selectors'
 export * from './panels.effects'
 export * from './panels.signalr.effects'

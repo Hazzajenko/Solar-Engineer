@@ -16,7 +16,6 @@ import {
 } from '@shared/data-access/models'
 import { assertNotNull, updateMany } from '@shared/utils'
 import { isEqual } from 'lodash'
-import { EntityStoreService } from '@entities/data-access'
 import {
 	changeCanvasCursor,
 	eventToEventPoint,
@@ -32,19 +31,20 @@ import {
 	multiSelectDraggingKeysDown,
 } from '@canvas/utils'
 import {
-	CanvasEntity,
 	ENTITY_TYPE,
+	EntityBase,
 	getEntitySize,
 	PanelId,
 	PanelModel,
 	SizeByType,
 } from '@entities/shared'
+import { injectEntityStore } from '@entities/data-access'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ObjectPositioningService {
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 	private _domPoint = inject(DomPointService)
 	private _render = inject(RenderService)
 	private _canvasElement = inject(CanvasElementService)
@@ -105,7 +105,7 @@ export class ObjectPositioningService {
 		const customEntity: PanelModel = {
 			...entity,
 			id: this.singleToMoveId as PanelId,
-			location: getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.Panel]),
+			location: getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.PANEL]),
 		}
 		if (!nearbyEntitiesOnAxis.length || nearbyLinesState === 'NearbyLinesDisabled') {
 			this._render.renderCanvasApp({
@@ -181,7 +181,7 @@ export class ObjectPositioningService {
 				y: this.axisRepositionPreviewRect.top,
 			}
 		} else {
-			location = getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.Panel])
+			location = getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.PANEL])
 		}
 
 		this._entities.panels.updatePanel({
@@ -330,7 +330,7 @@ export class ObjectPositioningService {
 		)
 	}
 
-	areAnyEntitiesNearbyExcludingMultipleGrabbed(updatedEntities: CanvasEntity[]) {
+	areAnyEntitiesNearbyExcludingMultipleGrabbed(updatedEntities: EntityBase[]) {
 		const grabbedIds = updatedEntities.map((entity) => entity.id)
 		const panelsExceptGrabbed = this._entities.panels.allPanels.filter(
 			(entity) => !grabbedIds.includes(entity.id),

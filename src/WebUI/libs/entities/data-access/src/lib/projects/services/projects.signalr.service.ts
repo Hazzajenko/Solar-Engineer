@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
 import { HubConnection } from '@microsoft/signalr'
 import {
+	ProjectDataModel,
 	ProjectId,
 	ProjectModel,
 	PROJECTS_SIGNALR_EVENT,
@@ -13,6 +14,8 @@ import { injectProjectsStore } from '../store'
 import { EntityUpdate } from '@shared/data-access/models'
 import { injectSignalrEventsStore } from '../../signalr-events'
 import { UpdateStr } from '@ngrx/entity/src/models'
+import { injectEntityStore } from '../../shared'
+import { retryCheck } from '@shared/utils'
 
 const hubName = 'Projects'
 const hubUrl = '/hubs/projects'
@@ -25,6 +28,8 @@ export type ProjectsHubConnection = HubConnection
 })
 export class ProjectsSignalrService {
 	private _projectsStore = injectProjectsStore()
+	private _entitiesStore = injectEntityStore()
+
 	private _signalrEventsStore = injectSignalrEventsStore()
 	hubConnection: ProjectsHubConnection | undefined
 
@@ -75,14 +80,33 @@ export class ProjectsSignalrService {
 			},
 		)
 
+		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.GET_PROJECT, (response: ProjectDataModel) => {
+			console.log(PROJECTS_SIGNALR_EVENT.GET_PROJECT, response)
+			this._entitiesStore.panels.loadPanels(response.panels)
+			this._entitiesStore.strings.dispatch.loadStrings(response.strings)
+			// this._entitiesStore.panelLinks.addManyPanelLinks(response.panelLinks)
+			this._entitiesStore.panelConfigs.loadPanelConfigs(response.panelConfigs)
+			// this._entitiesStore.panelLinks.addManyPanelLinks(response.panelLinks)
+		})
+
 		return this.hubConnection
+	}
+
+	getProjectById(projectId: ProjectId, initial?: boolean) {
+		if (initial) {
+			retryCheck(async () => this.hubConnection?.state === 'Connected', 1000, 10)
+				.then(() => this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.GET_PROJECT_BY_ID, projectId))
+				.catch((err) => console.error(err))
+			return
+		}
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.GET_PROJECT_BY_ID, projectId)
 	}
 
 	invokeSignalrEvent(request: Omit<SignalrEventRequest, 'timeStamp'>) {
 		this._signalrEventsStore.dispatch.addSignalrEvent(addTimeStamp(request))
 		console.log(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
 		// this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
-		if (!this.hubConnection) throw new Error('Hub connection is not initsialized')
+		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
 		this.hubConnection
 			.invoke(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
 			.catch((err) => console.error(err, invoke, request))
@@ -114,8 +138,9 @@ export class ProjectsSignalrService {
 		this._signalrEventsStore.dispatch.updateSignalrEvent(update)
 	}
 
-	private invokeHubConnection(invoke: string, ...params: unknown[]) {
+	private invokeHubConnection(invoke: string, params?: unknown) {
 		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
+		if (this.hubConnection.state !== 'Connected') throw new Error('Hub connection is not connected')
 		if (invoke && params)
 			this.hubConnection.invoke(invoke, params).catch((err) => console.error(err, invoke, params))
 		if (invoke && !params) {

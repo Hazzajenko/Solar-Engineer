@@ -7,11 +7,11 @@ import {
 	NearbyEntity,
 } from '@shared/data-access/models'
 import { getDistanceBetweenTwoPoints } from './distance'
-import { CanvasEntity } from '@entities/shared'
+import { EntityBase } from '@entities/shared'
 
 export const findNearbyBoundOverlapOnBothAxis = (
 	bounds: EntityBounds,
-	entities: CanvasEntity[],
+	entities: EntityBase[],
 ): NearbyEntity[] => {
 	const { left, right, top, bottom } = bounds
 	const entitiesWithBounds = entities.map((entity) => {
@@ -56,7 +56,7 @@ export const findNearbyBoundOverlapOnBothAxis = (
 
 export const findNearbyBoundOverlapOnBothAxisExcludingIds = (
 	bounds: EntityBounds,
-	entities: CanvasEntity[],
+	entities: EntityBase[],
 	excludedIds: string[],
 ): NearbyEntity[] => {
 	const { left, right, top, bottom } = bounds

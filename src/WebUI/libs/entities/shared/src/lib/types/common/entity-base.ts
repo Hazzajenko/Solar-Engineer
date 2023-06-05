@@ -1,13 +1,14 @@
 import { ENTITY_TYPE, EntityType } from './entity.type'
 import { AngleRadians, Point, Size } from '@shared/data-access/models'
+import { PanelModel } from '../panels'
 // import { Point } from '@shared/data-access/models'
 
-export type CanvasEntity = {
+export type EntityBase = {
 	id: string
 	type: EntityType
 	location: Point
-	width: number
-	height: number
+	// width: number
+	// height: number
 	angle: AngleRadians
 }
 
@@ -41,14 +42,23 @@ export type CanvasEntity = {
  } as const*/
 
 export const SizeByType = {
-	[ENTITY_TYPE.Panel]: { width: 18, height: 23 },
+	[ENTITY_TYPE.PANEL]: { width: 18, height: 23 },
 }
 
-export const getEntitySize = (entity: CanvasEntity) => {
-	return SizeByType[entity.type]
+export const getEntitySize = (entity: EntityBase | EntityType | PanelModel) => {
+	// return SizeByType[entity.type]
+	const toSwitch = typeof entity === 'string' ? entity : entity.type
+	switch (toSwitch) {
+		case ENTITY_TYPE.PANEL:
+			return { width: 18, height: 23 }
+		case ENTITY_TYPE.STRING:
+			throw new Error('Not implemented')
+		default:
+			throw new Error('Not implemented')
+	}
 }
 
-export const getEntityCenter = (entity: CanvasEntity) => {
+export const getEntityCenter = (entity: EntityBase) => {
 	const { width, height } = getEntitySize(entity)
 	return {
 		x: entity.location.x + width / 2,
@@ -56,7 +66,7 @@ export const getEntityCenter = (entity: CanvasEntity) => {
 	}
 }
 
-export const mapEntityWithSize = <T extends CanvasEntity>(
+export const mapEntityWithSize = <T extends EntityBase>(
 	entity: T,
 ): T & {
 	size: Size

@@ -6,14 +6,14 @@ import {
 	ContextMenuType,
 	isMultipleEntitiesContextMenuTemplate,
 } from '@canvas/view-positioning/data-access'
-import { EntityStoreService } from '@entities/data-access'
+import { injectEntityStore } from '@entities/data-access'
 
 @Pipe({
 	name: 'getSelectedPanels',
 	standalone: true,
 })
 export class GetSelectedPanelsPipe implements PipeTransform {
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 	private _render = inject(RenderService)
 	private _appStore = inject(AppStateStoreService)
 	private _uiStore = inject(UiStoreService)

@@ -1,10 +1,16 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { StringModel } from '@entities/shared'
+import { StringId, StringModel } from '@entities/shared'
 
 export const StringsActions = createActionGroup({
 	source: 'Strings Store',
 	events: {
+		'Load Strings': props<{
+			strings: StringModel[]
+		}>(),
+		'Set Undefined String Id': props<{
+			stringId: StringId
+		}>(),
 		'Add String': props<{
 			string: StringModel
 		}>(),
@@ -18,11 +24,12 @@ export const StringsActions = createActionGroup({
 			updates: UpdateStr<StringModel>[]
 		}>(),
 		'Delete String': props<{
-			stringId: string
+			stringId: StringId
 		}>(),
 		'Delete Many Strings': props<{
-			stringIds: string[]
+			stringIds: StringId[]
 		}>(),
 		'Clear Strings State': emptyProps(),
+		Noop: emptyProps(),
 	},
 })

@@ -1,12 +1,13 @@
-import { CANVAS_COLORS, PanelModel } from '@entities/shared'
+import { CANVAS_COLORS, getEntitySize, PanelModel } from '@entities/shared'
 import { drawBoxWithOptionsCtx } from '../draw-box-with-options.ctx'
 
 export const drawDisconnectionPoint = (ctx: CanvasRenderingContext2D, panel: PanelModel): void => {
 	ctx.save()
 	ctx.strokeStyle = 'orange'
 	ctx.lineWidth = 2
-	const width = panel.width + 4
-	const height = panel.height + 4
+	const size = getEntitySize(panel)
+	const width = size.width + 4
+	const height = size.height + 4
 	ctx.strokeRect(-width / 2, -height / 2, width, height)
 	ctx.restore()
 }

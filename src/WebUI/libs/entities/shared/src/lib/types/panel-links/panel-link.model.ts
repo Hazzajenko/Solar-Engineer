@@ -1,6 +1,9 @@
 import { Point } from '@shared/data-access/models'
-import { PanelId } from './panels'
+import { PanelId } from '../panels'
 import { CurvedNumberLine } from '@canvas/shared'
+import { BackendDataModel } from '../backend-data/backend-data.model'
+
+export type PanelLinkBackendModel = PanelLinkModel & BackendDataModel
 
 export type PanelLinkId = string & {
 	__type: 'PanelLinkId'

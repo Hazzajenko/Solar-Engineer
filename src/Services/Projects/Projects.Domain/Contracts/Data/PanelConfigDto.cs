@@ -7,7 +7,10 @@ public class PanelConfigDto : IProjectItemDto
     public string Type { get; set; } = EntityType.PanelConfig;
     public string? Brand { get; set; }
     public string Name { get; set; } = default!;
-    public string FullName => Brand is null ? Name : $"{Brand} {Name}";
+
+    public string FullName { get; set; } = default!;
+
+    // public string FullName => Brand is null ? Name : $"{Brand} {Name}";
     public double CurrentAtMaximumPower { get; set; }
     public double ShortCircuitCurrent { get; set; }
     public double ShortCircuitCurrentTemp { get; set; }

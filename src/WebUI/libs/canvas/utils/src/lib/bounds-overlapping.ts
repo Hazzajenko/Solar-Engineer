@@ -6,9 +6,9 @@ import {
 	getStretchedEntityBoundsByValue,
 } from './bounds'
 import { EntityBounds, Point } from '@shared/data-access/models'
-import { CanvasEntity, PanelModel, PanelSymbol, PanelWithSymbol } from '@entities/shared'
+import { EntityBase, PanelModel, PanelSymbol, PanelWithSymbol } from '@entities/shared'
 
-export const isEntityInsideTwoPoints = (entity: CanvasEntity, point1: Point, point2: Point) => {
+export const isEntityInsideTwoPoints = (entity: EntityBase, point1: Point, point2: Point) => {
 	const bounds = getEntityBounds(entity)
 	const box = getBoundsFromTwoPoints(point1, point2)
 
@@ -32,7 +32,7 @@ export const checkOverlapBetweenTwoBounds = (
 	)
 }
 
-export const isEntityInsideBounds = (entity: CanvasEntity, bounds: EntityBounds): boolean => {
+export const isEntityInsideBounds = (entity: EntityBase, bounds: EntityBounds): boolean => {
 	const entityBounds = getEntityBounds(entity)
 	return (
 		entityBounds.left >= bounds.left &&
@@ -43,7 +43,7 @@ export const isEntityInsideBounds = (entity: CanvasEntity, bounds: EntityBounds)
 }
 
 export const isEntityOverlappingWithBounds = (
-	entity: CanvasEntity,
+	entity: EntityBase,
 	bounds: EntityBounds,
 ): boolean => {
 	const entityBounds = getEntityBounds(entity)
@@ -52,8 +52,8 @@ export const isEntityOverlappingWithBounds = (
 
 export const filterEntitiesInsideBounds = (
 	bounds: EntityBounds,
-	entities: CanvasEntity[],
-): CanvasEntity[] => {
+	entities: EntityBase[],
+): EntityBase[] => {
 	return entities.filter((entity) => isEntityInsideBounds(entity, bounds))
 }
 
@@ -66,14 +66,14 @@ export const isPointInsideBounds = (point: Point, bounds: EntityBounds): boolean
 	)
 }
 
-export const isPointInsideEntity = (point: Point, entity: CanvasEntity): boolean => {
+export const isPointInsideEntity = (point: Point, entity: EntityBase): boolean => {
 	const bounds = getEntityBounds(entity)
 	return isPointInsideBounds(point, bounds)
 }
 
 export const isPointInsideStretchedEntityByValue = (
 	point: Point,
-	entity: CanvasEntity,
+	entity: EntityBase,
 	value: number,
 ): boolean => {
 	const bounds = getStretchedEntityBoundsByValue(entity, value)
@@ -83,19 +83,19 @@ export const isPointInsideStretchedEntityByValue = (
 const ENTITY_LEFT_SIDE_THRESHOLD = 10
 const ENTITY_RIGHT_SIDE_THRESHOLD = 10
 
-export const isPointInsideLeftSideOfEntity = (point: Point, entity: CanvasEntity): boolean => {
+export const isPointInsideLeftSideOfEntity = (point: Point, entity: EntityBase): boolean => {
 	const bounds = getEntityBounds(entity)
 	return point.x <= bounds.left + ENTITY_LEFT_SIDE_THRESHOLD && isPointInsideBounds(point, bounds)
 }
 
-export const isPointInsideRightSideOfEntity = (point: Point, entity: CanvasEntity): boolean => {
+export const isPointInsideRightSideOfEntity = (point: Point, entity: EntityBase): boolean => {
 	const bounds = getEntityBounds(entity)
 	return point.x >= bounds.right - ENTITY_RIGHT_SIDE_THRESHOLD && isPointInsideBounds(point, bounds)
 }
 
 export const isPointInsideRightSideOfEntityWithRotation = (
 	point: Point,
-	entity: CanvasEntity,
+	entity: EntityBase,
 ): boolean => {
 	const bounds = getCompleteEntityBounds(getEntityBounds(entity))
 	// const bounds = getEntityBounds(entity)
@@ -106,7 +106,7 @@ export const isPointInsideRightSideOfEntityWithRotation = (
 
 export const isPointInsideMiddleRightOfEntityWithRotationV2 = (
 	point: Point,
-	entity: CanvasEntity,
+	entity: EntityBase,
 ): boolean => {
 	const bounds = getCompleteEntityBounds(getEntityBounds(entity))
 	const rotatedPoint = rotatePoint(point, entity.angle, { x: bounds.centerX, y: bounds.centerY })
@@ -118,7 +118,7 @@ export const isPointInsideMiddleRightOfEntityWithRotationV2 = (
 	)
 }
 
-export const isPointInsidePanelSymbols = (point: Point, entity: CanvasEntity) => {
+export const isPointInsidePanelSymbols = (point: Point, entity: EntityBase) => {
 	const bounds = getCompleteEntityBoundsFromEntity(entity)
 	if (isPointWithinPointByValue(point, { x: bounds.left, y: bounds.centerY }, 5)) {
 		return {
@@ -135,7 +135,7 @@ export const isPointInsidePanelSymbols = (point: Point, entity: CanvasEntity) =>
 	return false
 }
 
-export const isPointInsidePanelSymbolsV2 = (point: Point, entity: CanvasEntity) => {
+export const isPointInsidePanelSymbolsV2 = (point: Point, entity: EntityBase) => {
 	const bounds = getCompleteEntityBoundsFromEntity(entity)
 	if (isPointWithinPointByValue(point, { x: bounds.left, y: bounds.centerY }, 5)) {
 		return {

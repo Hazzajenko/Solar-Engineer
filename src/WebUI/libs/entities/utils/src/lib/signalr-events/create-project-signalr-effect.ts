@@ -5,7 +5,7 @@ import { map, tap } from 'rxjs'
 import { assertNotNull, GetActionParametersByAction } from '@shared/utils'
 import { ProjectId, SignalrEventRequest } from '@entities/shared'
 import { createAction } from '@ngrx/store'
-import { injectCurrentProject } from './get-current-project'
+import { injectCurrentProject } from '../projects/get-current-project'
 
 type Action = ReturnType<typeof createAction>
 export const createProjectSignalrEffect = <TAction extends Action>(
@@ -34,15 +34,3 @@ export const createProjectSignalrEffect = <TAction extends Action>(
 		},
 		{ functional: true, dispatch: false },
 	)
-/*
-
- const test = createProjectSignalrEffect(PanelsActions.addPanel, (panel, projectId) => {
- return {
- requestId: newGuidT(),
- projectId: projectId,
- action: SIGNALR_EVENT_ACTION.CREATE,
- model: SIGNALR_EVENT_MODEL.PANEL,
- data: JSON.stringify(panel),
- } as Omit<SignalrEventRequest, 'timeStamp'>
- })
- */

@@ -9,9 +9,9 @@ import {
 	TransformedPoint,
 	TrigonometricBoundsTuple,
 } from '@shared/data-access/models'
-import { CanvasEntity } from '@entities/shared'
+import { EntityBase, getEntitySize } from '@entities/shared'
 
-export const getCompleteEntityBoundsFromEntity = (entity: CanvasEntity): CompleteEntityBounds => {
+export const getCompleteEntityBoundsFromEntity = (entity: EntityBase): CompleteEntityBounds => {
 	return getCompleteEntityBounds(getEntityBounds(entity))
 }
 export const getCompleteEntityBounds = (bounds: EntityBounds): CompleteEntityBounds => ({
@@ -20,28 +20,30 @@ export const getCompleteEntityBounds = (bounds: EntityBounds): CompleteEntityBou
 	height: bounds.bottom - bounds.top,
 })
 
-export const getEntityBounds = (entity: CanvasEntity): EntityBounds => {
+export const getEntityBounds = (entity: EntityBase): EntityBounds => {
+	const { width, height } = getEntitySize(entity)
 	return {
 		left: entity.location.x,
 		top: entity.location.y,
-		right: entity.location.x + entity.width,
-		bottom: entity.location.y + entity.height,
-		centerX: entity.location.x + entity.width / 2,
-		centerY: entity.location.y + entity.height / 2,
+		right: entity.location.x + width,
+		bottom: entity.location.y + height,
+		centerX: entity.location.x + width / 2,
+		centerY: entity.location.y + height / 2,
 	}
 }
 
 export const getStretchedEntityBoundsByValue = (
-	entity: CanvasEntity,
+	entity: EntityBase,
 	value: number,
 ): EntityBounds => {
+	const { width, height } = getEntitySize(entity)
 	return {
 		left: entity.location.x - value,
 		top: entity.location.y - value,
-		right: entity.location.x + entity.width + value,
-		bottom: entity.location.y + entity.height + value,
-		centerX: entity.location.x + entity.width / 2,
-		centerY: entity.location.y + entity.height / 2,
+		right: entity.location.x + width + value,
+		bottom: entity.location.y + height + value,
+		centerX: entity.location.x + width / 2,
+		centerY: entity.location.y + height / 2,
 	}
 }
 
@@ -50,20 +52,19 @@ export const getStretchedEntityBoundsByValue = (
  * [left, top, right, bottom, centerX, centerY]
  */
 export type CompleteEntityBoundsTuple = [number, number, number, number, number, number]
-export const getEntityArrayBounds = (element: CanvasEntity): CompleteEntityBoundsTuple => {
+export const getEntityArrayBounds = (element: EntityBase): CompleteEntityBoundsTuple => {
+	const { width, height } = getEntitySize(element)
 	return [
 		element.location.x,
 		element.location.y,
-		element.location.x + element.width,
-		element.location.y + element.height,
-		element.location.x + element.width / 2,
-		element.location.y + element.height / 2,
+		element.location.x + width,
+		element.location.y + height,
+		element.location.x + width / 2,
+		element.location.y + height / 2,
 	]
 }
 
-export const getEntityTrigonometricBoundsTuple = (
-	entity: CanvasEntity,
-): TrigonometricBoundsTuple => {
+export const getEntityTrigonometricBoundsTuple = (entity: EntityBase): TrigonometricBoundsTuple => {
 	const { left, top, right, bottom, centerX, centerY } = getEntityBounds(entity)
 	const [x11, y11] = rotate(left, top, centerX, centerY, entity.angle)
 	const [x12, y12] = rotate(left, bottom, centerX, centerY, entity.angle)
@@ -77,7 +78,7 @@ export const getEntityTrigonometricBoundsTuple = (
 }
 
 export const getCommonEntityTrigonometricBounds = (
-	entities: CanvasEntity[],
+	entities: EntityBase[],
 ): TrigonometricBoundsTuple => {
 	let minX = Infinity
 	let maxX = -Infinity
@@ -160,7 +161,7 @@ export const getBoundsFromArrPoints = (points: number[][]): EntityBounds => {
 }
 
 export const getCompleteBoundsFromMultipleEntitiesWithPadding = (
-	entities: CanvasEntity[],
+	entities: EntityBase[],
 	padding: number,
 ): CompleteEntityBounds => {
 	const bounds = entities.map(getEntityBounds)

@@ -32,7 +32,7 @@ public sealed class StringsRepository
     public async Task<String?> GetUndefinedStringByProjectIdAsync(Guid projectId)
     {
         return await Queryable.FirstOrDefaultAsync(
-            x => x.Name == "undefined" && x.ProjectId == projectId
+            x => x.Name == String.UndefinedStringName && x.ProjectId == projectId
         );
     }
 

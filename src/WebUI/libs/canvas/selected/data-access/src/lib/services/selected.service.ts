@@ -2,15 +2,15 @@ import { AppStateStoreService } from '@canvas/app/data-access'
 import { ENTITY_SELECTED_STATE, injectSelectedStore } from '../store'
 import { inject, Injectable } from '@angular/core'
 import { assertNotNull } from '@shared/utils'
-import { EntityStoreService } from '@entities/data-access'
-import { CanvasEntity, PanelId, PanelModel } from '@entities/shared'
+import { injectEntityStore } from '@entities/data-access'
+import { EntityBase, PanelId, PanelModel } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class SelectedService {
-	// private _entities = inject(EntityStoreService)
-	private _entities = inject(EntityStoreService)
+	// private _entities = injectEntityStore()
+	private _entities = injectEntityStore()
 	// private _app = inject(AppStoreService)
 	private _appStore = inject(AppStateStoreService)
 	private _selectedStore = injectSelectedStore()
@@ -106,7 +106,7 @@ export class SelectedService {
 		 )*/
 	}
 
-	removeFromMultiSelected(selected: CanvasEntity) {
+	removeFromMultiSelected(selected: EntityBase) {
 		// this._app.sendEvent({
 		/*		this._app.sendSelectedEvent({
 		 type: 'RemoveEntitiesFromMultipleSelected',

@@ -1,3 +1,8 @@
+import { StringBackendModel } from '../strings'
+import { PanelBackendModel } from '../panels'
+import { PanelLinkBackendModel } from '../panel-links'
+import { PanelConfigModel } from '../panel-configs'
+
 export type ProjectModel = {
 	id: ProjectId
 	name: string
@@ -28,3 +33,15 @@ export type ProjectUserId = string & {
 }
 
 export type ProjectUserRole = 'owner' | 'admin' | 'member'
+
+export type ProjectDataModel = {
+	id: string
+	name: string
+	strings: StringBackendModel[]
+	panels: PanelBackendModel[]
+	panelLinks: PanelLinkBackendModel[]
+	panelConfigs: PanelConfigModel[]
+	createdTime: string
+	lastModifiedTime: string
+	createdById: string
+}

@@ -6,6 +6,19 @@ import { getGuid } from '@ngrx/data'
 import { ActionNotificationModel, NotificationsActions } from '@overlays/notifications/data-access'
 import { SelectedActions } from '@canvas/selected/data-access'
 import { StringsStatsService } from '../services'
+import { ProjectsActions } from '../../projects'
+
+export const stringsStoreInitialized$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(StringsActions.loadStrings),
+			map(() => {
+				return ProjectsActions.stringsStoreInitialized()
+			}),
+		)
+	},
+	{ functional: true },
+)
 
 export const createStringNotification$ = createEffect(
 	(actions$ = inject(Actions)) => {

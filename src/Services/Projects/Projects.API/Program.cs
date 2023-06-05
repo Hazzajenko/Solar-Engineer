@@ -1,4 +1,5 @@
 using FastEndpoints;
+using FastEndpoints.ClientGen;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Logging;
@@ -6,6 +7,8 @@ using Infrastructure.OpenTelemetry;
 using Infrastructure.Swagger;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
+using NJsonSchema.CodeGeneration.TypeScript;
+using NSwag.CodeGeneration.TypeScript;
 using Projects.Application.Data;
 using Projects.Application.Extensions;
 
@@ -181,6 +184,40 @@ app.MapGet(
 );*/
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+app.MapTypeScriptClientEndpoint(
+    "/ts-client",
+    "Projects API v1",
+    s =>
+    {
+        s.GenerateClientInterfaces = true;
+        s.GenerateDtoTypes = true;
+        // s.ge = true;
+
+        // s.TypeScriptGeneratorSettings.TypeStyle = TypeScriptTypeStyle.Interface;
+        // s.TypeScriptGeneratorSettings.TypeScriptVersion = 4.1m;
+        // s.TypeScriptGeneratorSettings.
+        s.ClassName = "ProjectsService";
+        // s.TypeScriptGeneratorSettings.Namespace = "My Namespace";
+        s.Template = TypeScriptTemplate.Angular;
+        s.TypeScriptGeneratorSettings.TypeStyle = TypeScriptTypeStyle.Interface;
+        s.ConfigurationClass = "ProjectsConfig";
+        s.TypeScriptGeneratorSettings.TypeScriptVersion = 5.0m;
+        s.PromiseType = PromiseType.Promise;
+        s.InjectionTokenType = InjectionTokenType.InjectionToken;
+        // s.RxJsVersion = 6.6m;
+        // s.BaseUrlTokenName = string.Empty;
+        s.UseGetBaseUrlMethod = false;
+        // s.UseGetBaseUrlMethod = false;
+        // s.
+        // s.TypeScriptGeneratorSettings.GenerateOptionalParameters = true;
+        // s.ConfigurationClassLocation = TypeScriptGeneratorSettings.ConfigurationClassLocationType.Global;
+        // s.CodeGeneratorSettings.CodeGenerator = new TypeScriptClientGenerator(s.TypeScriptGeneratorSettings);
+        // s.InjectionTokenType = ;
+        // s.ClassName
+    }
+);
+
 
 // BogusGenerators.InitBogusData();
 app.Run();

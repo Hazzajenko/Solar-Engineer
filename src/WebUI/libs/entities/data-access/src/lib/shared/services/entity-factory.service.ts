@@ -7,7 +7,7 @@ import { createPanel } from '@entities/utils'
 import { getTopLeftPointFromTransformedPoint } from '@canvas/utils'
 import { ENTITY_TYPE, SizeByType } from '@entities/shared'
 import { TransformedPoint } from '@shared/data-access/models'
-import { EntityStoreService } from '../store'
+import { injectEntityStore } from '../store'
 
 @Injectable({
 	providedIn: 'root',
@@ -17,7 +17,7 @@ export class EntityFactoryService {
 	private _selectedStore = injectSelectedStore()
 	private _nearby = inject(NearbyService)
 	private _render = inject(RenderService)
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 
 	createEntity(event: PointerEvent, currentPoint: TransformedPoint) {
 		const previewAxisState = this._appStore.state.previewAxis
@@ -48,7 +48,7 @@ export class EntityFactoryService {
 
 		const location = getTopLeftPointFromTransformedPoint(
 			currentPoint,
-			SizeByType[ENTITY_TYPE.Panel],
+			SizeByType[ENTITY_TYPE.PANEL],
 		)
 		const selectedStringId = this._selectedStore.state.selectedStringId
 		const entity = selectedStringId
@@ -88,7 +88,7 @@ export class EntityFactoryService {
 
 		const location = getTopLeftPointFromTransformedPoint(
 			currentPoint,
-			SizeByType[ENTITY_TYPE.Panel],
+			SizeByType[ENTITY_TYPE.PANEL],
 		)
 		const selectedStringId = this._selectedStore.state.selectedStringId
 		const entity = selectedStringId

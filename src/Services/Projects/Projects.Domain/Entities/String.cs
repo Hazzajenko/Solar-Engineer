@@ -6,6 +6,10 @@ namespace Projects.Domain.Entities;
 
 public class String : IEntity, IProjectItem, IUserObject
 {
+    public static readonly string UndefinedStringId = "UNDEFINED_STRING_ID";
+    public static readonly string UndefinedStringName = "UNDEFINED_STRING";
+    public static readonly string DefaultPanelFillStyle = "#8ED6FF";
+
     private String(
         Guid id,
         Guid projectId,
@@ -75,6 +79,6 @@ public class String : IEntity, IProjectItem, IUserObject
 
     public static String CreateUndefined(Guid projectId, Guid appUserId)
     {
-        return new String(Guid.NewGuid(), projectId, appUserId, "undefined", "#808080", false);
+        return new String(Guid.NewGuid(), projectId, appUserId, UndefinedStringName, DefaultPanelFillStyle, false);
     }
 }

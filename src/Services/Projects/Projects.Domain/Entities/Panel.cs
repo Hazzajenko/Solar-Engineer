@@ -11,7 +11,7 @@ public class Panel : IEntity, IProjectItem, IUserObject
         Guid stringId,
         Guid panelConfigId,
         Point location,
-        int angle,
+        double angle,
         Guid createdById
     )
     {
@@ -29,7 +29,7 @@ public class Panel : IEntity, IProjectItem, IUserObject
         Guid stringId,
         Guid panelConfigId,
         Point location,
-        int angle,
+        double angle,
         Guid createdById
     )
     {
@@ -52,7 +52,7 @@ public class Panel : IEntity, IProjectItem, IUserObject
     public Guid PanelConfigId { get; set; }
 
     public Point Location { get; set; } = default!;
-    public int Angle { get; set; }
+    public double Angle { get; set; }
     public PanelLink? LinkPositiveTo { get; set; }
     public PanelLink? LinkNegativeTo { get; set; }
     public Guid? LinkPositiveToId { get; set; }
@@ -70,7 +70,7 @@ public class Panel : IEntity, IProjectItem, IUserObject
         Guid stringId,
         Guid panelConfigId,
         Point location,
-        int angle,
+        double angle,
         Guid createdById
     )
     {
@@ -91,10 +91,7 @@ public class Panel : IEntity, IProjectItem, IUserObject
             Y = y;
         }
 
-        // [JsonConverter(typeof(IntToStringConverter))]
         public double X { get; set; }
-
-        // [JsonConverter(typeof(IntToStringConverter))]
         public double Y { get; set; }
     }
 }

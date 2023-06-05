@@ -41,7 +41,7 @@ import {
 import { injectSelectedStore, SelectedService } from '@canvas/selected/data-access'
 import {
 	EntityFactoryService,
-	EntityStoreService,
+	injectEntityStore,
 	PanelLinksService,
 	PanelLinksStoreService,
 } from '@entities/data-access'
@@ -72,11 +72,12 @@ import {
 } from '@canvas/utils'
 import { isPanel, isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels } from '@entities/utils'
 import {
-	CanvasEntity,
 	ENTITY_TYPE,
+	EntityBase,
+	getEntitySize,
 	PanelModel,
 	SizeByType,
-	UndefinedStringId,
+	UNDEFINED_STRING_ID,
 } from '@entities/shared'
 
 @Directive({
@@ -103,9 +104,9 @@ export class DesignCanvasDirective implements OnInit {
 	private _entityFactory = inject(EntityFactoryService)
 	private _view = inject(ViewPositioningService)
 	private _render = inject(RenderService)
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 	private _uiStore = inject(UiStoreService)
-	// private _entities = inject(EntityStoreService)
+	// private _entities = injectEntityStore()
 	private _selected = inject(SelectedService)
 	private _nearby = inject(NearbyService)
 	private _domPoint = inject(DomPointService)
@@ -145,7 +146,7 @@ export class DesignCanvasDirective implements OnInit {
 	}
 
 	private get allStrings() {
-		return this._entities.strings.allStrings
+		return this._entities.strings.select.allStrings()
 	}
 
 	platform: Platform = getCurrentPlatform()
@@ -686,9 +687,9 @@ export class DesignCanvasDirective implements OnInit {
 		if (entityUnderMouse) {
 			// if (!isPanel(entityUnderMouse)) return
 
-			if (entityUnderMouse.stringId === UndefinedStringId) return
+			if (entityUnderMouse.stringId === UNDEFINED_STRING_ID) return
 			const selectedStringId = this._selectedStore.selectedStringId
-			const belongsToString = this._entities.strings.getById(entityUnderMouse.stringId)
+			const belongsToString = this._entities.strings.select.getById(entityUnderMouse.stringId)
 
 			if (!belongsToString) return
 			this._selectedStore.selectString(belongsToString.id)
@@ -732,8 +733,9 @@ export class DesignCanvasDirective implements OnInit {
 	contextMenuHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		const entityUnderMouse = this.getPanelUnderMouse(event)
 		if (entityUnderMouse) {
-			const x = event.offsetX + entityUnderMouse.width / 2
-			const y = event.offsetY + entityUnderMouse.height / 2
+			const { width, height } = getEntitySize(entityUnderMouse)
+			const x = event.offsetX + width / 2
+			const y = event.offsetY + height / 2
 			this._uiStore.dispatch.openContextMenu({
 				component: CONTEXT_MENU_COMPONENT.SINGLE_PANEL_MENU,
 				location: { x, y },
@@ -1220,7 +1222,7 @@ export class DesignCanvasDirective implements OnInit {
 		const point =
 			event instanceof PointerEvent ? this._domPoint.getTransformedPointFromEvent(event) : event
 		const entitiesUnderMouse = this.allPanels.filter((entity) => isPointInsideEntity(point, entity))
-		return entitiesUnderMouse[entitiesUnderMouse.length - 1] as CanvasEntity | undefined
+		return entitiesUnderMouse[entitiesUnderMouse.length - 1] as EntityBase | undefined
 	}
 
 	private getPanelUnderMouse(event: PointerEvent | TransformedPoint) {
@@ -1256,7 +1258,7 @@ export class DesignCanvasDirective implements OnInit {
 	}
 
 	private anyEntitiesNearAreaOfClick(event: PointerEvent) {
-		let size = SizeByType[ENTITY_TYPE.Panel]
+		let size = SizeByType[ENTITY_TYPE.PANEL]
 		const midSpacing = 2
 		size = {
 			width: size.width + midSpacing,
@@ -1287,7 +1289,7 @@ export class DesignCanvasDirective implements OnInit {
 	}
 
 	private anyEntitiesNearAreaOfTouch(event: TouchEvent) {
-		let size = SizeByType[ENTITY_TYPE.Panel]
+		let size = SizeByType[ENTITY_TYPE.PANEL]
 		const midSpacing = 2
 		size = {
 			width: size.width + midSpacing,

@@ -3,7 +3,7 @@ import { injectSelectedStore } from '@canvas/selected/data-access'
 import { injectStringsStore } from '../store'
 import { assertNotNull } from '@shared/utils'
 import { injectPanelConfigsStore } from '../../panel-configs'
-import { PanelConfig, PanelModel } from '@entities/shared'
+import { PanelConfigModel, PanelModel } from '@entities/shared'
 import { injectPanelsStore } from '../../panels'
 import { injectPanelLinksStore, PanelLinksService } from '../../panel-links'
 
@@ -96,7 +96,7 @@ export class StringsStatsService {
 }
 
 export type PanelWithConfig = Pick<PanelModel, 'id'> &
-	Omit<PanelConfig, 'name' | 'id' | 'brand' | 'model'>
+	Omit<PanelConfigModel, 'fullName' | 'id' | 'brand' | 'model'>
 
 export type StringStats = {
 	totalVoc: number
@@ -114,7 +114,10 @@ export type StringStatStrings = {
 	totalPmax: string
 }
 
-function mapPanelToPanelWithConfig(panel: PanelModel, panelConfig: PanelConfig): PanelWithConfig {
+function mapPanelToPanelWithConfig(
+	panel: PanelModel,
+	panelConfig: PanelConfigModel,
+): PanelWithConfig {
 	const {
 		maximumPowerTemp,
 		openCircuitVoltage,

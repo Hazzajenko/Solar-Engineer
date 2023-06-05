@@ -1,8 +1,8 @@
 import { assertNotNull } from '@shared/utils'
 import { getCompleteBoundsFromMultipleEntitiesWithPadding, isPointInsideBounds } from '@canvas/utils'
 import { TransformedPoint } from '@shared/data-access/models'
-import { PanelModel, PanelSymbol, PanelWithSymbol } from '@entities/shared'
-import { EntityStoreService } from '@entities/data-access'
+import { ENTITY_TYPE, PanelModel, PanelSymbol, PanelWithSymbol } from '@entities/shared'
+import { EntityStore } from '@entities/data-access'
 
 /*export const getSelectedStringPanelBounds = (
  store: EntityStoreService,
@@ -14,7 +14,7 @@ import { EntityStoreService } from '@entities/data-access'
  return getCompleteBoundsFromMultipleEntitiesWithPadding(selectedStringPanels, 10)
  }*/
 export const getSelectedStringPanelBoundsByStringId = (
-	store: EntityStoreService,
+	store: EntityStore,
 	selectedStringId: string,
 ) => {
 	assertNotNull(selectedStringId)
@@ -23,7 +23,7 @@ export const getSelectedStringPanelBoundsByStringId = (
 }
 
 export const isPointInsideSelectedStringPanelsByStringId = (
-	store: EntityStoreService,
+	store: EntityStore,
 	selectedStringId: string,
 	point: TransformedPoint,
 ) => {
@@ -32,7 +32,7 @@ export const isPointInsideSelectedStringPanelsByStringId = (
 }
 
 export const isPointInsideSelectedStringPanelsByStringIdNgrx = (
-	store: EntityStoreService,
+	store: EntityStore,
 	selectedStringId: string,
 	point: TransformedPoint,
 ) => {
@@ -49,7 +49,7 @@ export const isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels = (
 	return isPointInsideBounds(point, selectedPanelBounds)
 }
 export const getSelectedStringPanelBoundsByStringIdNgrx = (
-	store: EntityStoreService,
+	store: EntityStore,
 	selectedStringId: string,
 ) => {
 	assertNotNull(selectedStringId)
@@ -84,7 +84,7 @@ export const getSelectedStringPanelBoundsByStringIdNgrx = (
 
 export const isTypeOfPanel = (panel: unknown): panel is PanelModel => {
 	if (!panel) return false
-	return (panel as PanelModel).type === 'panel'
+	return (panel as PanelModel).type === ENTITY_TYPE.PANEL
 }
 
 export const panelWithSymbolToPanelSymbol = (panel: PanelWithSymbol): PanelSymbol => {

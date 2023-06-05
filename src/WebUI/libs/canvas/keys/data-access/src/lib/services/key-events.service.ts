@@ -10,8 +10,8 @@ import { KeysStoreService } from '../store'
 import { KEY_MAP_ACTION } from '../types'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { updateObjectByIdForStoreV3 } from '@canvas/utils'
-import { PanelModel } from '@entities/shared'
-import { EntityStoreService } from '@entities/data-access'
+import { ENTITY_TYPE, PanelModel } from '@entities/shared'
+import { injectEntityStore } from '@entities/data-access'
 
 // const DEFAULT_UNCHANGEABLE_KEYS = [KEYS.ESCAPE, KEYS.SHIFT, KEYS.ALT, KEYS.CTRL_OR_CMD] as const
 const isDefaultUnchangeableKey = (key: KeyboardEvent['key']) =>
@@ -26,7 +26,7 @@ export class KeyEventsService {
 	private _selected = inject(SelectedService)
 	private _selectedStore = injectSelectedStore()
 	// private _selectedStore = inject(SelectedStoreService)
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 	private _positioningStore = inject(ObjectPositioningStoreService)
 	private _objRotating = inject(ObjectRotatingService)
 	private _appState = inject(AppStateStoreService)
@@ -132,18 +132,20 @@ export class KeyEventsService {
 					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 					if (multipleSelectedIds.length <= 1) return
-					const name = genStringNameV2(this._entities.strings.allStrings)
+					const name = genStringNameV2(this._entities.strings.select.allStrings())
 					const string = createString(name)
 
 					const entities = this._entities.panels.getByIds(multipleSelectedIds)
-					const panels = entities.filter((entity) => entity.type === 'panel') as PanelModel[]
+					const panels = entities.filter(
+						(entity) => entity.type === ENTITY_TYPE.PANEL,
+					) as PanelModel[]
 					/*				const panelUpdates = panels.map((panel) =>
 				 updateObjectByIdForStore<CanvasPanel>(panel.id, { stringId: string.id }),
 				 )*/
 					const panelUpdates = panels.map(
 						updateObjectByIdForStoreV3<PanelModel>({ stringId: string.id }),
 					)
-					this._entities.strings.addString(string)
+					this._entities.strings.dispatch.addString(string)
 					this._entities.panels.updateManyPanels(panelUpdates)
 
 					this._selectedStore.selectString(string.id)
@@ -225,9 +227,9 @@ export class KeyEventsService {
 	private createStringWithSelected() {
 		const multipleSelectedIds = this._selectedStore.selectMultipleSelectedPanelIds
 		if (multipleSelectedIds.length <= 1) return
-		const amountOfStrings = this._entities.strings.allStrings.length
+		const amountOfStrings = this._entities.strings.select.allStrings().length
 		const { string, panelUpdates } = createStringWithPanelsV2(multipleSelectedIds, amountOfStrings)
-		this._entities.strings.addString(string)
+		this._entities.strings.dispatch.addString(string)
 		this._entities.panels.updateManyPanels(panelUpdates)
 		this._selectedStore.selectString(string.id)
 	}

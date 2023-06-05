@@ -1,21 +1,20 @@
 ﻿using FluentValidation;
 using Projects.Domain.Common;
-using Projects.Domain.Contracts.Data;
 
 namespace Projects.Domain.Contracts.Requests.Panels;
 
 public class UpdatePanelRequest : IProjectEventRequest
 {
-    public required string Id { get; set; }
     public required string ProjectId { get; init; }
-    public required PanelChanges Changes { get; set; }
+
+    public required PanelUpdate Update { get; init; }
 }
 
 public class UpdatePanelRequestValidator : AbstractValidator<UpdatePanelRequest>
 {
     public UpdatePanelRequestValidator()
     {
-        RuleFor(v => v.Id)
+        RuleFor(v => v.Update.Id)
             .NotNull()
             .WithMessage("Id cannot be null")
             .NotEmpty()
@@ -31,7 +30,7 @@ public class UpdatePanelRequestValidator : AbstractValidator<UpdatePanelRequest>
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("ProjectId must be a valid Guid");
 
-        RuleFor(v => v.Changes)
+        RuleFor(v => v.Update.Changes)
             .NotNull()
             .WithMessage("Changes cannot be null")
             .NotEmpty()
@@ -41,11 +40,12 @@ public class UpdatePanelRequestValidator : AbstractValidator<UpdatePanelRequest>
             )
             .WithMessage("Changes cannot be empty");
 
-        RuleFor(v => v.Changes)
+        /*
+        RuleFor(v => v.Update.Changes)
             .NotNull()
             .WithMessage("Changes cannot be null")
             .NotEmpty()
-            .WithMessage("Changes cannot be empty");
+            .WithMessage("Changes cannot be empty");*/
 
         /*RuleFor(v => v.ProjectId)
             .NotNull()

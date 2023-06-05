@@ -1,4 +1,4 @@
-import { PanelModel, PanelSymbol } from '@entities/shared'
+import { getEntitySize, PanelModel, PanelSymbol } from '@entities/shared'
 import { toRadians } from '@canvas/utils'
 import { AngleDegrees } from '@shared/data-access/models'
 
@@ -15,8 +15,9 @@ export const drawLinkModeSymbols = (
 	ctx.save()
 	// draw negative symbol
 	const negativeLineLength = isNegative ? lineLength * 1.25 : lineLength
+	const { width } = getEntitySize(panel)
 	ctx.save()
-	ctx.translate(-panel.width / 2, 0)
+	ctx.translate(-width / 2, 0)
 	ctx.save()
 	ctx.rotate(toRadians(45 as AngleDegrees))
 	ctx.strokeStyle = 'black'
@@ -47,7 +48,7 @@ export const drawLinkModeSymbols = (
 	// draw positive symbol
 	const positiveLineLength = isPositive ? lineLength * 1.25 : lineLength
 	ctx.save()
-	ctx.translate(panel.width / 2, 0)
+	ctx.translate(width / 2, 0)
 	ctx.save()
 	ctx.rotate(toRadians(45 as AngleDegrees))
 	ctx.strokeStyle = 'black'

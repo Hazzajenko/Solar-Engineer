@@ -3,7 +3,7 @@ import { initialPanelConfigsState, PanelConfigsState } from './panel-configs.red
 import { selectAllPanelConfigs, selectPanelConfigsState } from './panel-configs.selectors'
 import { inject, Injectable } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
-import { PanelConfig } from '@entities/shared'
+import { PanelConfigModel } from '@entities/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { select, Store } from '@ngrx/store'
 import { isNotNull } from '@shared/utils'
@@ -50,19 +50,19 @@ export class PanelConfigsStoreService {
 		return ids.map((id) => this.entities[id]).filter(isNotNull)
 	}
 
-	addPanelConfig(panelConfig: PanelConfig) {
+	addPanelConfig(panelConfig: PanelConfigModel) {
 		this._store.dispatch(PanelConfigsActions.addPanelConfig({ panelConfig }))
 	}
 
-	addManyPanelConfigs(panelConfigs: PanelConfig[]) {
+	addManyPanelConfigs(panelConfigs: PanelConfigModel[]) {
 		this._store.dispatch(PanelConfigsActions.addManyPanelConfigs({ panelConfigs }))
 	}
 
-	updatePanelConfig(update: UpdateStr<PanelConfig>) {
+	updatePanelConfig(update: UpdateStr<PanelConfigModel>) {
 		this._store.dispatch(PanelConfigsActions.updatePanelConfig({ update }))
 	}
 
-	updateManyPanelConfigs(updates: UpdateStr<PanelConfig>[]) {
+	updateManyPanelConfigs(updates: UpdateStr<PanelConfigModel>[]) {
 		this._store.dispatch(PanelConfigsActions.updateManyPanelConfigs({ updates }))
 	}
 
@@ -82,19 +82,19 @@ export class PanelConfigsStoreService {
 class PanelConfigsRepository {
 	constructor(private readonly _store: Store<PanelConfigsState>) {}
 
-	addPanelConfig(panelConfig: PanelConfig) {
+	addPanelConfig(panelConfig: PanelConfigModel) {
 		this._store.dispatch(PanelConfigsActions.addPanelConfig({ panelConfig }))
 	}
 
-	addManyPanelConfigs(panelConfigs: PanelConfig[]) {
+	addManyPanelConfigs(panelConfigs: PanelConfigModel[]) {
 		this._store.dispatch(PanelConfigsActions.addManyPanelConfigs({ panelConfigs }))
 	}
 
-	updatePanelConfig(update: UpdateStr<PanelConfig>) {
+	updatePanelConfig(update: UpdateStr<PanelConfigModel>) {
 		this._store.dispatch(PanelConfigsActions.updatePanelConfig({ update }))
 	}
 
-	updateManyPanelConfigs(updates: UpdateStr<PanelConfig>[]) {
+	updateManyPanelConfigs(updates: UpdateStr<PanelConfigModel>[]) {
 		this._store.dispatch(PanelConfigsActions.updateManyPanelConfigs({ updates }))
 	}
 

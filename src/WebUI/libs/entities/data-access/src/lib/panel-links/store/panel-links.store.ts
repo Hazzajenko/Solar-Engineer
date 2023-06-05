@@ -1,5 +1,4 @@
-import { inject, makeEnvironmentProviders } from '@angular/core'
-import { provideState, Store } from '@ngrx/store'
+import { Store } from '@ngrx/store'
 import {
 	selectAllPanelLinks,
 	selectDrawingPanelPolaritySymbolLine,
@@ -12,7 +11,7 @@ import {
 	selectRequestingLink,
 	selectSelectedStringCircuit,
 } from './panel-links.selectors'
-import { isNotNull } from '@shared/utils'
+import { createRootServiceInjector, isNotNull } from '@shared/utils'
 import { PanelLinksActions } from './panel-links.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import {
@@ -22,19 +21,19 @@ import {
 	Polarity,
 	StringCircuitWithIndex,
 } from '@entities/shared'
-import { PANEL_LINKS_FEATURE_KEY, panelLinksReducer, PanelLinksState } from './panel-links.reducer'
-import * as panelLinksEffects from './panel-links.effects'
-import { provideEffects } from '@ngrx/effects'
+import { PanelLinksState } from './panel-links.reducer'
 
-export function providePanelLinksFeature() {
-	return makeEnvironmentProviders([
-		provideState(PANEL_LINKS_FEATURE_KEY, panelLinksReducer),
-		provideEffects(panelLinksEffects),
-	])
+export function injectPanelLinksStore(): PanelLinksStore {
+	return panelLinksStoreInjector()
 }
 
-export function injectPanelLinksStore() {
-	const store = inject(Store)
+const panelLinksStoreInjector = createRootServiceInjector(panelLinksStoreFactory, {
+	deps: [Store],
+})
+
+export type PanelLinksStore = ReturnType<typeof panelLinksStoreFactory>
+
+function panelLinksStoreFactory(store: Store) {
 	// const state = store.selectSignal(selectPanelLinksState)
 	const allPanelLinks = store.selectSignal(selectAllPanelLinks)
 	const entities = store.selectSignal(selectPanelLinksEntities)
@@ -103,6 +102,9 @@ export function injectPanelLinksStore() {
 					(panelLink.positivePanelId === panelId && polarity === 'positive') ||
 					(panelLink.negativePanelId === panelId && polarity === 'negative'),
 			)
+		},
+		loadPanelLinks(panelLinks: PanelLinkModel[]) {
+			store.dispatch(PanelLinksActions.loadPanelLinks({ panelLinks }))
 		},
 
 		/*		panelLinksForSelectedString() {
@@ -199,5 +201,3 @@ export function injectPanelLinksStore() {
 		},
 	}
 }
-
-export type PanelLinksStore = ReturnType<typeof injectPanelLinksStore>

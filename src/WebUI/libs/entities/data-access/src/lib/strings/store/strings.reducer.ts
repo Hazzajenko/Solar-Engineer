@@ -1,11 +1,12 @@
 import { StringsActions } from './strings.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { StringModel } from '@entities/shared'
+import { StringId, StringModel, UNDEFINED_STRING_NAME } from '@entities/shared'
 
 export const STRINGS_FEATURE_KEY = 'strings'
 
 export interface StringsState extends EntityState<StringModel> {
+	undefinedStringId: StringId | undefined
 	loaded: boolean
 	error?: string | null
 }
@@ -15,11 +16,17 @@ export const stringsAdapter: EntityAdapter<StringModel> = createEntityAdapter<St
 })
 
 export const initialStringsState: StringsState = stringsAdapter.getInitialState({
+	undefinedStringId: undefined,
 	loaded: false,
 })
 
 const reducer = createReducer(
 	initialStringsState,
+	on(StringsActions.loadStrings, (state, { strings }) => {
+		const newState = stringsAdapter.setMany(strings, state)
+		const undefinedStringId = strings.find((string) => string.name === UNDEFINED_STRING_NAME)?.id
+		return { ...newState, undefinedStringId, loaded: true }
+	}),
 	on(StringsActions.addString, (state, { string }) => stringsAdapter.addOne(string, state)),
 	on(StringsActions.addManyStrings, (state, { strings }) => stringsAdapter.addMany(strings, state)),
 	on(StringsActions.updateString, (state, { update }) => stringsAdapter.updateOne(update, state)),

@@ -1,7 +1,7 @@
-import { CanvasEntity, PanelModel } from '@entities/shared'
+import { EntityBase, PanelModel } from '@entities/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 
-export const updateMany = (array: CanvasEntity[], key: keyof CanvasEntity) => {
+export const updateMany = (array: EntityBase[], key: keyof EntityBase) => {
 	return array.map(
 		(entity) =>
 			({
@@ -13,10 +13,7 @@ export const updateMany = (array: CanvasEntity[], key: keyof CanvasEntity) => {
 	)
 }
 
-export function mapManyToUpdateStr<T extends CanvasEntity>(
-	array: T[],
-	key: keyof T,
-): UpdateStr<T>[] {
+export function mapManyToUpdateStr<T extends EntityBase>(array: T[], key: keyof T): UpdateStr<T>[] {
 	return array.map(
 		(entity) =>
 			({
@@ -28,7 +25,7 @@ export function mapManyToUpdateStr<T extends CanvasEntity>(
 	)
 }
 
-export function mapManyToUpdateStrV2<T extends CanvasEntity>(
+export function mapManyToUpdateStrV2<T extends EntityBase>(
 	array: T[],
 	keys: (keyof T)[],
 ): UpdateStr<T>[] {
@@ -45,7 +42,7 @@ export function mapManyToUpdateStrV2<T extends CanvasEntity>(
 	)
 }
 
-export const updateManyWith = <T extends CanvasEntity>(
+export const updateManyWith = <T extends EntityBase>(
 	array: T[],
 	key: keyof T,
 	value: T[typeof key],
@@ -61,7 +58,7 @@ export const updateManyWith = <T extends CanvasEntity>(
 	)
 }
 
-export const updateManyWithFn = <T extends CanvasEntity>(
+export const updateManyWithFn = <T extends EntityBase>(
 	array: T[],
 	key: keyof T,
 	fn: (entity: T) => T[typeof key],

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
 using Projects.Domain.Commands.Panels;
-using Projects.Domain.Contracts.Data;
+using Projects.Domain.Common;
 using Projects.Domain.Entities;
 using Projects.SignalR.Hubs;
 
@@ -14,7 +14,8 @@ namespace Projects.Application.Handlers.Panels;
 
 public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 {
-    private const string UndefinedStringId = "undefinedStringId";
+    // private const string DefaultPanelConfigId = "Longi-Himo555m";
+    // private const string UndefinedStringId = "UNDEFINED_STRING_ID";
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<CreatePanelHandler> _logger;
     private readonly IMapper _mapper;
@@ -44,27 +45,8 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             );
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
-        /*var existingPanel = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
-            projectId,
-            new[] { command.Request.Location }
-        );
-        if (existingPanel)
-            throw new HubException("Panel already exists at this location");*/
-
-        /*var existingPanel = await _unitOfWork.PanelsRepository.GetPanelByLocationAsync(
-            appUserId,
-            projectId,
-            command.Request.Location
-        );
-        if (existingPanel is not null) throw new HubException("Panel already exists at this location");*/
-
-        var panelStringId = command.Request.StringId;
-        var panelHasString = panelStringId.Equals(UndefinedStringId) is false;
-
-        /*if (panelHasString)
-        {
-            
-        }*/
+        var panelStringId = command.Request.Panel.StringId;
+        var panelHasString = panelStringId.Equals(String.UndefinedStringId) is false;
 
         var panelString = panelHasString
             ? await _unitOfWork.StringsRepository.GetByIdAndProjectIdAsync(
@@ -85,61 +67,26 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 
         panelString.ThrowExceptionIfNull(new HubException("String does not exist"));
 
-        var panelConfigId = command.Request.PanelConfigId;
-        var doesPanelHaveConfig = panelConfigId.Equals("undefined") is false;
+        var panelConfigId = command.Request.Panel.PanelConfigId;
+        var panelConfig = panelConfigId.Equals(PanelConfig.DefaultPanelConfigId)
+            ? await _unitOfWork.PanelConfigsRepository.GetByBrandAndModelAsync("Longi", "Himo555m")
+            : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());
 
-        /*panelConfigId = doesPanelHaveConfig
-            ? panelConfigId
-            : UndefinedStringId;*/
-
-        var panelConfig = doesPanelHaveConfig is false
-            ? await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync()
-            : panelConfigId.Equals("Longi-Himo555m")
-                ? await _unitOfWork.PanelConfigsRepository.GetByBrandAndModel("Longi", "Himo555m")
-                : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());
-
-
-        /*PanelConfig? panelConfig;
-        if (doesPanelHaveConfig)
-        {
-            if (panelConfigId.Equals("Longi-Himo555m"))
-            {
-                var brand = "Longi";
-                var model = "Himo555m";
-                panelConfig = await _unitOfWork.PanelConfigsRepository.GetByBrandAndModel(brand, model);
-            }
-            else
-            {
-                panelConfig = await _unitOfWork.PanelConfigsRepository.GetByIdNotNullAsync(
-                    panelConfigId.ToGuid()
-                );
-            }
-        }
-        else
-        {
-            panelConfig = await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync();
-        }*/
-
-
-        /*panelConfig = doesPanelHaveConfig is false
-            ? await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync()
-            : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());*/
         panelConfig.ThrowExceptionIfNull(new HubException("Panel config does not exist"));
 
         var panel = Panel.Create(
-            command.Request.Id.ToGuid(),
+            command.Request.Panel.Id.ToGuid(),
             appUserProject.ProjectId,
             panelString.Id,
             panelConfig.Id,
-            command.Request.Location,
-            command.Request.Angle,
+            command.Request.Panel.Location,
+            command.Request.Panel.Angle,
             appUserId
         );
 
         panel = await _unitOfWork.PanelsRepository.AddAndSaveChangesAsync(panel);
 
         var response = panel.ToProjectEventResponseFromEntity(command, ActionType.Create);
-        // var response = panel.ToProjectEventResponseV3(command, ActionType.Create);
 
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(

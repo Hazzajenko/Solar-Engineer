@@ -3,13 +3,13 @@
 // import { drawLine } from '@canvas/rendering/data-access'
 
 import { APoint } from '@shared/utils'
-import { CanvasEntity, PanelLinkModel } from '@entities/shared'
+import { EntityBase, PanelLinkModel } from '@entities/shared'
 import { getPanelLinksChainContinuedLineInXyPoints } from '@entities/data-access'
 import { bzCurve } from './bz-curve'
 
 export const drawLinkModePathLinesCurvedV20 = (
 	ctx: CanvasRenderingContext2D,
-	customEntities: CanvasEntity[] | undefined,
+	customEntities: EntityBase[] | undefined,
 	linksInOrder: PanelLinkModel[],
 ) => {
 	const customIds = customEntities?.map((entity) => entity.id) ?? []

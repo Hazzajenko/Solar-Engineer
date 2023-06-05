@@ -3,7 +3,7 @@ import {
 	panelConfigsAdapter,
 	PanelConfigsState,
 } from './panel-configs.reducer'
-import { PanelConfig } from '@entities/shared'
+import { PanelConfigModel } from '@entities/shared'
 import { Dictionary } from '@ngrx/entity'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 
@@ -25,10 +25,10 @@ export const selectPanelConfigsEntities = createSelector(
 export const selectPanelConfigById = (props: { id: string }) =>
 	createSelector(
 		selectPanelConfigsEntities,
-		(panelConfigs: Dictionary<PanelConfig>) => panelConfigs[props.id],
+		(panelConfigs: Dictionary<PanelConfigModel>) => panelConfigs[props.id],
 	)
 
 export const selectPanelConfigsByIdArray = (props: { ids: string[] }) =>
-	createSelector(selectAllPanelConfigs, (panelConfigs: PanelConfig[]) =>
+	createSelector(selectAllPanelConfigs, (panelConfigs: PanelConfigModel[]) =>
 		panelConfigs.filter((panel) => props.ids.includes(panel.id)),
 	)

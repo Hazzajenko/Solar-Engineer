@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
 using Projects.Domain.Commands.Panels;
-using Projects.Domain.Contracts.Data;
+using Projects.Domain.Common;
 using Projects.SignalR.Hubs;
 
 namespace Projects.Application.Handlers.Panels;
@@ -38,7 +38,7 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
             );
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
-        var panelId = command.Request.Id.ToGuid();
+        var panelId = command.Request.Update.Id.ToGuid();
 
         var panel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
             panelId,
@@ -46,7 +46,7 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
         );
         panel.ThrowExceptionIfNull(new HubException("Panel not found"));
 
-        var changes = command.Request.Changes;
+        var changes = command.Request.Update.Changes;
 
         _unitOfWork.Attach(panel);
         if (changes.Location is not null)

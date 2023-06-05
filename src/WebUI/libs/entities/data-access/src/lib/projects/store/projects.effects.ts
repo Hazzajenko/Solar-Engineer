@@ -50,3 +50,16 @@ export const loadUserProjects$ = createEffect(
 	},
 	{ functional: true },
 )
+
+export const selectUserProjectOnLoad$ = createEffect(
+	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.loadUserProjectsSuccess),
+			map(({ projects }) => {
+				return ProjectsActions.selectProject({ projectId: projects[0].id })
+			}),
+			tap((action) => projectsSignalr.getProjectById(action.projectId, true)),
+		)
+	},
+	{ functional: true },
+)

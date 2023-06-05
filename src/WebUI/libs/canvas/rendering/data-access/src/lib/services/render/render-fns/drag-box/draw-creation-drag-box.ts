@@ -17,7 +17,7 @@ export const drawCreationDragBox = (
 	ctx.closePath()
 	ctx.restore()
 
-	const entitySize = SizeByType[ENTITY_TYPE.Panel]
+	const entitySize = SizeByType[ENTITY_TYPE.PANEL]
 
 	ctx.save()
 	creationBox.spots.forEach((spot) => {

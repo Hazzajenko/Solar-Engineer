@@ -7,7 +7,7 @@ import {
 	SpotInBox,
 } from './directions'
 import { TransformedPoint } from '@shared/data-access/models'
-import { CanvasEntity, ENTITY_TYPE, PanelModel, SizeByType } from '@entities/shared'
+import { ENTITY_TYPE, EntityBase, getEntitySize, PanelModel, SizeByType } from '@entities/shared'
 
 export const getAllEntitiesBetweenTwoPoints = (
 	point1: TransformedPoint,
@@ -64,11 +64,11 @@ export const getAllEntitiesBetweenTwoPoints = (
 export const getAllAvailableEntitySpotsBetweenTwoPoints = (
 	point1: TransformedPoint,
 	point2: TransformedPoint,
-	entities: CanvasEntity[],
+	entities: EntityBase[],
 ): SpotInBox[] => {
 	const distanceX = point1.x - point2.x
 	const distanceY = point1.y - point2.y
-	const entitySize = SizeByType[ENTITY_TYPE.Panel]
+	const entitySize = SizeByType[ENTITY_TYPE.PANEL]
 	const widthWithMidSpacing = entitySize.width + 2
 	const heightWithMidSpacing = entitySize.height + 2
 	const entitiesInX = Math.floor(distanceX / widthWithMidSpacing)
@@ -94,13 +94,14 @@ export const getAllAvailableEntitySpotsBetweenTwoPoints = (
 				y: point1.y + startingPoint.y + a * adjustedHeight,
 			}
 			existingEntities.forEach((entity) => {
+				const { width, height } = getEntitySize(entity)
 				const firstSpot = {
-					x: spot.x - entity.width / 2,
-					y: spot.y - entity.height / 2,
+					x: spot.x - width / 2,
+					y: spot.y - height / 2,
 				}
 				const secondSpot = {
-					x: spot.x + entity.width + entity.width / 2,
-					y: spot.y + entity.width + entity.height / 2,
+					x: spot.x + width + width / 2,
+					y: spot.y + width + height / 2,
 				}
 				if (isEntityInsideTwoPoints(entity, firstSpot, secondSpot)) {
 					spot.vacant = false

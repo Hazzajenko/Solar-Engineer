@@ -7,12 +7,14 @@ export const PROJECTS_SIGNALR_METHOD = {
 	DELETE_PROJECT: 'DeleteProject',
 	DELETE_MANY_PROJECTS: 'DeleteManyProjects',
 	SEND_PROJECT_EVENT: 'SendProjectEvent',
+	GET_PROJECT_BY_ID: 'GetProjectById',
 } as const
 export type ProjectsSignalrMethod =
 	(typeof PROJECTS_SIGNALR_METHOD)[keyof typeof PROJECTS_SIGNALR_METHOD]
 
 export const PROJECTS_SIGNALR_EVENT = {
 	GET_MANY_PROJECTS: 'GetManyProjects',
+	GET_PROJECT: 'GetProject',
 	PROJECT_CREATED: 'ProjectCreated',
 	PROJECT_UPDATED: 'ProjectUpdated',
 	PROJECT_DELETED: 'ProjectDeleted',

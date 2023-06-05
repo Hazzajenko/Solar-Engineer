@@ -1,30 +1,25 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { AngleRadians, Point } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
-import { CanvasEntity, EntityType, PanelModel, SizeByType, StringModel } from '@entities/shared'
+import { EntityBase, EntityType, PanelModel, StringModel } from '@entities/shared'
 
 export const EntityFactory = {
-	create: (type: EntityType, location: Point): CanvasEntity => {
-		const { width, height } = SizeByType[type]
+	create: (type: EntityType, location: Point): EntityBase => {
+		// const { width, height } = getEntitySize(type)
 		return {
 			id: newGuid(),
 			type,
 			location,
-			width,
-			height,
 			angle: 0 as AngleRadians,
 		}
 	},
-	update: (entity: CanvasEntity, changes: Partial<CanvasEntity>): CanvasEntity => {
+	update: (entity: EntityBase, changes: Partial<EntityBase>): EntityBase => {
 		return {
 			...entity,
 			...changes,
 		}
 	},
-	updateForStore: (
-		entity: CanvasEntity,
-		changes: Partial<CanvasEntity>,
-	): UpdateStr<CanvasEntity> => {
+	updateForStore: (entity: EntityBase, changes: Partial<EntityBase>): UpdateStr<EntityBase> => {
 		return {
 			id: entity.id,
 			changes,
@@ -102,7 +97,7 @@ export const updateObjectByIdForStoreV2 = <
 		changes,
 	}
 }
-export const updateObjectByIdForStore = <T extends CanvasEntity | StringModel>(
+export const updateObjectByIdForStore = <T extends EntityBase | StringModel>(
 	id: T['id'],
 	changes: Partial<T>,
 ): UpdateStr<T> => {
@@ -113,7 +108,7 @@ export const updateObjectByIdForStore = <T extends CanvasEntity | StringModel>(
 }
 
 export const updateObjectByIdForStoreV3 =
-	<T extends CanvasEntity | StringModel>( // id: T['id'],
+	<T extends EntityBase | StringModel>( // id: T['id'],
 		changes: Partial<T>,
 	) =>
 	(entity: T): UpdateStr<T> => {

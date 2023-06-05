@@ -35,7 +35,7 @@ export const selectSelectedProject = createSelector(
 		selectedProjectId ? projects[selectedProjectId] : undefined,
 )
 
-export const selectProjectsByIdArray = (props: { ids: string[] }) =>
-	createSelector(selectAllProjects, (projects: ProjectModel[]) =>
-		projects.filter((project) => props.ids.includes(project.id)),
-	)
+export const selectProjectReadyToRender = createSelector(
+	selectProjectsState,
+	(state: ProjectsState) => state.panelsReadyToRender && state.stringsReadyToRender,
+)

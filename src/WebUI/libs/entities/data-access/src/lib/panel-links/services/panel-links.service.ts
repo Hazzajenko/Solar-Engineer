@@ -10,23 +10,23 @@ import {
 	PanelModel,
 	PolarityDirection,
 	StringCircuitChains,
-	UndefinedStringId,
+	UNDEFINED_STRING_ID,
 } from '@entities/shared'
 import { assertNotNull, newGuid, selectSignalFromStore } from '@shared/utils'
 import { injectSelectedStore, selectSelectedStringId } from '@canvas/selected/data-access'
-import { EntityStoreService } from '../../shared'
 import { TransformedPoint } from '@shared/data-access/models'
 import { changeCanvasCursor, setCanvasCursorToAuto } from '@canvas/utils'
 import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
 import { isPointOverCurvedLineNoCtx } from './utils'
 import { CurvedNumberLine } from '@canvas/shared'
 import { CanvasRenderOptions } from '@canvas/rendering/data-access'
+import { injectEntityStore } from '../../shared'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class PanelLinksService {
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 	private _appState = injectAppStateStore()
 	private _panelLinksStore = injectPanelLinksStore()
 	private _selectedStore = injectSelectedStore()
@@ -99,7 +99,7 @@ export class PanelLinksService {
 			console.error('a string must be selected to link panels')
 			return
 		}
-		if (panel.stringId === UndefinedStringId) {
+		if (panel.stringId === UNDEFINED_STRING_ID) {
 			console.error('panel must be in a string to link it')
 			return
 		}

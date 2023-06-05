@@ -7,7 +7,7 @@ import {
 	getSnapToGridBoolean,
 } from './utils'
 import { inject, Injectable } from '@angular/core'
-import { EntityStoreService } from '@entities/data-access'
+import { injectEntityStore } from '@entities/data-access'
 import {
 	Axis,
 	CompleteEntityBounds,
@@ -31,8 +31,8 @@ import { CANVAS_COLORS, ENTITY_TYPE, SizeByType } from '@entities/shared'
 export class NearbyService {
 	private _render = inject(RenderService)
 	// private _render = inject(CanvasRenderService)
-	private _entities = inject(EntityStoreService)
-	// private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
+	// private _entities = injectEntityStore()
 	// private _app = inject(AppStoreService)
 	// private _appStore = inject(AppNgrxStateStore)
 	private _graphicsStore = inject(GraphicsStoreService)
@@ -51,7 +51,7 @@ export class NearbyService {
 	axisPreviewRect: CompleteEntityBounds | undefined
 
 	getDrawEntityPreviewV2Ngrx(event: PointerEvent, currentPoint: TransformedPoint) {
-		const size = SizeByType[ENTITY_TYPE.Panel]
+		const size = SizeByType[ENTITY_TYPE.PANEL]
 		const mouseBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
 		const entities = this._entities.panels.allPanels
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBounds, entities)

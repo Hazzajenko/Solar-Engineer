@@ -1,13 +1,16 @@
-import { CanvasEntity } from '../canvas-entity'
-import { PanelConfigId } from '../panel-config'
-import { StringId } from '../string.entity'
-import { Polarity } from '../panel-link'
+import { ENTITY_TYPE, EntityBase } from '../common'
+import { Polarity } from '../panel-links'
+import { StringId } from '../strings'
+import { PanelConfigId } from '../panel-configs'
+import { BackendDataModel } from '../backend-data/backend-data.model'
 
-export type PanelModel = Omit<CanvasEntity, 'id' | 'type'> & {
+export type PanelBackendModel = PanelModel & BackendDataModel
+
+export type PanelModel = Omit<EntityBase, 'id' | 'type'> & {
 	id: PanelId
 	stringId: StringId
 	panelConfigId: PanelConfigId
-	type: 'panel'
+	type: typeof ENTITY_TYPE.PANEL
 }
 
 export type PanelId = string & {

@@ -1,4 +1,4 @@
-﻿namespace Projects.Domain.Contracts.Data;
+﻿namespace Projects.Domain.Common;
 
 public static class ActionType
 {

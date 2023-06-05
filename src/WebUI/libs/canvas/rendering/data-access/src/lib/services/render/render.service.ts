@@ -5,7 +5,6 @@ import {
 	injectAppStateStore,
 	MODE_STATE,
 } from '@canvas/app/data-access'
-// import { EntityStoreService } from '../entities'
 import { injectSelectedStore } from '@canvas/selected/data-access'
 import { CanvasRenderOptions, DrawPanelsOptions } from '../../types'
 import {
@@ -29,7 +28,8 @@ import { inject, Injectable } from '@angular/core'
 import { assertNotNull, shadeColor } from '@shared/utils'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import {
-	EntityStoreService,
+	injectEntityStore,
+	injectProjectsStore,
 	PanelLinksStoreService,
 	StringsStatsService,
 } from '@entities/data-access'
@@ -37,10 +37,11 @@ import { getNegativeSymbolLocation, getPositiveSymbolLocation, isPanel } from '@
 import { Point } from '@shared/data-access/models'
 import {
 	CANVAS_COLORS,
-	CanvasEntity,
+	EntityBase,
+	getEntitySize,
 	PANEL_STROKE_STYLE,
 	PanelModel,
-	UndefinedStringId,
+	UNDEFINED_STRING_ID,
 } from '@entities/shared'
 import { throttle } from 'lodash'
 import { ObjectPositioningStoreService } from '@canvas/object-positioning/data-access'
@@ -51,9 +52,9 @@ import { ObjectPositioningStoreService } from '@canvas/object-positioning/data-a
 export class RenderService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _divElements = inject(DivElementsService)
-	private _entities = inject(EntityStoreService)
-	// private _entities = inject(EntityStoreService)
-	// private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
+	// private _entities = injectEntityStore()
+	// private _entities = injectEntityStore()
 	// private _app = inject(AppStoreService)
 	// private _appStore = inject(AppNgrxStateStore)
 	private _appState = injectAppStateStore()
@@ -65,6 +66,8 @@ export class RenderService {
 	// private _panelLinks = inject(PanelLinksService)
 	private _objectPositioningStore = inject(ObjectPositioningStoreService)
 	private _stringStats = inject(StringsStatsService)
+	private _projectsStore = injectProjectsStore()
+
 	// private _linkRender = new LinkPathRenderService()
 
 	private _throttleRender = false
@@ -103,6 +106,8 @@ export class RenderService {
 	 _imageElement: HTMLImageElement | undefined
 	 _svgCursorImages: SvgCursorImageRecord | undefined*/
 	throttledRenderCanvasApp = throttle(this.renderFn, 1000 / 60)
+
+	projectReadyToRender = this._projectsStore.select.projectReadyToRender
 
 	constructor() {
 		this.checkFps()
@@ -144,6 +149,7 @@ export class RenderService {
 	}
 
 	renderCanvasApp(options?: Partial<CanvasRenderOptions>) {
+		if (!this.projectReadyToRender()) return
 		if (this._throttleRender) {
 			this.throttledRenderCanvasApp(options)
 			return
@@ -179,6 +185,9 @@ export class RenderService {
 							return true
 						})
 
+			// console.log('renderFn', panels)
+			// console.log('renderFn', panels.length)
+
 			const appState = this._appState.appState()
 			const graphicsState = this._graphicsStore.state
 
@@ -193,7 +202,7 @@ export class RenderService {
 			const selectedState = this._selectedStore.state
 			const selectedStringId = selectedState.selectedStringId
 			const selectedString = selectedStringId
-				? this._entities.strings.getById(selectedStringId)
+				? this._entities.strings.select.getById(selectedStringId)
 				: undefined
 			const selectedStringPanels = selectedStringId
 				? panels.filter((panel) => panel.stringId === selectedStringId)
@@ -248,7 +257,7 @@ export class RenderService {
 			}
 
 			if (shouldRenderSelectedStringBox && selectedString) {
-				// const selectedString = this._entities.strings.getById(selectedStringId)
+				// const selectedString = this._entities.strings.select.getById(selectedStringId)
 				// assertNotNull(selectedString, 'selectedString')
 				if (shouldRenderSelectedEntitiesBox && multipleSelectedPanels.length) {
 					drawSelectedBox(ctx, multipleSelectedPanels)
@@ -257,12 +266,12 @@ export class RenderService {
 
 			if (graphicsState.stringBoxes) {
 				if (selectedString) {
-					// const string = this._entities.strings.getById(selectedStringId)
+					// const string = this._entities.strings.select.getById(selectedStringId)
 					// assertNotNull(string, 'selectedString')
 					const stringStats = this._stringStats.calculateStringStatsForSelectedString()
 					drawSelectedStringBoxWithStats(ctx, selectedString, selectedStringPanels, stringStats)
 				} else {
-					const stringsWithPanels = this._entities.strings.allStrings.map((string) => ({
+					const stringsWithPanels = this._entities.strings.select.allStrings().map((string) => ({
 						string,
 						panels: this._entities.panels.getByStringId(string.id),
 					}))
@@ -401,9 +410,10 @@ export class RenderService {
 			}
 
 			if (hoveringOverPanel) {
+				const { width } = getEntitySize(hoveringOverPanel)
 				const point = {
-					x: hoveringOverPanel.location.x + hoveringOverPanel.width * 2,
-					y: hoveringOverPanel.location.y - hoveringOverPanel.width * 2,
+					x: hoveringOverPanel.location.x + width * 2,
+					y: hoveringOverPanel.location.y - width * 2,
 				}
 				drawTooltipWithOptionsCtx(ctx, point, hoveringOverPanel.id)
 			}
@@ -473,15 +483,19 @@ export class RenderService {
 
 			const isBeingHovered = !!hoveringOverPanelId && hoveringOverPanelId === entity.id
 
+			/*			if (!isPanel(entity)) {
+			 console.error('not a panel', entity)
+			 continue
+			 }*/
 			if (!isPanel(entity)) continue
 			let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
 			const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
 			const isStringSelected = selectedStringId && selectedStringId === entity.stringId
 
 			if (graphicsState.colouredStrings) {
-				if (entity.stringId !== UndefinedStringId) {
-					const string = this._entities.strings.getById(entity.stringId)
-					assertNotNull(string)
+				if (entity.stringId !== UNDEFINED_STRING_ID) {
+					const string = this._entities.strings.select.getById(entity.stringId)
+					assertNotNull(string, JSON.stringify(entity, null, 2))
 					fillStyle = string.color
 				}
 			}
@@ -526,13 +540,14 @@ export class RenderService {
 				fillStyle = shadeColor(fillStyle, 50)
 			}
 
+			const { width, height } = getEntitySize(entity)
 			ctx.save()
 			ctx.fillStyle = fillStyle
 			ctx.strokeStyle = strokeStyle
-			ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
+			ctx.translate(entity.location.x + width / 2, entity.location.y + height / 2)
 			ctx.rotate(entity.angle)
 			ctx.beginPath()
-			ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+			ctx.rect(-width / 2, -height / 2, width, height)
 			ctx.fill()
 			ctx.stroke()
 			ctx.closePath()
@@ -567,7 +582,7 @@ export class RenderService {
 
 export const getSymbolLocationBasedOnIndex = (
 	index: number,
-	customEntities: CanvasEntity[] | undefined,
+	customEntities: EntityBase[] | undefined,
 	panelId: string,
 ): Point => {
 	if (!customEntities) {

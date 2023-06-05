@@ -1,13 +1,21 @@
-import { inject } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { selectAllPanelConfigs, selectPanelConfigsEntities } from './panel-configs.selectors'
-import { isNotNull } from '@shared/utils'
-import { PanelConfig } from '@entities/shared'
+import { createRootServiceInjector, isNotNull } from '@shared/utils'
+import { PanelConfigModel } from '@entities/shared'
 import { PanelConfigsActions } from './panel-configs.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 
-export function injectPanelConfigsStore() {
-	const store = inject(Store)
+export function injectPanelConfigsStore(): PanelConfigsStore {
+	return panelConfigsStoreInjector()
+}
+
+const panelConfigsStoreInjector = createRootServiceInjector(panelConfigsStoreFactory, {
+	deps: [Store],
+})
+
+export type PanelConfigsStore = ReturnType<typeof panelConfigsStoreFactory>
+
+export function panelConfigsStoreFactory(store: Store) {
 	const allPanelConfigs = store.selectSignal(selectAllPanelConfigs)
 	const entities = store.selectSignal(selectPanelConfigsEntities)
 
@@ -21,16 +29,19 @@ export function injectPanelConfigsStore() {
 		getByIds(ids: string[]) {
 			return ids.map((id) => entities()[id]).filter(isNotNull)
 		},
-		addPanelConfig(panelConfig: PanelConfig) {
+		loadPanelConfigs(panelConfigs: PanelConfigModel[]) {
+			store.dispatch(PanelConfigsActions.loadPanelConfigs({ panelConfigs }))
+		},
+		addPanelConfig(panelConfig: PanelConfigModel) {
 			store.dispatch(PanelConfigsActions.addPanelConfig({ panelConfig }))
 		},
-		addManyPanelConfigs(panelConfigs: PanelConfig[]) {
+		addManyPanelConfigs(panelConfigs: PanelConfigModel[]) {
 			store.dispatch(PanelConfigsActions.addManyPanelConfigs({ panelConfigs }))
 		},
-		updatePanelConfig(update: UpdateStr<PanelConfig>) {
+		updatePanelConfig(update: UpdateStr<PanelConfigModel>) {
 			store.dispatch(PanelConfigsActions.updatePanelConfig({ update }))
 		},
-		updateManyPanelConfigs(updates: UpdateStr<PanelConfig>[]) {
+		updateManyPanelConfigs(updates: UpdateStr<PanelConfigModel>[]) {
 			store.dispatch(PanelConfigsActions.updateManyPanelConfigs({ updates }))
 		},
 		deletePanelConfig(id: string) {
@@ -44,5 +55,3 @@ export function injectPanelConfigsStore() {
 		},
 	}
 }
-
-export type PanelConfigsStore = ReturnType<typeof injectPanelConfigsStore>

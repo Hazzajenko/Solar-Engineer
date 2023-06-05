@@ -104,8 +104,7 @@ const uiStoreInjector = createRootServiceInjector(uiStoreFactory, {
 
 export type UiStore = ReturnType<typeof uiStoreFactory>
 
-export function uiStoreFactory(store: Store) {
-	// const store = inject(Store<UiState>)
+function uiStoreFactory(store: Store) {
 	const feature = uiFeature
 
 	const select = {

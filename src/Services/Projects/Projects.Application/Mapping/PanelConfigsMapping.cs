@@ -11,6 +11,7 @@ public static class PanelConfigsMapping
         {
             Brand = panelConfig.Brand,
             Name = panelConfig.Name,
+            FullName = panelConfig.FullName,
             CurrentAtMaximumPower = panelConfig.CurrentAtMaximumPower,
             ShortCircuitCurrent = panelConfig.ShortCircuitCurrent,
             ShortCircuitCurrentTemp = panelConfig.ShortCircuitCurrentTemp,

@@ -13,7 +13,7 @@ import {
 	getTopLeftPointFromTransformedPoint,
 	singleTouchEventToPointLocation,
 } from '@canvas/utils'
-import { ENTITY_TYPE, EntityType, SizeByType } from '@entities/shared'
+import { ENTITY_TYPE, EntityType, getEntitySize, SizeByType } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -81,7 +81,7 @@ export class DomPointService {
 			.invertSelf()
 			.transformPoint(originalPoint) as TransformedPoint
 
-		const topLeft = getTopLeftPointFromTransformedPoint(transformFormedPoint, SizeByType[type])
+		const topLeft = getTopLeftPointFromTransformedPoint(transformFormedPoint, getEntitySize(type))
 		/*    const adjustedTransformed = this.adjustLocationToMiddleOfObjectByType(
 		 transformFormedPoint,
 		 type,
@@ -102,7 +102,7 @@ export class DomPointService {
 
 	adjustLocationToMiddleOfObjectByType(point: Point, type: EntityType): MiddlePoint {
 		switch (type) {
-			case ENTITY_TYPE.Panel:
+			case ENTITY_TYPE.PANEL:
 				return this.adjustLocationToMiddleOfObject(point, SizeByType[type])
 			default:
 				throw new Error('adjustLocationToMiddleOfObjectByType: unknown type')

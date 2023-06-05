@@ -6,10 +6,10 @@ import {
 	isSingleEntityContextMenuTemplate,
 } from '@canvas/view-positioning/data-access'
 import { isPanel } from '../../panels'
-import { CanvasEntity, StringModel } from '@entities/shared'
-import { EntityStoreService } from '@entities/data-access'
+import { EntityBase, StringModel } from '@entities/shared'
+import { injectEntityStore } from '@entities/data-access'
 
-export type PanelWithString = CanvasEntity & {
+export type PanelWithString = EntityBase & {
 	string: StringModel | undefined
 }
 
@@ -18,13 +18,13 @@ export type PanelWithString = CanvasEntity & {
 	standalone: true,
 })
 export class GetPanelWithStringPipe implements PipeTransform {
-	private _entities = inject(EntityStoreService)
-	// private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
+	// private _entities = injectEntityStore()
 	private _render = inject(RenderService)
 	// private _appStore = inject(AppStateStoreService)
 	private _uiStore = inject(UiStoreService)
 
-	// private _entities = inject(EntityStoreService)
+	// private _entities = injectEntityStore()
 
 	transform(menu: ContextMenuType | undefined) {
 		// transform(menu: ContextMenuType | undefined): PanelWithString | undefined {
@@ -33,7 +33,7 @@ export class GetPanelWithStringPipe implements PipeTransform {
 		const entity = this._entities.panels.getById(menu.id)
 		if (!entity) return
 		if (!isPanel(entity)) return
-		const string = this._entities.strings.getById(entity.stringId)
+		const string = this._entities.strings.select.getById(entity.stringId)
 		return {
 			...entity,
 			string,

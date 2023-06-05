@@ -7,7 +7,7 @@ import {
 	TransformedPoint,
 } from '@shared/data-access/models'
 import {
-	CanvasEntity,
+	EntityBase,
 	OpenCircuitChainWithIndex,
 	PanelId,
 	PanelLinkModel,
@@ -26,7 +26,7 @@ export type PartialRenderOptions = Partial<CanvasRenderOptions>
 
 export type CanvasRenderOptions = {
 	excludedEntityIds: string[]
-	customEntities: CanvasEntity[]
+	customEntities: EntityBase[]
 	currentLocation: TransformedPoint
 	shouldRenderSelectedEntitiesBox: boolean
 	shouldRenderSelectedStringBox: boolean
@@ -57,7 +57,7 @@ export type CanvasRenderOptions = {
 		mouseBounds: CompleteEntityBounds
 		closestEntity: NearbyEntity
 		snapToGridBool: boolean
-		entityToMove?: CanvasEntity
+		entityToMove?: EntityBase
 		// isMovingExistingEntity: boolean
 	}
 	multipleToMoveSpotsTakenIds: string[]

@@ -1,5 +1,5 @@
 import { CompleteEntityBounds, NearbyEntity } from '@shared/data-access/models'
-import { CANVAS_COLORS, CanvasEntity } from '@entities/shared'
+import { CANVAS_COLORS, EntityBase } from '@entities/shared'
 import { drawEntityWithConfig } from '@canvas/rendering/data-access'
 
 export const handleSnapToGridWhenNearby = (
@@ -8,7 +8,7 @@ export const handleSnapToGridWhenNearby = (
 	mouseBounds: CompleteEntityBounds,
 	closestEntity: NearbyEntity,
 	snapToGridBool: boolean,
-	isMovingExistingEntity: CanvasEntity | undefined,
+	isMovingExistingEntity: EntityBase | undefined,
 ) => {
 	if (snapToGridBool) {
 		if (isMovingExistingEntity) {

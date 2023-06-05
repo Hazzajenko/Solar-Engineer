@@ -21,8 +21,8 @@
  export class DragBoxService {
  private _canvasElementService = inject(CanvasElementService)
  // private _domPointService = inject(DomPointService)
- private _entities = inject(EntityStoreService)
- // private _entities = inject(EntityStoreService)
+ private _entities = injectEntityStore()
+ // private _entities = injectEntityStore()
  // private _state = inject(CanvasClientStateService)
  private _render = inject(RenderService)
  // private _render = inject(CanvasRenderService)

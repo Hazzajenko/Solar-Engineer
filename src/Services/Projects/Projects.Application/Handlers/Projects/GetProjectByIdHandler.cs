@@ -44,6 +44,11 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, bool>
             projectIdGuid
         );
 
+        var panelConfigIds = panels.Select(p => p.PanelConfigId).Distinct().Select(x => x.ToGuid());
+        var panelConfigs = await _unitOfWork.PanelConfigsRepository.GetByPanelConfigIdsAsync(
+            panelConfigIds
+        );
+
         var response = new ProjectDataDto
         {
             Name = project.Name,
@@ -53,7 +58,8 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, bool>
             CreatedById = project.CreatedById,
             Strings = strings,
             Panels = panels,
-            PanelLinks = panelLinks
+            PanelLinks = panelLinks,
+            PanelConfigs = panelConfigs
         };
 
         await _hubContext.Clients.User(request.User.Id.ToString()).GetProject(response);

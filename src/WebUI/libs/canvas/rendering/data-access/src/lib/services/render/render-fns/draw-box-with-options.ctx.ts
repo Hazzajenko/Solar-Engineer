@@ -1,5 +1,5 @@
 import { getCompleteBoundsFromMultipleEntitiesWithPadding } from '@canvas/utils'
-import { CANVAS_COLORS, CanvasEntity } from '@entities/shared'
+import { CANVAS_COLORS, EntityBase } from '@entities/shared'
 
 export type DrawBoxOptions = {
 	padding: number
@@ -8,7 +8,7 @@ export type DrawBoxOptions = {
 }
 export const drawBoxWithOptionsCtx = (
 	ctx: CanvasRenderingContext2D,
-	panelsInArea: CanvasEntity[],
+	panelsInArea: EntityBase[],
 	options: Partial<DrawBoxOptions>,
 ) => {
 	const padding = options.padding ?? 10

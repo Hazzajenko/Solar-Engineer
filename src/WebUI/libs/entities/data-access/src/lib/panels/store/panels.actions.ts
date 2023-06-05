@@ -5,6 +5,9 @@ import { PanelId, PanelModel } from '@entities/shared'
 export const PanelsActions = createActionGroup({
 	source: 'Panels Store',
 	events: {
+		'Load Panels': props<{
+			panels: PanelModel[]
+		}>(),
 		'Add Panel': props<{
 			panel: PanelModel
 		}>(),
@@ -24,5 +27,6 @@ export const PanelsActions = createActionGroup({
 			panelIds: PanelId[]
 		}>(),
 		'Clear Panels State': emptyProps(),
+		Noop: emptyProps(),
 	},
 })

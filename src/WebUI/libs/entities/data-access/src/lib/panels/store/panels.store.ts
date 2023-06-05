@@ -1,28 +1,24 @@
-import { inject, makeEnvironmentProviders } from '@angular/core'
-import { provideState, Store } from '@ngrx/store'
+import { Store } from '@ngrx/store'
 import { selectAllPanels, selectPanelsEntities } from './panels.selectors'
-import { isNotNull } from '@shared/utils'
+import { createRootServiceInjector, isNotNull } from '@shared/utils'
 import { PanelsActions } from './panels.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { PanelId, PanelModel } from '@entities/shared'
-import { provideEffects } from '@ngrx/effects'
-import { PANELS_FEATURE_KEY, panelsReducer } from './panels.reducer'
 import { TransformedPoint } from '@shared/data-access/models'
 import { isPointInsideEntity } from '@canvas/utils'
-import * as panelsEffects from './panels.effects'
-import * as panelsSignalrEffects from './panels.signalr.effects'
 import { getPanelNearbyInLinkModeExcludingOne, getPanelWithSymbolUnderMouse } from '@entities/utils'
 
-export function providePanelsFeature() {
-	return makeEnvironmentProviders([
-		provideState(PANELS_FEATURE_KEY, panelsReducer),
-		provideEffects(panelsEffects),
-		provideEffects(panelsSignalrEffects),
-	])
+export function injectPanelsStore(): PanelsStore {
+	return panelsStoreInjector()
 }
 
-export function injectPanelsStore() {
-	const store = inject(Store)
+const panelsStoreInjector = createRootServiceInjector(panelsStoreFactory, {
+	deps: [Store],
+})
+
+export type PanelsStore = ReturnType<typeof panelsStoreFactory>
+
+function panelsStoreFactory(store: Store) {
 	const allPanels$ = store.select(selectAllPanels)
 	const allPanels = store.selectSignal(selectAllPanels)
 	const entities = store.selectSignal(selectPanelsEntities)
@@ -62,6 +58,9 @@ export function injectPanelsStore() {
 		getNearbyPanelInLinkModeExcludingOne(point: TransformedPoint, panelId: PanelId) {
 			return getPanelNearbyInLinkModeExcludingOne(this.allPanels, point, panelId)
 		},
+		loadPanels(panels: PanelModel[]) {
+			store.dispatch(PanelsActions.loadPanels({ panels }))
+		},
 		addPanel(panel: PanelModel) {
 			store.dispatch(PanelsActions.addPanel({ panel }))
 		},
@@ -85,5 +84,3 @@ export function injectPanelsStore() {
 		},
 	}
 }
-
-export type PanelsStore = ReturnType<typeof injectPanelsStore>

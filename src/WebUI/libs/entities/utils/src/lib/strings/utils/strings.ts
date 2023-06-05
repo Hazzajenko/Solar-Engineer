@@ -1,10 +1,10 @@
 // import { CanvasString, StringId, UndefinedStringId } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { getRandomVibrantColorHex, newGuid } from '@shared/utils'
-import { StringId, StringModel, UndefinedStringId } from '@entities/shared'
+import { ENTITY_TYPE, StringId, StringModel, UNDEFINED_STRING_ID } from '@entities/shared'
 
 export const isStringId = (id: string): id is StringId => {
-	return id === UndefinedStringId || id.startsWith('stringId')
+	return id === UNDEFINED_STRING_ID || id.startsWith('stringId')
 }
 
 export const isString = (string: StringModel | undefined): string is StringModel => {
@@ -23,6 +23,7 @@ export const createString = (
 		color,
 		parallel,
 		disconnectionPointId: undefined,
+		type: ENTITY_TYPE.STRING,
 	}
 }
 
@@ -34,6 +35,7 @@ export const CanvasStringFactory = {
 			color,
 			parallel,
 			disconnectionPointId: undefined,
+			type: ENTITY_TYPE.STRING,
 		}
 	},
 	update: (string: StringModel, changes: Partial<StringModel>): StringModel => {

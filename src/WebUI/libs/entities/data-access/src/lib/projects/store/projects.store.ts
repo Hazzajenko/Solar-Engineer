@@ -3,6 +3,7 @@ import { provideState, Store } from '@ngrx/store'
 import {
 	selectAllProjects,
 	selectProjectById,
+	selectProjectReadyToRender,
 	selectProjectsEntities,
 	selectSelectedProject,
 	selectSelectedProjectId,
@@ -41,6 +42,7 @@ export function projectsStoreFactory(store: Store) {
 		selectedProject: store.selectSignal(selectSelectedProject),
 		getById: (id: string) => entities()[id],
 		selectById: (id: string) => store.selectSignal(selectProjectById({ id })),
+		projectReadyToRender: store.selectSignal(selectProjectReadyToRender),
 	}
 
 	const dispatch = {

@@ -7,13 +7,13 @@ import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { LetDirective } from '@ngrx/component'
 import { RadiansToDegreesPipe, TruncatePipe } from '@shared/pipes'
 import { GetStringByIdPipe, GetStringWithPanelIdsPipe, IsTypeOfPanelPipe } from '@entities/utils'
-import { EntityStoreService } from '@entities/data-access'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { injectSelectedStore } from '@canvas/selected/data-access'
-import { PanelId, StringId, UndefinedStringId } from '@entities/shared'
+import { PanelId, StringId, UNDEFINED_STRING_ID } from '@entities/shared'
 import { groupBy } from 'lodash'
 import { map } from 'rxjs'
+import { injectEntityStore } from '@entities/data-access'
 
 @Component({
 	selector: 'side-ui-data-view',
@@ -43,7 +43,7 @@ import { map } from 'rxjs'
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SideUiDataViewComponent {
-	private _entityStore = inject(EntityStoreService)
+	private _entityStore = injectEntityStore()
 	private _uiStore = inject(UiStoreService)
 	private _render = inject(RenderService)
 	private _selectedStore = injectSelectedStore()
@@ -52,9 +52,7 @@ export class SideUiDataViewComponent {
 		initialValue: this._entityStore.panels.allPanels,
 	})
 	// private _panels = this._entityStore.panels.allPanels
-	private _strings = toSignal(this._entityStore.strings.allStrings$, {
-		initialValue: this._entityStore.strings.allStrings,
-	})
+	private _strings = this._entityStore.strings.select.allStrings
 	private _multipleSelectedPanelIds = toSignal(this._selectedStore.multipleSelectedEntityIds$, {
 		initialValue: this._selectedStore.selectMultipleSelectedPanelIds,
 	})
@@ -70,15 +68,15 @@ export class SideUiDataViewComponent {
 			const entries = Object.entries(grouped)
 			return entries.map(([stringId, panels]) => {
 				return {
-					string: this._entityStore.strings.getById(stringId),
+					string: this._entityStore.strings.select.getById(stringId as StringId),
 					panels,
 				}
 			})
 		}),
 	)
 	private _panelsGroupedByStringId = toSignal(this._panelsGroupedByStringId$)
-	_openedStrings = signal<Map<StringId, boolean>>(new Map().set(UndefinedStringId, true))
-	protected readonly UndefinedStringId = UndefinedStringId
+	_openedStrings = signal<Map<StringId, boolean>>(new Map().set(UNDEFINED_STRING_ID, true))
+	protected readonly UndefinedStringId = UNDEFINED_STRING_ID
 
 	constructor() {
 		effect(
@@ -124,7 +122,7 @@ export class SideUiDataViewComponent {
 		 const entries = Object.entries(grouped)
 		 return entries.map(([stringId, panels]) => {
 		 return {
-		 string: this._entityStore.strings.getById(stringId),
+		 string: this._entityStore.strings.select.getById(stringId),
 		 panels,
 		 }
 		 })
@@ -154,15 +152,15 @@ export class SideUiDataViewComponent {
 
 	openAllStrings() {
 		const map = new Map<StringId, boolean>()
-		this._entityStore.strings.allStrings.forEach((string) => map.set(string.id, true))
-		map.set(UndefinedStringId, true)
+		this._entityStore.strings.select.allStrings().forEach((string) => map.set(string.id, true))
+		map.set(UNDEFINED_STRING_ID, true)
 		this._openedStrings.set(map)
 	}
 
 	closeAllStrings() {
 		const map = new Map<StringId, boolean>()
-		this._entityStore.strings.allStrings.forEach((string) => map.set(string.id, false))
-		map.set(UndefinedStringId, false)
+		this._entityStore.strings.select.allStrings().forEach((string) => map.set(string.id, false))
+		map.set(UNDEFINED_STRING_ID, false)
 		this._openedStrings.set(map)
 	}
 

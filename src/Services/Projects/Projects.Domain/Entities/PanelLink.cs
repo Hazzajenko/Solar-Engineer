@@ -5,6 +5,8 @@ namespace Projects.Domain.Entities;
 
 public class PanelLink : IEntity, IProjectItem, IUserObject
 {
+    public static string DefaultPanelConfigId = "Longi-Himo555m";
+
     private PanelLink(
         Guid id,
         Guid projectId,

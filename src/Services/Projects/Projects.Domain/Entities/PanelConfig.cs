@@ -5,6 +5,7 @@ namespace Projects.Domain.Entities;
 
 public class PanelConfig : IEntity, IProject
 {
+    public static readonly string DefaultPanelConfigId = "Longi-Himo555m";
     public string? Brand { get; set; }
     public string Name { get; set; } = default!;
     public string FullName => Brand is null ? Name : $"{Brand} {Name}";

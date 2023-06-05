@@ -1,9 +1,7 @@
-// import { EntityStoreService } from '../../entities'
-
 import { assertNotNull } from '@shared/utils'
 import { getCompleteBoundsFromMultipleEntitiesWithPadding } from '@canvas/utils'
-import { CANVAS_COLORS, PanelModel, StringModel } from '@entities/shared'
-import { EntityStoreService, StringsStatsService } from '@entities/data-access'
+import { CANVAS_COLORS, PanelModel, StringId, StringModel } from '@entities/shared'
+import { EntityStore, StringsStatsService } from '@entities/data-access'
 // import { SelectedStateSnapshot } from '../../../../../../deprecated/design-app/feature-design-canvas/src/lib/services/canvas-client-state/+xstate/selected-state.machine'
 
 /*export const drawSelectedStringBox = (
@@ -13,7 +11,7 @@ import { EntityStoreService, StringsStatsService } from '@entities/data-access'
  ) => {
  const selectedStringId = selectedSnapshot.context.selectedStringId
  assertNotNull(selectedStringId)
- const string = entityStore.strings.getById(selectedStringId)
+ const string = entityStore.strings.select.getById(selectedStringId)
  assertNotNull(string)
  const selectedStringPanels = entityStore.panels.getByStringId(selectedStringId)
 
@@ -39,11 +37,11 @@ import { EntityStoreService, StringsStatsService } from '@entities/data-access'
 
 export const drawSelectedStringBoxV2 = (
 	ctx: CanvasRenderingContext2D,
-	selectedStringId: string,
-	entityStore: EntityStoreService,
+	selectedStringId: StringId,
+	entityStore: EntityStore,
 ) => {
 	assertNotNull(selectedStringId)
-	const string = entityStore.strings.getById(selectedStringId)
+	const string = entityStore.strings.select.getById(selectedStringId)
 	assertNotNull(string)
 	const selectedStringPanels = entityStore.panels.getByStringId(selectedStringId)
 

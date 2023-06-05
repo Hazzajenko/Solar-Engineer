@@ -11,7 +11,7 @@ import {
 	TrigonometricBounds,
 } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
-import { EntityStoreService } from '@entities/data-access'
+import { injectEntityStore } from '@entities/data-access'
 import {
 	getAngleInRadiansBetweenTwoPoints,
 	getCommonEntityTrigonometricBounds,
@@ -25,8 +25,8 @@ import { PanelModel, SizeByType } from '@entities/shared'
 	providedIn: 'root',
 })
 export class ObjectRotatingService {
-	private _entities = inject(EntityStoreService)
-	// private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
+	// private _entities = injectEntityStore()
 	private _render = inject(RenderService)
 	// private _app = inject(AppStoreService)
 	private _positioningStore = inject(ObjectPositioningStoreService)

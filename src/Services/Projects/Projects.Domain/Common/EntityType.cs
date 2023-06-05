@@ -1,6 +1,6 @@
-﻿namespace Projects.Domain.Contracts.Data;
+﻿namespace Projects.Domain.Common;
 
-public static class ModelType
+public static class EntityType
 {
     public const string Panel = "Panel";
     public const string Inverter = "Inverter";

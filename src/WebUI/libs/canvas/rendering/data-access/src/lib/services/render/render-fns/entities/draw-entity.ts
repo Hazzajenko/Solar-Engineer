@@ -1,18 +1,19 @@
-import { CanvasEntity } from '@entities/shared'
+import { EntityBase, getEntitySize } from '@entities/shared'
 
 export const drawEntity = (
 	ctx: CanvasRenderingContext2D,
-	entity: CanvasEntity,
+	entity: EntityBase,
 	fillStyle: string,
 	strokeStyle: string,
 ) => {
+	const { width, height } = getEntitySize(entity)
 	ctx.save()
 	ctx.fillStyle = fillStyle
 	ctx.strokeStyle = strokeStyle
-	ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
+	ctx.translate(entity.location.x + width / 2, entity.location.y + height / 2)
 	ctx.rotate(entity.angle)
 	ctx.beginPath()
-	ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+	ctx.rect(-width / 2, -height / 2, width, height)
 	ctx.fill()
 	ctx.stroke()
 	ctx.closePath()

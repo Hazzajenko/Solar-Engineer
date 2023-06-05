@@ -1,6 +1,6 @@
 // import { injectStringsFeature } from '../../strings'
 
-/*export function inject(EntityStoreService) {
+/*export function injectEntityStore() {
  const panels = inject(PanelsStoreService)
  // const panels = injectPanelsFeature()
  const panelConfigs = inject(PanelConfigsStoreService)

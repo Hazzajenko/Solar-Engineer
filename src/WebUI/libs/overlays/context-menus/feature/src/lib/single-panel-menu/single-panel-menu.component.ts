@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject, Injector, OnInit, signal } 
 import { JsonPipe, NgIf } from '@angular/common'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { ContextMenuTemplateComponent } from '../context-menu-template/context-menu-template.component'
-import { EntityStoreService } from '@entities/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import {
 	CONTEXT_MENU_COMPONENT,
@@ -20,6 +19,7 @@ import { heroMinusCircle } from '@ng-icons/heroicons/outline'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { assertNotNull } from '@shared/utils'
 import { transitionContextMenu } from '../animations/context-menu.animation'
+import { injectEntityStore } from '@entities/data-access'
 
 @Component({
 	selector: 'app-single-panel-menu',
@@ -47,7 +47,7 @@ import { transitionContextMenu } from '../animations/context-menu.animation'
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SinglePanelMenuComponent implements OnInit {
-	private _entityStore = inject(EntityStoreService)
+	private _entityStore = injectEntityStore()
 	private _render = inject(RenderService)
 	private _uiStore = inject(UiStoreService)
 	private _appStore = inject(AppStateStoreService)
@@ -81,7 +81,7 @@ export class SinglePanelMenuComponent implements OnInit {
 			return
 		}
 		this.panel = panel
-		this.string = this._entityStore.strings.getById(panel.stringId)
+		this.string = this._entityStore.strings.select.getById(panel.stringId)
 
 		const linkMode = this._appStore.state.mode === 'LinkMode'
 		const isInSelectedString = this._selectedStore.state.selectedStringId === this.panel.stringId
@@ -142,6 +142,6 @@ export class SinglePanelMenuComponent implements OnInit {
 				disconnectionPointId: this.panel.id,
 			},
 		}
-		this._entityStore.strings.updateString(update)
+		this._entityStore.strings.dispatch.updateString(update)
 	}
 }

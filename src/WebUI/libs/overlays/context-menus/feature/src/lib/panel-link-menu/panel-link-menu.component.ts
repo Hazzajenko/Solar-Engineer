@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, Injector, OnInit } from '@angular/core'
 import { ContextMenuDirective } from '../directives'
-import { EntityStoreService } from '@entities/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import {
 	CONTEXT_MENU_COMPONENT,
@@ -12,6 +11,7 @@ import { PanelLinkModel } from '@entities/shared'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { NgIf } from '@angular/common'
 import { AppStateStoreService } from '@canvas/app/data-access'
+import { injectEntityStore } from '@entities/data-access'
 
 @Component({
 	selector: 'app-panel-link-menu',
@@ -22,7 +22,7 @@ import { AppStateStoreService } from '@canvas/app/data-access'
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PanelLinkMenuComponent implements OnInit {
-	private _entityStore = inject(EntityStoreService)
+	private _entityStore = injectEntityStore()
 	private _render = inject(RenderService)
 	private _uiStore = inject(UiStoreService)
 	private _appStore = inject(AppStateStoreService)

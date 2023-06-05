@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, ViewChild } from '@angular/core'
 import { NgClass, NgForOf, NgIf, NgTemplateOutlet } from '@angular/common'
 import {
-	EntityStoreService,
 	GetStringByIdPipe,
 	GetStringWithPanelIdsPipe,
 	IsTypeOfPanelPipe,
@@ -18,6 +17,7 @@ import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { LetDirective } from '@ngrx/component'
 import { TruncatePipe } from '@shared/pipes'
 import { PanelId, StringId } from '@design-app/shared'
+import { injectEntityStore } from '@entities/data-access'
 
 @Component({
 	selector: 'app-data-view-panels',
@@ -41,7 +41,7 @@ import { PanelId, StringId } from '@design-app/shared'
 	animations: [fadeInOutAnimation],
 })
 export class DataViewPanelsComponent {
-	private _entityStore = inject(EntityStoreService)
+	private _entityStore = injectEntityStore()
 	private _uiStore = inject(UiStoreService)
 	private _render = inject(RenderService)
 	private _selectedStore = inject(SelectedStoreService)
@@ -63,7 +63,7 @@ export class DataViewPanelsComponent {
 			const entries = Object.entries(grouped)
 			return entries.map(([stringId, panels]) => {
 				return {
-					string: this._entityStore.strings.getById(stringId),
+					string: this._entityStore.strings.select.getById(stringId),
 					panels,
 				}
 			})
@@ -73,7 +73,7 @@ export class DataViewPanelsComponent {
 	_openedStrings = signal<Map<StringId, boolean>>(
 		(() => {
 			const map = new Map<StringId, boolean>()
-			this._entityStore.strings.allStrings.forEach((string) => map.set(string.id, false))
+			this._entityStore.strings.select.allStrings().forEach((string) => map.set(string.id, false))
 			return map
 		})(),
 	)

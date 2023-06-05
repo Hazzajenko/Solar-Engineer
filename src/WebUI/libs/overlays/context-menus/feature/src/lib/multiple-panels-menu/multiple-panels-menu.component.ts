@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject, Injector, OnInit } from '@a
 import { NgIf } from '@angular/common'
 import { ShowSvgComponent } from '@shared/ui'
 import { ContextMenuTemplateComponent } from '../context-menu-template/context-menu-template.component'
-import { EntityStoreService } from '@entities/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import {
 	CONTEXT_MENU_COMPONENT,
@@ -13,6 +12,7 @@ import {
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuDirective } from '../directives'
 import { PanelId } from '@entities/shared'
+import { injectEntityStore } from '@entities/data-access'
 
 @Component({
 	selector: 'app-multiple-panels-menu',
@@ -23,7 +23,7 @@ import { PanelId } from '@entities/shared'
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MultiplePanelsMenuComponent implements OnInit {
-	private _entityStore = inject(EntityStoreService)
+	private _entityStore = injectEntityStore()
 	private _render = inject(RenderService)
 	private _uiStore = inject(UiStoreService)
 

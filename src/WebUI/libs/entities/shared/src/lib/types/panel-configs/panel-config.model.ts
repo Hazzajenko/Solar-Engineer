@@ -1,8 +1,11 @@
-export type PanelConfig = {
+import { ENTITY_TYPE } from '../common'
+
+export type PanelConfigModel = {
 	id: PanelConfigId
 	brand?: string
 	model?: string
-	name: string
+	default?: boolean
+	fullName: string
 	currentAtMaximumPower: number
 	shortCircuitCurrent: number
 	shortCircuitCurrentTemp: number
@@ -14,12 +17,13 @@ export type PanelConfig = {
 	length: number
 	width: number
 	weight: number
+	type: typeof ENTITY_TYPE.PANEL_CONFIG
 }
 
 export type PanelConfigId = string & {
 	readonly _type: 'panelConfigId'
 }
 
-export const UndefinedPanelConfigId = 'undefinedPanelConfigId' as PanelConfigId
+// export const UndefinedPanelConfigId = 'undefinedPanelConfigId' as PanelConfigId
 
-export const DefaultPanelConfigId = 'Longi-Himo555m' as PanelConfigId
+export const DEFAULT_PANEL_CONFIG_ID = 'Longi-Himo555m' as PanelConfigId

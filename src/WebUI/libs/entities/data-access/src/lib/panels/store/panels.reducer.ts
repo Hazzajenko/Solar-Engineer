@@ -20,6 +20,7 @@ export const initialPanelsState: PanelsState = panelsAdapter.getInitialState({
 
 const reducer = createReducer(
 	initialPanelsState,
+	on(PanelsActions.loadPanels, (state, { panels }) => panelsAdapter.setMany(panels, state)),
 	on(PanelsActions.addPanel, (state, { panel }) => panelsAdapter.addOne(panel, state)),
 	on(PanelsActions.addManyPanels, (state, { panels }) => panelsAdapter.addMany(panels, state)),
 	on(PanelsActions.updatePanel, (state, { update }) => panelsAdapter.updateOne(update, state)),

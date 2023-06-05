@@ -7,7 +7,19 @@ import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
 import { injectPanelLinksStore, PanelLinksActions } from '../../panel-links'
 import { assertNotNull } from '@shared/utils'
 import { injectPanelsStore } from './panels.store'
+import { ProjectsActions } from '../../projects'
 
+export const panelsStoreInitialized$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(PanelsActions.loadPanels),
+			map(() => {
+				return ProjectsActions.panelsStoreInitialized()
+			}),
+		)
+	},
+	{ functional: true },
+)
 export const removeSelectedIfDeleted$ = createEffect(
 	(actions$ = inject(Actions), selectedStore = injectSelectedStore()) => {
 		return actions$.pipe(

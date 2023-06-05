@@ -1,21 +1,24 @@
-import { PanelConfig } from '@entities/shared'
+import { PanelConfigModel } from '@entities/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 
 export const PanelConfigsActions = createActionGroup({
 	source: 'PanelConfigs Store',
 	events: {
+		'Load PanelConfigs': props<{
+			panelConfigs: PanelConfigModel[]
+		}>(),
 		'Add PanelConfig': props<{
-			panelConfig: PanelConfig
+			panelConfig: PanelConfigModel
 		}>(),
 		'Add Many PanelConfigs': props<{
-			panelConfigs: PanelConfig[]
+			panelConfigs: PanelConfigModel[]
 		}>(),
 		'Update PanelConfig': props<{
-			update: UpdateStr<PanelConfig>
+			update: UpdateStr<PanelConfigModel>
 		}>(),
 		'Update Many PanelConfigs': props<{
-			updates: UpdateStr<PanelConfig>[]
+			updates: UpdateStr<PanelConfigModel>[]
 		}>(),
 		'Delete PanelConfig': props<{
 			panelConfigId: string

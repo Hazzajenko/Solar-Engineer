@@ -1,19 +1,20 @@
 import { PanelConfigsActions } from './panel-configs.actions'
-import { PanelConfig } from '@entities/shared'
+import { PanelConfigModel } from '@entities/shared'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on, provideState } from '@ngrx/store'
 import { makeEnvironmentProviders } from '@angular/core'
 
 export const PANEL_CONFIGS_FEATURE_KEY = 'panelConfigs'
 
-export interface PanelConfigsState extends EntityState<PanelConfig> {
+export interface PanelConfigsState extends EntityState<PanelConfigModel> {
 	loaded: boolean
 	error?: string | null
 }
 
-export const panelConfigsAdapter: EntityAdapter<PanelConfig> = createEntityAdapter<PanelConfig>({
-	selectId: (string) => string.id,
-})
+export const panelConfigsAdapter: EntityAdapter<PanelConfigModel> =
+	createEntityAdapter<PanelConfigModel>({
+		selectId: (string) => string.id,
+	})
 
 export const initialPanelConfigsState: PanelConfigsState = panelConfigsAdapter.getInitialState({
 	loaded: false,
@@ -21,7 +22,7 @@ export const initialPanelConfigsState: PanelConfigsState = panelConfigsAdapter.g
 	entities: {
 		'Longi-Himo555m': {
 			id: 'Longi-Himo555m',
-			name: 'Longi Himo555m',
+			fullName: 'Longi Himo555m',
 			brand: 'Longi',
 			model: 'Himo555m',
 			currentAtMaximumPower: 13.19,
@@ -41,6 +42,9 @@ export const initialPanelConfigsState: PanelConfigsState = panelConfigsAdapter.g
 
 const reducer = createReducer(
 	initialPanelConfigsState,
+	on(PanelConfigsActions.loadPanelConfigs, (state, { panelConfigs }) =>
+		panelConfigsAdapter.setMany(panelConfigs, state),
+	),
 	on(PanelConfigsActions.addPanelConfig, (state, { panelConfig }) =>
 		panelConfigsAdapter.addOne(panelConfig, state),
 	),

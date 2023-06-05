@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
 using Projects.Domain.Commands.Panels;
-using Projects.Domain.Contracts.Data;
+using Projects.Domain.Common;
 using Projects.Domain.Entities;
 using Projects.SignalR.Hubs;
 
@@ -39,7 +39,7 @@ public class DeleteManyPanelsHandler : ICommandHandler<DeleteManyPanelsCommand, 
             );
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
-        var panelIdGuids = command.Request.PanelIds.Select(x => x.Id.ToGuid()).ToList();
+        var panelIdGuids = command.Request.PanelIds.Select(x => x.PanelId.ToGuid()).ToList();
 
         var panels = await _unitOfWork.PanelsRepository.GetManyPanelsAsync(projectId, panelIdGuids);
 

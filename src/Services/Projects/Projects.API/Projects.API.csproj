@@ -12,6 +12,7 @@
         <PackageReference Include="Bogus" Version="34.0.2" />
         <PackageReference Include="ErrorOr" Version="1.2.1" />
         <PackageReference Include="FastEndpoints" Version="5.11.0" />
+        <PackageReference Include="FastEndpoints.ClientGen" Version="5.8.1" />
         <PackageReference Include="FastEndpoints.Generator" Version="5.11.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

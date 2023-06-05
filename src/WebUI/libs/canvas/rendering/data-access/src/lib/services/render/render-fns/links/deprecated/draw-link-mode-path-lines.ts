@@ -1,4 +1,4 @@
-import { CanvasEntity, PanelLinkModel } from '@entities/shared'
+import { EntityBase, PanelLinkModel } from '@entities/shared'
 import { getSymbolLocationBasedOnIndex } from '../../../render.service'
 import { PanelLinksStore } from '@entities/data-access'
 import { Point } from '@shared/data-access/models'
@@ -9,7 +9,7 @@ import { reduceLinkPointsToNumberArray } from '@entities/utils'
 
 export const drawLinkModePathLines = (
 	ctx: CanvasRenderingContext2D,
-	customEntities: CanvasEntity[] | undefined,
+	customEntities: EntityBase[] | undefined,
 	linksInOrder: PanelLinkModel[],
 	selectedPanelLinkId: string | undefined,
 	hoveringOverPanelLinkInLinkMenu: PanelLinksStore['hoveringOverPanelLinkInLinkMenu'],
@@ -52,7 +52,7 @@ export const drawLinkModePathLines = (
 
 export const drawLinkModePathLinesCurved = (
 	ctx: CanvasRenderingContext2D,
-	customEntities: CanvasEntity[] | undefined,
+	customEntities: EntityBase[] | undefined,
 	linksInOrder: PanelLinkModel[],
 	selectedPanelLinkId: string | undefined,
 	hoveringOverPanelLinkInLinkMenu: PanelLinksStore['hoveringOverPanelLinkInLinkMenu'],
@@ -74,7 +74,7 @@ export const drawLinkModePathLinesCurved = (
 
 export const drawLinkModePathLinesCurvedWithAPoints = (
 	ctx: CanvasRenderingContext2D,
-	customEntities: CanvasEntity[] | undefined,
+	customEntities: EntityBase[] | undefined,
 	linksInOrder: PanelLinkModel[],
 	selectedPanelLinkId: string | undefined,
 	hoveringOverPanelLinkInLinkMenu: PanelLinksStore['hoveringOverPanelLinkInLinkMenu'],

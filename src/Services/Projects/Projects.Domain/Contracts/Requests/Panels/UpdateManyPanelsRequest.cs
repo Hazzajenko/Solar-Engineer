@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
+using Projects.Domain.Common;
 using Projects.Domain.Contracts.Data;
 
 namespace Projects.Domain.Contracts.Requests.Panels;
 
-public class UpdateManyPanelsRequest
+public class UpdateManyPanelsRequest : IProjectEventRequest
 {
     public required string ProjectId { get; init; }
     public required IEnumerable<PanelUpdate> Updates { get; init; }

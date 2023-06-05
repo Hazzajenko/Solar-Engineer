@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
 using Projects.Domain.Commands.Strings;
-using Projects.Domain.Contracts.Data;
+using Projects.Domain.Common;
 using Projects.SignalR.Hubs;
 
 namespace Projects.Application.Handlers.Strings;

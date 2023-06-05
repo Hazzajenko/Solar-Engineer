@@ -9,17 +9,27 @@ public class CreateManyPanelsRequest : IProjectEventRequest
     public required string ProjectId { get; set; } = default!;
     public required string StringId { get; set; } = default!;
     public required string PanelConfigId { get; set; } = default!;
-    public required int Angle { get; set; } = 0;
+    public required double Angle { get; set; } = 0;
 
     public required IEnumerable<MinimalCreatePanelRequest> Panels { get; init; } =
         new List<MinimalCreatePanelRequest>();
 }
 
-public class MinimalCreatePanelRequest
+/*public class MinimalCreatePanelRequest
 {
     public required string Id { get; init; }
     public required Panel.Point Location { get; init; }
-    public required int Angle { get; init; }
+    public required string StringId { get; set; } = default!;
+    public required string PanelConfigId { get; set; } = default!;
+    public required double Angle { get; init; }
+}*/
+
+public class MinimalCreatePanelRequest
+{
+    public required string Id { get; init; }
+
+    public required Panel.Point Location { get; init; }
+    // public required double Angle { get; init; }
 }
 
 public class CreateManyPanelsRequestValidator : AbstractValidator<CreateManyPanelsRequest>
@@ -34,13 +44,14 @@ public class CreateManyPanelsRequestValidator : AbstractValidator<CreateManyPane
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("ProjectId must be a valid Guid");
 
+        /*
         RuleFor(v => v.StringId)
             .NotNull()
             .WithMessage("StringId cannot be null")
             .NotEmpty()
             .WithMessage("StringId cannot be empty")
             .Must(x => Guid.TryParse(x, out _))
-            .WithMessage("StringId must be a valid Guid");
+            .WithMessage("StringId must be a valid Guid");*/
 
         RuleFor(v => v.Panels)
             .NotNull()
@@ -64,11 +75,12 @@ public class CreateManyPanelsRequestValidator : AbstractValidator<CreateManyPane
             return true;
         }
 
-        bool CheckAngle(int angle)
+        bool CheckAngle(double angle)
         {
-            return angle >= 0 && angle <= 360;
+            // return angle >= 0 && angle <= 360;
+            return true;
         }
 
-        return panels.All(x => CheckId(x.Id) && CheckLocation(x.Location) && CheckAngle(x.Angle));
+        return panels.All(x => CheckId(x.Id) && CheckLocation(x.Location));
     }
 }

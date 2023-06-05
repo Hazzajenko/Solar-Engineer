@@ -1,5 +1,5 @@
 import {
-	CanvasEntity,
+	EntityBase,
 	OpenCircuitChainWithIndex,
 	PanelLinkFromMenu,
 	PanelLinkId,
@@ -28,7 +28,7 @@ const offset = 0
 let image: HTMLImageElement | undefined
 export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	ctx: CanvasRenderingContext2D,
-	customEntities: CanvasEntity[] | undefined,
+	customEntities: EntityBase[] | undefined,
 	circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][],
 	panelLinkUnderMouse: PanelLinkModel | undefined,
 	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined,

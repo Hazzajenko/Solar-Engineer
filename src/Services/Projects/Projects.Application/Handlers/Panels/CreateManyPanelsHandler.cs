@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
 using Projects.Domain.Commands.Panels;
-using Projects.Domain.Contracts.Data;
+using Projects.Domain.Common;
 using Projects.Domain.Entities;
 using Projects.SignalR.Hubs;
 
@@ -13,6 +13,8 @@ namespace Projects.Application.Handlers.Panels;
 
 public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, bool>
 {
+    // private const string DefaultPanelConfigId = "Longi-Himo555m";
+    // private const string UndefinedStringId = "UNDEFINED_STRING_ID";
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<CreateManyPanelsHandler> _logger;
     private readonly IProjectsUnitOfWork _unitOfWork;
@@ -48,7 +50,7 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
             throw new HubException("Panel already exists at this location");*/
 
         var panelStringId = command.Request.StringId;
-        var panelHasString = panelStringId.Equals("undefined") is false;
+        var panelHasString = panelStringId.Equals(String.UndefinedStringId) is false;
 
         var panelString = panelHasString
             ? await _unitOfWork.StringsRepository.GetByIdAndProjectIdAsync(
@@ -70,11 +72,20 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
         panelString.ThrowExceptionIfNull(new HubException("String does not exist"));
 
         var panelConfigId = command.Request.PanelConfigId;
-        var doesPanelHaveConfig = panelConfigId.Equals("undefined") is false;
+        // var doesPanelHaveConfig = panelConfigId.Equals("undefined") is false;
 
-        var panelConfig = doesPanelHaveConfig is false
-            ? await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync()
+        var panelConfig = panelConfigId.Equals(PanelConfig.DefaultPanelConfigId)
+            ? await _unitOfWork.PanelConfigsRepository.GetByBrandAndModelAsync("Longi", "Himo555m")
             : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());
+        /*var panelConfig = doesPanelHaveConfig is false
+            ? await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync()
+            : panelConfigId.Equals(DEFAULT_PANEL_CONFIG_ID)
+                ? await _unitOfWork.PanelConfigsRepository.GetByBrandAndModel("Longi", "Himo555m")
+                : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());*/
+
+        /*var panelConfig = doesPanelHaveConfig is false
+            ? await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync()
+            : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());*/
 
         panelConfig.ThrowExceptionIfNull(new HubException("Panel config does not exist"));
 

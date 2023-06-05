@@ -5,6 +5,8 @@ import { CreateProjectRequest, ProjectId, ProjectModel } from '@entities/shared'
 export const ProjectsActions = createActionGroup({
 	source: 'Projects Store',
 	events: {
+		'Panels Store Initialized': emptyProps(),
+		'Strings Store Initialized': emptyProps(),
 		'Create Project Http': props<CreateProjectRequest>(),
 		'Select Project': props<{
 			projectId: ProjectId

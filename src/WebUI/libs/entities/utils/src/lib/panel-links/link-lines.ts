@@ -1,4 +1,4 @@
-import { getEntityCenter, PanelModel, PanelWithSymbol, Polarity } from '@entities/shared'
+import { getEntityCenter, getEntitySize, PanelModel, PanelWithSymbol, Polarity } from '@entities/shared'
 import { Point } from '@shared/data-access/models'
 
 /**
@@ -39,14 +39,16 @@ export const getSymbolLocationPoints = (panel: PanelModel) => {
 }
 
 export const getPositiveSymbolLocation = (panel: PanelModel) => {
-	const x = panel.location.x + panel.width
-	const y = panel.location.y + panel.height / 2
+	const { width, height } = getEntitySize(panel)
+	const x = panel.location.x + width
+	const y = panel.location.y + height / 2
 	return { x, y }
 }
 
 export const getNegativeSymbolLocation = (panel: PanelModel) => {
+	const { height } = getEntitySize(panel)
 	const x = panel.location.x
-	const y = panel.location.y + panel.height / 2
+	const y = panel.location.y + height / 2
 	return { x, y }
 }
 

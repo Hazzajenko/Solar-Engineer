@@ -1,5 +1,6 @@
 import { SELECTED_FEATURE_KEY, SelectedState } from './selected.reducer'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
+import { UNDEFINED_STRING_ID } from '@entities/shared'
 
 export const selectSelectedState = createFeatureSelector<SelectedState>(SELECTED_FEATURE_KEY)
 
@@ -25,6 +26,11 @@ export const selectSingleAndMultiSelectedEntities = createSelector(
 export const selectSelectedStringId = createSelector(
 	selectSelectedState,
 	(state: SelectedState) => state.selectedStringId,
+)
+
+export const selectSelectedStringIdOrUndefinedString = createSelector(
+	selectSelectedState,
+	(state: SelectedState) => state.selectedStringId ?? UNDEFINED_STRING_ID,
 )
 
 /*export const selectSelectedStringIdV2 = createSelector(
