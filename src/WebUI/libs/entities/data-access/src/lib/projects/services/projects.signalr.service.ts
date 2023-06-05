@@ -82,10 +82,10 @@ export class ProjectsSignalrService {
 
 		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.GET_PROJECT, (response: ProjectDataModel) => {
 			console.log(PROJECTS_SIGNALR_EVENT.GET_PROJECT, response)
-			this._entitiesStore.panels.loadPanels(response.panels)
+			this._entitiesStore.panels.dispatch.loadPanels(response.panels)
 			this._entitiesStore.strings.dispatch.loadStrings(response.strings)
 			// this._entitiesStore.panelLinks.addManyPanelLinks(response.panelLinks)
-			this._entitiesStore.panelConfigs.loadPanelConfigs(response.panelConfigs)
+			this._entitiesStore.panelConfigs.dispatch.loadPanelConfigs(response.panelConfigs)
 			// this._entitiesStore.panelLinks.addManyPanelLinks(response.panelLinks)
 		})
 

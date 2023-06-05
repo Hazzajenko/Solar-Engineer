@@ -50,9 +50,9 @@ export class ObjectPositioningService {
 	private _canvasElement = inject(CanvasElementService)
 	private _graphicsStore = inject(GraphicsStoreService)
 	private _positioningStore = inject(ObjectPositioningStoreService)
-	singleToMoveId: string | undefined
+	singleToMoveId: PanelId | undefined
 	multiToMoveStart: EventPoint | undefined
-	multipleToMoveIds: string[] = []
+	multipleToMoveIds: PanelId[] = []
 
 	currentAxis: Axis | undefined
 	axisRepositionPreviewRect: CompleteEntityBounds | undefined
@@ -65,7 +65,7 @@ export class ObjectPositioningService {
 		return document.getElementById('canvas') as HTMLCanvasElement
 	}
 
-	setSingleToMoveEntity(event: PointerEvent | TouchEvent, singleToMoveId: string) {
+	setSingleToMoveEntity(event: PointerEvent | TouchEvent, singleToMoveId: PanelId) {
 		this.singleToMoveId = singleToMoveId
 		this._positioningStore.dispatch.startMovingSingleEntity(singleToMoveId)
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
@@ -89,12 +89,12 @@ export class ObjectPositioningService {
 				this._positioningStore.dispatch.setToMoveSpotFree()
 			}
 		}
-		const entity = this._entities.panels.getById(this.singleToMoveId)
+		const entity = this._entities.panels.select.getById(this.singleToMoveId)
 		assertNotNull(entity)
 
 		const size = getEntitySize(entity)
 		const mouseBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
-		const entities = this._entities.panels.allPanels
+		const entities = this._entities.panels.select.allPanels()
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxisExcludingIds(
 			mouseBounds,
 			entities,
@@ -184,7 +184,7 @@ export class ObjectPositioningService {
 			location = getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.PANEL])
 		}
 
-		this._entities.panels.updatePanel({
+		this._entities.panels.dispatch.updatePanel({
 			id: this.singleToMoveId,
 			changes: {
 				location,
@@ -199,14 +199,14 @@ export class ObjectPositioningService {
 		return
 	}
 
-	multipleEntitiesToMoveMouseDown(event: PointerEvent, multipleSelectedIds: string[]) {
+	multipleEntitiesToMoveMouseDown(event: PointerEvent, multipleSelectedIds: PanelId[]) {
 		if (!event.shiftKey || !event.ctrlKey) return
 		this.multipleToMoveIds = multipleSelectedIds
 		this.multiToMoveStart = eventToEventPoint(event)
 		this._positioningStore.dispatch.startMovingMultipleEntities(multipleSelectedIds)
 	}
 
-	setMultipleEntitiesToMove(event: PointerEvent, multipleSelectedIds: string[]) {
+	setMultipleEntitiesToMove(event: PointerEvent, multipleSelectedIds: PanelId[]) {
 		if (!multiSelectDraggingKeysDown(event)) return
 		this.multipleToMoveIds = multipleSelectedIds
 		this.multiToMoveStart = eventToEventPoint(event)
@@ -230,7 +230,7 @@ export class ObjectPositioningService {
 		}
 
 		const multipleToMoveIds = this.multipleToMoveIds
-		const entities = this._entities.panels.getByIds(multipleToMoveIds)
+		const entities = this._entities.panels.select.getByIds(multipleToMoveIds)
 
 		const updates = entities.map((entity) => ({
 			...entity,
@@ -287,7 +287,7 @@ export class ObjectPositioningService {
 			x: (dragStopPoint.x - multiToMoveStart.x) / scale,
 			y: (dragStopPoint.y - multiToMoveStart.y) / scale,
 		}
-		const entities = this._entities.panels.getByIds(this.multipleToMoveIds)
+		const entities = this._entities.panels.select.getByIds(this.multipleToMoveIds)
 		const multiSelectedUpdated = entities.map((entity) => ({
 			...entity,
 			location: {
@@ -297,7 +297,7 @@ export class ObjectPositioningService {
 		}))
 
 		const storeUpdates = updateMany(multiSelectedUpdated, 'location')
-		this._entities.panels.updateManyPanels(storeUpdates as UpdateStr<PanelModel>[])
+		this._entities.panels.dispatch.updateManyPanels(storeUpdates as UpdateStr<PanelModel>[])
 
 		this._positioningStore.dispatch.stopMoving()
 
@@ -325,16 +325,18 @@ export class ObjectPositioningService {
 	}
 
 	areAnyEntitiesNearbyExcludingGrabbed(point: TransformedPoint, grabbedId: string) {
-		return !!this._entities.panels.allPanels.find(
-			(entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)),
-		)
+		return !!this._entities.panels.select
+			.allPanels()
+			.find(
+				(entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)),
+			)
 	}
 
 	areAnyEntitiesNearbyExcludingMultipleGrabbed(updatedEntities: EntityBase[]) {
 		const grabbedIds = updatedEntities.map((entity) => entity.id)
-		const panelsExceptGrabbed = this._entities.panels.allPanels.filter(
-			(entity) => !grabbedIds.includes(entity.id),
-		)
+		const panelsExceptGrabbed = this._entities.panels.select
+			.allPanels()
+			.filter((entity) => !grabbedIds.includes(entity.id))
 
 		return updatedEntities.filter((entity) =>
 			panelsExceptGrabbed.find((panel) =>

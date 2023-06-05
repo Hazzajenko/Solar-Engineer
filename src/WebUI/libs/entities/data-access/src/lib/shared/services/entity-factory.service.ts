@@ -38,7 +38,7 @@ export class EntityFactoryService {
 			const entity = selectedStringId
 				? createPanel(previewRectLocation, selectedStringId)
 				: createPanel(previewRectLocation)
-			this._entities.panels.addPanel(entity)
+			this._entities.panels.dispatch.addPanel(entity)
 			this._nearby.axisPreviewRect = undefined
 			this._appStore.dispatch.setPreviewAxisState('None')
 
@@ -54,7 +54,7 @@ export class EntityFactoryService {
 		const entity = selectedStringId
 			? createPanel(location, selectedStringId)
 			: createPanel(location)
-		this._entities.panels.addPanel(entity)
+		this._entities.panels.dispatch.addPanel(entity)
 
 		this._render.renderCanvasApp()
 	}
@@ -78,7 +78,7 @@ export class EntityFactoryService {
 			const entity = selectedStringId
 				? createPanel(previewRectLocation, selectedStringId)
 				: createPanel(previewRectLocation)
-			this._entities.panels.addPanel(entity)
+			this._entities.panels.dispatch.addPanel(entity)
 			this._nearby.axisPreviewRect = undefined
 			this._appStore.dispatch.setPreviewAxisState('None')
 
@@ -94,7 +94,7 @@ export class EntityFactoryService {
 		const entity = selectedStringId
 			? createPanel(location, selectedStringId)
 			: createPanel(location)
-		this._entities.panels.addPanel(entity)
+		this._entities.panels.dispatch.addPanel(entity)
 
 		this._render.renderCanvasApp()
 	}

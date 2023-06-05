@@ -79,7 +79,7 @@ export class MultiplePanelsMenuComponent implements OnInit {
 	}
 
 	deletePanels() {
-		this._entityStore.panels.deleteManyPanels(this.panelIds)
+		this._entityStore.panels.dispatch.deleteManyPanels(this.panelIds)
 		this._render.renderCanvasApp()
 		this._uiStore.dispatch.closeContextMenu()
 	}

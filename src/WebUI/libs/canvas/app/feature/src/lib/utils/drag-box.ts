@@ -151,7 +151,7 @@ export const creationBoxMouseUp = (
 		return
 	}
 	const newPanels = spots.map((spot) => createPanel({ x: spot.x, y: spot.y }))
-	_panelsStore.addManyPanels(newPanels)
+	_panelsStore.dispatch.addManyPanels(newPanels)
 	_appStore.setDragBoxState({
 		state: 'NoDragBox',
 	})

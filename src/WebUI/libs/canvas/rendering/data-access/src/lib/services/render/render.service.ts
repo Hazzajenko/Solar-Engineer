@@ -24,15 +24,10 @@ import {
 	drawTooltipWithOptionsCtx,
 	handleCustomEntitiesBeforeLinkRender,
 } from './render-fns'
-import { inject, Injectable } from '@angular/core'
+import { effect, inject, Injectable } from '@angular/core'
 import { assertNotNull, shadeColor } from '@shared/utils'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
-import {
-	injectEntityStore,
-	injectProjectsStore,
-	PanelLinksStoreService,
-	StringsStatsService,
-} from '@entities/data-access'
+import { injectEntityStore, injectProjectsStore, StringsStatsService } from '@entities/data-access'
 import { getNegativeSymbolLocation, getPositiveSymbolLocation, isPanel } from '@entities/utils'
 import { Point } from '@shared/data-access/models'
 import {
@@ -62,7 +57,6 @@ export class RenderService {
 	private _selectedStore = injectSelectedStore()
 	// private _selectedStore = inject(SelectedStoreService)
 	private _graphicsStore = inject(GraphicsStoreService)
-	private _panelLinksStore = inject(PanelLinksStoreService)
 	// private _panelLinks = inject(PanelLinksService)
 	private _objectPositioningStore = inject(ObjectPositioningStoreService)
 	private _stringStats = inject(StringsStatsService)
@@ -107,10 +101,16 @@ export class RenderService {
 	 _svgCursorImages: SvgCursorImageRecord | undefined*/
 	throttledRenderCanvasApp = throttle(this.renderFn, 1000 / 60)
 
-	projectReadyToRender = this._projectsStore.select.projectReadyToRender
+	isProjectReadyToRender = this._projectsStore.select.projectReadyToRender
+	storesHaveBeenInitialized = false
 
 	constructor() {
 		this.checkFps()
+		effect(() => {
+			if (this.isProjectReadyToRender()) {
+				this.renderCanvasApp()
+			}
+		})
 	}
 
 	get renderOptions() {
@@ -134,7 +134,7 @@ export class RenderService {
 	// private _fpsElement = document.getElementById(DIV_ELEMENT.FPS)
 
 	get allPanels() {
-		return this._entities.panels.allPanels
+		return this._entities.panels.select.allPanels()
 		// return this._entities.panels.allPanels
 		// return this._state.entities.panels.getEntities()
 	}
@@ -149,7 +149,10 @@ export class RenderService {
 	}
 
 	renderCanvasApp(options?: Partial<CanvasRenderOptions>) {
-		if (!this.projectReadyToRender()) return
+		if (!this.isProjectReadyToRender()) {
+			console.log('project not ready to render')
+			return
+		}
 		if (this._throttleRender) {
 			this.throttledRenderCanvasApp(options)
 			return
@@ -192,7 +195,8 @@ export class RenderService {
 			const graphicsState = this._graphicsStore.state
 
 			const singleSelectedPanelId = this._selectedStore.state.singleSelectedPanelId
-			const singleSelectedPanel = this._entities.panels.getByIdOrUndefined(singleSelectedPanelId)
+			const singleSelectedPanel =
+				this._entities.panels.select.getByIdOrUndefined(singleSelectedPanelId)
 
 			const multipleSelectedPanelIds = this._selectedStore.state.multipleSelectedPanelIds
 			const multipleSelectedPanels = multipleSelectedPanelIds.length
@@ -208,27 +212,29 @@ export class RenderService {
 				? panels.filter((panel) => panel.stringId === selectedStringId)
 				: []
 			const selectedStringPanelLinks = selectedStringId
-				? this._entities.panelLinks.getByStringId(selectedStringId)
+				? this._entities.panelLinks.select.getByStringId(selectedStringId)
 				: []
 
-			const selectedStringCircuit = this._entities.panelLinks.getSelectedStringCircuit
+			const selectedStringCircuit = this._entities.panelLinks.select.selectedStringCircuit()
 			const openCircuitChains = selectedStringCircuit ? selectedStringCircuit.openCircuitChains : []
 			const circuitLinkLines = selectedStringCircuit ? selectedStringCircuit.circuitLinkLines : []
 
 			const hoveringOverPanelId = appState.pointer.hoveringOverPanelId
-			const hoveringOverPanel = this._entities.panels.getByIdOrUndefined(hoveringOverPanelId)
-			const hoveringOverPanelInLinkMenuId = this._entities.panelLinks.hoveringOverPanelInLinkMenuId
+			const hoveringOverPanel = this._entities.panels.select.getByIdOrUndefined(hoveringOverPanelId)
+			const hoveringOverPanelInLinkMenuId =
+				this._entities.panelLinks.select.hoveringOverPanelInLinkMenuId()
 			const hoveringOverPanelLinkInLinkMenu =
-				this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
-			const hoveringOverPanelLinkInApp = this._entities.panelLinks.getHoveringOverPanelLinkInApp
+				this._entities.panelLinks.select.hoveringOverPanelLinkInLinkMenu()
+			const hoveringOverPanelLinkInApp =
+				this._entities.panelLinks.select.hoveringOverPanelLinkInApp()
 
 			const toMoveMultipleSpotTakenIds =
 				this._objectPositioningStore.state.toMoveMultipleSpotTakenIds
 
 			const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
-			const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
+			const panelLinkUnderMouse = this._entities.panelLinks.select.hoveringOverPanelLinkInApp()
 			const panelLinkRequest = options?.panelLinkRequest
-			const requestingLink = this._entities.panelLinks.requestingLink
+			const requestingLink = this._entities.panelLinks.select.requestingLink()
 
 			const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
 			const shouldRenderSelectedStringBox = options?.shouldRenderSelectedStringBox ?? true
@@ -251,7 +257,7 @@ export class RenderService {
 			if (shouldRenderSelectedEntitiesBox && multipleSelectedPanels.length) {
 				drawSelectedBox(ctx, multipleSelectedPanels)
 			} else if (shouldRenderSelectedEntitiesBox && singleSelectedPanel) {
-				// const selectedEntity = this._entities.panels.getById(singleSelectedPanelId)
+				// const selectedEntity = this._entities.panels.select.getById(singleSelectedPanelId)
 				assertNotNull(singleSelectedPanel, 'selectedEntity')
 				drawSelectedBox(ctx, [singleSelectedPanel])
 			}
@@ -273,7 +279,7 @@ export class RenderService {
 				} else {
 					const stringsWithPanels = this._entities.strings.select.allStrings().map((string) => ({
 						string,
-						panels: this._entities.panels.getByStringId(string.id),
+						panels: this._entities.panels.select.getByStringId(string.id),
 					}))
 					stringsWithPanels.forEach(({ string, panels }) => {
 						drawSelectedStringBoxV3(ctx, string, panels)
@@ -346,7 +352,7 @@ export class RenderService {
 				const mouseDownPanelSymbol = options?.draggingSymbolLinkLine?.mouseDownPanelSymbol
 
 				const panelLinkForSelectedPanel = singleSelectedPanel
-					? this._entities.panelLinks.getLinksMappedByPanelId(singleSelectedPanel.id)
+					? this._entities.panelLinks.select.getLinksMappedByPanelId(singleSelectedPanel.id)
 					: undefined
 
 				drawLinkModePathLinesCurvedAlreadyMappedV6(
@@ -373,7 +379,7 @@ export class RenderService {
 			}
 
 			if (selectedString && selectedString.disconnectionPointId) {
-				const disconnectionPointPanel = this._entities.panels.getById(
+				const disconnectionPointPanel = this._entities.panels.select.getById(
 					selectedString.disconnectionPointId,
 				)
 				assertNotNull(disconnectionPointPanel, 'disconnectionPointPanel')
@@ -381,7 +387,7 @@ export class RenderService {
 			}
 
 			if (hoveringOverPanelInLinkMenuId) {
-				const panel = this._entities.panels.getById(hoveringOverPanelInLinkMenuId)
+				const panel = this._entities.panels.select.getById(hoveringOverPanelInLinkMenuId)
 				assertNotNull(panel, 'panel')
 				drawBoxWithOptionsCtx(ctx, [panel], {
 					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
@@ -391,7 +397,7 @@ export class RenderService {
 			}
 
 			if (hoveringOverPanelLinkInLinkMenu) {
-				const panel = this._entities.panels.getById(hoveringOverPanelLinkInLinkMenu.panelId)
+				const panel = this._entities.panels.select.getById(hoveringOverPanelLinkInLinkMenu.panelId)
 				assertNotNull(panel, 'panel')
 				drawBoxWithOptionsCtx(ctx, [panel], {
 					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
@@ -470,10 +476,10 @@ export class RenderService {
 		// const selectedState = this._selectedStore.state
 		// const { singleSelectedPanelId, multipleSelectedPanelIds, selectedPanelLinkId } = selectedState
 		/*		const selectedPanel = singleSelectedPanelId
-		 ? this._entities.panels.getById(singleSelectedPanelId)
+		 ? this._entities.panels.select.getById(singleSelectedPanelId)
 		 : undefined*/
 
-		const mouseOverSymbol = this._entities.panelLinks.getHoveringOverPanelPolaritySymbol
+		// const mouseOverSymbol = this._entities.panelLinks.select.hoveringOverPanelLinkInApp()
 
 		for (let i = 0; i < panels.length; i++) {
 			const entity = panels[i]
@@ -565,7 +571,8 @@ export class RenderService {
 				 })*!/
 				 }*/
 				if (graphicsState.linkModeSymbols) {
-					drawLinkModeSymbols(ctx, entity, mouseOverSymbol)
+					drawLinkModeSymbols(ctx, entity)
+					// drawLinkModeSymbols(ctx, entity, mouseOverSymbol)
 				}
 			}
 			if (

@@ -135,7 +135,7 @@ export class KeyEventsService {
 					const name = genStringNameV2(this._entities.strings.select.allStrings())
 					const string = createString(name)
 
-					const entities = this._entities.panels.getByIds(multipleSelectedIds)
+					const entities = this._entities.panels.select.getByIds(multipleSelectedIds)
 					const panels = entities.filter(
 						(entity) => entity.type === ENTITY_TYPE.PANEL,
 					) as PanelModel[]
@@ -146,7 +146,7 @@ export class KeyEventsService {
 						updateObjectByIdForStoreV3<PanelModel>({ stringId: string.id }),
 					)
 					this._entities.strings.dispatch.addString(string)
-					this._entities.panels.updateManyPanels(panelUpdates)
+					this._entities.panels.dispatch.updateManyPanels(panelUpdates)
 
 					this._selectedStore.selectString(string.id)
 					this._render.renderCanvasApp()
@@ -230,7 +230,7 @@ export class KeyEventsService {
 		const amountOfStrings = this._entities.strings.select.allStrings().length
 		const { string, panelUpdates } = createStringWithPanelsV2(multipleSelectedIds, amountOfStrings)
 		this._entities.strings.dispatch.addString(string)
-		this._entities.panels.updateManyPanels(panelUpdates)
+		this._entities.panels.dispatch.updateManyPanels(panelUpdates)
 		this._selectedStore.selectString(string.id)
 	}
 

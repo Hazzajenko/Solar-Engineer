@@ -1,4 +1,4 @@
-import { PanelConfigModel } from '@entities/shared'
+import { PanelConfigId, PanelConfigModel } from '@entities/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 
@@ -21,10 +21,10 @@ export const PanelConfigsActions = createActionGroup({
 			updates: UpdateStr<PanelConfigModel>[]
 		}>(),
 		'Delete PanelConfig': props<{
-			panelConfigId: string
+			panelConfigId: PanelConfigId
 		}>(),
 		'Delete Many PanelConfigs': props<{
-			panelConfigIds: string[]
+			panelConfigIds: PanelConfigId[]
 		}>(),
 		'Clear PanelConfigs State': emptyProps(),
 	},

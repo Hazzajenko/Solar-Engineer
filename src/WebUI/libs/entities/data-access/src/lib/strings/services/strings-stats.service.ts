@@ -3,7 +3,7 @@ import { injectSelectedStore } from '@canvas/selected/data-access'
 import { injectStringsStore } from '../store'
 import { assertNotNull } from '@shared/utils'
 import { injectPanelConfigsStore } from '../../panel-configs'
-import { PanelConfigModel, PanelModel } from '@entities/shared'
+import { PanelConfigModel, PanelModel, StringId } from '@entities/shared'
 import { injectPanelsStore } from '../../panels'
 import { injectPanelLinksStore, PanelLinksService } from '../../panel-links'
 
@@ -21,10 +21,10 @@ export class StringsStatsService {
 	calculateStringStatsForSelectedString() {
 		const selectedStringId = this._selectedStore.selectedStringId
 		assertNotNull(selectedStringId)
-		const stringPanels = this._panelsStore.getByStringId(selectedStringId)
+		const stringPanels = this._panelsStore.select.getByStringId(selectedStringId)
 
 		const panelsWithSpecs = stringPanels.map((panel) => {
-			const panelConfig = this._panelConfigsStore.getById(panel.panelConfigId)
+			const panelConfig = this._panelConfigsStore.select.getById(panel.panelConfigId)
 			assertNotNull(panelConfig)
 			return mapPanelToPanelWithConfig(panel, panelConfig)
 		})
@@ -48,7 +48,7 @@ export class StringsStatsService {
 		}
 	}
 
-	calculateStringPanelLinkStatsForString(stringId: string, stringPanels: PanelModel[]) {
+	calculateStringPanelLinkStatsForString(stringId: StringId, stringPanels: PanelModel[]) {
 		const stringPanelLinkChains = this._panelLinks.getPanelLinkOrderForString(stringId)
 		const amountOfChains = stringPanelLinkChains.length
 		const amountOfLinks = stringPanelLinkChains.reduce((acc, chain) => acc + chain.length, 0)

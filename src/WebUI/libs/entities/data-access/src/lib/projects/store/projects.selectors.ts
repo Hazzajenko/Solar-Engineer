@@ -37,5 +37,17 @@ export const selectSelectedProject = createSelector(
 
 export const selectProjectReadyToRender = createSelector(
 	selectProjectsState,
-	(state: ProjectsState) => state.panelsReadyToRender && state.stringsReadyToRender,
+	(state: ProjectsState) =>
+		state.storesToInit.panels &&
+		state.storesToInit.strings && // state.storesToInit.panelLinks &&
+		state.storesToInit.panelConfigs,
+)
+
+export const selectProjectReadyForReset = createSelector(
+	selectProjectsState,
+	(state: ProjectsState) =>
+		state.storesToClear.panels &&
+		state.storesToClear.strings &&
+		state.storesToClear.panelLinks &&
+		state.storesToClear.panelConfigs,
 )

@@ -6,7 +6,7 @@ const lineLength = 5
 export const drawLinkModeSymbols = (
 	ctx: CanvasRenderingContext2D,
 	panel: PanelModel,
-	mouseOverSymbol: PanelSymbol | undefined,
+	mouseOverSymbol: PanelSymbol | undefined = undefined,
 ) => {
 	const isHovered = panel.id === mouseOverSymbol?.panelId
 	const isPositive = isHovered && mouseOverSymbol?.symbol === 'positive'

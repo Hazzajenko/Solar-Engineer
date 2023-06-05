@@ -1,7 +1,9 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import {
+	PanelId,
 	PanelLinkFromMenu,
+	PanelLinkId,
 	PanelLinkModel,
 	PanelLinkRequest,
 	PanelSymbol,
@@ -31,13 +33,13 @@ export const PanelLinksActions = createActionGroup({
 			updates: UpdateStr<PanelLinkModel>[]
 		}>(),
 		'Delete Panel Link': props<{
-			panelLinkId: string
+			panelLinkId: PanelLinkId
 		}>(),
 		'Delete Many Panel Links': props<{
-			panelLinkIds: string[]
+			panelLinkIds: PanelLinkId[]
 		}>(),
 		'Set Hovering Over Panel In Link Menu Id': props<{
-			panelId: string
+			panelId: PanelId
 		}>(),
 		'Clear Hovering Over Panel In Link Menu Id': emptyProps(),
 		'Set Hovering Over Panel Link In Link Menu': props<{
@@ -50,7 +52,7 @@ export const PanelLinksActions = createActionGroup({
 		}>(),
 		'Clear Selected String Circuit': emptyProps(),
 		'Set Hovering Over Panel Link In App': props<{
-			panelLinkId: string
+			panelLinkId: PanelLinkId
 		}>(),
 		'Clear Hovering Over Panel Link In App': emptyProps(),
 		'Set Hovering Over Panel Polarity Symbol': props<{

@@ -7,7 +7,7 @@ import {
 	UiStoreService,
 } from '@overlays/ui-store/data-access'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
-import { PanelLinkModel } from '@entities/shared'
+import { PanelId, PanelLinkModel } from '@entities/shared'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { NgIf } from '@angular/common'
 import { AppStateStoreService } from '@canvas/app/data-access'
@@ -34,7 +34,7 @@ export class PanelLinkMenuComponent implements OnInit {
 	panelLink!: PanelLinkModel
 
 	ngOnInit() {
-		const panelLink = this._entityStore.panelLinks.getById(this.contextMenu.data.panelLinkId)
+		const panelLink = this._entityStore.panelLinks.select.getById(this.contextMenu.data.panelLinkId)
 		if (!panelLink) {
 			console.error('Panel link not found')
 			this._render.renderCanvasApp()
@@ -45,18 +45,18 @@ export class PanelLinkMenuComponent implements OnInit {
 		this.panelLink = panelLink
 	}
 
-	enterPolarityPanel(event: PointerEvent, panelId: string) {
+	enterPolarityPanel(event: PointerEvent, panelId: PanelId) {
 		// this._appStore.dispatch.setHoveringOverEntityState(panelId)
-		this._entityStore.panelLinks.setHoveringOverPanelInLinkMenuId(panelId)
+		this._entityStore.panelLinks.dispatch.setHoveringOverPanelInLinkMenuId(panelId)
 	}
 
 	leavePolarityPanel() {
-		this._entityStore.panelLinks.clearHoveringOverPanelInLinkMenuId()
+		this._entityStore.panelLinks.dispatch.clearHoveringOverPanelInLinkMenuId()
 		// this._appStore.dispatch.liftHoveringOverEntity()
 	}
 
 	deletePanelLink() {
-		this._entityStore.panelLinks.deletePanelLink(this.panelLink.id)
+		this._entityStore.panelLinks.dispatch.deletePanelLink(this.panelLink.id)
 		this._uiStore.dispatch.closeContextMenu()
 	}
 }

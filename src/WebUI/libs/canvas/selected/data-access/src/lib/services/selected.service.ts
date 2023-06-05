@@ -88,7 +88,7 @@ export class SelectedService {
 
 		if (!selectedId) return
 
-		const selectedEntity = this._entities.panels.getById(selectedId)
+		const selectedEntity = this._entities.panels.select.getById(selectedId)
 		assertNotNull(selectedEntity, 'selected entity not found')
 		// this._app.sendEvent(
 		// 	{

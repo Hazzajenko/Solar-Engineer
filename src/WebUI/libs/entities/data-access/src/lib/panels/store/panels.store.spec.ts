@@ -20,9 +20,9 @@ describe('injectPanelsStore', () => {
 
 		expect(panelsStore.allPanels$).toEqual(allPanelsMock)
 		expect(panelsStore.allPanels).toEqual(allPanelsMock)
-		expect(panelsStore.getById('1')).toEqual(entitiesMock['1'])
-		expect(panelsStore.getByIds(['1', '2'])).toEqual([entitiesMock['1'], entitiesMock['2']])
-		expect(panelsStore.getByStringId('Panel 1')).toEqual([allPanelsMock[0]])
+		expect(panelsStore.select.getById('1')).toEqual(entitiesMock['1'])
+		expect(panelsStore.select.getByIds(['1', '2'])).toEqual([entitiesMock['1'], entitiesMock['2']])
+		expect(panelsStore.select.getByStringId('Panel 1')).toEqual([allPanelsMock[0]])
 		expect(storeMock.dispatch).toHaveBeenCalledTimes(0)
 	})
 })

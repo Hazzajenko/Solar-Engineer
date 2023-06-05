@@ -1,2 +1,2 @@
 export * from './utils/index'
-export * from './pipes/index'
+// export * from './pipes/index'

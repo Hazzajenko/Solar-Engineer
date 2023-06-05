@@ -10,6 +10,7 @@ import {
 	PanelModel,
 	PolarityDirection,
 	StringCircuitChains,
+	StringId,
 	UNDEFINED_STRING_ID,
 } from '@entities/shared'
 import { assertNotNull, newGuid, selectSignalFromStore } from '@shared/utils'
@@ -48,7 +49,7 @@ export class PanelLinksService {
 	 const selectedStringId = this._selectedStringId()
 	 if (selectedStringId) {
 	 console.log('PanelLinksService: selectedStringId', selectedStringId)
-	 const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
+	 const panelLinks = this._panelLinksStore.select.getByStringId(selectedStringId)
 	 const curvedLines = preparePanelLinksForRender(panelLinks)
 	 console.log('PanelLinksService: curvedLines', curvedLines)
 	 this._selectedStringLinkLines = curvedLines
@@ -62,7 +63,7 @@ export class PanelLinksService {
 	 if (!selectedStringId) {
 	 return
 	 }
-	 const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
+	 const panelLinks = this._panelLinksStore.select.getByStringId(selectedStringId)
 	 this._selectedStringPanelLinks.set(panelLinks)
 	 const stringCircuitChains = prepareStringPanelLinkCircuitChain(
 	 panelLinks,
@@ -103,7 +104,7 @@ export class PanelLinksService {
 			console.error('panel must be in a string to link it')
 			return
 		}
-		const requestingLink = this._panelLinksStore.requestingLink
+		const requestingLink = this._panelLinksStore.select.requestingLink()
 		if (requestingLink) {
 			this.endPanelLink(event, panel, requestingLink)
 			return
@@ -113,7 +114,7 @@ export class PanelLinksService {
 
 	startPanelLink(event: PointerEvent, panel: PanelModel) {
 		const polarity = getStarterPolarityFromDirection(this.polarityDirection)
-		if (this._panelLinksStore.isPanelLinkExisting(panel.id, polarity)) {
+		if (this._panelLinksStore.select.isPanelLinkExisting(panel.id, polarity)) {
 			console.error('panel already has a positive link')
 			return
 		}
@@ -123,7 +124,7 @@ export class PanelLinksService {
 			stringId: panel.stringId,
 			panelId: panel.id,
 		}
-		this._panelLinksStore.startPanelLink(panelLinkRequest)
+		this._panelLinksStore.dispatch.startPanelLink(panelLinkRequest)
 		// this._panelLinksStore.startPanelLink(panelLinkRequest)
 	}
 
@@ -135,11 +136,11 @@ export class PanelLinksService {
 			return
 		}
 		const polarity = getEnderPolarityFromDirection(this.polarityDirection)
-		if (this._panelLinksStore.isPanelLinkExisting(panel.id, polarity)) {
+		if (this._panelLinksStore.select.isPanelLinkExisting(panel.id, polarity)) {
 			console.error('panel already has a negative link')
 			return
 		}
-		const requestingPanel = this._entities.panels.getById(requestingLink.panelId)
+		const requestingPanel = this._entities.panels.select.getById(requestingLink.panelId)
 		if (!requestingPanel) {
 			console.error('requestingPanel not found')
 			return
@@ -153,28 +154,29 @@ export class PanelLinksService {
 				requestingLink.direction === 'positive-to-negative' ? panel.id : requestingLink.panelId,
 			linePoints: calculateLinkLinesBetweenTwoPanelCenters(requestingPanel, panel), // linePoints: calculateLinkLinesBetweenTwoPanels(requestingPanel, panel),
 		}
-		this._panelLinksStore.addPanelLink(panelLink)
+		this._panelLinksStore.dispatch.addPanelLink(panelLink)
 		if (event.shiftKey) {
 			this.startPanelLink(event, panel)
 		} else {
-			this._panelLinksStore.endPanelLink()
+			this._panelLinksStore.dispatch.endPanelLink()
 		}
 	}
 
 	getPanelLinkOrderForSelectedString() {
 		const selectedStringId = this._selectedStore.selectedStringId
 		if (!selectedStringId) return
-		const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
+		const panelLinks = this._panelLinksStore.select.getByStringId(selectedStringId)
 		return getPanelLinkOrderSeparateChains(panelLinks)
 	}
 
-	getPanelLinkOrderForString(stringId: string) {
-		const panelLinks = this._panelLinksStore.getByStringId(stringId)
+	getPanelLinkOrderForString(stringId: StringId) {
+		const panelLinks = this._panelLinksStore.select.getByStringId(stringId)
+		// const panelLinks = this._panelLinksStore.select.getByStringId(stringId)
 		return getPanelLinkOrderSeparateChains(panelLinks)
 	}
 
 	clearPanelLinkRequest() {
-		this._panelLinksStore.endPanelLink()
+		this._panelLinksStore.dispatch.endPanelLink()
 	}
 
 	isMouseOverLinkPath(event: PointerEvent, currentPoint: TransformedPoint) {
@@ -183,7 +185,9 @@ export class PanelLinksService {
 			return
 		}
 
-		const panelLinks = this._entities.panelLinks.getByStringId(this._selectedStore.selectedStringId)
+		const panelLinks = this._entities.panelLinks.select.getByStringId(
+			this._selectedStore.selectedStringId,
+		)
 		if (!panelLinks.length) {
 			return
 		}
@@ -206,12 +210,14 @@ export class PanelLinksService {
 	}
 
 	handleLinkModeClickOnCanvas(event: PointerEvent, currentPoint: TransformedPoint) {
-		const panelLinkRequest = this._panelLinksStore.requestingLink
+		const panelLinkRequest = this._panelLinksStore.select.requestingLink()
+		// const panelLinkRequest = this._panelLinksStore.select.requestingLink()
 		if (panelLinkRequest) {
-			const nearbyPanelToLinkLine = this._entities.panels.getNearbyPanelInLinkModeExcludingOne(
-				currentPoint,
-				panelLinkRequest.panelId,
-			)
+			const nearbyPanelToLinkLine =
+				this._entities.panels.select.getNearbyPanelInLinkModeExcludingOne(
+					currentPoint,
+					panelLinkRequest.panelId,
+				)
 			if (nearbyPanelToLinkLine) {
 				this.endPanelLink(event, nearbyPanelToLinkLine, panelLinkRequest)
 				return
@@ -220,7 +226,7 @@ export class PanelLinksService {
 
 		const panelLink = this.isMouseOverLinkPath(event, currentPoint)
 		if (!panelLink) {
-			if (this._panelLinksStore.requestingLink) {
+			if (this._panelLinksStore.select.requestingLink()) {
 				this.clearPanelLinkRequest()
 			}
 			if (this._selectedStore.state.selectedPanelLinkId) {
@@ -239,14 +245,15 @@ export class PanelLinksService {
 		currentPoint: TransformedPoint,
 		pointer: PointerState, // pointer,
 	): Partial<CanvasRenderOptions> | undefined {
-		const panelLinkRequest = this._panelLinksStore.requestingLink
+		const panelLinkRequest = this._panelLinksStore.select.requestingLink()
 		if (panelLinkRequest) {
-			const panel = this._entities.panels.getById(panelLinkRequest.panelId)
+			const panel = this._entities.panels.select.getById(panelLinkRequest.panelId)
 			assertNotNull(panel)
-			const nearbyPanelToLinkLine = this._entities.panels.getNearbyPanelInLinkModeExcludingOne(
-				currentPoint,
-				panelLinkRequest.panelId,
-			)
+			const nearbyPanelToLinkLine =
+				this._entities.panels.select.getNearbyPanelInLinkModeExcludingOne(
+					currentPoint,
+					panelLinkRequest.panelId,
+				)
 			return {
 				panelLinkRequest: {
 					request: panelLinkRequest,
@@ -259,23 +266,25 @@ export class PanelLinksService {
 			// return
 		}
 
-		const panelUnderMouse = this._entities.panels.getPanelUnderMouse(currentPoint)
+		const panelUnderMouse = this._entities.panels.select.getPanelUnderMouse(currentPoint)
 		if (panelUnderMouse) {
 			const hoveringEntityId = pointer.hoveringOverPanelId
 			if (hoveringEntityId === panelUnderMouse.id) return
 			this._appState.setHoveringOverEntityState(panelUnderMouse.id)
-			if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-				this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
+			if (this._entities.panelLinks.select.hoveringOverPanelLinkInApp()) {
+				this._entities.panelLinks.dispatch.clearHoveringOverPanelLinkInApp()
 			}
 			return
 		}
 
 		const panelLinkUnderMouse = this.isMouseOverLinkPath(event, currentPoint)
 		if (panelLinkUnderMouse) {
-			const existingPanelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
+			const existingPanelLinkUnderMouse =
+				this._entities.panelLinks.select.hoveringOverPanelLinkInApp()
 			if (existingPanelLinkUnderMouse && existingPanelLinkUnderMouse.id === panelLinkUnderMouse.id)
 				return
-			this._entities.panelLinks.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
+			this._entities.panelLinks.dispatch.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
+			// this._entities.panelLinks.dispatch.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
 			return {
 				transformedPoint: currentPoint,
 			}
@@ -285,13 +294,15 @@ export class PanelLinksService {
 			 return*/
 		}
 
-		if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-			this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
+		if (this._entities.panelLinks.select.hoveringOverPanelLinkInApp()) {
+			// if (this._entities.panelLinks.select.hoveringOverPanelLinkInApp()) {
+			this._entities.panelLinks.dispatch.clearHoveringOverPanelLinkInApp()
+			// this._entities.panelLinks.dispatch.clearHoveringOverPanelLinkInApp()
 			// this._render.renderCanvasApp()
 			return {}
 		}
 
-		const entityUnderMouse = this._entities.panels.getPanelUnderMouse(currentPoint)
+		const entityUnderMouse = this._entities.panels.select.getPanelUnderMouse(currentPoint)
 		if (entityUnderMouse) {
 			const hoveringEntityId = pointer.hoveringOverPanelId
 			if (hoveringEntityId === entityUnderMouse.id) return

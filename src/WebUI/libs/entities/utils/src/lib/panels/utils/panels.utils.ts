@@ -10,7 +10,7 @@ import { EntityStore } from '@entities/data-access'
  ) => {
  const selectedStringId = selectedCtx.selectedStringId
  assertNotNull(selectedStringId)
- const selectedStringPanels = store.panels.getByStringId(selectedStringId)
+ const selectedStringPanels = store.panels.select.getByStringId(selectedStringId)
  return getCompleteBoundsFromMultipleEntitiesWithPadding(selectedStringPanels, 10)
  }*/
 export const getSelectedStringPanelBoundsByStringId = (
@@ -18,7 +18,7 @@ export const getSelectedStringPanelBoundsByStringId = (
 	selectedStringId: string,
 ) => {
 	assertNotNull(selectedStringId)
-	const selectedStringPanels = store.panels.getByStringId(selectedStringId)
+	const selectedStringPanels = store.panels.select.getByStringId(selectedStringId)
 	return getCompleteBoundsFromMultipleEntitiesWithPadding(selectedStringPanels, 10)
 }
 
@@ -53,7 +53,7 @@ export const getSelectedStringPanelBoundsByStringIdNgrx = (
 	selectedStringId: string,
 ) => {
 	assertNotNull(selectedStringId)
-	const selectedStringPanels = store.panels.getByStringId(selectedStringId) ?? []
+	const selectedStringPanels = store.panels.select.getByStringId(selectedStringId) ?? []
 	return getCompleteBoundsFromMultipleEntitiesWithPadding(selectedStringPanels, 10)
 }
 /*export const isPointInsideSelectedStringPanels = (
@@ -69,7 +69,7 @@ export const getSelectedStringPanelBoundsByStringIdNgrx = (
  selectedCtx: SelectedStateContext,
  ) => {
  const multipleSelectedIds = selectedCtx.multipleSelectedIds
- const selectedPanels = store.panels.getByIds(multipleSelectedIds)
+ const selectedPanels = store.panels.select.getByIds(multipleSelectedIds)
  return getCompleteBoundsFromMultipleEntitiesWithPadding(selectedPanels, 10)
  }
 

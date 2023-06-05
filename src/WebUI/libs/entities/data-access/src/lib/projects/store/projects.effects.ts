@@ -5,6 +5,7 @@ import { AuthActions } from '@auth/data-access'
 import { ProjectsHttpService, ProjectsSignalrService } from '../services'
 import { ProjectsActions } from './projects.actions'
 import { PanelsSignalrService } from '../../panels'
+import { injectEntityStore } from '../../shared'
 
 export const createProject$ = createEffect(
 	(actions$ = inject(Actions), projectsHttp = inject(ProjectsHttpService)) => {
@@ -56,10 +57,30 @@ export const selectUserProjectOnLoad$ = createEffect(
 		return actions$.pipe(
 			ofType(ProjectsActions.loadUserProjectsSuccess),
 			map(({ projects }) => {
-				return ProjectsActions.selectProject({ projectId: projects[0].id })
+				return ProjectsActions.selectProjectInitial({ projectId: projects[0].id })
 			}),
 			tap((action) => projectsSignalr.getProjectById(action.projectId, true)),
 		)
 	},
 	{ functional: true },
+)
+
+export const fetchProjectDataOnSelection$ = createEffect(
+	(
+		actions$ = inject(Actions),
+		entitiesStore = injectEntityStore(),
+		projectsSignalr = inject(ProjectsSignalrService),
+	) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.selectProject),
+			tap(({ projectId }) => {
+				entitiesStore.strings.dispatch.clearStringsState()
+				entitiesStore.panels.dispatch.clearPanelsState()
+				entitiesStore.panelLinks.dispatch.clearPanelLinksState()
+				entitiesStore.panelConfigs.dispatch.clearPanelConfigsState()
+				projectsSignalr.getProjectById(projectId)
+			}),
+		)
+	},
+	{ functional: true, dispatch: false },
 )

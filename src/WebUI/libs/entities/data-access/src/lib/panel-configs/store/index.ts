@@ -1,5 +1,6 @@
 export * from './panel-configs.actions'
 export * from './panel-configs.reducer'
+export * from './panel-configs.feature'
+export * from './panel-configs.effects'
 export * from './panel-configs.store'
 export * from './panel-configs.selectors'
-export * from './panel-configs-store.service'

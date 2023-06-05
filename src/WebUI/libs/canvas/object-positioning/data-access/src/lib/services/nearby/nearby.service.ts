@@ -53,7 +53,7 @@ export class NearbyService {
 	getDrawEntityPreviewV2Ngrx(event: PointerEvent, currentPoint: TransformedPoint) {
 		const size = SizeByType[ENTITY_TYPE.PANEL]
 		const mouseBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
-		const entities = this._entities.panels.allPanels
+		const entities = this._entities.panels.select.allPanels()
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBounds, entities)
 
 		if (!nearbyEntitiesOnAxis.length) {

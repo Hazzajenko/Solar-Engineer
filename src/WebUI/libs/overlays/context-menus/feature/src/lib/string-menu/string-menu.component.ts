@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject, Injector, OnInit } from '@a
 import { NgIf } from '@angular/common'
 import { ShowSvgComponent } from '@shared/ui'
 import { ContextMenuTemplateComponent } from '../context-menu-template/context-menu-template.component'
-import { GetStringWithPanelIdsPipe } from '@entities/utils'
 import { RenderService } from '@canvas/rendering/data-access'
 import {
 	CONTEXT_MENU_COMPONENT,
@@ -17,13 +16,7 @@ import { injectEntityStore } from '@entities/data-access'
 @Component({
 	selector: 'app-string-menu',
 	standalone: true,
-	imports: [
-		GetStringWithPanelIdsPipe,
-		NgIf,
-		ShowSvgComponent,
-		ContextMenuTemplateComponent,
-		ContextMenuDirective,
-	],
+	imports: [NgIf, ShowSvgComponent, ContextMenuTemplateComponent, ContextMenuDirective],
 	templateUrl: './string-menu.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,7 +42,9 @@ export class StringMenuComponent implements OnInit {
 			return
 		}
 		this.string = string
-		this.panelIds = this._entityStore.panels.getByStringId(string.id).map((panel) => panel.id)
+		this.panelIds = this._entityStore.panels.select
+			.getByStringId(string.id)
+			.map((panel) => panel.id)
 	}
 
 	// menuPosition!: Point
@@ -78,7 +73,7 @@ export class StringMenuComponent implements OnInit {
 	 console.error('String not found')
 	 return
 	 }
-	 const panelIds = this._entityStore.panels.getByStringId(string.id).map((panel) => panel.id)
+	 const panelIds = this._entityStore.panels.select.getByStringId(string.id).map((panel) => panel.id)
 	 if (!panelIds.length) {
 	 this._render.renderCanvasApp()
 	 this._uiStore.dispatch.closeContextMenu()

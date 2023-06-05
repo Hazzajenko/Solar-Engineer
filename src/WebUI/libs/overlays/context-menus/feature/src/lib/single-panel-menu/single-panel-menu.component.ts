@@ -73,7 +73,7 @@ export class SinglePanelMenuComponent implements OnInit {
 	})
 
 	ngOnInit() {
-		const panel = this._entityStore.panels.getById(this.contextMenu.data.panelId)
+		const panel = this._entityStore.panels.select.getById(this.contextMenu.data.panelId)
 		if (!panel) {
 			console.error('No panel')
 			this._render.renderCanvasApp()
@@ -89,12 +89,12 @@ export class SinglePanelMenuComponent implements OnInit {
 		if (linkMode && isInSelectedString) {
 			this.inLinkMode.set(true)
 			const { positiveToLink, negativeToLink } =
-				this._entityStore.panelLinks.getLinksMappedByPanelId(panel.id)
+				this._entityStore.panelLinks.select.getLinksMappedByPanelId(panel.id)
 			const positiveToPanel = positiveToLink
-				? this._entityStore.panels.getById(positiveToLink.negativePanelId)
+				? this._entityStore.panels.select.getById(positiveToLink.negativePanelId)
 				: undefined
 			const negativeToPanel = negativeToLink
-				? this._entityStore.panels.getById(negativeToLink.positivePanelId)
+				? this._entityStore.panels.select.getById(negativeToLink.positivePanelId)
 				: undefined
 			this.panelLinks.set({
 				positiveToLink,
@@ -110,7 +110,7 @@ export class SinglePanelMenuComponent implements OnInit {
 	}
 
 	deletePanel() {
-		this._entityStore.panels.deletePanel(this.panel.id)
+		this._entityStore.panels.dispatch.deletePanel(this.panel.id)
 		this._render.renderCanvasApp()
 		this._uiStore.dispatch.closeContextMenu()
 	}
@@ -122,7 +122,7 @@ export class SinglePanelMenuComponent implements OnInit {
 	) {
 		event.stopPropagation()
 		const polarity = polarityToLink.positivePanelId === polarityToPanel.id ? 'negative' : 'positive'
-		this._entityStore.panelLinks.setHoveringOverPanelLinkInLinkMenu({
+		this._entityStore.panelLinks.dispatch.setHoveringOverPanelLinkInLinkMenu({
 			panelId: polarityToPanel.id,
 			panelLinkId: polarityToLink.id,
 			polarity,
@@ -131,7 +131,7 @@ export class SinglePanelMenuComponent implements OnInit {
 
 	leavePolarityPanel(event: PointerEvent) {
 		event.stopPropagation()
-		this._entityStore.panelLinks.clearHoveringOverPanelLinkInLinkMenu()
+		this._entityStore.panelLinks.dispatch.clearHoveringOverPanelLinkInLinkMenu()
 	}
 
 	setPanelAsDisconnectionPoint() {

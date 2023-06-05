@@ -55,7 +55,7 @@ export class MovePanelsToStringDialogComponent {
 		const amountOfStrings = this._entities.strings.select.allStrings().length
 		const { string, panelUpdates } = createStringWithPanelsV2(multipleSelectedIds, amountOfStrings)
 		this._entities.strings.dispatch.addString(string)
-		this._entities.panels.updateManyPanels(panelUpdates)
+		this._entities.panels.dispatch.updateManyPanels(panelUpdates)
 		this._selectedStore.selectString(string.id)
 		this._render.renderCanvasApp()
 		this._uiStore.dispatch.closeDialog()

@@ -5,11 +5,21 @@ import { ProjectId, ProjectModel } from '@entities/shared'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
 
+export type ProjectEntityStore = 'panels' | 'strings' | 'panelLinks' | 'panelConfigs'
+// export const initialStoresArray = ['panels', 'strings', 'panelLinks', 'panelConfigs']
+const initialStoresObject = {
+	panels: false,
+	strings: false,
+	panelLinks: false,
+	panelConfigs: false,
+}
+
 export interface ProjectsState extends EntityState<ProjectModel> {
 	selectedProjectId: ProjectId | undefined
-	panelsReadyToRender: boolean
-	stringsReadyToRender: boolean
-	// panelLinksReadyToRender: boolean
+	storesToInit: typeof initialStoresObject
+	storesToClear: typeof initialStoresObject
+	/*	storesToInit: Map<ProjectEntityStore, boolean> | null
+	 storesToClear: Map<ProjectEntityStore, boolean> | null*/
 	loaded: boolean
 	error?: string | null
 }
@@ -20,20 +30,26 @@ export const projectsAdapter: EntityAdapter<ProjectModel> = createEntityAdapter<
 
 export const initialProjectsState: ProjectsState = projectsAdapter.getInitialState({
 	selectedProjectId: undefined,
-	panelsReadyToRender: false,
-	stringsReadyToRender: false,
+	storesToInit: initialStoresObject,
+	storesToClear: initialStoresObject,
 	loaded: false,
 })
 
 const reducer = createReducer(
 	initialProjectsState,
-	on(ProjectsActions.panelsStoreInitialized, (state) => ({
+	on(ProjectsActions.projectEntityStoreInitialized, (state, { store }) => ({
 		...state,
-		panelsReadyToRender: true,
+		storesToInit: {
+			...state.storesToInit,
+			[store]: true,
+		},
 	})),
-	on(ProjectsActions.stringsStoreInitialized, (state) => ({
+	on(ProjectsActions.projectEntityStoreCleared, (state, { store }) => ({
 		...state,
-		stringsReadyToRender: true,
+		storesToClear: {
+			...state.storesToClear,
+			[store]: true,
+		},
 	})),
 	on(ProjectsActions.loadUserProjectsSuccess, (state, { projects }) => ({
 		...state,
@@ -47,8 +63,13 @@ const reducer = createReducer(
 	on(ProjectsActions.selectProject, (state, { projectId }) => ({
 		...state,
 		selectedProjectId: projectId,
+		storesToInit: initialStoresObject,
+		storesToClear: initialStoresObject,
 	})),
-
+	on(ProjectsActions.selectProjectInitial, (state, { projectId }) => ({
+		...state,
+		selectedProjectId: projectId,
+	})),
 	on(ProjectsActions.addProject, (state, { project }) => projectsAdapter.addOne(project, state)),
 	on(ProjectsActions.addManyProjects, (state, { projects }) =>
 		projectsAdapter.addMany(projects, state),

@@ -204,7 +204,7 @@
  dragBoxStart: undefined,
  },
  })*!/
- this._entities.panels.addManyPanels(newPanels)
+ this._entities.panels.dispatch.addManyPanels(newPanels)
  // this._state.entities.panels.addManyEntities(newPanels)
  this._appStore.setDragBoxState({
  state: 'NoDragBox',

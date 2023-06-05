@@ -39,12 +39,7 @@ import {
 	ObjectRotatingService,
 } from '@canvas/object-positioning/data-access'
 import { injectSelectedStore, SelectedService } from '@canvas/selected/data-access'
-import {
-	EntityFactoryService,
-	injectEntityStore,
-	PanelLinksService,
-	PanelLinksStoreService,
-} from '@entities/data-access'
+import { EntityFactoryService, injectEntityStore, PanelLinksService } from '@entities/data-access'
 import { ViewPositioningService } from '@canvas/view-positioning/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { CONTEXT_MENU_COMPONENT, UiStoreService } from '@overlays/ui-store/data-access'
@@ -98,7 +93,6 @@ export class DesignCanvasDirective implements OnInit {
 	private _renderer = inject(Renderer2)
 	private _canvasEl = inject(CanvasElementService)
 	private _panelLinks = inject(PanelLinksService)
-	private _panelLinksStore = inject(PanelLinksStoreService)
 	private _objRotating = inject(ObjectRotatingService)
 	private _objPositioning = inject(ObjectPositioningService)
 	private _entityFactory = inject(EntityFactoryService)
@@ -142,7 +136,7 @@ export class DesignCanvasDirective implements OnInit {
 	}
 
 	private get allPanels() {
-		return this._entities.panels.allPanels
+		return this._entities.panels.select.allPanels()
 	}
 
 	private get allStrings() {
@@ -349,7 +343,7 @@ export class DesignCanvasDirective implements OnInit {
 				event,
 				currentPoint,
 				dragBox.start,
-				this._entities.panels.allPanels,
+				this._entities.panels.select.allPanels(),
 				this._appState,
 			)
 			if (renderOptions) this._render.renderCanvasApp(renderOptions)
@@ -465,7 +459,7 @@ export class DesignCanvasDirective implements OnInit {
 			selectionBoxMouseUp(
 				currentPoint,
 				dragBox.start,
-				this._entities.panels.allPanels,
+				this._entities.panels.select.allPanels(),
 				this._appState,
 				this._selectedStore,
 			)
@@ -476,7 +470,7 @@ export class DesignCanvasDirective implements OnInit {
 			creationBoxMouseUp(
 				currentPoint,
 				dragBox.start,
-				this._entities.panels.allPanels,
+				this._entities.panels.select.allPanels(),
 				this._appState,
 				this._entities.panels,
 			)
@@ -622,7 +616,7 @@ export class DesignCanvasDirective implements OnInit {
 			 }*/
 		}
 
-		if (this._panelLinksStore.state.requestingLink) {
+		if (this._entities.panelLinks.select.requestingLink()) {
 			this._panelLinks.clearPanelLinkRequest()
 			return
 		}
@@ -653,7 +647,7 @@ export class DesignCanvasDirective implements OnInit {
 		 const entity = selectedStringId
 		 ? createPanel(previewRectLocation, selectedStringId)
 		 : createPanel(previewRectLocation)
-		 this._entities.panels.addPanel(entity)
+		 this._entities.panels.dispatch.addPanel(entity)
 		 this._nearby.axisPreviewRect = undefined
 		 this._appState.dispatch.setPreviewAxisState('None')
 
@@ -669,7 +663,7 @@ export class DesignCanvasDirective implements OnInit {
 		 const entity = selectedStringId
 		 ? createPanel(location, selectedStringId)
 		 : createPanel(location)
-		 this._entities.panels.addPanel(entity)
+		 this._entities.panels.dispatch.addPanel(entity)
 
 		 this._render.renderCanvasApp()*/
 	}
@@ -767,7 +761,8 @@ export class DesignCanvasDirective implements OnInit {
 
 		const selectedStringId = this._selectedStore.state.selectedStringId
 		if (selectedStringId) {
-			const selectedStringPanels = this._entities.panels.getByStringId(selectedStringId) ?? []
+			const selectedStringPanels =
+				this._entities.panels.select.getByStringId(selectedStringId) ?? []
 			const pointInsideSelectedStringPanels =
 				isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels(
 					selectedStringPanels,
@@ -791,7 +786,7 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		if (this._selectedStore.state.multipleSelectedPanelIds.length > 0) {
-			const selectedPanels = this._entities.panels.getByIds(
+			const selectedPanels = this._entities.panels.select.getByIds(
 				this._selectedStore.state.multipleSelectedPanelIds,
 			)
 			const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
@@ -936,7 +931,7 @@ export class DesignCanvasDirective implements OnInit {
 			event,
 			currentPoint,
 			start,
-			this._entities.panels.allPanels,
+			this._entities.panels.select.allPanels(),
 			this._appState,
 		)
 		if (renderOptions) {
@@ -961,7 +956,7 @@ export class DesignCanvasDirective implements OnInit {
 			dragBoxOnMouseUpHandler(
 				currentPoint,
 				dragBox.start,
-				this._entities.panels.allPanels,
+				this._entities.panels.select.allPanels(),
 				this._appState,
 				this._selectedStore,
 				this._entities.panels,

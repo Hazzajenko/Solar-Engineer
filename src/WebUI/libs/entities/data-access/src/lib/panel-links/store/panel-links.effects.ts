@@ -1,28 +1,56 @@
-/*export const updatePanelLinkLinesOnChange$ = createEffect(
- (
- actions$ = inject(Actions),
- _panelLinks = inject(PanelLinksService),
- _selectedStore = injectSelectedStore(),
- ) => {
- return actions$.pipe(
- ofType(...getAllActions(PanelsActions), ...getAllActions(PanelLinksActions)),
- tap(() => {
- if (_selectedStore.selectedStringId) {
- _panelLinks.updateSelectedStringLinkLines()
- }
- }),
- )
- },
- { functional: true, dispatch: false },
- )*/
-
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
 import { map } from 'rxjs'
-import { injectPanelLinksStore, PanelLinksActions, PanelsActions, prepareStringCircuitChainForRender } from '@entities/data-access'
+import {
+	injectPanelLinksStore,
+	PanelLinksActions,
+	PanelsActions,
+	prepareStringCircuitChainForRender,
+	ProjectsActions,
+} from '@entities/data-access'
 import { StringCircuitWithIndex } from '@entities/shared'
 import { getAllActions } from '@shared/utils'
 import { injectSelectedStore } from '@canvas/selected/data-access'
+
+export const panelLinksStoreInitialized$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(PanelLinksActions.loadPanelLinks),
+			map(() => {
+				return ProjectsActions.projectEntityStoreInitialized({
+					store: 'panelLinks',
+				})
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+/*export const panelLinksStoreToClear$ = createEffect(
+ (actions$ = inject(Actions)) => {
+ return actions$.pipe(
+ ofType(ProjectsActions.selectProject),
+ map(() => {
+ return PanelLinksActions.clearPanelLinksState()
+ }),
+ )
+ },
+ { functional: true },
+ )
+
+ export const panelLinksStoreCleared$ = createEffect(
+ (actions$ = inject(Actions)) => {
+ return actions$.pipe(
+ ofType(PanelLinksActions.clearPanelLinksState),
+ map(() => {
+ return ProjectsActions.projectEntityStoreCleared({
+ store: 'panelLinks',
+ })
+ }),
+ )
+ },
+ { functional: true },
+ )*/
 
 export const updateSelectedStringCircuitOnChange$ = createEffect(
 	(
@@ -36,18 +64,14 @@ export const updateSelectedStringCircuitOnChange$ = createEffect(
 				PanelLinksActions.addPanelLink,
 				PanelLinksActions.updatePanelLink,
 				PanelLinksActions.updateManyPanelLinks,
-				PanelLinksActions.deletePanelLink, // PanelLinksActions.deletePanelLink,
-				// PanelLinksActions.removePanelLink,
-				// PanelLinksActions.updatePanelLink,
-				// ...getAllActionsExcept(PanelLinksActions, ['setSelectedStringCircuit', 'noop']),
-			), // ofType(...getAllActions(PanelsActions), ...getAllActions(PanelLinksActions)),
+				PanelLinksActions.deletePanelLink,
+			),
 			map(() => {
 				const selectedStringId = _selectedStore.selectedStringId
 				if (!selectedStringId) {
 					return PanelLinksActions.noop()
-					// return
 				}
-				const panelLinks = _panelLinksStore.getByStringId(selectedStringId)
+				const panelLinks = _panelLinksStore.select.getByStringId(selectedStringId)
 				const selectedStringCircuit: StringCircuitWithIndex =
 					prepareStringCircuitChainForRender(panelLinks)
 				return PanelLinksActions.setSelectedStringCircuit({
@@ -58,18 +82,3 @@ export const updateSelectedStringCircuitOnChange$ = createEffect(
 	},
 	{ functional: true },
 )
-/*
-
- const updateSelectedStringLinkLines = () => {
- const selectedStringId = this._selectedStringId()
- if (!selectedStringId) {
- return
- }
- const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
- this._selectedStringPanelLinks.set(panelLinks)
- const stringCircuitChains = prepareStringPanelLinkCircuitChain(panelLinks) as StringCircuitChains
- this._selectedStringCircuitChains.set(stringCircuitChains)
- const stringCircuitChain = preparePanelLinksForRender(stringCircuitChains)
- this._selectedStringLinkToLinesTuple.set(stringCircuitChain)
- }
- */

@@ -13,13 +13,40 @@ export const stringsStoreInitialized$ = createEffect(
 		return actions$.pipe(
 			ofType(StringsActions.loadStrings),
 			map(() => {
-				return ProjectsActions.stringsStoreInitialized()
+				return ProjectsActions.projectEntityStoreInitialized({
+					store: 'strings',
+				})
 			}),
 		)
 	},
 	{ functional: true },
 )
 
+/*export const stringsStoreToClear$ = createEffect(
+ (actions$ = inject(Actions)) => {
+ return actions$.pipe(
+ ofType(ProjectsActions.selectProject),
+ map(() => {
+ return StringsActions.clearStringsState()
+ }),
+ )
+ },
+ { functional: true },
+ )
+
+ export const stringsStoreCleared$ = createEffect(
+ (actions$ = inject(Actions)) => {
+ return actions$.pipe(
+ ofType(StringsActions.clearStringsState),
+ map(() => {
+ return ProjectsActions.projectEntityStoreCleared({
+ store: 'strings',
+ })
+ }),
+ )
+ },
+ { functional: true },
+ )*/
 export const createStringNotification$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(

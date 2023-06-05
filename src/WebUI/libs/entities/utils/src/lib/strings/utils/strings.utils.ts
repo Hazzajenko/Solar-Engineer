@@ -15,7 +15,7 @@ export const genStringNameV3 = (amountOfStrings: number): string => {
 
 /*export const createStringWithPanels = (entities: EntityStore, selectedPanelIds: string[]) => {
  const string = createString()
- const panels = entities.panels.getByIds(selectedPanelIds)
+ const panels = entities.panels.select.getByIds(selectedPanelIds)
  const panelUpdates = panels.map(updateObjectByIdForStoreV3<CanvasPanel>({ stringId: string.id }))
 
  return { string, panelUpdates }

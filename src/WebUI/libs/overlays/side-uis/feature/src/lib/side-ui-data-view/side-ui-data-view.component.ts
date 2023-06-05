@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core'
 
 import { toSignal } from '@angular/core/rxjs-interop'
 import { NgClass, NgForOf, NgIf, NgTemplateOutlet } from '@angular/common'
@@ -6,14 +6,14 @@ import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 // import { groupBy } from '@shared/utils'
 import { LetDirective } from '@ngrx/component'
 import { RadiansToDegreesPipe, TruncatePipe } from '@shared/pipes'
-import { GetStringByIdPipe, GetStringWithPanelIdsPipe, IsTypeOfPanelPipe } from '@entities/utils'
+import { IsTypeOfPanelPipe } from '@entities/utils'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { injectSelectedStore } from '@canvas/selected/data-access'
 import { PanelId, StringId, UNDEFINED_STRING_ID } from '@entities/shared'
-import { groupBy } from 'lodash'
-import { map } from 'rxjs'
+// import { groupBy } from 'lodash'
 import { injectEntityStore } from '@entities/data-access'
+import { groupBy } from '@shared/utils'
 
 @Component({
 	selector: 'side-ui-data-view',
@@ -21,9 +21,7 @@ import { injectEntityStore } from '@entities/data-access'
 	imports: [
 		NgForOf,
 		NgIf,
-		GetStringByIdPipe,
 		ShowSvgComponent,
-		GetStringWithPanelIdsPipe,
 		LetDirective,
 		ShowSvgNoStylesComponent,
 		TruncatePipe,
@@ -48,9 +46,7 @@ export class SideUiDataViewComponent {
 	private _render = inject(RenderService)
 	private _selectedStore = injectSelectedStore()
 	// private _selectedStore = inject(SelectedStoreService)
-	private _panels = toSignal(this._entityStore.panels.allPanels$, {
-		initialValue: this._entityStore.panels.allPanels,
-	})
+	private _panels = this._entityStore.panels.select.allPanels
 	// private _panels = this._entityStore.panels.allPanels
 	private _strings = this._entityStore.strings.select.allStrings
 	private _multipleSelectedPanelIds = toSignal(this._selectedStore.multipleSelectedEntityIds$, {
@@ -62,19 +58,42 @@ export class SideUiDataViewComponent {
 	private _selectedStringId = toSignal(this._selectedStore.selectedStringId$, {
 		initialValue: this._selectedStore.selectedStringId,
 	})
-	private _panelsGroupedByStringId$ = this._entityStore.panels.allPanels$.pipe(
-		map((panels) => {
-			const grouped = groupBy(panels, 'stringId')
-			const entries = Object.entries(grouped)
-			return entries.map(([stringId, panels]) => {
-				return {
-					string: this._entityStore.strings.select.getById(stringId as StringId),
-					panels,
-				}
-			})
-		}),
-	)
-	private _panelsGroupedByStringId = toSignal(this._panelsGroupedByStringId$)
+	/*	private _panelsGroupedByStringId$ = this._entityStore.panels.allPanels$.pipe(
+	 map((panels) => {
+	 const grouped = groupBy(panels, 'stringId')
+	 const entries = Object.entries(grouped)
+	 return entries.map(([stringId, panels]) => {
+	 return {
+	 string: this._entityStore.strings.select.getById(stringId as StringId),
+	 panels,
+	 }
+	 })
+	 }),
+	 )*/
+	private _panelsGroupedByStringId = computed(() => {
+		const panels = this._entityStore.panels.select.allPanels()
+		const grouped = groupBy(panels, 'stringId')
+		const entries = Object.entries(grouped)
+		return entries.map(([stringId, panels]) => {
+			return {
+				string: this._entityStore.strings.select.getById(stringId as StringId),
+				panels,
+			}
+		})
+		/*return this._entityStore.panels.select.allPanels().map((panels) => {
+		 // const toGroup = panels as Record<PropertyKey, keyof PanelModel>
+		 // const grouped = groupBy(panels as Re, 'stringId')
+		 // const grouped = groupBy(panels, 'stringId')
+		 const entries = Object.entries(grouped)
+		 return entries.map(([stringId, panels]) => {
+		 return {
+		 string: this._entityStore.strings.select.getById(stringId as StringId),
+		 panels,
+		 }
+		 })
+		 })*/
+	})
+	// private _panelsGroupedByStringId = toSignal(this._panelsGroupedByStringId$)
 	_openedStrings = signal<Map<StringId, boolean>>(new Map().set(UNDEFINED_STRING_ID, true))
 	protected readonly UndefinedStringId = UNDEFINED_STRING_ID
 

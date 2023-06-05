@@ -1,14 +1,22 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { CreateProjectRequest, ProjectId, ProjectModel } from '@entities/shared'
+import { ProjectEntityStore } from './projects.reducer'
 
 export const ProjectsActions = createActionGroup({
 	source: 'Projects Store',
 	events: {
-		'Panels Store Initialized': emptyProps(),
-		'Strings Store Initialized': emptyProps(),
+		'Project Entity Store Initialized': props<{
+			store: ProjectEntityStore
+		}>(),
+		'Project Entity Store Cleared': props<{
+			store: ProjectEntityStore
+		}>(),
 		'Create Project Http': props<CreateProjectRequest>(),
 		'Select Project': props<{
+			projectId: ProjectId
+		}>(),
+		'Select Project Initial': props<{
 			projectId: ProjectId
 		}>(),
 		'Load User Projects': emptyProps(),

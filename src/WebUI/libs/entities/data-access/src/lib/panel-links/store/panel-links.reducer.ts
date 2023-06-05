@@ -1,6 +1,6 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { PanelLinkFromMenu, PanelLinkModel, PanelLinkRequest, PanelSymbol, StringCircuitWithIndex } from '@entities/shared'
+import { PanelId, PanelLinkFromMenu, PanelLinkModel, PanelLinkRequest, PanelSymbol, StringCircuitWithIndex } from '@entities/shared'
 import { PanelLinksActions } from './panel-links.actions'
 
 /*export type LinkPathLine = {
@@ -12,7 +12,7 @@ export interface PanelLinksState extends EntityState<PanelLinkModel> {
 	loaded: boolean
 	error?: string | null
 	requestingLink: PanelLinkRequest | undefined
-	hoveringOverPanelInLinkMenuId: string | undefined
+	hoveringOverPanelInLinkMenuId: PanelId | undefined
 	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined
 	hoveringOverPanelLinkInApp: string | undefined
 	hoveringOverPanelPolaritySymbol: PanelSymbol | undefined

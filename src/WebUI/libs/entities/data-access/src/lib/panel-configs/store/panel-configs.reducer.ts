@@ -1,8 +1,7 @@
 import { PanelConfigsActions } from './panel-configs.actions'
 import { PanelConfigModel } from '@entities/shared'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
-import { Action, createReducer, on, provideState } from '@ngrx/store'
-import { makeEnvironmentProviders } from '@angular/core'
+import { Action, createReducer, on } from '@ngrx/store'
 
 export const PANEL_CONFIGS_FEATURE_KEY = 'panelConfigs'
 
@@ -69,51 +68,3 @@ const reducer = createReducer(
 export function panelConfigsReducer(state: PanelConfigsState | undefined, action: Action) {
 	return reducer(state, action)
 }
-
-export function providePanelConfigsFeature() {
-	return makeEnvironmentProviders([provideState(PANEL_CONFIGS_FEATURE_KEY, panelConfigsReducer)])
-}
-
-/*
-
- export function injectPanelConfigsFeature() {
- const store = inject(Store)
- const allPanelConfigs = store.selectSignal(selectAllPanelConfigs)
- const entities = store.selectSignal(selectPanelConfigsEntities)
-
- return {
- get allPanelConfigs() {
- return allPanelConfigs
- },
- getById(id: string) {
- return entities()[id]
- },
- getByIds(ids: string[]) {
- return ids.map((id) => entities()[id]).filter(isNotNull)
- },
- addPanelConfig(panelConfig: PanelConfig) {
- store.dispatch(PanelConfigsActions.addPanelConfig({ panelConfig }))
- },
- addManyPanelConfigs(panelConfigs: PanelConfig[]) {
- store.dispatch(PanelConfigsActions.addManyPanelConfigs({ panelConfigs }))
- },
- updatePanelConfig(update: UpdateStr<PanelConfig>) {
- store.dispatch(PanelConfigsActions.updatePanelConfig({ update }))
- },
- updateManyPanelConfigs(updates: UpdateStr<PanelConfig>[]) {
- store.dispatch(PanelConfigsActions.updateManyPanelConfigs({ updates }))
- },
- deletePanelConfig(id: string) {
- store.dispatch(PanelConfigsActions.deletePanelConfig({ panelConfigId: id }))
- },
- deleteManyPanelConfigs(ids: string[]) {
- store.dispatch(PanelConfigsActions.deleteManyPanelConfigs({ panelConfigIds: ids }))
- },
- clearPanelConfigsState() {
- store.dispatch(PanelConfigsActions.clearPanelConfigsState())
- },
- }
- }
-
- export type PanelConfigsFeature = ReturnType<typeof injectPanelConfigsFeature>
- */

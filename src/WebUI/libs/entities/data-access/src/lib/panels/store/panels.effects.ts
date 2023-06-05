@@ -8,18 +8,47 @@ import { injectPanelLinksStore, PanelLinksActions } from '../../panel-links'
 import { assertNotNull } from '@shared/utils'
 import { injectPanelsStore } from './panels.store'
 import { ProjectsActions } from '../../projects'
+import { PanelId } from '@entities/shared'
 
 export const panelsStoreInitialized$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(
 			ofType(PanelsActions.loadPanels),
 			map(() => {
-				return ProjectsActions.panelsStoreInitialized()
+				return ProjectsActions.projectEntityStoreInitialized({
+					store: 'panels',
+				})
 			}),
 		)
 	},
 	{ functional: true },
 )
+
+/*export const panelsStoreToClear$ = createEffect(
+ (actions$ = inject(Actions)) => {
+ return actions$.pipe(
+ ofType(ProjectsActions.selectProject),
+ map(() => {
+ return PanelsActions.clearPanelsState()
+ }),
+ )
+ },
+ { functional: true },
+ )
+
+ export const panelsStoreCleared$ = createEffect(
+ (actions$ = inject(Actions)) => {
+ return actions$.pipe(
+ ofType(PanelsActions.clearPanelsState),
+ map(() => {
+ return ProjectsActions.projectEntityStoreCleared({
+ store: 'panels',
+ })
+ }),
+ )
+ },
+ { functional: true },
+ )*/
 export const removeSelectedIfDeleted$ = createEffect(
 	(actions$ = inject(Actions), selectedStore = injectSelectedStore()) => {
 		return actions$.pipe(
@@ -54,11 +83,11 @@ export const updatePanelLinkPaths$ = createEffect(
 				if (!update.changes.location) {
 					return PanelLinksActions.noop()
 				}
-				const linkForPanel = panelLinksStore.getByPanelId(update.id)
+				const linkForPanel = panelLinksStore.select.getByPanelId(update.id as PanelId)
 				const updates = linkForPanel.map((panelLink) => {
-					const positivePanel = panelsStore.getById(panelLink.positivePanelId)
+					const positivePanel = panelsStore.select.getById(panelLink.positivePanelId)
 					assertNotNull(positivePanel)
-					const negativePanel = panelsStore.getById(panelLink.negativePanelId)
+					const negativePanel = panelsStore.select.getById(panelLink.negativePanelId)
 					assertNotNull(negativePanel)
 					const linePoints = calculateLinkLinesBetweenTwoPanelCenters(positivePanel, negativePanel)
 					return { id: panelLink.id, changes: { linePoints } }
@@ -84,12 +113,12 @@ export const updateManyPanelLinksPaths$ = createEffect(
 				if (updatesWithLocation.length === 0) {
 					return PanelLinksActions.noop()
 				}
-				const panelIds = updatesWithLocation.map((update) => update.id)
-				const linksForPanels = panelLinksStore.getByPanelIds(panelIds)
+				const panelIds = updatesWithLocation.map((update) => update.id) as PanelId[]
+				const linksForPanels = panelLinksStore.select.getByPanelIds(panelIds)
 				const updatedLinks = linksForPanels.map((panelLink) => {
-					const positivePanel = panelsStore.getById(panelLink.positivePanelId)
+					const positivePanel = panelsStore.select.getById(panelLink.positivePanelId)
 					assertNotNull(positivePanel)
-					const negativePanel = panelsStore.getById(panelLink.negativePanelId)
+					const negativePanel = panelsStore.select.getById(panelLink.negativePanelId)
 					assertNotNull(negativePanel)
 					const linePoints = calculateLinkLinesBetweenTwoPanelCenters(positivePanel, negativePanel)
 					return { id: panelLink.id, changes: { linePoints } }

@@ -13,7 +13,7 @@ import { EntityStore, StringsStatsService } from '@entities/data-access'
  assertNotNull(selectedStringId)
  const string = entityStore.strings.select.getById(selectedStringId)
  assertNotNull(string)
- const selectedStringPanels = entityStore.panels.getByStringId(selectedStringId)
+ const selectedStringPanels = entityStore.panels.select.getByStringId(selectedStringId)
 
  const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
  selectedStringPanels,
@@ -43,7 +43,7 @@ export const drawSelectedStringBoxV2 = (
 	assertNotNull(selectedStringId)
 	const string = entityStore.strings.select.getById(selectedStringId)
 	assertNotNull(string)
-	const selectedStringPanels = entityStore.panels.getByStringId(selectedStringId)
+	const selectedStringPanels = entityStore.panels.select.getByStringId(selectedStringId)
 
 	const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
 		selectedStringPanels,
