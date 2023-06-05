@@ -21,7 +21,7 @@ export const genStringNameV3 = (amountOfStrings: number): string => {
  return { string, panelUpdates }
  }*/
 
-export const createStringWithPanelsV2 = (selectedPanelIds: string[], amountOfStrings: number) => {
+export const createStringWithPanelsV2 = (selectedPanelIds: PanelId[], amountOfStrings: number) => {
 	const name = genStringNameV3(amountOfStrings)
 	const string = createString(name)
 	const panelUpdates = selectedPanelIds.map((panelId) => ({

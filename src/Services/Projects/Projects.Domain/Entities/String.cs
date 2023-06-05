@@ -15,7 +15,7 @@ public class String : IEntity, IProjectItem, IUserObject
         Guid projectId,
         Guid appUserId,
         string name,
-        string color,
+        string colour,
         bool parallel,
         List<Panel> panels = null!
     )
@@ -24,7 +24,7 @@ public class String : IEntity, IProjectItem, IUserObject
         ProjectId = projectId;
         CreatedById = appUserId;
         Name = name;
-        Color = color;
+        Colour = colour;
         Parallel = parallel;
     }
 
@@ -32,7 +32,7 @@ public class String : IEntity, IProjectItem, IUserObject
         Guid projectId,
         Guid appUserId,
         string name,
-        string color,
+        string colour,
         bool parallel,
         List<Panel>? panels = null!
     )
@@ -40,7 +40,7 @@ public class String : IEntity, IProjectItem, IUserObject
         ProjectId = projectId;
         CreatedById = appUserId;
         Name = name;
-        Color = color;
+        Colour = colour;
         Parallel = parallel;
         Panels = panels ?? new List<Panel>();
     }
@@ -50,7 +50,7 @@ public class String : IEntity, IProjectItem, IUserObject
     }
 
     public string Name { get; set; } = default!;
-    public string Color { get; set; } = default!;
+    public string Colour { get; set; } = default!;
     public bool Parallel { get; set; }
     public ICollection<Panel> Panels { get; set; } = default!;
     public ICollection<PanelLink> PanelLinks { get; set; } = default!;

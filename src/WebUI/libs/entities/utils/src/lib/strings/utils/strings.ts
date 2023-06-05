@@ -20,7 +20,7 @@ export const createString = (
 	return {
 		id: newGuid() as StringId,
 		name,
-		color,
+		colour: color,
 		parallel,
 		disconnectionPointId: undefined,
 		type: ENTITY_TYPE.STRING,
@@ -32,7 +32,7 @@ export const CanvasStringFactory = {
 		return {
 			id: newGuid() as StringId,
 			name,
-			color,
+			colour: color,
 			parallel,
 			disconnectionPointId: undefined,
 			type: ENTITY_TYPE.STRING,

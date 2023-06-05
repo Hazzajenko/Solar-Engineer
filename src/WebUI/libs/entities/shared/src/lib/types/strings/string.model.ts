@@ -6,7 +6,7 @@ export type StringBackendModel = StringModel & BackendDataModel
 
 export type StringModel = {
 	id: StringId
-	color: string
+	colour: string
 	name: string
 	parallel: boolean
 	disconnectionPointId: PanelId | undefined

@@ -39,48 +39,23 @@ public class CreateStringHandler : ICommandHandler<CreateStringCommand, bool>
             );
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
-        var stringId = command.Request.Id;
+        var stringId = command.Request.String.Id;
         if (stringId == "undefined")
             throw new HubException("String Id is undefined");
 
-        // String @string;
-
-        var panelIds = command.Request.PanelIds;
+        var panelIds = command.Request.PanelUpdates;
         IEnumerable<Guid> panelIdGuids = new List<Guid>();
-        if (panelIds is not null && panelIds.Any())
+        if (panelIds.Any())
             panelIdGuids = panelIds.Select(x => x.Id.ToGuid());
-        // var panelIdGuids = panelIds.Any() ? panelIds.Select(x => x.Id.ToGuid());
         IEnumerable<Panel>? panels = null;
-        /*  if (panelIdGuids.Any())
-         {
-             panels = await _unitOfWork.PanelsRepository.GetManyPanelsAsync(projectId, panelIdGuids);
-             if (panels.Count() != panelIdGuids.Count())
-                 throw new HubException("One or more panels not found");
-             // @string = String.CreateWithPanelNoIds(command.Request, projectId, appUserId, panels);
-             // @string = String.CreateWithPanels(command.Request, projectId, appUserId, panels);
-             // panels = panels.Select(x => Panel.AddStringId(x, @string.Id));
-             // panels = panels.Select(x => x.AddString(@string));
-         }
-         else
-         {
-             // @string = String.Create(command.Request, projectId, appUserId);
-         }*/
+
         var @string = String.Create(
-            (command.Request.Id, command.Request.Name, command.Request.Color),
+            (command.Request.String.Id, command.Request.String.Name, command.Request.String.Color),
             projectId,
             appUserId
         );
-        // var @string = String.CreateNoId(command.Request, projectId, appUserId);
-        // var @string = String.Create(command.Request, projectId, appUserId);
 
         @string = await _unitOfWork.StringsRepository.AddAndSaveChangesAsync(@string);
-        // await _unitOfWork.StringsRepository.AddAsync(@string);
-
-        /*
-        if (panels is not null && panels.Any())
-            await _unitOfWork.PanelsRepository.UpdateManyAndSaveChangesAsync(panels);*/
-
-        // await _unitOfWork.SaveChangesAsync();
 
         if (panelIdGuids.Any())
         {

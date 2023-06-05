@@ -1,6 +1,7 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { PanelId, PanelModel } from '@entities/shared'
+import { EntityUpdate } from '@shared/data-access/models'
 
 export const PanelsActions = createActionGroup({
 	source: 'Panels Store',
@@ -19,6 +20,9 @@ export const PanelsActions = createActionGroup({
 		}>(),
 		'Update Many Panels': props<{
 			updates: UpdateStr<PanelModel>[]
+		}>(),
+		'Update Many Panels With String': props<{
+			updates: EntityUpdate<PanelModel>[]
 		}>(),
 		'Delete Panel': props<{
 			panelId: PanelId

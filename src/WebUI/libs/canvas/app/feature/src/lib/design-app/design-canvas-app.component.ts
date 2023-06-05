@@ -45,6 +45,7 @@ import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import { getScreenSize, selectSignalFromStore } from '@shared/utils'
 import { selectSelectedStringId } from '@canvas/selected/data-access'
 import { DialogRendererComponent } from '@overlays/dialogs/feature'
+import { injectProjectsStore } from '@entities/data-access'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -83,6 +84,7 @@ import { DialogRendererComponent } from '@overlays/dialogs/feature'
 export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	// private _supabase = inject(SupabaseService)
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	private _projectsStore = injectProjectsStore()
 	private _ngZone = inject(NgZone)
 	private _renderer = inject(Renderer2)
 	private _divElements = inject(DivElementsService)
@@ -117,6 +119,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		},
 	})
 
+	isProjectReadyToRender = this._projectsStore.select.projectReadyToRender
 	// session = this._supabase.session
 	screenSize = getScreenSize()
 	// @ViewChildren('canvas') canvas: ElementRef<HTMLDivElement>

@@ -28,6 +28,9 @@ const reducer = createReducer(
 		return { ...newState, undefinedStringId, loaded: true }
 	}),
 	on(StringsActions.addString, (state, { string }) => stringsAdapter.addOne(string, state)),
+	on(StringsActions.addStringWithPanels, (state, { string }) =>
+		stringsAdapter.addOne(string, state),
+	),
 	on(StringsActions.addManyStrings, (state, { strings }) => stringsAdapter.addMany(strings, state)),
 	on(StringsActions.updateString, (state, { update }) => stringsAdapter.updateOne(update, state)),
 	on(StringsActions.updateManyStrings, (state, { updates }) =>

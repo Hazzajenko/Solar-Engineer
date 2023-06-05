@@ -1,9 +1,10 @@
 import { Store } from '@ngrx/store'
 import { createRootServiceInjector, isNotNull } from '@shared/utils'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { StringId, StringModel } from '@entities/shared'
+import { PanelModel, StringId, StringModel } from '@entities/shared'
 import { selectAllStringsExceptUndefinedString, selectStringsEntities } from './strings.selectors'
 import { StringsActions } from './strings.actions'
+import { EntityUpdate } from '@shared/data-access/models'
 
 export function injectStringsStore(): StringsStore {
 	return stringsStoreInjector()
@@ -28,6 +29,8 @@ function stringsStoreFactory(store: Store) {
 		loadStrings: (strings: StringModel[]) =>
 			store.dispatch(StringsActions.loadStrings({ strings })),
 		addString: (string: StringModel) => store.dispatch(StringsActions.addString({ string })),
+		addStringWithPanels: (string: StringModel, panelUpdates: EntityUpdate<PanelModel>[]) =>
+			store.dispatch(StringsActions.addStringWithPanels({ string, panelUpdates })),
 		addManyStrings: (strings: StringModel[]) =>
 			store.dispatch(StringsActions.addManyStrings({ strings })),
 		updateString: (update: UpdateStr<StringModel>) =>

@@ -27,6 +27,9 @@ const reducer = createReducer(
 	on(PanelsActions.updateManyPanels, (state, { updates }) =>
 		panelsAdapter.updateMany(updates, state),
 	),
+	on(PanelsActions.updateManyPanelsWithString, (state, { updates }) =>
+		panelsAdapter.updateMany(updates, state),
+	),
 	on(PanelsActions.deletePanel, (state, { panelId }) => panelsAdapter.removeOne(panelId, state)),
 	on(PanelsActions.deleteManyPanels, (state, { panelIds }) =>
 		panelsAdapter.removeMany(panelIds, state),

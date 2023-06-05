@@ -9,7 +9,7 @@ public static class StringsMapping
         return new StringDto
         {
             Name = @string.Name,
-            Color = @string.Color,
+            Colour = @string.Colour,
             Parallel = @string.Parallel,
             Id = @string.Id.ToString(),
             ProjectId = @string.ProjectId.ToString(),

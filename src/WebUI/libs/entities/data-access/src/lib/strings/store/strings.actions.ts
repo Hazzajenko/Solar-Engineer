@@ -1,6 +1,7 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { StringId, StringModel } from '@entities/shared'
+import { PanelModel, StringId, StringModel } from '@entities/shared'
+import { EntityUpdate } from '@shared/data-access/models'
 
 export const StringsActions = createActionGroup({
 	source: 'Strings Store',
@@ -13,6 +14,10 @@ export const StringsActions = createActionGroup({
 		}>(),
 		'Add String': props<{
 			string: StringModel
+		}>(),
+		'Add String With Panels': props<{
+			string: StringModel
+			panelUpdates: EntityUpdate<PanelModel>[]
 		}>(),
 		'Add Many Strings': props<{
 			strings: StringModel[]

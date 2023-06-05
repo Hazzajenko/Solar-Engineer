@@ -38,7 +38,7 @@ public class DeleteStringHandler : ICommandHandler<DeleteStringCommand, bool>
             );
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
-        var stringId = command.Request.Id.ToGuid();
+        var stringId = command.Request.StringId.ToGuid();
 
         var deleteResult = await _unitOfWork.StringsRepository.DeleteStringByIdAndProjectIdAsync(
             stringId,

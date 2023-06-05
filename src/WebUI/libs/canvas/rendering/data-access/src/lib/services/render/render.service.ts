@@ -102,7 +102,6 @@ export class RenderService {
 	throttledRenderCanvasApp = throttle(this.renderFn, 1000 / 60)
 
 	isProjectReadyToRender = this._projectsStore.select.projectReadyToRender
-	storesHaveBeenInitialized = false
 
 	constructor() {
 		this.checkFps()
@@ -502,7 +501,7 @@ export class RenderService {
 				if (entity.stringId !== UNDEFINED_STRING_ID) {
 					const string = this._entities.strings.select.getById(entity.stringId)
 					assertNotNull(string, JSON.stringify(entity, null, 2))
-					fillStyle = string.color
+					fillStyle = string.colour
 				}
 			}
 
@@ -543,6 +542,7 @@ export class RenderService {
 				if (isStringSelected && graphicsState.selectedStringPanelFill) {
 					fillStyle = shadeColor(CANVAS_COLORS.StringSelectedPanelFillStyle, 50)
 				}
+				// console.log(fillStyle)
 				fillStyle = shadeColor(fillStyle, 50)
 			}
 

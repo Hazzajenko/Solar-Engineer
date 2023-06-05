@@ -9,6 +9,7 @@ import { assertNotNull } from '@shared/utils'
 import { injectPanelsStore } from './panels.store'
 import { ProjectsActions } from '../../projects'
 import { PanelId } from '@entities/shared'
+import { StringsActions } from '../../strings'
 
 export const panelsStoreInitialized$ = createEffect(
 	(actions$ = inject(Actions)) => {
@@ -17,6 +18,20 @@ export const panelsStoreInitialized$ = createEffect(
 			map(() => {
 				return ProjectsActions.projectEntityStoreInitialized({
 					store: 'panels',
+				})
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+export const updatePanelsFromCreatingString$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(StringsActions.addStringWithPanels),
+			map(({ panelUpdates }) => {
+				return PanelsActions.updateManyPanelsWithString({
+					updates: panelUpdates,
 				})
 			}),
 		)
