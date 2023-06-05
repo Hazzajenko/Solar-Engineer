@@ -46,6 +46,7 @@ import { getScreenSize, selectSignalFromStore } from '@shared/utils'
 import { selectSelectedStringId } from '@canvas/selected/data-access'
 import { DialogRendererComponent } from '@overlays/dialogs/feature'
 import { injectProjectsStore } from '@entities/data-access'
+import { injectAuthStore } from '@auth/data-access'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -85,6 +86,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	// private _supabase = inject(SupabaseService)
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	private _projectsStore = injectProjectsStore()
+	private _authStore = injectAuthStore()
 	private _ngZone = inject(NgZone)
 	private _renderer = inject(Renderer2)
 	private _divElements = inject(DivElementsService)
@@ -118,6 +120,8 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 			rotateEntityState: this._objectPositioningStore.state.rotateEntityState,
 		},
 	})
+
+	user = this._authStore.select.user
 
 	isProjectReadyToRender = this._projectsStore.select.projectReadyToRender
 	// session = this._supabase.session
