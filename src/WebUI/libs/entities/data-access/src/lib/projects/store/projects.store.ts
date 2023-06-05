@@ -41,8 +41,8 @@ export function projectsStoreFactory(store: Store) {
 		allProjects: store.selectSignal(selectAllProjects),
 		selectedProjectId: store.selectSignal(selectSelectedProjectId),
 		selectedProject: store.selectSignal(selectSelectedProject),
-		getById: (id: string) => entities()[id],
-		selectById: (id: string) => store.selectSignal(selectProjectById({ id })),
+		getById: (id: ProjectId) => entities()[id],
+		selectById: (id: ProjectId) => store.selectSignal(selectProjectById({ id })),
 		projectReadyToRender: store.selectSignal(selectProjectReadyToRender),
 		projectReadyForReset: store.selectSignal(selectProjectReadyForReset),
 	}

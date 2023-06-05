@@ -3,6 +3,8 @@ import {
 	CONTEXT_MENU_COMPONENT,
 	ContextMenuInput,
 	ContextMenuProjectMenu,
+	DIALOG_COMPONENT,
+	injectUiStore,
 	uiFeature,
 } from '@overlays/ui-store/data-access'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
@@ -48,6 +50,7 @@ export const selectProjectByContextMenuData = createSelector(
 })
 export class ContextMenuProjectComponent implements OnInit {
 	private _projectsStore = injectProjectsStore()
+	private _uiStore = injectUiStore()
 
 	id = CONTEXT_MENU_COMPONENT.PROJECT_MENU
 	contextMenu = inject(Injector).get(contextMenuInputInjectionToken) as ContextMenuProjectMenu
@@ -68,6 +71,13 @@ export class ContextMenuProjectComponent implements OnInit {
 		this._projectsStore.dispatch.updateProject({
 			id: project.id,
 			changes: { colour },
+		})
+	}
+
+	deleteProject(project: ProjectModel) {
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.DELETE_PROJECT_WARNING,
+			data: { projectId: project.id },
 		})
 	}
 }

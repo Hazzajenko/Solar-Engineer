@@ -6,7 +6,6 @@ import {
 	InjectionToken,
 	Injector,
 	OnDestroy,
-	Renderer2,
 } from '@angular/core'
 import { DIALOG_COMPONENT, DialogInput, injectUiStore } from '@overlays/ui-store/data-access'
 import { NgComponentOutlet, NgIf } from '@angular/common'
@@ -16,6 +15,7 @@ import { ProfileSettingsDialogComponent } from '../profile-settings-dialog/profi
 import { SignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.component'
 import { DialogCreateProjectComponent } from '../dialog-create-project'
 import { handleAllSwitchCases } from '@shared/utils'
+import { DialogDeleteProjectWarningComponent } from '../dialog-delete-project-warning'
 
 export const dialogInputInjectionToken = new InjectionToken<DialogInput>('')
 
@@ -38,14 +38,8 @@ export class DialogRendererComponent implements OnDestroy {
 	private _dialog = this._uiStore.select.currentDialog
 	private _injector = inject(Injector)
 	private _killEvent?: () => void
-	private _renderer = inject(Renderer2)
-
 	dialogInjector: Injector | undefined
-
-	// component: DialogInput['component'] | undefined
 	component: ReturnType<typeof this.switchFn> | undefined
-
-	// @ViewChild() ngComponentOutlet!: NgComponentOutlet
 
 	constructor() {
 		effect(() => {
@@ -53,7 +47,6 @@ export class DialogRendererComponent implements OnDestroy {
 				return
 			}
 
-			// this.component = this.dialog.component
 			this.component = this.switchFn(this.dialog.component)
 
 			this.dialogInjector = Injector.create({
@@ -65,19 +58,6 @@ export class DialogRendererComponent implements OnDestroy {
 				],
 				parent: this._injector,
 			})
-
-			// this._injector.
-
-			/*			this._killEvent = this._renderer.listen('document', 'click', (event: MouseEvent) => {
-			 if (!this.dialogInjector) {
-			 this.ngOnDestroy()
-			 return
-			 }
-			 if (event.target instanceof Node) {
-			 // if (this._renderer..?.nativeElement.contains(event.target)) return
-			 }
-			 this.ngOnDestroy()
-			 })*/
 		})
 	}
 
@@ -102,6 +82,8 @@ export class DialogRendererComponent implements OnDestroy {
 				return SignInDialogComponent
 			case DIALOG_COMPONENT.CREATE_PROJECT:
 				return DialogCreateProjectComponent
+			case DIALOG_COMPONENT.DELETE_PROJECT_WARNING:
+				return DialogDeleteProjectWarningComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

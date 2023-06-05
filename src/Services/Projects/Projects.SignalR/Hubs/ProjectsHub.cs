@@ -13,19 +13,12 @@ namespace Projects.SignalR.Hubs;
 public class ProjectsHub : Hub<IProjectsHub>
 {
     private readonly ILogger<ProjectsHub> _logger;
-
-    // private readonly IMapper _mapper;
     private readonly IMediator _mediator;
-
-    // private readonly Dictionary<string, Type> _messageTypes;
 
     public ProjectsHub(IMediator mediator, ILogger<ProjectsHub> logger)
     {
         _mediator = mediator;
         _logger = logger;
-        /*_messageTypes = typeof(Program).Assembly.DefinedTypes
-            .Where(x => typeof(ICommand<bool>).IsAssignableFrom(x) && x is { IsInterface: false })
-            .ToDictionary(type => type.Name, type => type.AsType());*/
     }
 
     public override async Task OnConnectedAsync()

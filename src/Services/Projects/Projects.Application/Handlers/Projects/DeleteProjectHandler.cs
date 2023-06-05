@@ -71,9 +71,10 @@ public class DeleteProjectHandler : ICommandHandler<DeleteProjectCommand, bool>
             throw new ValidationException(message, message.ToValidationFailure<AppUserProject>());
         }
 
-        await _unitOfWork.ProjectsRepository.DeleteAsync(projectId);
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(projectId);
+
+        await _unitOfWork.ProjectsRepository.DeleteAsync(projectId);
         await _unitOfWork.SaveChangesAsync();
 
         var response = new DeleteProjectResponse { Id = projectId.ToString() };
