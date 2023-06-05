@@ -28,6 +28,7 @@ public static class SignalRExtensions
 
                 options.AddFilter<HubLoggerFilter>();
             })
+            // .AddMessagePackProtocol()
             .AddStackExchangeRedis(
                 "localhost",
                 options => { options.Configuration.ChannelPrefix = "SolarEngineerApp"; }

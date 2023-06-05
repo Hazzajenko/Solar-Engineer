@@ -4,18 +4,14 @@ using Infrastructure.Mapping;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
-using Projects.Domain.Contracts.Requests.Projects;
+using Projects.Domain.Commands.Projects;
+using Projects.Domain.Contracts.Responses.Projects;
 using Projects.Domain.Entities;
 using Projects.SignalR.Hubs;
 
 namespace Projects.Application.Handlers.Projects;
 
-public sealed record UpdateProjectCommand(
-    HubCallerContext Context,
-    UpdateProjectRequest UpdateProjectRequest
-) : IRequest<bool>;
-
-public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, bool>
+public class UpdateProjectHandler : ICommandHandler<UpdateProjectCommand, bool>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<UpdateProjectHandler> _logger;
@@ -34,8 +30,8 @@ public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, bool>
 
     public async ValueTask<bool> Handle(UpdateProjectCommand request, CancellationToken cT)
     {
-        ArgumentNullException.ThrowIfNull(request.Context.User);
-        var appUserId = request.Context.User.GetGuidUserId();
+        ArgumentNullException.ThrowIfNull(request.User);
+        var appUserId = request.User.Id;
         var projectId = request.UpdateProjectRequest.ProjectId.ToGuid();
         var appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
@@ -57,12 +53,23 @@ public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, bool>
         if (projectChanges.Name is not null)
             appUserProject.Project.Name = projectChanges.Name;
 
+        if (projectChanges.Colour is not null)
+            appUserProject.Project.Colour = projectChanges.Colour;
+
+        await _unitOfWork.ProjectsRepository.UpdateAndSaveChangesAsync(appUserProject.Project);
+
         await _unitOfWork.SaveChangesAsync();
 
         var projectMemberIds =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(projectId);
 
-        await _hubContext.Clients.Users(projectMemberIds).UpdateProject(projectChanges);
+        var response = new UpdateProjectResponse
+        {
+            ProjectId = projectId.ToString(),
+            Changes = projectChanges
+        };
+
+        await _hubContext.Clients.Users(projectMemberIds).ProjectUpdated(response);
 
         _logger.LogInformation(
             "User {User} updated {Project}",

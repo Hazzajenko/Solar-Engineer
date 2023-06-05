@@ -20,7 +20,7 @@ import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dia
 import { ShowSvgComponent, ShowSvgNoStylesComponent, ToggleSvgNoStylesComponent } from '@shared/ui'
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
 import { RadiansToDegreesPipe, TruncatePipe } from '@shared/pipes'
-import { heightInOut } from '@shared/animations'
+import { increaseScaleAndOpacity } from '@shared/animations'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { IsTypeOfPanelPipe } from '@entities/utils'
 import { FormBuilder } from '@angular/forms'
@@ -48,7 +48,7 @@ import { injectAuthStore } from '@auth/data-access'
 		ToggleSvgNoStylesComponent,
 		NgOptimizedImage,
 	],
-	animations: [heightInOut],
+	animations: [increaseScaleAndOpacity],
 })
 export class ProfileSettingsDialogComponent implements AfterViewInit {
 	// private _supabase = inject(SupabaseService)

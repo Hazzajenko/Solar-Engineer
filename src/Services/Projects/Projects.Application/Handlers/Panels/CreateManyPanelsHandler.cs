@@ -41,14 +41,6 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
             );
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
-        // var locations = command.Request.Panels.Select(x => x.Location).ToList();
-        /*var existingPanels = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
-            projectId,
-            locations
-        );
-        if (existingPanels)
-            throw new HubException("Panel already exists at this location");*/
-
         var panelStringId = command.Request.StringId;
         var panelHasString = panelStringId.Equals(String.UndefinedStringId) is false;
 
@@ -72,20 +64,10 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
         panelString.ThrowExceptionIfNull(new HubException("String does not exist"));
 
         var panelConfigId = command.Request.PanelConfigId;
-        // var doesPanelHaveConfig = panelConfigId.Equals("undefined") is false;
 
         var panelConfig = panelConfigId.Equals(PanelConfig.DefaultPanelConfigId)
             ? await _unitOfWork.PanelConfigsRepository.GetByBrandAndModelAsync("Longi", "Himo555m")
             : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());
-        /*var panelConfig = doesPanelHaveConfig is false
-            ? await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync()
-            : panelConfigId.Equals(DEFAULT_PANEL_CONFIG_ID)
-                ? await _unitOfWork.PanelConfigsRepository.GetByBrandAndModel("Longi", "Himo555m")
-                : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());*/
-
-        /*var panelConfig = doesPanelHaveConfig is false
-            ? await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync()
-            : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());*/
 
         panelConfig.ThrowExceptionIfNull(new HubException("Panel config does not exist"));
 
@@ -103,18 +85,11 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
         );
 
         panels = await _unitOfWork.PanelsRepository.AddManyAndSaveChangesAsync(panels);
-        // var panelDtos4 = panels.ToDtoIEnumerable<Panel, PanelDto>();
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
                 appUserProject.ProjectId
             );
-        /*var response = panels.ToProjectEventResponseV3(
-            command,
-            ActionType.CreateMany,
-            projectId.ToString()
-        );*/
         var response = panels.ToProjectEventResponseFromEntityList(command, ActionType.CreateMany);
-        // var response = panelDtos4.ToProjectEventResponseV3(command, ActionType.Create, projectId.ToString());
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(

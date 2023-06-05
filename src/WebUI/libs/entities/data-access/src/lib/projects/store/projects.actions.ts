@@ -2,6 +2,7 @@ import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { CreateProjectRequest, ProjectId, ProjectModel } from '@entities/shared'
 import { ProjectEntityStore } from './projects.reducer'
+import { EntityUpdate } from '@shared/data-access/models'
 
 export const ProjectsActions = createActionGroup({
 	source: 'Projects Store',
@@ -33,7 +34,7 @@ export const ProjectsActions = createActionGroup({
 			projects: ProjectModel[]
 		}>(),
 		'Update Project': props<{
-			update: UpdateStr<ProjectModel>
+			update: EntityUpdate<ProjectModel>
 		}>(),
 		'Update Many Projects': props<{
 			updates: UpdateStr<ProjectModel>[]

@@ -4,14 +4,16 @@ namespace Projects.Domain.Contracts.Requests.Projects;
 
 public class UpdateProjectRequest
 {
-    public string ProjectId { get; set; } = default!;
-
-    public ProjectChanges Changes { get; set; } = default!;
+    public required string ProjectId { get; set; }
+    public required ProjectChanges Changes { get; set; }
 }
+
+// publ
 
 public class ProjectChanges
 {
     public string? Name { get; set; } = default!;
+    public string? Colour { get; set; } = default!;
 }
 
 public class UpdateProjectRequestValidator : AbstractValidator<UpdateProjectRequest>

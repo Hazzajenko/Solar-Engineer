@@ -52,6 +52,9 @@ importers:
       '@microsoft/signalr':
         specifier: 7.0.4
         version: 7.0.4
+      '@microsoft/signalr-protocol-msgpack':
+        specifier: ^7.0.5
+        version: 7.0.5
       '@ng-icons/core':
         specifier: ^25.0.1
         version: 25.0.1
@@ -4680,6 +4683,17 @@ packages:
       react: 18.2.0
     dev: true
 
+  /@microsoft/signalr-protocol-msgpack@7.0.5:
+    resolution: {integrity: sha512-6J/5Dt4SSr2prLk6ehDbYvZfT+ST3oO1GiMmZRfGB3KYJ63R50JlygIVASzskZBC1C+gDpAZ7SrdZoBrM8SlYQ==}
+    dependencies:
+      '@microsoft/signalr': 7.0.5
+      '@msgpack/msgpack': 2.8.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: false
+
   /@microsoft/signalr@7.0.4:
     resolution: {integrity: sha512-K+I0MXvawTph0D2pwmuGXBIQbyZ+zDSw39Iqgy+D9aewLfQR4TIRFvz4kFNRhvlHIcSKrUFL2w3uiHnMPSQs4g==}
     dependencies:
@@ -4687,6 +4701,20 @@ packages:
       eventsource: 2.0.2
       fetch-cookie: 2.1.0
       node-fetch: 2.6.9
+      ws: 7.5.9
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: false
+
+  /@microsoft/signalr@7.0.5:
+    resolution: {integrity: sha512-j84syCKlXkQAOQhyrzRmW7w/M2UXQ6OKcXXFIVNjmiiZbEGIvSvJDRAuyMFjArdQOXz+etJgd58H/prTbyTCrA==}
+    dependencies:
+      abort-controller: 3.0.0
+      eventsource: 2.0.2
+      fetch-cookie: 2.1.0
+      node-fetch: 2.6.11
       ws: 7.5.9
     transitivePeerDependencies:
       - bufferutil
@@ -4707,6 +4735,11 @@ packages:
       got: 11.8.6
       os-filter-obj: 2.0.0
     dev: true
+
+  /@msgpack/msgpack@2.8.0:
+    resolution: {integrity: sha512-h9u4u/jiIRKbq25PM+zymTyW6bhTzELvOoUd+AvYriWOAKpLGnIamaET3pnHYoI5iYphAHBI4ayx0MehR+VVPQ==}
+    engines: {node: '>= 10'}
+    dev: false
 
   /@ndelangen/get-tarball@3.0.7:
     resolution: {integrity: sha512-NqGfTZIZpRFef1GoVaShSSRwDC3vde3ThtTeqFdcYd6ipKqnfEVhjK2hUeHjCQUcptyZr2TONqcloFXM+5QBrQ==}

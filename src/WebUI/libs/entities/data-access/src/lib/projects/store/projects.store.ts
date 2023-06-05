@@ -1,5 +1,4 @@
-import { makeEnvironmentProviders } from '@angular/core'
-import { provideState, Store } from '@ngrx/store'
+import { Store } from '@ngrx/store'
 import {
 	selectAllProjects,
 	selectProjectById,
@@ -12,17 +11,8 @@ import {
 import { ProjectsActions } from './projects.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { CreateProjectRequest, ProjectId, ProjectModel } from '@entities/shared'
-import { PROJECTS_FEATURE_KEY, projectsReducer } from './projects.reducer'
-import { provideEffects } from '@ngrx/effects'
-import * as ProjectsEffects from './projects.effects'
 import { createRootServiceInjector } from '@shared/utils'
-
-export function provideProjectsFeature() {
-	return makeEnvironmentProviders([
-		provideState(PROJECTS_FEATURE_KEY, projectsReducer),
-		provideEffects(ProjectsEffects),
-	])
-}
+import { EntityUpdate } from '@shared/data-access/models'
 
 export function injectProjectsStore(): ProjectsStoreFactory {
 	return projectsStoreInjector()
@@ -55,7 +45,7 @@ export function projectsStoreFactory(store: Store) {
 		addProject: (project: ProjectModel) => store.dispatch(ProjectsActions.addProject({ project })),
 		addManyProjects: (projects: ProjectModel[]) =>
 			store.dispatch(ProjectsActions.addManyProjects({ projects })),
-		updateProject: (update: UpdateStr<ProjectModel>) =>
+		updateProject: (update: EntityUpdate<ProjectModel>) =>
 			store.dispatch(ProjectsActions.updateProject({ update })),
 		updateManyProjects: (updates: UpdateStr<ProjectModel>[]) =>
 			store.dispatch(ProjectsActions.updateManyProjects({ updates })),

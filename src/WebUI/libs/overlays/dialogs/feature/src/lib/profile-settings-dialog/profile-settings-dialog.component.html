@@ -1,8 +1,10 @@
-<dialog-backdrop-template-component #dialog *ngIf="user() as user">
+<dialog-backdrop-template-component #dialog>
 	<div
+		*ngIf="user() as user"
+		@increaseScaleAndOpacity
 		class="relative w-1/2 h-3/4 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 overflow-y-auto p-4"
 	>
-		<div class="relative bg-slate-100 rounded-lg shadow dark:bg-gray-700">
+		<div class="relative bg-slate-100 rounded-lg shadow dark:bg-gray-700" id="dialog-content">
 			<!--      <div class='overflow-y-auto'>-->
 			<button
 				(click)="dialog.closeDialog()"

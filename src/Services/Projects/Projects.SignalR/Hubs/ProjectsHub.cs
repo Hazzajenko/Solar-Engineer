@@ -23,9 +23,6 @@ public class ProjectsHub : Hub<IProjectsHub>
 
     public override async Task OnConnectedAsync()
     {
-        // await _mediator.Send(new OnConnectedCommand(Context.ToHubAppUser()));
-        // Connections.Add(Context.ToHubAppUser().Id.ToString(), Context.ConnectionId);
-        // Connections.DumpObjectJson();
         var user = Context.ToAuthUser();
         _logger.LogInformation(
             "Connected: {ConnectionId} - {UserId}",
@@ -43,15 +40,18 @@ public class ProjectsHub : Hub<IProjectsHub>
             Context.ConnectionId,
             user.Id
         );
-
-        // _logger.LogInformation("Disconnected: {ConnectionId}", Context.ConnectionId);
-        // Connections.Remove(Context.ToHubAppUser().Id.ToString(), Context.ConnectionId);
         await base.OnDisconnectedAsync(exception);
     }
 
     public async Task CreateProject(CreateProjectRequest request)
     {
         var command = new CreateProjectCommand(Context.ToAuthUser(), request);
+        await _mediator.Send(command);
+    }
+
+    public async Task UpdateProject(UpdateProjectRequest request)
+    {
+        var command = new UpdateProjectCommand(Context.ToAuthUser(), request);
         await _mediator.Send(command);
     }
 

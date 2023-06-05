@@ -1,5 +1,4 @@
 ﻿using Projects.Domain.Contracts.Data;
-using Projects.Domain.Contracts.Requests.Projects;
 using Projects.Domain.Contracts.Responses;
 using Projects.Domain.Contracts.Responses.Projects;
 
@@ -10,14 +9,17 @@ public interface IProjectsHub
     Task GetManyProjects(IEnumerable<ProjectDto> projects);
     Task GetUserProject(ProjectDto project);
     Task GetProject(ProjectDataDto projectData);
+
     Task ProjectCreated(ProjectDto project);
-    Task UpdateProject(ProjectDto project);
-    Task ProjectUpdated(ProjectDto project);
+
+    // Task UpdateProject(ProjectDto project);
+    // Task ProjectUpdated(ProjectDto project);
     Task NewProjectMembers(InviteToProjectResponse response);
     Task ProjectDeleted(DeleteProjectResponse response);
     Task InvitedToProject(ProjectDto project);
 
-    Task UpdateProject(ProjectChanges projectChanges);
+    Task ProjectUpdated(UpdateProjectResponse response);
+    // Task UpdateProject(ProjectChanges projectChanges);
 
     Task PanelsCreated(IEnumerable<PanelCreatedResponse> panels);
     Task NewProjectEvents(IEnumerable<ProjectEventResponse> projectEvents);

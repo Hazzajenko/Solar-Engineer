@@ -31,7 +31,7 @@ public class DeleteProjectHandler : ICommandHandler<DeleteProjectCommand, bool>
     public async ValueTask<bool> Handle(DeleteProjectCommand command, CancellationToken cT)
     {
         var appUserId = command.User.Id;
-        var projectId = command.DeleteProjectRequest.Id.ToGuid();
+        var projectId = command.DeleteProjectRequest.ProjectId.ToGuid();
         var appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,

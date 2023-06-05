@@ -25,3 +25,20 @@ export type PanelSymbol = {
 export type PanelWithSymbol = PanelModel & {
 	symbol: Polarity
 }
+
+type UppercaseObjectKeys<
+	T extends {
+		[key: string | number | symbol]: any
+	},
+> = {
+	[x in Uppercase<Extract<keyof T, string>> | Exclude<keyof T, string>]: x extends string
+		? T[Lowercase<x>]
+		: T[x]
+}
+
+// type PanelPANEL = UppercaseObjectKeys<PanelModel>
+
+/*
+ const PanelPANEL: PanelPANEL = {
+ ID: 'id',
+ }*/

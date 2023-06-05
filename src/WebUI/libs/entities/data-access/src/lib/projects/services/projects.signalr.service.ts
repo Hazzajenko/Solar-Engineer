@@ -60,7 +60,7 @@ export class ProjectsSignalrService {
 			PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED,
 			(response: EntityUpdate<ProjectModel>) => {
 				console.log(PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED, response)
-				this._projectsStore.dispatch.updateProject(response)
+				// this._projectsStore.dispatch.updateProject(response)
 			},
 		)
 
@@ -68,7 +68,7 @@ export class ProjectsSignalrService {
 			PROJECTS_SIGNALR_EVENT.PROJECT_DELETED,
 			(response: { projectId: ProjectId }) => {
 				console.log(PROJECTS_SIGNALR_EVENT.PROJECT_DELETED, response)
-				this._projectsStore.dispatch.deleteProject(response.projectId)
+				// this._projectsStore.dispatch.deleteProject(response.projectId)
 			},
 		)
 
@@ -81,6 +81,9 @@ export class ProjectsSignalrService {
 		)
 
 		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.GET_PROJECT, (response: ProjectDataModel) => {
+			// const camelCaseResponse = convertPascalCaseToCamelCaseNested(response)
+			// console.log(PROJECTS_SIGNALR_EVENT.GET_PROJECT, camelCaseResponse)
+
 			console.log(PROJECTS_SIGNALR_EVENT.GET_PROJECT, response)
 			this._entitiesStore.panels.dispatch.loadPanels(response.panels)
 			this._entitiesStore.strings.dispatch.loadStrings(response.strings)
@@ -102,10 +105,21 @@ export class ProjectsSignalrService {
 		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.GET_PROJECT_BY_ID, projectId)
 	}
 
+	updateProject(update: EntityUpdate<ProjectModel>) {
+		console.log(PROJECTS_SIGNALR_METHOD.UPDATE_PROJECT, update)
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.UPDATE_PROJECT, {
+			projectId: update.id,
+			changes: update.changes,
+		})
+	}
+
+	deleteProject(projectId: ProjectId) {
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.DELETE_PROJECT, { projectId })
+	}
+
 	invokeSignalrEvent(request: Omit<SignalrEventRequest, 'timeStamp'>) {
 		this._signalrEventsStore.dispatch.addSignalrEvent(addTimeStamp(request))
 		console.log(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
-		// this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
 		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
 		this.hubConnection
 			.invoke(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)

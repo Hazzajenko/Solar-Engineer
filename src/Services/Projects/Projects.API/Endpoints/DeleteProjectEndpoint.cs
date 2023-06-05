@@ -15,7 +15,7 @@ public class DeleteProjectEndpoint : Endpoint<DeleteProjectRequest>
 
     public override void Configure()
     {
-        Delete("/projects/{@projectId}", x => new { x.Id });
+        Delete("/projects/{@projectId}", x => new { Id = x.ProjectId });
         Summary(x =>
         {
             x.Summary = "Delete a project";

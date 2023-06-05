@@ -16,6 +16,7 @@ export const createHubConnection = (request: HubConnectionRequest) => {
 			skipNegotiation: true,
 			transport: signalR.HttpTransportType.WebSockets,
 		})
+		// .withHubProtocol(new MessagePackHubProtocol())
 		.configureLogging(LogLevel.Information)
 		.withAutomaticReconnect()
 		.build()
@@ -36,7 +37,7 @@ export const createHubConnection = (request: HubConnectionRequest) => {
 export const invokeHubConnection = (
 	hubConnection: HubConnection,
 	invoke: string,
-	params?: unknown[],
+	params?: unknown,
 ) => {
 	if (invoke && params)
 		hubConnection.invoke(invoke, params).catch((err) => console.error(err, invoke, params))

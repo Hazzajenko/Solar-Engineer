@@ -148,14 +148,13 @@ export class RenderService {
 	}
 
 	renderCanvasApp(options?: Partial<CanvasRenderOptions>) {
-		if (!this.isProjectReadyToRender()) {
-			console.log('project not ready to render')
-			return
-		}
+		if (!this.isProjectReadyToRender()) return
 		if (this._throttleRender) {
 			this.throttledRenderCanvasApp(options)
 			return
 		}
+
+		if (!this.ctx) return
 
 		this.renderFn(options)
 	}
