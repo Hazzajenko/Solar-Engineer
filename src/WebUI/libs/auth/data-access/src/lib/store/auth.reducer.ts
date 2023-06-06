@@ -4,26 +4,36 @@ import { AppUserModel } from '@shared/data-access/models'
 
 export interface AuthState {
 	user?: AppUserModel
+	guest: boolean
 	error: string | null
 }
 
 export const AUTH_FEATURE_KEY = 'auth'
 export const initialAuthState: AuthState = {
 	user: undefined,
+	guest: true,
 	error: null,
 }
 
 export const reducer = createReducer(
 	initialAuthState,
 
+	on(AuthActions.signInAsGuest, (state) => ({
+		...state,
+		guest: true,
+		user: undefined,
+	})),
+
 	on(AuthActions.signInSuccess, (state, { user }) => ({
 		...state,
 		user,
+		guest: false,
 	})),
 
 	on(AuthActions.signInFetchUserSuccess, (state, { user }) => ({
 		...state,
 		user,
+		guest: false,
 	})),
 
 	on(AuthActions.modifiedUser, (state, { user }) => ({
@@ -34,6 +44,7 @@ export const reducer = createReducer(
 	on(AuthActions.loginSuccess, (state, { user }) => ({
 		...state,
 		user,
+		guest: false,
 	})),
 
 	on(AuthActions.loginError, (state, { error }) => ({
@@ -44,6 +55,7 @@ export const reducer = createReducer(
 	on(AuthActions.getCurrentUserSuccess, (state, { user }) => ({
 		...state,
 		user,
+		guest: false,
 	})),
 
 	on(AuthActions.getCurrentUserError, (state, { error }) => ({
@@ -56,7 +68,7 @@ export const reducer = createReducer(
 		user: state.user
 			? {
 					...state.user,
-					...update,
+					...update, // eslint-disable-next-line no-mixed-spaces-and-tabs
 			  }
 			: undefined,
 	})),
@@ -68,6 +80,7 @@ export const reducer = createReducer(
 
 	on(AuthActions.signOut, () => ({
 		user: undefined,
+		guest: true,
 		error: null,
 	})),
 )

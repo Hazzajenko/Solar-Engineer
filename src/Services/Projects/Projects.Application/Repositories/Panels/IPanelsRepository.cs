@@ -1,6 +1,6 @@
 ﻿using Infrastructure.Common;
 using Infrastructure.Repositories;
-using Projects.Domain.Contracts.Data;
+using Projects.Contracts.Data;
 using Projects.Domain.Entities;
 
 namespace Projects.Application.Repositories.Panels;

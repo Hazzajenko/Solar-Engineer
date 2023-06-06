@@ -1,8 +1,8 @@
 import { createFeature, provideState } from '@ngrx/store'
 import { SELECTED_FEATURE_KEY, selectedReducer } from './selected.reducer'
 import { makeEnvironmentProviders } from '@angular/core'
-import { provideEffects } from '@ngrx/effects'
-import * as SelectedEffects from './selected.effects'
+import { omit } from '@shared/utils'
+// import * as SelectedEffects from './selected.effects'
 
 export const selectedFeature = createFeature({
 	name: SELECTED_FEATURE_KEY,
@@ -31,9 +31,16 @@ export const selectedFeature = createFeature({
 	}),
 })
 
+export function getSelectedSelectors() {
+	// if (selectedFeature)
+	return omit(selectedFeature, 'name', 'reducer')
+}
+
+// export const SelectedSelectors = omit(selectedFeature, 'name', 'reducer')
+
 export function provideSelectedFeature() {
 	return makeEnvironmentProviders([
 		provideState(selectedFeature), // provideState(SELECTED_FEATURE_KEY, selectedReducer),
-		provideEffects(SelectedEffects),
+		// provideEffects(SelectedEffects),
 	])
 }

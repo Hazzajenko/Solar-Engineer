@@ -43,9 +43,9 @@ export class ContextMenuDirective {
 		const { left, right } = leftAndRight
 		console.log('leftAndRight', leftAndRight)
 		this._renderer.setStyle(this._element, 'left', `${left}px`)
-		const width = right - left
-		const child = this._element.children[0]
-		this._renderer.setStyle(child, 'width', `${width}px`)
+		// const width = right - left
+		// const child = this._element.children[0]
+		// this._renderer.setStyle(child, 'width', `${width}px`)
 	}
 
 	@Input() set trackLeftOfDiv(data: { divId: string }) {

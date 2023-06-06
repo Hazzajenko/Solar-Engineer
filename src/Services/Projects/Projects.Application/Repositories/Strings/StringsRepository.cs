@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Projects.Application.Data;
 using Projects.Application.Mapping;
-using Projects.Domain.Contracts.Data;
+using Projects.Contracts.Data;
 
 namespace Projects.Application.Repositories.Strings;
 
@@ -60,11 +60,10 @@ public sealed class StringsRepository
         return undefinedString;
     }*/
 
-    public async Task<String> GetByIdAndProjectIdAsync(Guid id, Guid projectId)
+    public async Task<String> GetByIdAndProjectIdAsync(Guid stringId, Guid projectId)
     {
         return await Queryable
-            .Where(x => x.ProjectId == projectId && x.Id == id)
-            // .Select(x => x.ToDto())
+            .Where(x => x.ProjectId == projectId && x.Id == stringId)
             .SingleOrDefaultAsync() ?? throw new HubException("String not found");
     }
 

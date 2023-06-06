@@ -1,6 +1,6 @@
-﻿using Projects.Domain.Contracts.Data;
-using Projects.Domain.Contracts.Responses;
-using Projects.Domain.Contracts.Responses.Projects;
+﻿using Projects.Contracts.Data;
+using Projects.Contracts.Responses;
+using Projects.Contracts.Responses.Projects;
 
 namespace Projects.SignalR.Hubs;
 

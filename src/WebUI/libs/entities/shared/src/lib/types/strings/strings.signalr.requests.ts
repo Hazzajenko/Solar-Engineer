@@ -9,6 +9,11 @@ export interface CreateStringSignalrRequest {
 	panelUpdates: EntityUpdate<PanelModel>[]
 }
 
+export interface UpdateStringSignalrRequest {
+	projectId: ProjectId
+	update: EntityUpdate<StringModel>
+}
+
 export interface DeleteStringSignalrRequest {
 	projectId: ProjectId
 	stringId: StringId

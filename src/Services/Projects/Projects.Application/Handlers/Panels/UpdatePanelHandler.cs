@@ -4,8 +4,8 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
-using Projects.Domain.Commands.Panels;
 using Projects.Domain.Common;
+using Projects.SignalR.Commands.Panels;
 using Projects.SignalR.Hubs;
 
 namespace Projects.Application.Handlers.Panels;
@@ -50,12 +50,6 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
 
         _unitOfWork.Attach(panel);
         if (changes.Location is not null)
-            /*var existingPanel = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
-                projectId,
-                new[] { changes.Location }
-            );
-            if (existingPanel)
-                throw new HubException("Panel already exists at this location");*/
             panel.Location = changes.Location;
 
         if (changes.Angle is not null)
@@ -77,21 +71,7 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
                 appUserProject.ProjectId
             );
 
-        /*var response = panel.ToProjectEventResponse(command.RequestId, appUserId.ToString(), ActionType.Update,
-            ModelType.Panel);*/
-
         var response = panel.ToProjectEventResponseFromEntity(command, ActionType.Update);
-        // var response = panel.ToProjectEventResponseV3(command, ActionType.Update);
-        /*await _hubContext.Clients
-            .Group(appUserProject.ProjectId.ToString())
-            .PanelsUpdated(panel.ToDtoList());
-        await _hubContext.Clients.Users(projectMembers).PanelsUpdated(panel.ToDtoList());*/
-        /*await _hubContext.Clients
-            .Group(appUserProject.ProjectId.ToString())
-            .ReceiveProjectEvents(response.ToIEnumerable());*/
-        /*await _hubContext.Clients
-            .Users(projectMembers)
-            .ReceiveProjectEvents(response.ToIEnumerable());*/
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(

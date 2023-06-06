@@ -1,9 +1,9 @@
 ﻿using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
-using Projects.Domain.Contracts.Data;
-using Projects.Domain.Queries.Projects;
+using Projects.Contracts.Data;
 using Projects.SignalR.Hubs;
+using Projects.SignalR.Queries.Projects;
 
 namespace Projects.Application.Handlers.Projects;
 

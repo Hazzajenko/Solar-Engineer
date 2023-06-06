@@ -49,7 +49,7 @@ export function tokenGetter() {
 
 function provideWebAppProviders() {
 	return makeEnvironmentProviders([
-		provideZoneChangeDetection({ eventCoalescing: true }),
+		provideZoneChangeDetection({ eventCoalescing: true }), // provideFirebase(),
 		provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
 		provideNgrx(),
 		provideHttpClient(withInterceptors([jwtInterceptor()])), // provideClientHydration(),
@@ -67,22 +67,6 @@ function provideWebAppProviders() {
 					tokenGetter: tokenGetter,
 				},
 			}),
-		) /*		{
-		 provide: 'SocialAuthServiceConfig',
-		 useValue: {
-		 autoLogin: false,
-		 providers: [
-		 {
-		 id: GoogleLoginProvider.PROVIDER_ID,
-		 provider: new GoogleLoginProvider(
-		 '1060507997816-fa53go38giju7jkohf046fkdhjg5rd47.apps.googleusercontent.com',
-		 ),
-		 },
-		 ],
-		 onError: (err) => {
-		 console.error(err)
-		 },
-		 } as SocialAuthServiceConfig,
-		 },*/,
+		),
 	])
 }

@@ -105,7 +105,7 @@ export const selectionBoxMouseUp = (
 	if (panelsInArea) {
 		const entitiesInAreaIds = panelsInArea.map((panel) => panel.id)
 		_appStore.setDragBoxState({ state: 'NoDragBox' })
-		_selectedStore.selectMultipleEntities(entitiesInAreaIds)
+		_selectedStore.dispatch.selectMultiplePanels(entitiesInAreaIds)
 	} else {
 		_appStore.setDragBoxState({ state: 'NoDragBox' })
 	}

@@ -1,5 +1,5 @@
-import { SELECTED_FEATURE_KEY, SelectedState } from './selected.reducer'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
+import { SELECTED_FEATURE_KEY, SelectedState } from './selected.reducer'
 import { UNDEFINED_STRING_ID } from '@entities/shared'
 
 export const selectSelectedState = createFeatureSelector<SelectedState>(SELECTED_FEATURE_KEY)

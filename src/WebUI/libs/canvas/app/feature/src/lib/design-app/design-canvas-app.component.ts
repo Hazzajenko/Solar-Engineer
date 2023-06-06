@@ -1,40 +1,15 @@
-import {
-	DesignCanvasDirective,
-	DynamicContextMenuDirective,
-	DynamicDialogDirective,
-} from '../directives'
-import {
-	AfterViewInit,
-	ChangeDetectionStrategy,
-	Component,
-	computed,
-	ElementRef,
-	inject,
-	NgZone,
-	OnInit,
-	Renderer2,
-	signal,
-	ViewChild,
-} from '@angular/core'
+import { DesignCanvasDirective, DynamicContextMenuDirective, DynamicDialogDirective } from '../directives'
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, inject, NgZone, OnInit, Renderer2, signal, ViewChild } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { LetDirective } from '@ngrx/component'
 import { getGuid } from '@ngrx/data'
-import {
-	ActionsNotificationComponent,
-	ButtonBuilderComponent,
-	ShowSvgComponent,
-	UndoActionNotificationComponent,
-} from '@shared/ui'
+import { ActionsNotificationComponent, ButtonBuilderComponent, ShowSvgComponent, UndoActionNotificationComponent } from '@shared/ui'
 
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import { ActionNotificationsDisplayComponent } from '@overlays/notifications/feature'
 import { SideUiAuthViewComponent, SideUiNavBarComponent } from '@overlays/side-uis/feature'
-import {
-	MobileBottomToolbarComponent,
-	OverlayToolBarComponent,
-	SelectedStringToolBarComponent,
-} from '@overlays/toolbars/feature'
+import { MobileBottomToolbarComponent, OverlayToolBarComponent, SelectedStringToolBarComponent } from '@overlays/toolbars/feature'
 import { AppStateStoreService, DivElementsService } from '@canvas/app/data-access'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { DraggableWindow, SCREEN_SIZE } from '@shared/data-access/models'
@@ -47,6 +22,8 @@ import { selectSelectedStringId } from '@canvas/selected/data-access'
 import { DialogRendererComponent } from '@overlays/dialogs/feature'
 import { injectProjectsStore } from '@entities/data-access'
 import { injectAuthStore } from '@auth/data-access'
+// import { AngularFireAuth } from '@angular/fire/compat/auth'
+// import { AngularFireAuth } from '@angular/fire/compat/auth'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -85,6 +62,7 @@ import { injectAuthStore } from '@auth/data-access'
 export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	// private _supabase = inject(SupabaseService)
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// private _firebaseAuth = inject(AngularFireAuth)
 	private _projectsStore = injectProjectsStore()
 	private _authStore = injectAuthStore()
 	private _ngZone = inject(NgZone)
@@ -120,7 +98,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 			rotateEntityState: this._objectPositioningStore.state.rotateEntityState,
 		},
 	})
-
+	// firebaseUseasdasdasr = this._firebaseAuth.user
 	user = this._authStore.select.user
 
 	isProjectReadyToRender = this._projectsStore.select.projectReadyToRender

@@ -1,6 +1,5 @@
 ﻿using Infrastructure.Common;
 using Projects.Domain.Common;
-using Projects.Domain.Contracts.Requests.Projects;
 
 namespace Projects.Domain.Entities;
 
@@ -86,9 +85,9 @@ public class AppUserProject : IEntityToEntity, IProjectItem
         );
     }
 
-    public static AppUserProject CreateAsOwner(Guid projectUserId, CreateProjectRequest request)
+    public static AppUserProject CreateAsOwner(Guid projectUserId, string name, string colour)
     {
-        var project = Project.Create(request.Name, request.Colour, projectUserId);
+        var project = Project.Create(name, colour, projectUserId);
 
         return new AppUserProject(project, projectUserId, "Owner", true, true, true, true);
     }

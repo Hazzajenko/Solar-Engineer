@@ -1,10 +1,23 @@
 <div
+	#toolBar
 	@goBottom
 	class="overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 md:rounded-lg z-50 absolute top-28 left-1/2 -translate-x-1/2"
 >
 	<div
 		class="flex flex-col items-center justify-between p-2 space-y-3 md:flex-row md:space-y-0 md:space-x-4"
 	>
+		<div class="flex items-center space-x-1 relative">
+			<button
+				#changeColourButton
+				(click)="openColourPicker(changeColourButton, toolBar)"
+				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				id="change-colour-button"
+				type="button"
+			>
+				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/paint-brush" />
+				<span class="sr-only">Change Colour</span>
+			</button>
+		</div>
 		<div class="flex items-center space-x-1">
 			<button
 				(click)="toggleLinkMode()"

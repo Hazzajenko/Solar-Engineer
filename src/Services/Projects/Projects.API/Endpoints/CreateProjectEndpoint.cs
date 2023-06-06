@@ -1,8 +1,8 @@
 ﻿using FastEndpoints;
 using Infrastructure.Extensions;
 using Mediator;
-using Projects.Domain.Commands.Projects;
-using Projects.Domain.Contracts.Requests.Projects;
+using Projects.Contracts.Requests.Projects;
+using Projects.SignalR.Commands.Projects;
 
 namespace Projects.API.Endpoints;
 

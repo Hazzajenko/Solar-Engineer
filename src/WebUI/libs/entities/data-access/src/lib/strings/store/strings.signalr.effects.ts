@@ -4,6 +4,7 @@ import {
 	SIGNALR_EVENT_ACTION,
 	SIGNALR_EVENT_MODEL,
 	SignalrEventRequest,
+	UpdateStringSignalrRequest,
 } from '@entities/shared'
 import { newGuidT } from '@shared/utils'
 import { createProjectSignalrEffect } from '@entities/utils'
@@ -39,6 +40,23 @@ export const addStringWithPanelsSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId,
 			action: SIGNALR_EVENT_ACTION.CREATE,
+			model: SIGNALR_EVENT_MODEL.STRING,
+			data: JSON.stringify(request),
+		} as Omit<SignalrEventRequest, 'timeStamp'>
+	},
+)
+
+export const updateStringSignalr$ = createProjectSignalrEffect(
+	StringsActions.updateString,
+	({ update }, projectId) => {
+		const request: UpdateStringSignalrRequest = {
+			projectId,
+			update,
+		}
+		return {
+			requestId: newGuidT(),
+			projectId,
+			action: SIGNALR_EVENT_ACTION.UPDATE,
 			model: SIGNALR_EVENT_MODEL.STRING,
 			data: JSON.stringify(request),
 		} as Omit<SignalrEventRequest, 'timeStamp'>

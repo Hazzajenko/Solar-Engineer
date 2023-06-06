@@ -2,10 +2,10 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
 import { ProjectsSignalrService } from '@entities/data-access'
 import { map, tap } from 'rxjs'
-import { assertNotNull, GetActionParametersByAction } from '@shared/utils'
+import { GetActionParametersByAction } from '@shared/utils'
 import { ProjectId, SignalrEventRequest } from '@entities/shared'
 import { createAction } from '@ngrx/store'
-import { injectCurrentProject } from '../projects/get-current-project'
+import { injectCurrentProject } from '../projects'
 
 type Action = ReturnType<typeof createAction>
 export const createProjectSignalrEffect = <TAction extends Action>(
@@ -25,11 +25,16 @@ export const createProjectSignalrEffect = <TAction extends Action>(
 				ofType(action),
 				map((actionResult) => {
 					const project = projectGetter()
-					assertNotNull(project)
+					// * If there is no project, then we don't need to invoke the signalr event
+					// * User is not logged in
+					if (!project) return undefined
 					const params = actionResult as GetActionParametersByAction<TAction>
 					return mapFn(params, project.id)
 				}),
-				tap((request) => projectsSignalr.invokeSignalrEvent(request)),
+				tap((request) => {
+					if (!request) return
+					projectsSignalr.invokeSignalrEvent(request)
+				}),
 			)
 		},
 		{ functional: true, dispatch: false },

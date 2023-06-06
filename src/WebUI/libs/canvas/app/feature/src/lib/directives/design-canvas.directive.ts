@@ -223,7 +223,7 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const multipleSelectedIds = this._selectedStore.state.multipleSelectedPanelIds
+		const multipleSelectedIds = this._selectedStore.select.multipleSelectedPanelIds()
 		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
 			this._objPositioning.multipleEntitiesToMoveMouseDown(event, multipleSelectedIds)
 			return
@@ -276,7 +276,7 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const multipleSelectedIds = this._selectedStore.state.multipleSelectedPanelIds
+		const multipleSelectedIds = this._selectedStore.select.multipleSelectedPanelIds()
 		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
 			this._objPositioning.setMultipleEntitiesToMove(event, multipleSelectedIds)
 			this._objPositioning.multipleEntitiesToMoveMouseMove(event)
@@ -595,7 +595,7 @@ export class DesignCanvasDirective implements OnInit {
 			}
 
 			/*	// todo move link mode method to strings or selected
-			 if (this._selectedStore.selectedStringId) {
+			 if (this._selectedStore.select.selectedStringId()) {
 			 // this._entities.panelLinks.set(entityUnderMouse.id)
 			 return
 			 }*/
@@ -643,7 +643,7 @@ export class DesignCanvasDirective implements OnInit {
 		 y: this._nearby.axisPreviewRect.top,
 		 }
 
-		 const selectedStringId = this._selectedStore.state.selectedStringId
+		 const selectedStringId = this._selectedStore.select.selectedStringId()
 		 const entity = selectedStringId
 		 ? createPanel(previewRectLocation, selectedStringId)
 		 : createPanel(previewRectLocation)
@@ -659,7 +659,7 @@ export class DesignCanvasDirective implements OnInit {
 		 currentPoint,
 		 SizeByType[ENTITY_TYPE.Panel],
 		 )
-		 const selectedStringId = this._selectedStore.state.selectedStringId
+		 const selectedStringId = this._selectedStore.select.selectedStringId()
 		 const entity = selectedStringId
 		 ? createPanel(location, selectedStringId)
 		 : createPanel(location)
@@ -682,11 +682,11 @@ export class DesignCanvasDirective implements OnInit {
 			// if (!isPanel(entityUnderMouse)) return
 
 			if (entityUnderMouse.stringId === UNDEFINED_STRING_ID) return
-			const selectedStringId = this._selectedStore.selectedStringId
+			const selectedStringId = this._selectedStore.select.selectedStringId()
 			const belongsToString = this._entities.strings.select.getById(entityUnderMouse.stringId)
 
 			if (!belongsToString) return
-			this._selectedStore.selectString(belongsToString.id)
+			this._selectedStore.dispatch.selectStringId(belongsToString.id)
 			this._render.renderCanvasApp()
 		}
 	}
@@ -759,7 +759,7 @@ export class DesignCanvasDirective implements OnInit {
 			}
 		}
 
-		const selectedStringId = this._selectedStore.state.selectedStringId
+		const selectedStringId = this._selectedStore.select.selectedStringId()
 		if (selectedStringId) {
 			const selectedStringPanels =
 				this._entities.panels.select.getByStringId(selectedStringId) ?? []
@@ -785,9 +785,9 @@ export class DesignCanvasDirective implements OnInit {
 			}
 		}
 
-		if (this._selectedStore.state.multipleSelectedPanelIds.length > 0) {
+		if (this._selectedStore.select.multipleSelectedPanelIds().length > 0) {
 			const selectedPanels = this._entities.panels.select.getByIds(
-				this._selectedStore.state.multipleSelectedPanelIds,
+				this._selectedStore.select.multipleSelectedPanelIds(),
 			)
 			const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
 				selectedPanels,

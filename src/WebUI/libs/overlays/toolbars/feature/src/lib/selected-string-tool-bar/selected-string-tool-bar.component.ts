@@ -5,6 +5,7 @@ import { selectSignalFromStore } from '@shared/utils'
 import { injectAppStateStore, selectModeState } from '@canvas/app/data-access'
 import { CssToggleDirective } from '@shared/directives'
 import { goBottom } from '@shared/animations'
+import { CONTEXT_MENU_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 
 @Component({
 	selector: 'overlay-selected-string-tool-bar',
@@ -23,6 +24,7 @@ import { goBottom } from '@shared/animations'
 })
 export class SelectedStringToolBarComponent {
 	private _appStore = injectAppStateStore()
+	private _uiStore = injectUiStore()
 	showToolbar = true
 	appMode = selectSignalFromStore(selectModeState)
 
@@ -33,5 +35,23 @@ export class SelectedStringToolBarComponent {
 		}
 
 		this._appStore.setModeState('SelectMode')
+	}
+
+	openColourPicker(changeColourButton: HTMLButtonElement, toolBar: HTMLDivElement) {
+		const rect = changeColourButton.getBoundingClientRect()
+
+		const location = { x: rect.left, y: rect.top + rect.height }
+		location.y += 10
+		const toolbarRect = toolBar.getBoundingClientRect()
+		const right = toolbarRect.right
+
+		this._uiStore.dispatch.openContextMenu({
+			component: CONTEXT_MENU_COMPONENT.COLOUR_PICKER_MENU,
+			location,
+			data: {
+				left: rect.left,
+				right,
+			},
+		})
 	}
 }

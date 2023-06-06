@@ -48,7 +48,7 @@ export class MovePanelsToStringDialogComponent {
 	}
 
 	createStringWithSelected() {
-		const multipleSelectedIds = this._selectedStore.state.multipleSelectedPanelIds
+		const multipleSelectedIds = this._selectedStore.select.multipleSelectedPanelIds()
 		if (multipleSelectedIds.length < 1) {
 			throw new Error('multipleSelectedIds.length < 1')
 		}
@@ -56,7 +56,7 @@ export class MovePanelsToStringDialogComponent {
 		const { string, panelUpdates } = createStringWithPanelsV2(multipleSelectedIds, amountOfStrings)
 		this._entities.strings.dispatch.addString(string)
 		this._entities.panels.dispatch.updateManyPanels(panelUpdates)
-		this._selectedStore.selectString(string.id)
+		this._selectedStore.dispatch.selectStringId(string.id)
 		this._render.renderCanvasApp()
 		this._uiStore.dispatch.closeDialog()
 		// this._appStore.dispatch.updateDialog({ id: this.dialogId, changes: { open: false } })

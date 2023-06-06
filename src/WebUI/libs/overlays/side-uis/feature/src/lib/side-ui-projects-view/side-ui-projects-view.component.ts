@@ -54,11 +54,15 @@ export class SideUiProjectsViewComponent {
 
 	openProjectContextMenu(event: MouseEvent, project: ProjectModel) {
 		this._uiStore.dispatch.openContextMenu({
-			contextMenu: {
-				component: CONTEXT_MENU_COMPONENT.PROJECT_MENU,
-				data: { projectId: project.id },
-				location: { x: event.clientX, y: event.clientY },
-			},
+			component: CONTEXT_MENU_COMPONENT.PROJECT_MENU,
+			data: { projectId: project.id },
+			location: { x: event.clientX, y: event.clientY },
+		})
+	}
+
+	openSignInDialog() {
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.SIGN_IN,
 		})
 	}
 }

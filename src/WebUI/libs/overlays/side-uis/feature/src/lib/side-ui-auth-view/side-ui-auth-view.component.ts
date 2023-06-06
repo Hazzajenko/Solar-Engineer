@@ -4,6 +4,7 @@ import { goRightWithConfig } from '@shared/animations'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { MouseOverRenderDirective } from '@canvas/rendering/data-access'
 import { injectAuthStore } from '@auth/data-access'
+import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 
 @Component({
 	selector: 'side-ui-auth-view',
@@ -15,5 +16,12 @@ import { injectAuthStore } from '@auth/data-access'
 })
 export class SideUiAuthViewComponent {
 	private _auth = injectAuthStore()
+	private _uiStore = injectUiStore()
 	user = this._auth.select.user
+
+	openSignInDialog() {
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.SIGN_IN,
+		})
+	}
 }

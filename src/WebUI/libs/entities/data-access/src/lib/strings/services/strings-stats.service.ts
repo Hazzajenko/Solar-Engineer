@@ -19,7 +19,7 @@ export class StringsStatsService {
 	private _panelLinksStore = injectPanelLinksStore()
 
 	calculateStringStatsForSelectedString() {
-		const selectedStringId = this._selectedStore.selectedStringId
+		const selectedStringId = this._selectedStore.select.selectedStringId()
 		assertNotNull(selectedStringId)
 		const stringPanels = this._panelsStore.select.getByStringId(selectedStringId)
 

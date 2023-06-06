@@ -7,11 +7,34 @@
 >
 	<!--	class="pt-4 pb-4 text-sm text-gray-700 dark:text-gray-200 absolute h-fit w-full divide-y divide-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none"-->
 	<!--	-->
+	<!--	class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-[100] mt-2 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"-->
+
 	<div
 		@transitionContextMenu
-		class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-[100] mt-2 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+		class="py-1 top-0 left-[105%] text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-44 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
 	>
-		<div class="grid grid-cols-3 gap-2 justify-items-center">
+		<a
+			class="group flex items-center px-4 py-2 text-sm text-gray-700"
+			role="menuitem"
+			tabindex="-1"
+		>
+			<div class="grid grid-cols-4 gap-4 justify-items-center">
+				<button
+					(click)="setStringColor(colour)"
+					*ngFor="let colour of stringColors"
+					[ngClass]="{
+						'ring-2 ring-black': selectedStringColor() === colour
+					}"
+					[ngStyle]="{
+						'background-color': colour,
+						'border-color': colour
+					}"
+					class="w-6 h-6 rounded-sm"
+					type="button"
+				></button>
+			</div>
+		</a>
+		<!--<div class="grid grid-cols-3 gap-2 justify-items-center">
 			<div
 				(click)="setStringColor(color)"
 				*ngFor="let color of stringColors"
@@ -21,6 +44,6 @@
 				 }"
 				style="width: 25px; height: 25px; border-radius: 50%"
 			></div>
-		</div>
+		</div>-->
 	</div>
 </div>

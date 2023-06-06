@@ -1,22 +1,22 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core'
+import { Component, computed, ElementRef, inject, ViewChild } from '@angular/core'
 import { ToSafeHtmlPipe } from '@shared/utils'
 import { NgClass, NgForOf, NgIf, NgStyle } from '@angular/common'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { ShowSvgNoStylesComponent, ToggleSvgNoStylesComponent, TooltipComponent } from '@shared/ui'
 import { ConvertTooltipPipe } from './convert-tooltip.pipe'
 import { MouseOverRenderDirective } from '@canvas/rendering/data-access'
-import { toSignal } from '@angular/core/rxjs-interop'
-import { UiStoreService } from '@overlays/ui-store/data-access'
+import {
+	CONTEXT_MENU_COMPONENT,
+	DIALOG_COMPONENT,
+	injectUiStore,
+} from '@overlays/ui-store/data-access'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
-import { NgIconComponent, provideIcons } from '@ng-icons/core'
-import { heroUsers } from '@ng-icons/heroicons/outline'
+import { NgIconComponent } from '@ng-icons/core'
 import { goBottom } from '@shared/animations'
-import { ColourPickerMenuV2Component } from '@overlays/context-menus/feature'
 import { DynamicWidthDirective } from './dynamic-width.directive'
+import { injectAuthStore } from '@auth/data-access'
+import { LetDirective } from '@ngrx/component'
 
-// import { ZippyTooltipDirective } from '@canvas/app/feature'
-// NG_ICON_DIRECTIVES
-// heroAcademicCapSolid
 @Component({
 	selector: 'overlay-tool-bar-component',
 	standalone: true,
@@ -32,40 +32,34 @@ import { DynamicWidthDirective } from './dynamic-width.directive'
 		ToggleSvgNoStylesComponent,
 		NgIconComponent,
 		NgForOf,
-		ColourPickerMenuV2Component,
 		NgStyle,
 		DynamicWidthDirective,
-		// ZippyTooltipDirective,
+		LetDirective,
 	],
-	providers: [provideIcons({ heroUsers })],
 	hostDirectives: [MouseOverRenderDirective],
 	animations: [goBottom],
 })
 export class OverlayToolBarComponent {
-	private _uiStore = inject(UiStoreService)
+	private _uiStore = injectUiStore()
+	private _authStore = injectAuthStore()
 	private _graphicsStore = inject(GraphicsStoreService)
-	// showToolbar = true
-	sideUiEnabled = toSignal(this._uiStore.sideUiNav$, { initialValue: this._uiStore.sideUiNav })
+	user = this._authStore.select.user
 	@ViewChild('toolBar') toolBar: ElementRef<HTMLDivElement> | undefined
 
-	// protected readonly stringColors = stringColors
-
-	get sideUiNavOpen() {
-		return this.sideUiEnabled()
-	}
+	vm = computed(() => ({
+		user: this._authStore.select.user(),
+		sideUiEnabled: this._uiStore.select.sideUiNavOpen(),
+	}))
 
 	openSettingsDialog() {
 		this._uiStore.dispatch.openDialog({
-			// component: DIALOG_COMPONENT_TYPE.APP_SETTINGS,
-			component: 'AppSettingsDialogComponent',
+			component: DIALOG_COMPONENT.APP_SETTINGS,
 		})
 	}
 
 	openProfileDialog() {
 		this._uiStore.dispatch.openDialog({
-			// component: DIALOG_COMPONENT_TYPE.PROFILE_SETTINGS,
-			// component: DIALOG_COMPONENT_TYPE.PROFILE_SETTINGS,
-			component: 'ProfileSettingsDialogComponent',
+			component: DIALOG_COMPONENT.PROFILE_SETTINGS,
 		})
 	}
 
@@ -78,7 +72,7 @@ export class OverlayToolBarComponent {
 		const right = toolbarRect.right
 
 		this._uiStore.dispatch.openContextMenu({
-			component: 'app-colour-picker-menu',
+			component: CONTEXT_MENU_COMPONENT.COLOUR_PICKER_MENU,
 			location,
 			data: {
 				left: rect.left,
@@ -93,5 +87,13 @@ export class OverlayToolBarComponent {
 
 	toggleColouredStrings() {
 		this._graphicsStore.dispatch.toggleColouredStrings()
+	}
+
+	undo() {
+		console.log('implement undo')
+	}
+
+	redo() {
+		console.log('implement redo')
 	}
 }

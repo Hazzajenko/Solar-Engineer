@@ -2,12 +2,12 @@
 using System.Text.Json;
 using Mapster;
 using Microsoft.AspNetCore.SignalR;
-using Projects.Domain.Commands.Panels;
-using Projects.Domain.Contracts.Data;
-using Projects.Domain.Contracts.Requests.Panels;
-using Projects.Domain.Contracts.Requests.Projects;
-using Projects.Domain.Contracts.Responses;
+using Projects.Contracts.Data;
+using Projects.Contracts.Requests.Panels;
+using Projects.Contracts.Requests.Projects;
+using Projects.Contracts.Responses;
 using Projects.Domain.Entities;
+using Projects.SignalR.Commands.Panels;
 
 namespace Projects.Application.Mapping;
 
@@ -88,6 +88,7 @@ public class PanelsMappingConfig : IRegister
             )
             .Map(dest => dest.User, src => src.Context.ToHubAppUser())
             .Map(dest => dest.RequestId, src => src.ProjectEvent.RequestId);
+
 
         config
             .NewConfig<PanelCreatedResponse, IEnumerable<PanelCreatedResponse>>()

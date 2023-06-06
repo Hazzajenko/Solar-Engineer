@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Infrastructure.Logging;
+using Projects.Contracts.Responses;
 using Projects.Domain.Common;
-using Projects.Domain.Contracts.Responses;
 
 namespace Projects.Application.Mapping;
 

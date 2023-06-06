@@ -1,8 +1,37 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
-import { tap } from 'rxjs'
+import { map, tap } from 'rxjs'
 import { ProjectsSignalrService } from '../services'
 import { ProjectsActions } from './projects.actions'
+import { injectEntityStore, PanelsSignalrService } from '@entities/data-access'
+import { AuthActions } from '@auth/data-access'
+
+export const createProjectSignalr$ = createEffect(
+	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.createProjectHttp),
+			tap((request) => projectsSignalr.createProject(request)),
+		)
+	},
+	{ functional: true, dispatch: false },
+)
+
+export const initProjectsSignalr$ = createEffect(
+	(
+		actions$ = inject(Actions),
+		projectsSignalr = inject(ProjectsSignalrService),
+		panelsSignalr = inject(PanelsSignalrService),
+	) => {
+		return actions$.pipe(
+			ofType(AuthActions.signInSuccess),
+			tap(({ token }) => {
+				const hubConnection = projectsSignalr.init(token)
+				panelsSignalr.init(hubConnection)
+			}),
+		)
+	},
+	{ functional: true, dispatch: false },
+)
 
 export const updateProjectSignalr$ = createEffect(
 	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
@@ -19,6 +48,39 @@ export const deleteProjectSignalr$ = createEffect(
 		return actions$.pipe(
 			ofType(ProjectsActions.deleteProject),
 			tap(({ projectId }) => projectsSignalr.deleteProject(projectId)),
+		)
+	},
+	{ functional: true, dispatch: false },
+)
+
+export const selectUserProjectOnLoad$ = createEffect(
+	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.loadUserProjectsSuccess),
+			map(({ projects }) => {
+				return ProjectsActions.selectProjectInitial({ projectId: projects[0].id })
+			}),
+			tap((action) => projectsSignalr.getProjectById(action.projectId, true)),
+		)
+	},
+	{ functional: true },
+)
+
+export const fetchProjectDataOnSelection$ = createEffect(
+	(
+		actions$ = inject(Actions),
+		entitiesStore = injectEntityStore(),
+		projectsSignalr = inject(ProjectsSignalrService),
+	) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.selectProject),
+			tap(({ projectId }) => {
+				entitiesStore.strings.dispatch.clearStringsState()
+				entitiesStore.panels.dispatch.clearPanelsState()
+				entitiesStore.panelLinks.dispatch.clearPanelLinksState()
+				entitiesStore.panelConfigs.dispatch.clearPanelConfigsState()
+				projectsSignalr.getProjectById(projectId)
+			}),
 		)
 	},
 	{ functional: true, dispatch: false },

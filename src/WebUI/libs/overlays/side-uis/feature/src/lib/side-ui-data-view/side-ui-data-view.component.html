@@ -1,14 +1,60 @@
-<ng-container>
+<div
+	*ngrxLet="vm() as vm"
+	class="overflow-y-auto py-4 px-3 h-full w-52 bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+>
 	<div
-		class="relative overflow-y-auto py-5 w-52 px-3 h-full bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
-		id="secondary-sidenav"
+		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
 	>
+		<h3>Data</h3>
+	</div>
+	<div *ngIf="!vm.user" class="text-center">
+		<p class="mt-1 mb-1 text-sm text-gray-500">
+			<span
+				(click)="openSignInDialog()"
+				class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+				href="#"
+				>Sign in</span
+			>
+			to your account to save your progress.
+		</p>
+	</div>
+	<div *ngIf="vm.user && vm.project">
+		<p class="mt-1 mb-2 text-sm text-gray-500">Selected Project:</p>
 		<div
-			class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+			*ngrxLet="vm.project as project"
+			[ngStyle]="{
+				'border-left-color': project.colour
+			}"
+			class="flex items-center py-1 justify-between bg-primary-50 text-primary-700 dark:bg-primary-700 dark:text-primary-100"
+			style="border-left-width: 4px; border-left-style: solid; margin-left: -4px"
 		>
-			<span class="ml-3">Data</span>
+			<!--				<div class="min-w-0 flex">-->
+			<div class="flex justify-start">
+				<a
+					class="flex items-center text-base rounded-lg transition duration-75 group font-medium text-gray-900 dark:text-gray-200"
+				>
+					<span
+						[ngStyle]="{
+							'background-color': project.colour,
+							'border-color': project.colour
+						}"
+						class="w-4 h-4 rounded ml-2"
+					></span>
+					<span class="ml-3 capitalize text-sm text-gray-900">{{ project.name }}</span>
+				</a>
+			</div>
 		</div>
-		<div class="flex flex-row items-center justify-evenly pb-2" id="buttons">
+		<!--		<p class="mt-1 mb-2 text-sm text-gray-500">
+					<span
+						(click)="openSignInDialog()"
+						class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+						href="#"
+					>Sign in</span
+					>
+					to your account to save your progress.
+				</p>-->
+	</div>
+	<!--	<div class="flex flex-row items-center justify-evenly pb-2" id="buttons">
 			<button
 				(click)="openAllStrings()"
 				class="flex rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -23,179 +69,186 @@
 			>
 				Close All
 			</button>
-		</div>
-		<nav aria-label="Directory">
-			<div class="relative">
-				<ul>
-					<ng-container
-						*ngIf="
-							panelsGroupedByStringId && panelsGroupedByStringId.length > 0;
-							then hasPanels;
-							else noPanels
-						"
-					/>
-					<ng-template #noPanels>
-						<li
-							class="sticky top-0 z-10 border-y bg-gray-50 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900"
-						>
-							<div class="flex items-center justify-between py-1">
-								<div class="min-w-0 flex">
-									<div class="flex items-start gap-x-3">
-										<span class="flex text-xs font-semibold text-gray-900">
-											No Panels in Scene</span
-										>
-									</div>
+		</div>-->
+	<nav aria-label="Directory" class="mt-4">
+		<div class="relative">
+			<ul>
+				<ng-container
+					*ngIf="
+						vm.panelsGroupedByStringId && vm.panelsGroupedByStringId.length > 0;
+						then hasPanels;
+						else noPanels
+					"
+				/>
+				<ng-template #noPanels>
+					<li
+						class="sticky top-0 z-10 border-y bg-gray-50 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900"
+					>
+						<div class="flex items-center justify-between py-1">
+							<div class="min-w-0 flex">
+								<div class="flex items-start gap-x-3">
+									<span class="flex text-xs font-semibold text-gray-900"> No Panels in Scene</span>
 								</div>
 							</div>
-						</li>
-					</ng-template>
-					<ng-template #hasPanels>
-						<ng-container *ngFor="let stringIdGroup of panelsGroupedByStringId">
-							<ng-container *ngIf="stringIdGroup.string; else noString">
-								<li
-									[ngClass]="{
-										'border-b-gray-200 border-t-gray-100':
-											stringIdGroup.string.id !== selectedStringId,
-										'border border-blue-200': stringIdGroup.string.id === selectedStringId
-									}"
-									class="sticky top-0 z-10 border-y bg-gray-50 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900"
-								>
-									<div class="flex items-center justify-between py-1">
-										<div class="min-w-0 flex">
-											<div class="flex items-start gap-x-3">
-												<p class="flex text-xs font-semibold text-gray-900">
-													{{ stringIdGroup.string.name }} [{{ stringIdGroup.panels.length }}]
-												</p>
-											</div>
-										</div>
-										<div class="flex justify-end">
-											<div class="relative flex-none">
-												<button
-													(click)="toggleStringView(stringIdGroup.string.id)"
-													class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-													type="button"
-												>
-													<ng-container
-														*ngIf="
-															openedStrings.get(stringIdGroup.string.id);
-															then contentOpen;
-															else contentClosed
-														"
-													/>
-												</button>
-											</div>
-											<div class="relative flex-none">
-												<button
-													(click)="openStringContextMenu($event, stringIdGroup.string.id)"
-													aria-expanded="false"
-													aria-haspopup="true"
-													class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-													id="options-menu-0-button"
-													type="button"
-												>
-													<span class="sr-only">Open options</span>
-													<app-show-svg-no-styles
-														inputClass="h-5 w-5"
-														svgPath="menus/ellipsis-vertical"
-													/>
-												</button>
-											</div>
+						</div>
+					</li>
+				</ng-template>
+				<ng-template #hasPanels>
+					<ng-container *ngFor="let stringIdGroup of vm.panelsGroupedByStringId">
+						<ng-container
+							*ngIf="
+								stringIdGroup.string && stringIdGroup.string.name !== UNDEFINED_STRING_NAME;
+								else noString
+							"
+						>
+							<li
+								[ngClass]="{
+									'border-b-gray-200 border-t-gray-100':
+										stringIdGroup.string.id !== vm.selectedStringId,
+									'border border-blue-200': stringIdGroup.string.id === vm.selectedStringId
+								}"
+								class="sticky top-0 z-10 border-y bg-gray-50 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900"
+							>
+								<div class="flex items-center justify-between py-1">
+									<div class="min-w-0 flex">
+										<div class="flex items-start gap-x-3">
+											<p class="flex text-xs font-semibold text-gray-900">
+												{{ stringIdGroup.string.name }} [{{ stringIdGroup.panels.length }}]
+											</p>
 										</div>
 									</div>
-								</li>
-								<ul
-									*ngIf="openedStrings.get(stringIdGroup.string.id)"
-									class="divide-y divide-gray-300 overflow-y-auto"
-									role="list"
-								>
-									<ng-container *ngFor="let panel of stringIdGroup.panels">
-										<ng-container *ngTemplateOutlet="panelItem; context: { panel }"></ng-container>
-									</ng-container>
-								</ul>
-							</ng-container>
-							<ng-template #noString>
-								<li
-									class="sticky top-0 z-10 border-y bg-gray-50 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900"
-								>
-									<div class="flex items-center justify-between py-1">
-										<div class="min-w-0 flex">
-											<div class="flex items-start gap-x-3">
-												<span class="flex text-xs font-semibold text-gray-900">
-													No String [{{ stringIdGroup.panels.length }}]</span
-												>
-											</div>
+									<div class="flex justify-end">
+										<div class="relative flex-none">
+											<button
+												(click)="toggleStringView(stringIdGroup.string.id)"
+												class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+												type="button"
+											>
+												<ng-container
+													*ngIf="
+														vm.openedStrings.get(stringIdGroup.string.id);
+														then contentOpen;
+														else contentClosed
+													"
+												/>
+											</button>
 										</div>
-										<div class="flex justify-end">
-											<div class="relative flex-none">
-												<button
-													(click)="toggleStringView(UndefinedStringId)"
-													class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-													type="button"
-												>
-													<ng-container
-														*ngIf="
-															openedStrings.get(UndefinedStringId);
-															then contentOpen;
-															else contentClosed
-														"
-													/>
-												</button>
-											</div>
-											<!--<div class="relative flex-none">
-												<button
-													(click)="openStringContextMenu($event, UndefinedStringId)"
-													aria-expanded="false"
-													aria-haspopup="true"
-													class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-													type="button"
-												>
-													<span class="sr-only">Open options</span>
-													<app-show-svg-no-styles
-														inputClass="h-5 w-5"
-														svgPath="menus/ellipsis-vertical"
-													/>
-												</button>
-											</div>-->
+										<div class="relative flex-none">
+											<button
+												(click)="openStringContextMenu($event, stringIdGroup.string.id)"
+												aria-expanded="false"
+												aria-haspopup="true"
+												class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+												id="options-menu-0-button"
+												type="button"
+											>
+												<span class="sr-only">Open options</span>
+												<app-show-svg-no-styles
+													inputClass="h-5 w-5"
+													svgPath="menus/ellipsis-vertical"
+												/>
+											</button>
 										</div>
 									</div>
-								</li>
-								<ul
-									*ngIf="openedStrings.get(UndefinedStringId)"
-									class="divide-y divide-gray-300 overflow-y-auto"
-									role="list"
-								>
-									<ng-container *ngFor="let panel of stringIdGroup.panels">
-										<ng-container *ngTemplateOutlet="panelItem; context: { panel }"></ng-container>
-									</ng-container>
-								</ul>
-							</ng-template>
+								</div>
+							</li>
+							<ul
+								*ngIf="vm.openedStrings.get(stringIdGroup.string.id)"
+								class="divide-y divide-gray-300 overflow-y-auto"
+								role="list"
+							>
+								<ng-container *ngFor="let panel of stringIdGroup.panels">
+									<ng-container *ngTemplateOutlet="panelItem; context: { panel }"></ng-container>
+								</ng-container>
+							</ul>
 						</ng-container>
-					</ng-template>
-				</ul>
-			</div>
-		</nav>
-	</div>
-</ng-container>
+						<ng-template #noString>
+							<li
+								class="sticky top-0 z-10 border-y bg-gray-50 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900"
+							>
+								<div class="flex items-center justify-between py-1">
+									<div class="min-w-0 flex">
+										<div class="flex items-start gap-x-3">
+											<span class="flex text-xs font-semibold text-gray-900">
+												No String [{{ stringIdGroup.panels.length }}]</span
+											>
+										</div>
+									</div>
+									<div class="flex justify-end">
+										<div class="relative flex-none">
+											<button
+												(click)="toggleStringView(UndefinedStringId)"
+												class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+												type="button"
+											>
+												<ng-container
+													*ngIf="
+														vm.openedStrings.get(UndefinedStringId);
+														then contentOpen;
+														else contentClosed
+													"
+												/>
+											</button>
+										</div>
+										<!--<div class="relative flex-none">
+											<button
+												(click)="openStringContextMenu($event, UndefinedStringId)"
+												aria-expanded="false"
+												aria-haspopup="true"
+												class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+												type="button"
+											>
+												<span class="sr-only">Open options</span>
+												<app-show-svg-no-styles
+													inputClass="h-5 w-5"
+													svgPath="menus/ellipsis-vertical"
+												/>
+											</button>
+										</div>-->
+									</div>
+								</div>
+							</li>
+							<ul
+								*ngIf="vm.openedStrings.get(UndefinedStringId)"
+								class="divide-y divide-gray-300 overflow-y-auto max-h-80"
+								role="list"
+							>
+								<ng-container *ngFor="let panel of stringIdGroup.panels">
+									<ng-container *ngTemplateOutlet="panelItem; context: { panel }"></ng-container>
+								</ng-container>
+							</ul>
+						</ng-template>
+					</ng-container>
+				</ng-template>
+			</ul>
+		</div>
+	</nav>
+</div>
+<!--	</div>-->
+<!--	</div>-->
+<!--</ng-container>-->
 
 <ng-template #panelItem let-panel="panel">
-	<li
-		(click)="selectPanel(panel.id)"
-		(contextmenu)="openPanelContextMenu($event, panel.id)"
-		*ngIf="panel | isTypeOfPanel as panel"
-		[ngClass]="{
-			'bg-gray-100 hover:bg-gray-300':
-				panel.id !== singleSelectedPanelId || !multipleSelectedPanelIds.includes(panel.id),
-			'bg-indigo-100 hover:bg-indigo-300':
-				panel.id === singleSelectedPanelId || multipleSelectedPanelIds.includes(panel.id)
-		}"
-		class="min-w-0 pl-1"
-	>
-		<p class="text-sm text-gray-700 truncate">ID: {{ panel.id | truncate : 20 }}</p>
-		<p class="mt-1 truncate text-xs text-gray-500">
-			X: {{ panel.location.x }} Y: {{ panel.location.y }}
-		</p>
-		<p class="truncate text-xs text-gray-500">Angle {{ panel.angle | radiansToDegrees }}</p>
-	</li>
+	<ng-container *ngrxLet="vm() as vm">
+		<li
+			(click)="selectPanel(panel.id)"
+			(contextmenu)="openPanelContextMenu($event, panel.id)"
+			*ngIf="panel | isTypeOfPanel as panel"
+			[ngClass]="{
+				'bg-gray-100 hover:bg-gray-300':
+					panel.id !== vm.singleSelectedPanelId || !vm.multipleSelectedPanelIds.includes(panel.id),
+				'bg-indigo-100 hover:bg-indigo-300':
+					panel.id === vm.singleSelectedPanelId || vm.multipleSelectedPanelIds.includes(panel.id)
+			}"
+			class="min-w-0 pl-1"
+		>
+			<p class="text-sm text-gray-700 truncate">ID: {{ panel.id | truncate : 20 }}</p>
+			<p class="mt-1 truncate text-xs text-gray-500">
+				X: {{ panel.location.x }} Y: {{ panel.location.y }}
+			</p>
+			<p class="truncate text-xs text-gray-500">Angle {{ panel.angle | radiansToDegrees }}</p>
+		</li>
+	</ng-container>
 </ng-template>
 
 <ng-template #contentClosed>

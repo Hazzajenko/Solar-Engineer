@@ -1,10 +1,6 @@
 import { MemoizedSelector, Store } from '@ngrx/store'
-import { UiActions, uiFeature } from '@overlays/ui-store/data-access'
-import {
-	createRootServiceInjector,
-	GetActionParametersByActionKey,
-	GetActionParametersByActionKeyDeep,
-} from '@shared/utils'
+import { ContextMenuInput, UiActions, uiFeature } from '@overlays/ui-store/data-access'
+import { createRootServiceInjector, GetActionParametersByActionKeyDeep } from '@shared/utils'
 
 export type UiStoreSelectors = Omit<typeof uiFeature, 'name' | 'reducer'>
 
@@ -118,9 +114,7 @@ function uiStoreFactory(store: Store) {
 		openDialog: (dialog: GetActionParametersByActionKeyDeep<UiStoreActions, 'openDialog'>) =>
 			store.dispatch(UiActions.openDialog({ dialog })),
 		closeDialog: () => store.dispatch(UiActions.closeDialog()),
-		openContextMenu: ({
-			contextMenu,
-		}: GetActionParametersByActionKey<UiStoreActions, 'openContextMenu'>) =>
+		openContextMenu: (contextMenu: ContextMenuInput) =>
 			store.dispatch(UiActions.openContextMenu({ contextMenu })),
 		closeContextMenu: () => store.dispatch(UiActions.closeContextMenu()),
 		toggleSideUiNav: () => store.dispatch(UiActions.toggleSideUiNav()),

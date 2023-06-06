@@ -16,7 +16,6 @@ import { injectSelectedStore } from '@canvas/selected/data-access'
 import { LetDirective } from '@ngrx/component'
 import { NgIconComponent, provideIcons } from '@ng-icons/core'
 import { heroMinusCircle } from '@ng-icons/heroicons/outline'
-import { UpdateStr } from '@ngrx/entity/src/models'
 import { assertNotNull } from '@shared/utils'
 import { transitionContextMenu } from '../animations/context-menu.animation'
 import { injectEntityStore } from '@entities/data-access'
@@ -84,7 +83,7 @@ export class SinglePanelMenuComponent implements OnInit {
 		this.string = this._entityStore.strings.select.getById(panel.stringId)
 
 		const linkMode = this._appStore.state.mode === 'LinkMode'
-		const isInSelectedString = this._selectedStore.state.selectedStringId === this.panel.stringId
+		const isInSelectedString = this._selectedStore.select.selectedStringId() === this.panel.stringId
 
 		if (linkMode && isInSelectedString) {
 			this.inLinkMode.set(true)
@@ -136,7 +135,7 @@ export class SinglePanelMenuComponent implements OnInit {
 
 	setPanelAsDisconnectionPoint() {
 		assertNotNull(this.string)
-		const update: UpdateStr<StringModel> = {
+		const update = {
 			id: this.string.id,
 			changes: {
 				disconnectionPointId: this.panel.id,

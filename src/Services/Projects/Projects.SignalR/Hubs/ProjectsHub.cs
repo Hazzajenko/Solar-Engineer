@@ -3,10 +3,10 @@
 using Infrastructure.Logging;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Projects.Domain.Commands.Projects;
-using Projects.Domain.Contracts.Requests.Projects;
-using Projects.Domain.Queries.Projects;
+using Projects.Contracts.Requests.Projects;
+using Projects.SignalR.Commands.Projects;
 using Projects.SignalR.Mapping;
+using Projects.SignalR.Queries.Projects;
 
 namespace Projects.SignalR.Hubs;
 

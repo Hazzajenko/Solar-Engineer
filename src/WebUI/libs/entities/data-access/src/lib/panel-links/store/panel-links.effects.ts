@@ -67,7 +67,7 @@ export const updateSelectedStringCircuitOnChange$ = createEffect(
 				PanelLinksActions.deletePanelLink,
 			),
 			map(() => {
-				const selectedStringId = _selectedStore.selectedStringId
+				const selectedStringId = _selectedStore.select.selectedStringId()
 				if (!selectedStringId) {
 					return PanelLinksActions.noop()
 				}

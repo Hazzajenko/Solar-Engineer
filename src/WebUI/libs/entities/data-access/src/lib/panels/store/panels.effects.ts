@@ -69,11 +69,11 @@ export const removeSelectedIfDeleted$ = createEffect(
 		return actions$.pipe(
 			ofType(PanelsActions.deletePanel),
 			map(({ panelId }) => {
-				const selected = selectedStore.selectSingleSelectedPanelId
+				const selected = selectedStore.select.singleSelectedPanelId()
 				if (selected === panelId) {
 					return SelectedActions.clearSingleSelected()
 				}
-				const multiSelectedIds = selectedStore.selectMultipleSelectedPanelIds
+				const multiSelectedIds = selectedStore.select.multipleSelectedPanelIds()
 				if (multiSelectedIds.includes(panelId)) {
 					return SelectedActions.removePanelsFromMultiSelect({ panelIds: [panelId] })
 				}

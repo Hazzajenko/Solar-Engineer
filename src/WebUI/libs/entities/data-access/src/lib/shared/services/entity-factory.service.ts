@@ -34,7 +34,7 @@ export class EntityFactoryService {
 				y: this._nearby.axisPreviewRect.top,
 			}
 
-			const selectedStringId = this._selectedStore.state.selectedStringId
+			const selectedStringId = this._selectedStore.select.selectedStringId()
 			const entity = selectedStringId
 				? createPanel(previewRectLocation, selectedStringId)
 				: createPanel(previewRectLocation)
@@ -50,7 +50,7 @@ export class EntityFactoryService {
 			currentPoint,
 			SizeByType[ENTITY_TYPE.PANEL],
 		)
-		const selectedStringId = this._selectedStore.state.selectedStringId
+		const selectedStringId = this._selectedStore.select.selectedStringId()
 		const entity = selectedStringId
 			? createPanel(location, selectedStringId)
 			: createPanel(location)
@@ -74,7 +74,7 @@ export class EntityFactoryService {
 				y: this._nearby.axisPreviewRect.top,
 			}
 
-			const selectedStringId = this._selectedStore.state.selectedStringId
+			const selectedStringId = this._selectedStore.select.selectedStringId()
 			const entity = selectedStringId
 				? createPanel(previewRectLocation, selectedStringId)
 				: createPanel(previewRectLocation)
@@ -90,7 +90,7 @@ export class EntityFactoryService {
 			currentPoint,
 			SizeByType[ENTITY_TYPE.PANEL],
 		)
-		const selectedStringId = this._selectedStore.state.selectedStringId
+		const selectedStringId = this._selectedStore.select.selectedStringId()
 		const entity = selectedStringId
 			? createPanel(location, selectedStringId)
 			: createPanel(location)

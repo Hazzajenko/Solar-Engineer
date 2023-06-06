@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
 using Projects.Contracts.Events;
-using Projects.Domain.Commands.Projects;
 using Projects.Domain.Entities;
+using Projects.SignalR.Commands.Projects;
 using Projects.SignalR.Hubs;
 
 namespace Projects.Application.Handlers.Projects;
@@ -53,9 +53,11 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
 
         appUserId = userFoundResponse.Message.Id;
 
+        var request = command.CreateProjectRequest;
         var appUserProject = AppUserProject.CreateAsOwner(
             appUserId,
-            command.CreateProjectRequest
+            request.Name,
+            request.Colour
         );
         await _unitOfWork.AppUserProjectsRepository.AddAsync(appUserProject);
         await _unitOfWork.SaveChangesAsync();

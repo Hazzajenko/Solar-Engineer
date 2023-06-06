@@ -1,6 +1,5 @@
 import { Store } from '@ngrx/store'
 import { createRootServiceInjector, isNotNull } from '@shared/utils'
-import { UpdateStr } from '@ngrx/entity/src/models'
 import { PanelModel, StringId, StringModel } from '@entities/shared'
 import { selectAllStringsExceptUndefinedString, selectStringsEntities } from './strings.selectors'
 import { StringsActions } from './strings.actions'
@@ -20,7 +19,7 @@ function stringsStoreFactory(store: Store) {
 	const entities = store.selectSignal(selectStringsEntities)
 
 	const select = {
-		allStrings: store.selectSignal(selectAllStringsExceptUndefinedString),
+		allStrings: store.selectSignal(selectAllStringsExceptUndefinedString), // selectedString: store.selectSignal(selectSelectedString),
 		getById: (id: StringId) => entities()[id],
 		getByIds: (ids: StringId[]) => ids.map((id) => entities()[id]).filter(isNotNull),
 	}
@@ -33,9 +32,9 @@ function stringsStoreFactory(store: Store) {
 			store.dispatch(StringsActions.addStringWithPanels({ string, panelUpdates })),
 		addManyStrings: (strings: StringModel[]) =>
 			store.dispatch(StringsActions.addManyStrings({ strings })),
-		updateString: (update: UpdateStr<StringModel>) =>
+		updateString: (update: EntityUpdate<StringModel>) =>
 			store.dispatch(StringsActions.updateString({ update })),
-		updateManyStrings: (updates: UpdateStr<StringModel>[]) =>
+		updateManyStrings: (updates: EntityUpdate<StringModel>[]) =>
 			store.dispatch(StringsActions.updateManyStrings({ updates })),
 		deleteString: (id: StringId) => store.dispatch(StringsActions.deleteString({ stringId: id })),
 		deleteManyStrings: (ids: StringId[]) =>

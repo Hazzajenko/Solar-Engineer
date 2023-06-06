@@ -40,6 +40,7 @@ import {
 } from '@entities/shared'
 import { throttle } from 'lodash'
 import { ObjectPositioningStoreService } from '@canvas/object-positioning/data-access'
+import { injectAuthStore } from '@auth/data-access'
 
 @Injectable({
 	providedIn: 'root',
@@ -48,6 +49,7 @@ export class RenderService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _divElements = inject(DivElementsService)
 	private _entities = injectEntityStore()
+	private _authStore = injectAuthStore()
 	// private _entities = injectEntityStore()
 	// private _entities = injectEntityStore()
 	// private _app = inject(AppStoreService)
@@ -94,22 +96,23 @@ export class RenderService {
 		return this._previousFpsStats.reduce((a, b) => a + b) / this._previousFpsStats.length
 	}
 
-	offset = 0 /*
-	 _svgs = injectSvgs()
-	 _svgs2 = injectSvgsV2()
-	 _imageElement: HTMLImageElement | undefined
-	 _svgCursorImages: SvgCursorImageRecord | undefined*/
+	offset = 0
 	throttledRenderCanvasApp = throttle(this.renderFn, 1000 / 60)
-
-	isProjectReadyToRender = this._projectsStore.select.projectReadyToRender
 
 	constructor() {
 		this.checkFps()
 		effect(() => {
-			if (this.isProjectReadyToRender()) {
+			if (this.isProjectReadyToRender) {
 				this.renderCanvasApp()
 			}
 		})
+	}
+
+	get isProjectReadyToRender() {
+		return (
+			(this._projectsStore.select.projectReadyToRender() && !!this._authStore.select.user()) ||
+			(!this._authStore.select.user() && this._authStore.select.guest())
+		)
 	}
 
 	get renderOptions() {
@@ -148,7 +151,7 @@ export class RenderService {
 	}
 
 	renderCanvasApp(options?: Partial<CanvasRenderOptions>) {
-		if (!this.isProjectReadyToRender()) return
+		if (!this.isProjectReadyToRender) return
 		if (this._throttleRender) {
 			this.throttledRenderCanvasApp(options)
 			return
@@ -192,16 +195,16 @@ export class RenderService {
 			const appState = this._appState.appState()
 			const graphicsState = this._graphicsStore.state
 
-			const singleSelectedPanelId = this._selectedStore.state.singleSelectedPanelId
+			const singleSelectedPanelId = this._selectedStore.select.singleSelectedPanelId()
 			const singleSelectedPanel =
 				this._entities.panels.select.getByIdOrUndefined(singleSelectedPanelId)
 
-			const multipleSelectedPanelIds = this._selectedStore.state.multipleSelectedPanelIds
+			const multipleSelectedPanelIds = this._selectedStore.select.multipleSelectedPanelIds()
 			const multipleSelectedPanels = multipleSelectedPanelIds.length
 				? panels.filter((panel) => multipleSelectedPanelIds.includes(panel.id))
 				: []
 
-			const selectedState = this._selectedStore.state
+			const selectedState = this._selectedStore.select.selectedState()
 			const selectedStringId = selectedState.selectedStringId
 			const selectedString = selectedStringId
 				? this._entities.strings.select.getById(selectedStringId)
@@ -229,7 +232,7 @@ export class RenderService {
 			const toMoveMultipleSpotTakenIds =
 				this._objectPositioningStore.state.toMoveMultipleSpotTakenIds
 
-			const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
+			const selectedPanelLinkId = this._selectedStore.select.selectedPanelLinkId()
 			const panelLinkUnderMouse = this._entities.panelLinks.select.hoveringOverPanelLinkInApp()
 			const panelLinkRequest = options?.panelLinkRequest
 			const requestingLink = this._entities.panelLinks.select.requestingLink()
@@ -469,9 +472,9 @@ export class RenderService {
 			requestingLink,
 		} = options
 		const selectedStringId = selectedString?.id
-		// const selectedStringId = this._selectedStore.state.selectedStringId
+		// const selectedStringId = this._selectedStore.select.selectedStringId()
 		// const graphicsState = this._graphicsStore.state
-		// const selectedState = this._selectedStore.state
+		// const selectedState = this._selectedStore
 		// const { singleSelectedPanelId, multipleSelectedPanelIds, selectedPanelLinkId } = selectedState
 		/*		const selectedPanel = singleSelectedPanelId
 		 ? this._entities.panels.select.getById(singleSelectedPanelId)

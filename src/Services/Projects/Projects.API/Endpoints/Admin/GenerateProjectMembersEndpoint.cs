@@ -4,9 +4,9 @@ using Mapster;
 using Mediator;
 using Projects.Application.Data.Bogus;
 using Projects.Application.Repositories.AppUserProjects;
-using Projects.Domain.Contracts.Data;
-using Projects.Domain.Contracts.Requests.Admin;
-using Projects.Domain.Contracts.Responses.Admin;
+using Projects.Contracts.Data;
+using Projects.Contracts.Requests.Admin;
+using Projects.Contracts.Responses.Admin;
 
 namespace Projects.API.Endpoints.Admin;
 

@@ -1,4 +1,4 @@
-﻿using Projects.Domain.Contracts.Data;
+﻿using Projects.Contracts.Data;
 
 namespace Projects.Application.Mapping;
 

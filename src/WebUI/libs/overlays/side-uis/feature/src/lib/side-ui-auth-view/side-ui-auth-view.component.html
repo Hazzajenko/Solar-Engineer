@@ -1,6 +1,14 @@
+<!--<div
+	class="overflow-y-auto w-52 py-4 px-3 h-full bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+>-->
 <div
-	class="overflow-y-auto py-4 px-3 h-full bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+	class="overflow-y-auto py-4 px-3 h-full w-52 bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
 >
+	<div
+		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
+	>
+		<h3>Account</h3>
+	</div>
 	<div
 		*ngIf="user() as user; else notLoggedIn"
 		class="text-center text-gray-500 dark:text-gray-400"
@@ -97,7 +105,7 @@
 		</ul>
 	</div>
 	<ng-template #notLoggedIn>
-		<div>
+		<div class="text-center text-gray-500 dark:text-gray-400">
 			<!--			<img
 							alt="demo-account-image"
 							class="mx-auto mb-4 w-20 h-20 rounded-full"
@@ -105,31 +113,43 @@
 							ngSrc="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.hiclipart.com%2Ffree-transparent-background-png-clipart-dpjax&psig=AOvVaw115ZrkINnhmJgBM0sdptWa&ust=1686053002804000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCNDxvoSLrP8CFQAAAAAdAAAAABAF"
 							width="80"
 						/>-->
-			<h3 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+			<h3 class="font-medium tracking-tight text-gray-900 dark:text-white">
 				<a href="#">Demo Account</a>
 			</h3>
-			<!--		<p class="font-light text-gray-500 dark:text-gray-400">{{ user.email }}</p>-->
-			<a
-				class="inline-flex items-center justify-center w-full py-2.5 px-5 my-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-				href="#"
-			>
-				<svg
-					aria-hidden="true"
-					class="mr-1 w-5 h-5"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-					xmlns="http://www.w3.org/2000/svg"
+			<!--			<p class="font-light text-gray-500 dark:text-gray-400">Demo Account</p>-->
+			<p class="mt-1 text-sm text-gray-500">
+				To create and save projects get started by signing in.
+			</p>
+			<div class="mt-6">
+				<button
+					(click)="openSignInDialog()"
+					class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+					type="submit"
 				>
-					<path
-						d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-					></path>
-				</svg>
-				Sign up or Sign In
-			</a>
+					Sign in
+				</button>
+			</div>
+			<!--			<a
+							class="inline-flex items-center justify-center w-full py-2.5 px-5 my-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+							href="#"
+						>
+							<svg
+								aria-hidden="true"
+								class="mr-1 w-5 h-5"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+								></path>
+							</svg>
+							Sign up or Sign In
+						</a>-->
 		</div>
 	</ng-template>
 </div>

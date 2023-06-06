@@ -74,7 +74,7 @@ export class PanelLinksService {
 	 }*/
 
 	/*	getPanelLinkOrderIfStringIsSelected() {
-	 const stringId = this._selectedStore.selectedStringId
+	 const stringId = this._selectedStore.select.selectedStringId()
 	 if (!stringId) {
 	 return {
 	 stringPanelLinks: [] as PanelLinkModel[],
@@ -96,7 +96,7 @@ export class PanelLinksService {
 	 }*/
 
 	handlePanelLinksClick(event: PointerEvent, panel: PanelModel) {
-		if (!this._selectedStore.selectedStringId) {
+		if (!this._selectedStore.select.selectedStringId()) {
 			console.error('a string must be selected to link panels')
 			return
 		}
@@ -163,7 +163,7 @@ export class PanelLinksService {
 	}
 
 	getPanelLinkOrderForSelectedString() {
-		const selectedStringId = this._selectedStore.selectedStringId
+		const selectedStringId = this._selectedStore.select.selectedStringId()
 		if (!selectedStringId) return
 		const panelLinks = this._panelLinksStore.select.getByStringId(selectedStringId)
 		return getPanelLinkOrderSeparateChains(panelLinks)
@@ -180,14 +180,13 @@ export class PanelLinksService {
 	}
 
 	isMouseOverLinkPath(event: PointerEvent, currentPoint: TransformedPoint) {
-		if (!this._selectedStore.selectedStringId) {
+		const selectedStringId = this._selectedStore.select.selectedStringId()
+		if (!selectedStringId) {
 			console.error('a string must be selected to be in link mode')
 			return
 		}
 
-		const panelLinks = this._entities.panelLinks.select.getByStringId(
-			this._selectedStore.selectedStringId,
-		)
+		const panelLinks = this._entities.panelLinks.select.getByStringId(selectedStringId)
 		if (!panelLinks.length) {
 			return
 		}
@@ -229,13 +228,14 @@ export class PanelLinksService {
 			if (this._panelLinksStore.select.requestingLink()) {
 				this.clearPanelLinkRequest()
 			}
-			if (this._selectedStore.state.selectedPanelLinkId) {
-				this._selectedStore.clearPanelLink()
+			if (this._selectedStore.select.selectedPanelLinkId()) {
+				this._selectedStore.dispatch.clearSelectedPanelLink()
+				// this._selectedStore.dispatch.clearSelectedPanelLink()
 			}
 			return
 		}
 
-		this._selectedStore.selectPanelLink(panelLink.id)
+		this._selectedStore.dispatch.selectPanelLink(panelLink.id)
 
 		// todo continue this
 	}

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
 import { HubConnection } from '@microsoft/signalr'
 import {
+	CreateProjectRequest,
 	ProjectDataModel,
 	ProjectId,
 	ProjectModel,
@@ -16,6 +17,7 @@ import { injectSignalrEventsStore } from '../../signalr-events'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { injectEntityStore } from '../../shared'
 import { retryCheck } from '@shared/utils'
+import { injectAuthStore } from '@auth/data-access'
 
 const hubName = 'Projects'
 const hubUrl = '/hubs/projects'
@@ -29,8 +31,10 @@ export type ProjectsHubConnection = HubConnection
 export class ProjectsSignalrService {
 	private _projectsStore = injectProjectsStore()
 	private _entitiesStore = injectEntityStore()
-
 	private _signalrEventsStore = injectSignalrEventsStore()
+	private _authStore = injectAuthStore()
+
+	user = this._authStore.select.user
 	hubConnection: ProjectsHubConnection | undefined
 
 	init(token: string): ProjectsHubConnection {
@@ -48,7 +52,7 @@ export class ProjectsSignalrService {
 
 		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, (projects: ProjectModel[]) => {
 			console.log(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, projects)
-			this._projectsStore.dispatch.addManyProjects(projects)
+			this._projectsStore.dispatch.loadUserProjectsSuccess(projects)
 		})
 
 		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.PROJECT_CREATED, (project: ProjectModel) => {
@@ -60,7 +64,6 @@ export class ProjectsSignalrService {
 			PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED,
 			(response: EntityUpdate<ProjectModel>) => {
 				console.log(PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED, response)
-				// this._projectsStore.dispatch.updateProject(response)
 			},
 		)
 
@@ -68,7 +71,6 @@ export class ProjectsSignalrService {
 			PROJECTS_SIGNALR_EVENT.PROJECT_DELETED,
 			(response: { projectId: ProjectId }) => {
 				console.log(PROJECTS_SIGNALR_EVENT.PROJECT_DELETED, response)
-				// this._projectsStore.dispatch.deleteProject(response.projectId)
 			},
 		)
 
@@ -81,9 +83,6 @@ export class ProjectsSignalrService {
 		)
 
 		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.GET_PROJECT, (response: ProjectDataModel) => {
-			// const camelCaseResponse = convertPascalCaseToCamelCaseNested(response)
-			// console.log(PROJECTS_SIGNALR_EVENT.GET_PROJECT, camelCaseResponse)
-
 			console.log(PROJECTS_SIGNALR_EVENT.GET_PROJECT, response)
 			this._entitiesStore.panels.dispatch.loadPanels(response.panels)
 			this._entitiesStore.strings.dispatch.loadStrings(response.strings)
@@ -93,6 +92,10 @@ export class ProjectsSignalrService {
 		})
 
 		return this.hubConnection
+	}
+
+	createProject(request: CreateProjectRequest) {
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.CREATE_PROJECT, request)
 	}
 
 	getProjectById(projectId: ProjectId, initial?: boolean) {

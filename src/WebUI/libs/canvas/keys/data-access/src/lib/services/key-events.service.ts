@@ -128,7 +128,7 @@ export class KeyEventsService {
 				break
 			case KEYS.X:
 				{
-					const multipleSelectedIds = this._selectedStore.state.multipleSelectedPanelIds
+					const multipleSelectedIds = this._selectedStore.select.multipleSelectedPanelIds()
 					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 					if (multipleSelectedIds.length <= 1) return
@@ -148,7 +148,7 @@ export class KeyEventsService {
 					this._entities.strings.dispatch.addString(string)
 					this._entities.panels.dispatch.updateManyPanels(panelUpdates)
 
-					this._selectedStore.selectString(string.id)
+					this._selectedStore.dispatch.selectStringId(string.id)
 					this._render.renderCanvasApp()
 				}
 				break
@@ -225,14 +225,14 @@ export class KeyEventsService {
 	}
 
 	private createStringWithSelected() {
-		const multipleSelectedIds = this._selectedStore.selectMultipleSelectedPanelIds
+		const multipleSelectedIds = this._selectedStore.select.multipleSelectedPanelIds()
 		if (multipleSelectedIds.length <= 1) return
 		const amountOfStrings = this._entities.strings.select.allStrings().length
 		const { string, panelUpdates } = createStringWithPanelsV2(multipleSelectedIds, amountOfStrings)
 		this._entities.strings.dispatch.addStringWithPanels(string, panelUpdates)
 		// this._entities.strings.dispatch.addString(string)
 		// this._entities.panels.dispatch.updateManyPanels(panelUpdates)
-		this._selectedStore.selectString(string.id)
+		this._selectedStore.dispatch.selectStringId(string.id)
 	}
 
 	private startRotateMode() {

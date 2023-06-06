@@ -6,7 +6,7 @@ import {
 	NgStyle,
 	NgTemplateOutlet,
 } from '@angular/common'
-import { Component, inject } from '@angular/core'
+import { Component, effect, inject } from '@angular/core'
 import { LetDirective } from '@ngrx/component'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
 import { ShowSvgComponent, ShowSvgNoStylesComponent, ToggleSvgNoStylesComponent } from '@shared/ui'
@@ -45,11 +45,26 @@ export class SignInDialogComponent {
 	private _uiStore = inject(UiStoreService)
 	private _auth = injectAuthStore()
 
+	user = this._auth.select.user
+
+	constructor() {
+		effect(() => {
+			if (this.user()) {
+				this.closeDialog()
+			}
+		})
+	}
+
 	signInWithGoogle() {
 		this._auth.dispatch.signInWithGoogle()
 	}
 
 	closeDialog() {
 		this._uiStore.dispatch.closeDialog()
+	}
+
+	signInAsGuest() {
+		this._auth.dispatch.signInAsGuest()
+		this.closeDialog()
 	}
 }

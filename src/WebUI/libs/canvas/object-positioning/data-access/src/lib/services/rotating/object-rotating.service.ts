@@ -48,7 +48,7 @@ export class ObjectRotatingService {
 	centerPoint: Point | undefined = undefined
 
 	handleSetEntitiesToRotate(event: PointerEvent, currentPoint: TransformedPoint) {
-		const multiSelectIds = this._selectedStore.state.multipleSelectedPanelIds
+		const multiSelectIds = this._selectedStore.select.multipleSelectedPanelIds()
 		// const multiSelectIds = this._app.selectedCtx.multipleSelectedIds
 		// const selectedId = this._machine.appCtx.selected.singleSelectedId
 		// const selectedId = this._state.selected.singleSelectedId

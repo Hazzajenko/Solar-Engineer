@@ -4,8 +4,8 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
-using Projects.Domain.Commands.Panels;
 using Projects.Domain.Common;
+using Projects.SignalR.Commands.Panels;
 using Projects.SignalR.Hubs;
 
 namespace Projects.Application.Handlers.Panels;

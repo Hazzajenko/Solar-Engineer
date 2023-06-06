@@ -2,8 +2,8 @@
 using System.Text.Json.Serialization;
 using Humanizer;
 using Microsoft.AspNetCore.SignalR;
+using Projects.Contracts.Requests.Projects;
 using Projects.Domain.Common;
-using Projects.Domain.Contracts.Requests.Projects;
 
 namespace Projects.SignalR.Mapping;
 
@@ -55,23 +55,19 @@ public static class CommandsMapping
 
     private static Type ToCommandType(this ProjectGridEvent request)
     {
-        // var action = request.Action.Transform(To.TitleCase);
-        // var action = request.Action.Transform(To.LowerCase, To.TitleCase);
         var action = request.Action;
         var model = request.Model;
         model = action.Contains("Many") ? model.Pluralize() : model;
         var commandName = $"{action}{model}Command";
-        return ScanForType(typeof(IProjectCommand), commandName);
+        return ScanForCommands(typeof(IProjectCommand), commandName);
     }
 
     private static Type ToRequestType(this ProjectGridEvent request)
     {
-        // var action = request.Action.ToPascalCase();
-        // var model = request.Model.ToPascalCase();
         var action = request.Action;
         var model = request.Model;
         model = action.Contains("Many") ? model.Pluralize() : model;
         var requestName = $"{action}{model}Request";
-        return ScanForType(typeof(IProjectEventRequest), requestName);
+        return ScanForContracts(typeof(IProjectEventRequest), requestName);
     }
 }
