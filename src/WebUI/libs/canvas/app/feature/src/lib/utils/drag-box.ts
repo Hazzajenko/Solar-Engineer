@@ -15,19 +15,19 @@ export const dragBoxOnMouseDownHandler = (
 	currentPoint: TransformedPoint,
 	_appStore: AppStateStore,
 ) => {
-	switch (_appStore.mode()) {
+	switch (_appStore.select.mode()) {
 		case MODE_STATE.SELECT_MODE:
-			return _appStore.setDragBoxState({
+			return _appStore.dispatch.setDragBoxState({
 				state: 'SelectionBoxInProgress',
 				start: currentPoint,
 			})
 		case MODE_STATE.LINK_MODE:
-			return _appStore.setDragBoxState({
+			return _appStore.dispatch.setDragBoxState({
 				state: 'SelectionBoxInProgress',
 				start: currentPoint,
 			})
 		case MODE_STATE.CREATE_MODE:
-			return _appStore.setDragBoxState({
+			return _appStore.dispatch.setDragBoxState({
 				state: 'CreationBoxInProgress',
 				start: currentPoint,
 			})
@@ -41,7 +41,7 @@ export const dragBoxOnMouseMoveHandler = (
 	panels: PanelModel[],
 	_appStore: AppStateStore,
 ) => {
-	switch (_appStore.mode()) {
+	switch (_appStore.select.mode()) {
 		case MODE_STATE.SELECT_MODE:
 			return selectionBoxMouseMove(event, currentPoint, dragBoxStart, _appStore)
 		case MODE_STATE.LINK_MODE:
@@ -59,7 +59,7 @@ export const dragBoxOnMouseUpHandler = (
 	_selectedStore: SelectedStore,
 	_panelsStore: PanelsStore,
 ) => {
-	switch (_appStore.mode()) {
+	switch (_appStore.select.mode()) {
 		case MODE_STATE.SELECT_MODE:
 			return selectionBoxMouseUp(currentPoint, dragBoxStart, panels, _appStore, _selectedStore)
 		case MODE_STATE.LINK_MODE:
@@ -77,7 +77,7 @@ export const selectionBoxMouseMove = (
 ) => {
 	if (event instanceof PointerEvent) {
 		if (!dragBoxKeysDown(event)) {
-			_appStore.setDragBoxState({
+			_appStore.dispatch.setDragBoxState({
 				state: 'NoDragBox',
 			})
 			return
@@ -104,10 +104,10 @@ export const selectionBoxMouseUp = (
 	const panelsInArea = getAllEntitiesBetweenTwoPoints(dragBoxStart, currentPoint, panels)
 	if (panelsInArea) {
 		const entitiesInAreaIds = panelsInArea.map((panel) => panel.id)
-		_appStore.setDragBoxState({ state: 'NoDragBox' })
+		_appStore.dispatch.setDragBoxState({ state: 'NoDragBox' })
 		_selectedStore.dispatch.selectMultiplePanels(entitiesInAreaIds)
 	} else {
-		_appStore.setDragBoxState({ state: 'NoDragBox' })
+		_appStore.dispatch.setDragBoxState({ state: 'NoDragBox' })
 	}
 }
 
@@ -120,7 +120,7 @@ export const creationBoxMouseMove = (
 ) => {
 	if (event instanceof PointerEvent) {
 		if (!dragBoxKeysDown(event)) {
-			_appStore.setDragBoxState({
+			_appStore.dispatch.setDragBoxState({
 				state: 'NoDragBox',
 			})
 			return
@@ -152,7 +152,7 @@ export const creationBoxMouseUp = (
 	}
 	const newPanels = spots.map((spot) => createPanel({ x: spot.x, y: spot.y }))
 	_panelsStore.dispatch.addManyPanels(newPanels)
-	_appStore.setDragBoxState({
+	_appStore.dispatch.setDragBoxState({
 		state: 'NoDragBox',
 	})
 }

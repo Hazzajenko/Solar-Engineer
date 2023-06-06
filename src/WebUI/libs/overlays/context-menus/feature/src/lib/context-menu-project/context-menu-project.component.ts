@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Injector, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, Injector } from '@angular/core'
 import {
 	CONTEXT_MENU_COMPONENT,
 	ContextMenuInput,
@@ -48,7 +48,7 @@ export const selectProjectByContextMenuData = createSelector(
 	animations: [increaseScaleAndOpacity],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContextMenuProjectComponent implements OnInit {
+export class ContextMenuProjectComponent {
 	private _projectsStore = injectProjectsStore()
 	private _uiStore = injectUiStore()
 
@@ -57,13 +57,6 @@ export class ContextMenuProjectComponent implements OnInit {
 	project = selectSignalFromStore(selectProjectByContextMenuData)
 
 	protected readonly TAILWIND_COLOUR_500_VALUES = TAILWIND_COLOUR_500_VALUES
-
-	ngOnInit() {
-		console.log('contextMenuProject', this.contextMenu)
-		console.log('project', this.project())
-		// const { projectId } = this.contextMenu.data
-		// this.project = this._projectsStore.select.selectById(projectId)
-	}
 
 	setProjectColour(colour: TailwindColor500) {
 		const project = this.project()

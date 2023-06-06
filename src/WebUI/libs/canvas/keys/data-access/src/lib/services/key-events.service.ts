@@ -29,7 +29,7 @@ export class KeyEventsService {
 	private _entities = injectEntityStore()
 	private _positioningStore = inject(ObjectPositioningStoreService)
 	private _objRotating = inject(ObjectRotatingService)
-	private _appState = inject(AppStateStoreService)
+	private _appStore = inject(AppStateStoreService)
 	private _render = inject(RenderService)
 	private _objPositioning = inject(ObjectPositioningService)
 	private _view = inject(ViewPositioningService)
@@ -112,7 +112,7 @@ export class KeyEventsService {
 					this._objRotating.clearMultipleToRotate()
 				}
 
-				if (this._appState.state.view === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
+				if (this._appStore.state.view === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
 					this._view.handleDragScreenMouseUp()
 				}
 				break
@@ -166,10 +166,10 @@ export class KeyEventsService {
 				}
 				break
 			case KEYS.C: {
-				const mode = this._appState.state.mode
+				const mode = this._appStore.state.mode
 				const newMode =
 					mode === MODE_STATE.CREATE_MODE ? MODE_STATE.SELECT_MODE : MODE_STATE.CREATE_MODE
-				this._appState.dispatch.setModeState(newMode)
+				this._appStore.dispatch.setModeState(newMode)
 				return
 			}
 			case KEYS.M:
@@ -216,7 +216,7 @@ export class KeyEventsService {
 					this._objRotating.clearMultipleToRotate()
 				}
 
-				if (this._appState.state.view === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
+				if (this._appStore.state.view === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
 					this._view.handleDragScreenMouseUp()
 				}
 				break
@@ -248,15 +248,15 @@ export class KeyEventsService {
 	}
 
 	private toggleMode() {
-		const mode = this._appState.state.mode
+		const mode = this._appStore.state.mode
 		const newMode =
 			mode === MODE_STATE.CREATE_MODE ? MODE_STATE.SELECT_MODE : MODE_STATE.CREATE_MODE
-		this._appState.dispatch.setModeState(newMode)
+		this._appStore.dispatch.setModeState(newMode)
 	}
 
 	private startLinkMode() {
-		const mode = this._appState.state.mode
+		const mode = this._appStore.state.mode
 		const newMode = mode !== MODE_STATE.LINK_MODE ? MODE_STATE.LINK_MODE : MODE_STATE.SELECT_MODE
-		this._appState.dispatch.setModeState(newMode)
+		this._appStore.dispatch.setModeState(newMode)
 	}
 }

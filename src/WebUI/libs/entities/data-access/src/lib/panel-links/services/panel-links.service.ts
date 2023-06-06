@@ -28,7 +28,7 @@ import { injectEntityStore } from '../../shared'
 })
 export class PanelLinksService {
 	private _entities = injectEntityStore()
-	private _appState = injectAppStateStore()
+	private _appStore = injectAppStateStore()
 	private _panelLinksStore = injectPanelLinksStore()
 	private _selectedStore = injectSelectedStore()
 	private _canvasElementStore = inject(CanvasElementService)
@@ -270,7 +270,7 @@ export class PanelLinksService {
 		if (panelUnderMouse) {
 			const hoveringEntityId = pointer.hoveringOverPanelId
 			if (hoveringEntityId === panelUnderMouse.id) return
-			this._appState.setHoveringOverEntityState(panelUnderMouse.id)
+			this._appStore.dispatch.setHoveringOverEntityState(panelUnderMouse.id)
 			if (this._entities.panelLinks.select.hoveringOverPanelLinkInApp()) {
 				this._entities.panelLinks.dispatch.clearHoveringOverPanelLinkInApp()
 			}
@@ -306,7 +306,7 @@ export class PanelLinksService {
 		if (entityUnderMouse) {
 			const hoveringEntityId = pointer.hoveringOverPanelId
 			if (hoveringEntityId === entityUnderMouse.id) return
-			this._appState.setHoveringOverEntityState(entityUnderMouse.id)
+			this._appStore.dispatch.setHoveringOverEntityState(entityUnderMouse.id)
 			return {
 				panelUnderMouse: entityUnderMouse as PanelModel,
 			}
@@ -318,7 +318,7 @@ export class PanelLinksService {
 
 		if (pointer.hoverState === 'HoveringOverEntity') {
 			// changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-			this._appState.liftHoveringOverEntity()
+			this._appStore.dispatch.liftHoveringOverEntity()
 			return {}
 			// this._render.renderCanvasApp()
 			// return

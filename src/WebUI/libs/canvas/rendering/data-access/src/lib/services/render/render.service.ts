@@ -54,8 +54,8 @@ export class RenderService {
 	// private _entities = injectEntityStore()
 	// private _app = inject(AppStoreService)
 	// private _appStore = inject(AppNgrxStateStore)
-	private _appState = injectAppStateStore()
-	// private _appState = inject(AppStateStoreService)
+	private _appStore = injectAppStateStore()
+	// private _appStore = inject(AppStateStoreService)
 	private _selectedStore = injectSelectedStore()
 	// private _selectedStore = inject(SelectedStoreService)
 	private _graphicsStore = inject(GraphicsStoreService)
@@ -192,7 +192,7 @@ export class RenderService {
 			// console.log('renderFn', panels)
 			// console.log('renderFn', panels.length)
 
-			const appState = this._appState.appState()
+			const appState = this._appStore.select.appState()
 			const graphicsState = this._graphicsStore.state
 
 			const singleSelectedPanelId = this._selectedStore.select.singleSelectedPanelId()

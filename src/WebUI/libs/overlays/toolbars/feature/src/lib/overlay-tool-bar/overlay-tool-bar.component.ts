@@ -63,20 +63,23 @@ export class OverlayToolBarComponent {
 		})
 	}
 
-	openColourPicker(changeColourButton: HTMLButtonElement, toolBar: HTMLDivElement) {
-		const rect = changeColourButton.getBoundingClientRect()
+	openModePicker(modePickButton: HTMLButtonElement, toolBar: HTMLDivElement) {
+		const rect = modePickButton.getBoundingClientRect()
 
 		const location = { x: rect.left, y: rect.top + rect.height }
 		location.y += 10
-		const toolbarRect = toolBar.getBoundingClientRect()
-		const right = toolbarRect.right
+		// const toolbarRect = toolBar.getBoundingClientRect()
+		// const right = toolbarRect.right
+		// const left = rect.left
+
+		const divIdToTrackLeft = modePickButton.id
+		// mode-picker-button
 
 		this._uiStore.dispatch.openContextMenu({
-			component: CONTEXT_MENU_COMPONENT.COLOUR_PICKER_MENU,
+			component: CONTEXT_MENU_COMPONENT.MODE_PICKER_MENU,
 			location,
 			data: {
-				left: rect.left,
-				right,
+				divIdToTrackLeft,
 			},
 		})
 	}

@@ -19,6 +19,9 @@ remove:
 publish:
 	dotnet publish --os linux --arch x64 -c Release -p:PublishProfile=DefaultContainer
 
+publish2:
+	dotnet publish --os linux --arch x64 -p:PublishProfile=DefaultContainer -p:ContainerImageName=hasd
+
 run:
 	docker run -it --rm -p 5000:80 dotnetapi:1.0.0
 

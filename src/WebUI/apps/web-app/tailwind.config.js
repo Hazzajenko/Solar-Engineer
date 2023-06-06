@@ -12,7 +12,9 @@ module.exports = {
 		join('libs/design-app/feature-panel/src/lib/**/*.{ts,html}'),
 		join('libs/design-app/feature/src/lib/**/*.{ts,html}'),
 		join('libs/auth/feature/src/lib/**/*.{ts,html}'),
+		join('libs/overlays/context-menus/feature/src/lib/**/*.{ts,html}'),
 		join('libs/shared/ui/src/lib/**/*.{ts,html}'),
 		...createGlobPatternsForDependencies(__dirname),
 	],
 }
+// libs/overlays/context-menus/feature/src/lib/context-menu-mode-picker/context-menu-mode-picker.component.html

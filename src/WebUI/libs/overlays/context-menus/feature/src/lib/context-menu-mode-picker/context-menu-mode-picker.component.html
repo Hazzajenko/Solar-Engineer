@@ -1,0 +1,168 @@
+<div
+	[contextMenuInput]="contextMenu"
+	[trackLeftOfDiv]="{ divId: contextMenu.data.divIdToTrackLeft }"
+	appContextMenu
+	class="absolute"
+>
+	<!--	<div
+			@transitionContextMenu
+			class="z-50 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
+		>-->
+	<div
+		@transitionContextMenu
+		class="py-1 top-0 left-[105%] text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-44 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+	>
+		<fieldset>
+			<legend class="sr-only">Privacy setting</legend>
+			<div class="-space-y-px rounded-md bg-white">
+				<!-- Checked: "z-10 border-indigo-200 bg-indigo-50", Not Checked: "border-gray-200" -->
+				<label
+					class="rounded-tl-md rounded-tr-md relative flex cursor-pointer border p-4 focus:outline-none"
+				>
+					<input
+						aria-describedby="privacy-setting-0-description"
+						aria-labelledby="privacy-setting-0-label"
+						class="mt-0.5 h-4 w-4 shrink-0 cursor-pointer text-indigo-600 border-gray-300 focus:ring-indigo-600"
+						name="privacy-setting"
+						type="radio"
+						value="Public access"
+					/>
+					<span class="ml-3 flex flex-col">
+						<!-- Checked: "text-indigo-900", Not Checked: "text-gray-900" -->
+						<span class="block text-sm font-medium" id="privacy-setting-0-label">Select Mode</span>
+						<!-- Checked: "text-indigo-700", Not Checked: "text-gray-500" -->
+						<!--	<span class="block text-sm" id="privacy-setting-0-description"
+								>This project would be available to anyone who has the link</span
+							>-->
+					</span>
+				</label>
+				<!-- Checked: "z-10 border-indigo-200 bg-indigo-50", Not Checked: "border-gray-200" -->
+				<label class="relative flex cursor-pointer border p-4 focus:outline-none">
+					<input
+						aria-describedby="privacy-setting-1-description"
+						aria-labelledby="privacy-setting-1-label"
+						class="mt-0.5 h-4 w-4 shrink-0 cursor-pointer text-indigo-600 border-gray-300 focus:ring-indigo-600"
+						name="privacy-setting"
+						type="radio"
+						value="Private to Project Members"
+					/>
+					<span class="ml-3 flex flex-col">
+						<!-- Checked: "text-indigo-900", Not Checked: "text-gray-900" -->
+						<span class="block text-sm font-medium" id="privacy-setting-1-label">Create</span>
+						<!-- Checked: "text-indigo-700", Not Checked: "text-gray-500" -->
+						<!--		<span class="block text-sm" id="privacy-setting-1-description"
+									>Only members of this project would be able to access</span
+								>-->
+					</span>
+				</label>
+				<!-- Checked: "z-10 border-indigo-200 bg-indigo-50", Not Checked: "border-gray-200" -->
+				<!--<label
+					class="rounded-bl-md rounded-br-md relative flex cursor-pointer border p-4 focus:outline-none"
+				>
+					<input
+						aria-describedby="privacy-setting-2-description"
+						aria-labelledby="privacy-setting-2-label"
+						class="mt-0.5 h-4 w-4 shrink-0 cursor-pointer text-indigo-600 border-gray-300 focus:ring-indigo-600"
+						name="privacy-setting"
+						type="radio"
+						value="Private to you"
+					/>
+					<span class="ml-3 flex flex-col">
+						&lt;!&ndash; Checked: "text-indigo-900", Not Checked: "text-gray-900" &ndash;&gt;
+						<span class="block text-sm font-medium" id="privacy-setting-2-label"
+							>Private to you</span
+						>
+						&lt;!&ndash; Checked: "text-indigo-700", Not Checked: "text-gray-500" &ndash;&gt;
+						<span class="block text-sm" id="privacy-setting-2-description"
+							>You are the only one able to access this project</span
+						>
+					</span>
+				</label>-->
+			</div>
+		</fieldset>
+
+		<!--<ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200">
+			<input checked class="radio" name="radio-1" type="radio" />
+			<input class="radio" name="radio-1" type="radio" />
+			<input checked class="radio radio-primary" name="radio-2" type="radio" />
+			<input class="radio radio-sm radio-primary" name="radio-2" type="radio" />
+			<input class="radio radio-md radio-primary" name="radio-2" type="radio" />
+			<input class="radio radio-lg radio-primary" name="radio-2" type="radio" />
+			<li>
+				<div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+					<input
+						checked
+						class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+						id="default-radio-4"
+						name="default-radio"
+						type="radio"
+						value=""
+					/>
+					<label
+						class="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+						for="default-radio-4"
+						>Default radio</label
+					>
+				</div>
+			</li>
+			<li>
+				<div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+					<input
+						checked
+						class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+						id="default-radio-5"
+						name="default-radio"
+						type="radio"
+						value=""
+					/>
+					<label
+						class="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+						for="default-radio-5"
+						>Checked state</label
+					>
+				</div>
+			</li>
+			<li>
+				<div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+					<input
+						class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+						id="default-radio-6"
+						name="default-radio"
+						type="radio"
+						value=""
+					/>
+					<label
+						class="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+						for="default-radio-6"
+						>Default radio</label
+					>
+				</div>
+			</li>
+		</ul>-->
+	</div>
+	<!--<div
+		@transitionContextMenu
+		class="py-1 top-0 left-[105%] text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-44 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+	>
+		<a
+			class="group flex items-center px-4 py-2 text-sm text-gray-700"
+			role="menuitem"
+			tabindex="-1"
+		>
+			<div class="grid grid-cols-4 gap-4 justify-items-center">
+				<button
+					*ngFor="let colour of stringColors"
+					[ngClass]="{
+						'ring-2 ring-black': currentMode() === colour
+					}"
+					[ngStyle]="{
+						'background-color': colour,
+						'border-color': colour
+					}"
+					class="w-6 h-6 rounded-sm"
+					type="button"
+				></button>
+			</div>
+		</a>
+	</div>-->
+</div>

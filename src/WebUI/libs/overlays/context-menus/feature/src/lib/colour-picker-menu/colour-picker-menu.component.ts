@@ -59,7 +59,7 @@ export class ColourPickerMenuComponent {
 	contextMenu = inject(Injector).get(contextMenuInputInjectionToken) as ContextMenuColourPickerMenu
 
 	stringColors = stringColors as StringColor[]
-	selectedStringColor = this._appStore.stringColor
+	selectedStringColor = this._appStore.select.stringColor
 
 	setStringColor(colour: StringColor) {
 		const selectedString = this._selectedString()
@@ -73,6 +73,6 @@ export class ColourPickerMenuComponent {
 				colour,
 			},
 		})
-		this._appStore.setStringColor(colour)
+		this._appStore.dispatch.setStringColor(colour)
 	}
 }

@@ -17,6 +17,7 @@ public static class WebApplicationExtensions
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
         app.UseForwardedHeaders();
+
         app.UseFastEndpoints(options =>
         {
             options.Errors.StatusCode = StatusCodes.Status422UnprocessableEntity;
@@ -51,27 +52,13 @@ public static class WebApplicationExtensions
         app.UseCors("corsPolicy");
         app.UseAuthentication();
         app.UseAuthorization();
-
-        /*
-        app.UseFastEndpoints(options =>
-        {
-            // options.Endpoints.RoutePrefix = "projects";
-            options.Errors.StatusCode = StatusCodes.Status422UnprocessableEntity;
-            options.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-        });*/
-
-        /*if (app.Environment.IsDevelopment())
-        {
-            app.UseOpenApi();
-            app.UseSwaggerUi3(x => x.ConfigureDefaults());
-        }*/
+        app.UseHttpsRedirection();
+        app.MapHealthChecks("/healthz");
 
         app.MapHub<ProjectsHub>("hubs/projects");
+        app.UseMiddleware<ValidationMappingMiddleware>();
 
         ProjectsSeeder.InitializeDatabase(app);
-
-        app.UseMiddleware<ValidationMappingMiddleware>();
 
         return app;
     }

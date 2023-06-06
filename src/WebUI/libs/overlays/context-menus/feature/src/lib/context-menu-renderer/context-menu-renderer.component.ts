@@ -25,6 +25,7 @@ import {
 	initBackdropEventWithRenderer,
 } from '@shared/utils'
 import { ContextMenuProjectComponent } from '../context-menu-project'
+import { ContextMenuModePickerComponent } from '../context-menu-mode-picker/context-menu-mode-picker.component'
 
 export const contextMenuInputInjectionToken = new InjectionToken<ContextMenuInput>('')
 
@@ -103,6 +104,8 @@ export class ContextMenuRendererComponent implements OnDestroy {
 				return ColourPickerMenuComponent
 			case CONTEXT_MENU_COMPONENT.PROJECT_MENU:
 				return ContextMenuProjectComponent
+			case CONTEXT_MENU_COMPONENT.MODE_PICKER_MENU:
+				return ContextMenuModePickerComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

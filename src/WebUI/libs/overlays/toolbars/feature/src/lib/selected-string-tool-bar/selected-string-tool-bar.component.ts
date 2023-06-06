@@ -30,11 +30,11 @@ export class SelectedStringToolBarComponent {
 
 	toggleLinkMode() {
 		if (this.appMode() === 'SelectMode' || this.appMode() === 'CreateMode') {
-			this._appStore.setModeState('LinkMode')
+			this._appStore.dispatch.setModeState('LinkMode')
 			return
 		}
 
-		this._appStore.setModeState('SelectMode')
+		this._appStore.dispatch.setModeState('SelectMode')
 	}
 
 	openColourPicker(changeColourButton: HTMLButtonElement, toolBar: HTMLDivElement) {

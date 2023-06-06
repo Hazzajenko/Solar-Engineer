@@ -46,24 +46,24 @@
  }
 
  handleDragBoxMouseDown(event: PointerEvent, currentPoint: TransformedPoint) {
- const modeState = this._appStore.mode()
+ const modeState = this._appStore.select.mode()
  if (modeState === MODE_STATE.SELECT_MODE) {
- // const idk = toFunc(this._appStore.setDragBoxState)
+ // const idk = toFunc(this._appStore.dispatch.setDragBoxState)
  // const randomFn = (one: number, two: number) => one + two
  // const randomFn2 = toFunc(randomFn)
- this._appStore.setDragBoxState({
+ this._appStore.dispatch.setDragBoxState({
  state: 'SelectionBoxInProgress',
  start: currentPoint,
  })
  }
  if (modeState === MODE_STATE.LINK_MODE) {
- this._appStore.setDragBoxState({
+ this._appStore.dispatch.setDragBoxState({
  state: 'SelectionBoxInProgress',
  start: currentPoint,
  })
  }
  if (modeState === MODE_STATE.CREATE_MODE) {
- this._appStore.setDragBoxState({
+ this._appStore.dispatch.setDragBoxState({
  state: 'CreationBoxInProgress',
  start: currentPoint,
  })
@@ -135,7 +135,7 @@
  // const boundsFromPoints = getCompleteBoundsFromMultipleEntities(panelsInArea)
  // const boundsFromPoints = getCompleteBoundsFromBoundsArray(panelPoints)
  // const boundsFromPoints = getCompleteBoundsFromPoints(panelPoints)
- this._appStore.setDragBoxState({
+ this._appStore.dispatch.setDragBoxState({
  state: 'NoDragBox',
  })
  this._selectedStore.dispatch.selectMultipleEntities(entitiesInAreaIds)
@@ -170,7 +170,7 @@
  // console.log('boundsFromPoints', boundsFromPoints)
  } else {
  // console.log('no panels in area')
- this._appStore.setDragBoxState({
+ this._appStore.dispatch.setDragBoxState({
  state: 'NoDragBox',
  })
  // this._app.sendEvent({ type: 'StopDragBox' })
@@ -206,7 +206,7 @@
  })*!/
  this._entities.panels.dispatch.addManyPanels(newPanels)
  // this._state.entities.panels.addManyEntities(newPanels)
- this._appStore.setDragBoxState({
+ this._appStore.dispatch.setDragBoxState({
  state: 'NoDragBox',
  })
  // this._app.sendEvent({ type: 'StopDragBox' })
@@ -216,7 +216,7 @@
 
  selectionBoxMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
  if (!dragBoxKeysDown(event)) {
- this._appStore.setDragBoxState({
+ this._appStore.dispatch.setDragBoxState({
  state: 'NoDragBox',
  })
  // this._app.sendEvent({ type: 'StopDragBox' })
@@ -260,7 +260,7 @@
 
  creationBoxMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
  if (!dragBoxKeysDown(event)) {
- this._appStore.setDragBoxState({
+ this._appStore.dispatch.setDragBoxState({
  state: 'NoDragBox',
  })
  // this._app.sendEvent({ type: 'StopDragBox' })

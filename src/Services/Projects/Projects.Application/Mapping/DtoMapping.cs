@@ -21,7 +21,7 @@ public static class DtoMapping
                 propertyInfo.SetValue(dtoObject, entityValue);
             } /* else if (propertyInfo.Name.Contains("Id"))
             {
-                
+
                 propertyInfo.SetValue(dtoObject, entity.ProjectId.ToString());
             }*/
         }
@@ -75,7 +75,7 @@ public static class DtoMapping
     {
         var typeName = request.GetType().Name ?? throw new ArgumentNullException(nameof(request));
         Log.Logger.Information("typeName: {TypeName}", typeName);
-        return ScanForType(typeof(IProjectItemDto), $"{typeName}Dto");
+        return ScanForContracts(typeof(IProjectItemDto), $"{typeName}Dto");
         /*var entityModel = request.GetType().Name.ToPascalCase();
         var typeName = $"Projects.API.Contracts.Data.{entityModel}Dto";
         return Type.GetType(typeName)
@@ -93,7 +93,7 @@ public static class DtoMapping
             request.FirstOrDefault()?.GetType().Name
             ?? throw new ArgumentNullException(nameof(request));
         ;
-        return ScanForType(typeof(IProjectItemDto), $"{typeName}Dto");
+        return ScanForContracts(typeof(IProjectItemDto), $"{typeName}Dto");
         // return Type.GetType(typeName)
         // ?? throw new InvalidOperationException($"Could not find DTO type {entityModel}");
     }

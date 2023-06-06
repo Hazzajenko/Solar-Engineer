@@ -81,8 +81,8 @@ import {
 	standalone: true,
 })
 export class DesignCanvasDirective implements OnInit {
-	private _appState = injectAppStateStore()
-	// private _appState = inject(AppStateStoreService)
+	private _appStore = injectAppStateStore()
+	// private _appStore = inject(AppStateStoreService)
 	private _graphicsState = inject(GraphicsStoreService)
 	private _positioningStore = inject(ObjectPositioningStoreService)
 	private _selectedStore = injectSelectedStore()
@@ -219,7 +219,7 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		if (dragBoxKeysDown(event)) {
-			dragBoxOnMouseDownHandler(currentPoint, this._appState)
+			dragBoxOnMouseDownHandler(currentPoint, this._appStore)
 			return
 		}
 
@@ -317,8 +317,8 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const { view, dragBox, mode, pointer } = this._appState.appState()
-		// const appState = this._appState.state
+		const { view, dragBox, mode, pointer } = this._appStore.select.appState()
+		// const appState = this._appStore.state
 
 		if (view === 'ViewDraggingInProgress') {
 			this._view.handleDragScreenMouseMove(event, currentPoint)
@@ -331,7 +331,7 @@ export class DesignCanvasDirective implements OnInit {
 				event,
 				currentPoint,
 				dragBox.start,
-				this._appState, // this._entities.panels.allPanels,
+				this._appStore, // this._entities.panels.allPanels,
 			)
 			if (renderOptions) this._render.renderCanvasApp(renderOptions)
 			return
@@ -344,7 +344,7 @@ export class DesignCanvasDirective implements OnInit {
 				currentPoint,
 				dragBox.start,
 				this._entities.panels.select.allPanels(),
-				this._appState,
+				this._appStore,
 			)
 			if (renderOptions) this._render.renderCanvasApp(renderOptions)
 			return
@@ -381,14 +381,14 @@ export class DesignCanvasDirective implements OnInit {
 		if (entityUnderMouse) {
 			const hoveringEntityId = pointer.hoveringOverPanelId
 			if (hoveringEntityId === entityUnderMouse.id) return
-			this._appState.setHoveringOverEntityState(entityUnderMouse.id)
+			this._appStore.dispatch.setHoveringOverEntityState(entityUnderMouse.id)
 			this._render.renderCanvasApp()
 			return
 		}
 
 		if (pointer.hoverState === 'HoveringOverEntity') {
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-			this._appState.liftHoveringOverEntity()
+			this._appStore.dispatch.liftHoveringOverEntity()
 			this._render.renderCanvasApp()
 			return
 		}
@@ -439,7 +439,7 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const { view, dragBox, mode } = this._appState.appState()
+		const { view, dragBox, mode } = this._appStore.select.appState()
 
 		/**
 		 * ! View Positioning
@@ -453,14 +453,14 @@ export class DesignCanvasDirective implements OnInit {
 		 * ! Drag Box
 		 */
 
-		// const dragBoxState = this._appState.state.dragBox
+		// const dragBoxState = this._appStore.state.dragBox
 
 		if (dragBox.state === 'SelectionBoxInProgress') {
 			selectionBoxMouseUp(
 				currentPoint,
 				dragBox.start,
 				this._entities.panels.select.allPanels(),
-				this._appState,
+				this._appStore,
 				this._selectedStore,
 			)
 			return
@@ -471,7 +471,7 @@ export class DesignCanvasDirective implements OnInit {
 				currentPoint,
 				dragBox.start,
 				this._entities.panels.select.allPanels(),
-				this._appState,
+				this._appStore,
 				this._entities.panels,
 			)
 			return
@@ -508,10 +508,10 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		/*		const contextMenuState = this._appState.state.contextMenu
+		/*		const contextMenuState = this._appStore.state.contextMenu
 
 		 if (contextMenuState.state === 'ContextMenuOpen') {
-		 this._appState.dispatch.setContextMenuState('NoContextMenu')
+		 this._appStore.dispatch.setContextMenuState('NoContextMenu')
 		 return
 		 }*/
 
@@ -524,8 +524,8 @@ export class DesignCanvasDirective implements OnInit {
 			this._objPositioning.resetObjectPositioning(event, currentPoint)
 			return
 		}
-		const { mode } = this._appState.appState()
-		// const mode = this._appState.state.mode
+		const { mode } = this._appStore.select.appState()
+		// const mode = this._appStore.state.mode
 		if (mode === 'LinkMode') {
 			/*const currentDrawingSymbolLine = this._entities.panelLinks.drawingPanelPolaritySymbolLine
 			 const symbolUnderMouse = this.getPanelSymbolUnderMouse(currentPoint)
@@ -568,7 +568,7 @@ export class DesignCanvasDirective implements OnInit {
 		 this._panelLinks.handlePanelLinksClick(event, entityUnderMouse)
 		 return
 		 }
-		 this._appState.dispatch.setModeState('SelectMode')
+		 this._appStore.dispatch.setModeState('SelectMode')
 		 // this._panelLinks.clearPanelLinkRequest()
 		 return
 		 }*/
@@ -579,7 +579,7 @@ export class DesignCanvasDirective implements OnInit {
 				return
 			}
 			if (mode == 'CreateMode') {
-				this._appState.setModeState('SelectMode')
+				this._appStore.dispatch.setModeState('SelectMode')
 				this._selected.handleEntityUnderMouse(event, entityUnderMouse)
 				return
 			}
@@ -589,7 +589,7 @@ export class DesignCanvasDirective implements OnInit {
 					this._panelLinks.handlePanelLinksClick(event, entityUnderMouse)
 					return
 				}
-				this._appState.setModeState('SelectMode')
+				this._appStore.dispatch.setModeState('SelectMode')
 				// this._panelLinks.clearPanelLinkRequest()
 				return
 			}
@@ -629,10 +629,10 @@ export class DesignCanvasDirective implements OnInit {
 
 		this._entityFactory.createEntity(event, currentPoint)
 
-		/*	const previewAxisState = this._appState.state.previewAxis
+		/*	const previewAxisState = this._appStore.state.previewAxis
 		 if (previewAxisState === 'AxisCreatePreviewInProgress') {
 		 if (!event.altKey || !this._nearby.axisPreviewRect) {
-		 this._appState.dispatch.setPreviewAxisState('None')
+		 this._appStore.dispatch.setPreviewAxisState('None')
 		 this._nearby.axisPreviewRect = undefined
 		 this._render.renderCanvasApp()
 		 return
@@ -649,7 +649,7 @@ export class DesignCanvasDirective implements OnInit {
 		 : createPanel(previewRectLocation)
 		 this._entities.panels.dispatch.addPanel(entity)
 		 this._nearby.axisPreviewRect = undefined
-		 this._appState.dispatch.setPreviewAxisState('None')
+		 this._appStore.dispatch.setPreviewAxisState('None')
 
 		 this._render.renderCanvasApp()
 		 return
@@ -740,7 +740,7 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const { mode } = this._appState.appState()
+		const { mode } = this._appStore.select.appState()
 		if (mode === 'LinkMode') {
 			const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
 			if (panelLinkUnderMouse) {
@@ -921,9 +921,9 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		// * Handle drag box
-		const dragBox = this._appState.dragBox()
+		const dragBox = this._appStore.select.dragBox()
 		if (dragBox.state === 'NoDragBox') {
-			dragBoxOnMouseDownHandler(currentPoint, this._appState)
+			dragBoxOnMouseDownHandler(currentPoint, this._appStore)
 		}
 		if (isNoDragBoxState(dragBox)) return
 		const start = dragBox.start
@@ -932,7 +932,7 @@ export class DesignCanvasDirective implements OnInit {
 			currentPoint,
 			start,
 			this._entities.panels.select.allPanels(),
-			this._appState,
+			this._appStore,
 		)
 		if (renderOptions) {
 			this._render.renderCanvasApp(renderOptions)
@@ -950,14 +950,14 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		// * Handle touch drag box
-		const dragBox = this._appState.dragBox()
+		const dragBox = this._appStore.select.dragBox()
 		const currentPoint = this.currentPoint
 		if (dragBox.state !== 'NoDragBox') {
 			dragBoxOnMouseUpHandler(
 				currentPoint,
 				dragBox.start,
 				this._entities.panels.select.allPanels(),
-				this._appState,
+				this._appStore,
 				this._selectedStore,
 				this._entities.panels,
 			)
@@ -979,7 +979,7 @@ export class DesignCanvasDirective implements OnInit {
 		if (this.gesture.pointers.size === 1) {
 			const entityUnderMouse = this.getPanelUnderMouse(this.currentPoint)
 			if (entityUnderMouse) {
-				const mode = this._appState.mode()
+				const mode = this._appStore.select.mode()
 				if (mode === 'SelectMode') {
 					this._selected.handleEntityUnderTouch(event, entityUnderMouse)
 					return
@@ -1130,7 +1130,7 @@ export class DesignCanvasDirective implements OnInit {
 			event.preventDefault()
 			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
-			// this._appState.mousePos = this.currentPoint
+			// this._appStore.mousePos = this.currentPoint
 			this.onMouseMoveHandler(event, this.currentPoint)
 		})
 		this._renderer.listen(this.canvas, 'touchstart', (event: TouchEvent) => {
@@ -1169,7 +1169,7 @@ export class DesignCanvasDirective implements OnInit {
 		 event.preventDefault()
 		 this.rawMousePos = eventToPointLocation(event)
 		 this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
-		 this._appState.mousePos = this.currentPoint
+		 this._appStore.mousePos = this.currentPoint
 		 this.onMouseMoveHandler(event, this.currentPoint)
 		 event.stopPropagation()
 		 event.preventDefault()

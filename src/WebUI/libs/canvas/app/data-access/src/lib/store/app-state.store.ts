@@ -1,19 +1,24 @@
-import { inject } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { AppState } from './app-state.reducer'
 import { appStateFeature } from './app-state.feature'
 import { AppStateActions } from './app-state.actions'
 import { DragBox, ModeState, PreviewAxisState, ViewPositioningState } from './app-state.types'
 import { FunctionKeys } from 'utility-types'
 import { PanelId, StringColor } from '@entities/shared'
+import { createRootServiceInjector } from '@shared/utils'
 
-export type AppStateStore = ReturnType<typeof injectAppStateStore>
+// export type AppStateStore = ReturnType<typeof injectAppStateStore>
 
-export function injectAppStateStore() {
-	const store = inject(Store<AppState>)
-	// const acs = mapStoreActionsToFunction(store)
-	// console.log('acs', acs)
-	// acs[3]({ previewAxis: {} as PreviewAxisState })
+export function injectAppStateStore(): AppStateStore {
+	return appStoreInjector()
+}
+
+const appStoreInjector = createRootServiceInjector(appStoreFactory, {
+	deps: [Store],
+})
+
+export type AppStateStore = ReturnType<typeof appStoreFactory>
+
+function appStoreFactory(store: Store) {
 	const appState = () => store.selectSignal(appStateFeature.selectAppStateState)()
 	const dragBox = () => store.selectSignal(appStateFeature.selectDragBox)()
 	const mode = () => store.selectSignal(appStateFeature.selectMode)()
@@ -22,6 +27,16 @@ export function injectAppStateStore() {
 	const previewAxis = () => store.selectSignal(appStateFeature.selectPreviewAxis)()
 
 	const stringColor = () => store.selectSignal(appStateFeature.selectStringColor)()
+
+	const select = {
+		appState,
+		dragBox,
+		mode,
+		pointer,
+		view,
+		previewAxis,
+		stringColor,
+	}
 
 	const setStringColor = (stringColor: StringColor) =>
 		store.dispatch(AppStateActions.setStringColor({ stringColor }))
@@ -39,21 +54,32 @@ export function injectAppStateStore() {
 	const setPreviewAxisState = (previewAxis: PreviewAxisState) =>
 		store.dispatch(AppStateActions.setPreviewAxisState({ previewAxis }))
 
-	return {
-		appState,
-		dragBox,
-		mode,
-		pointer,
-		view,
-		previewAxis,
+	const dispatch = {
 		setHoveringOverEntityState,
 		liftHoveringOverEntity,
 		setDragBoxState,
 		setViewPositioningState,
 		setModeState,
 		setPreviewAxisState,
-		stringColor,
 		setStringColor,
+	}
+
+	return {
+		select,
+		dispatch /*		appState,
+		 dragBox,
+		 mode,
+		 pointer,
+		 view,
+		 previewAxis,
+		 setHoveringOverEntityState,
+		 liftHoveringOverEntity,
+		 setDragBoxState,
+		 setViewPositioningState,
+		 setModeState,
+		 setPreviewAxisState,
+		 stringColor,
+		 setStringColor,*/,
 	}
 }
 

@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Infrastructure.Authentication;
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 
@@ -7,60 +8,37 @@ namespace Identity.API.Extensions;
 
 public static class AuthenticationExtensions
 {
-    public static IServiceCollection InitAuthentication(
-        this IServiceCollection services,
-        IConfiguration config
-    )
+    public static IServiceCollection InitAuthentication(this IServiceCollection services,
+        IConfiguration config, IWebHostEnvironment environment)
     {
         services
             .AddAuthentication()
-            // .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            /*.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-            {
-                options.LoginPath = "/auth/login";
-
-                options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-
-                /*options.Events = new CookieAuthenticationEvents
-                {
-                    OnValidatePrincipal = CookieHelpers.ValidateAsync
-                };#1#
-            })*/
-            // .AddCookie("cookie", options => { options.Events.OnValidatePrincipal = PrincipalValidator.ValidateAsync; })
-            // .AddGoogle( options =>
             .AddGoogle(
                 "google",
                 options =>
                 {
-                    // options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    string? googleClientId;
+                    string? googleClientSecret;
+                    if (environment.IsDevelopment())
+                    {
+                        googleClientId = config["Google:ClientId"]
+                                         ?? throw new ArgumentNullException(nameof(options.ClientId));
+                        googleClientSecret = config["Google:ClientSecret"]
+                                             ?? throw new ArgumentNullException(nameof(options.ClientSecret));
+                    }
+                    else
+                    {
+                        googleClientId = DataExtensions.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+                        googleClientSecret = DataExtensions.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+                    }
 
-                    options.ClientId =
-                        config["Google:ClientId"]
-                        ?? throw new ArgumentNullException(nameof(options.ClientId));
-                    options.ClientSecret =
-                        config["Google:ClientSecret"]
-                        ?? throw new ArgumentNullException(nameof(options.ClientSecret));
-
-                    // options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
-                    // options.ClaimActions.MapJsonKey("iss", "iss", "string");
+                    ArgumentNullException.ThrowIfNull(googleClientId, nameof(options.ClientId));
+                    ArgumentNullException.ThrowIfNull(googleClientSecret, nameof(options.ClientSecret));
+                    options.ClientId = googleClientId;
+                    options.ClientSecret = googleClientSecret;
 
                     options.ClaimActions.MapJsonKey(CustomClaims.Picture, "picture", "url");
-                    // options.ClaimActions.MapJsonKey("urn:google:locale", "locale", "string");
-                    // options.ClaimActions.
-                    // options.ClaimActions.Add(new );
-                    // options.ClaimActions.
-
                     options.SaveTokens = true;
-
-                    /*options.Events.OnCreatingTicket = async ctx =>
-                    {
-                        using var request = new HttpRequestMessage(HttpMethod.Get, ctx.Options.UserInformationEndpoint);
-                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", ctx.AccessToken);
-                        using var result = await ctx.Backchannel.SendAsync(request);
-                        var user = await result.Content.ReadFromJsonAsync<JsonElement>();
-                        ctx.RunClaimActions(user);
-                    };*/
 
                     options.Events.OnCreatingTicket = ctx =>
                     {
@@ -87,13 +65,6 @@ public static class AuthenticationExtensions
 
                         return Task.CompletedTask;
                     };
-
-                    /*
-                    options.Events.OnRedirectToAuthorizationEndpoint = context =>
-                    {
-                        context.Response.Cookies.Append("provider", "google");
-                        return Task.CompletedTask;
-                    };*/
                 }
             )
             .AddJwtBearer(

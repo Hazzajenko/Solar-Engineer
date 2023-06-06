@@ -7,6 +7,7 @@ export const CONTEXT_MENU_COMPONENT = {
 	SINGLE_PANEL_MENU: 'app-single-panel-menu',
 	PANEL_LINK_MENU: 'app-panel-link-menu',
 	COLOUR_PICKER_MENU: 'app-colour-picker-menu',
+	MODE_PICKER_MENU: 'context-menu-mode-picker-menu',
 	PROJECT_MENU: 'context-menu-project',
 } as const
 export type ContextMenuComponent =
@@ -55,6 +56,13 @@ export type ContextMenuProjectMenu = ContextMenuTemplate & {
 	}
 }
 
+export type ContextMenuModePickerMenu = ContextMenuTemplate & {
+	component: typeof CONTEXT_MENU_COMPONENT.MODE_PICKER_MENU
+	data: {
+		divIdToTrackLeft: string
+	}
+}
+
 export type ContextMenuInput =
 	| ContextMenuSinglePanelMenu
 	| ContextMenuMultiplePanelsMenu
@@ -62,7 +70,7 @@ export type ContextMenuInput =
 	| ContextMenuPanelLinkMenu
 	| ContextMenuColourPickerMenu
 	| ContextMenuProjectMenu
-
+	| ContextMenuModePickerMenu
 // export const
 /*
  const uhm: ContextMenuInput = {

@@ -53,6 +53,7 @@ export class ContextMenuDirective {
 			console.error('no trackLeftOfDiv')
 			return
 		}
+		console.log('trackLeftOfDiv', data)
 		const { divId } = data
 		const div = document.getElementById(divId)
 		if (!div) {

@@ -42,15 +42,6 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
 
         var newConnection = new ConnectionDto { UserId = userId.ToString() };
 
-        /*var userConnection = new UserConnection
-        {
-            UserId = userId,
-            Connections = new List<WebConnection>
-            {
-                new() { UserId = userId, ConnectionId = request.User.ConnectionId }
-            }
-        };*/
-
         await _hubContext.Clients.AllExcept(userId.ToString()).UserIsOnline(newConnection);
 
         var allConnections = _connections.GetAllConnectedUserIds();

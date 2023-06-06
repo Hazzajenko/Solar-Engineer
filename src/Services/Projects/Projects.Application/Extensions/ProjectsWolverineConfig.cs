@@ -1,9 +1,7 @@
 ﻿using EventBus.Common;
-using EventBus.Domain.AppUserEvents.Responses;
 using EventBus.Domain.ProjectsEvents;
 using Humanizer;
 using Marten;
-using Marten.Events.Projections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -75,7 +73,7 @@ public static class ProjectsWolverineConfig
 
                     opts.Connection(connectionString);
 
-                    opts.Projections.Add<UserSummaryProjector>(ProjectionLifecycle.Inline);
+                    // opts.Projections.Add<UserSummaryProjector>(ProjectionLifecycle.Inline);
 
                     // opts.AutoCreateSchemaObjects = AutoCreate.None;
 
@@ -226,7 +224,7 @@ public class UserSummary
     public List<string> Logs { get; set; } = new();
 }
 
-public class UserSummaryProjector : MultiStreamAggregation<UserSummary, Guid>
+/*public class UserSummaryProjector : MultiStreamAggregation<UserSummary, Guid>
 {
     public UserSummaryProjector()
     {
@@ -241,5 +239,5 @@ public class UserSummaryProjector : MultiStreamAggregation<UserSummary, Guid>
     /*public void Apply(UserSummary snapshot, User e)
     {
         snapshot.Comments.Add(e.Content);
-    }*/
-}
+    }#1#
+}*/

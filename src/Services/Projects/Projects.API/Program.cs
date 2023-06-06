@@ -19,7 +19,8 @@ config.AddEnvironmentVariables("solarengineer_");
 
 builder.Services.InitOpenTelemetry(config);
 
-builder.Services.AddApplicationServices(config);
+builder.Services.AddHealthChecks();
+builder.Services.AddApplicationServices(config, builder.Environment);
 builder.Services.ConfigureJwtAuthentication(config);
 builder.Services.AddAuthorization();
 
@@ -44,4 +45,5 @@ builder.Services.InitSwaggerDocs(config);
 var app = builder.Build();
 
 app.ConfigurePipeline();
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 app.Run();

@@ -16,7 +16,7 @@ export class SelectedService {
 	private _selectedStore = injectSelectedStore()
 	// private _selectedStore = inject(SelectedStoreService)
 
-	// private _appState = inject(AppSt)
+	// private _appStore = inject(AppSt)
 
 	handleEntityUnderMouse(event: MouseEvent, entityUnderMouse: PanelModel) {
 		if (event.shiftKey) {

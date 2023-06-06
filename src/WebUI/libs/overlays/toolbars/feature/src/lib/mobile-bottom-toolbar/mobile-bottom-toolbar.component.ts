@@ -72,8 +72,8 @@ export class MobileBottomToolbarComponent {
 	currentContextMenuDiv = signal<ElementRef<HTMLDivElement> | undefined>(undefined)
 
 	stringColors = stringColors as StringColor[]
-	selectedStringColor = this._appStore.stringColor
-	mode = this._appStore.mode
+	selectedStringColor = this._appStore.select.stringColor
+	mode = this._appStore.select.mode
 	// selectedStringColor = signal<StringColor>(STRING_COLOR.ORANGE)
 	killContextMenu: (() => void) | undefined = undefined
 
@@ -81,21 +81,21 @@ export class MobileBottomToolbarComponent {
 	 effect(
 	 () => {
 	 this.selectedStringColor()
-	 this._appStore.setStringColor(this.selectedStringColor())
+	 this._appStore.dispatch.setStringColor(this.selectedStringColor())
 	 },
 	 { allowSignalWrites: true },
 	 )
 	 }*/
 
 	/*	get mode() {
-	 return this._appStore.mode()
+	 return this._appStore.select.mode()
 	 }*/
 
 	// protected readonly setMode = setMode
 
 	setStringColor(color: StringColor) {
 		// this.selectedStringColor.set(color)
-		this._appStore.setStringColor(color)
+		this._appStore.dispatch.setStringColor(color)
 	}
 
 	openSettingsDialog() {
@@ -193,7 +193,7 @@ export class MobileBottomToolbarComponent {
 	}
 
 	selectMode(mode: ModeState) {
-		this._appStore.setModeState(mode)
+		this._appStore.dispatch.setModeState(mode)
 		// this.setContextMenuToUndefined()
 	}
 }

@@ -33,6 +33,7 @@ function authStoreFactory(store: Store) {
 		signInAsGuest: () => store.dispatch(AuthActions.signInAsGuest()),
 		signInWithGoogle: () => store.dispatch(AuthActions.signInWithGoogle()),
 		isReturningUser: () => store.dispatch(AuthActions.isReturningUser()),
+		signOut: () => store.dispatch(AuthActions.signOut()),
 	}
 
 	return {
