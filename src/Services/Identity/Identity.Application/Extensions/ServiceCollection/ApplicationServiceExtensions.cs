@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Identity.Application.Extensions.ServiceCollection;
 
@@ -21,7 +22,22 @@ public static class ServiceExtensions
         services.AddScoped<IAppUserRepository, AppUserRepository>();
         // services.AddScoped<IImagesService, ImagesService>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        services.Configure<JwtSettings>(config.GetSection("Jwt"));
+
+        if (environment.IsDevelopment())
+            services.Configure<JwtSettings>(config.GetSection("Jwt"));
+        /*else
+            services.Configure<JwtSettings>(new 
+            {
+                Key = jwtKey,
+                Issuer = "https://solarengineer.app",
+                Audience = "https://api.solarengineer.app"
+            });*/
+
+        // services.Configure<JwtSettings>(config.GetSection("Jwt"));
+        /*services.Configure<JwtSettings>(new JwtSettings
+        {
+            Issuer = 21
+        });*/
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.Configure<StorageSettings>(config.GetSection("Azure:Storage"));
 

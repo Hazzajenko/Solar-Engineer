@@ -1,0 +1,20 @@
+version: "3.3"
+services:
+  nginx:
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    ports:
+      - 443:443
+      - 80:80
+
+  web-ui:
+    hostname: web-ui
+    labels:
+      NAME: web-ui
+    image: solarengineer-web-ui:1.0.2
+    ports:
+      - 4200:80
+    depends_on:
+      nginx:
+        condition: service_started

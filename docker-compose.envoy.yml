@@ -2,7 +2,7 @@ version: '3'
 
 services:
   postgres:
-    image: 'postgres:14.0'
+    image: postgres:14.0
     ports:
       - "5432:5432"
     restart: always
@@ -34,6 +34,6 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./api-gateway/envoy.dev.yaml:/etc/envoy/envoy.yaml
+      - ./api-gateway/envoy.dev.yml:/etc/envoy/envoy.yaml
       - ./etc/ssl/solarengineer.net/solarengineer.net.crt:/etc/ssl/certs/solarengineer.net.crt
       - ./etc/ssl/solarengineer.net/solarengineer.net.rsa:/etc/ssl/certs/solarengineer.net.rsa

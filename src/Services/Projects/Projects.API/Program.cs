@@ -16,21 +16,25 @@ builder.ConfigureSerilog();
 
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
+var environment = builder.Environment;
 
 builder.Services.InitOpenTelemetry(config);
 
 builder.Services.AddHealthChecks();
-builder.Services.AddApplicationServices(config, builder.Environment);
-builder.Services.ConfigureJwtAuthentication(config);
+builder.Services.AddApplicationServices(config, environment);
+
+var jwtKey = await environment.GetSymmetricSecurityKey(config);
+
+builder.Services.ConfigureJwtAuthentication(config, jwtKey);
 builder.Services.AddAuthorization();
 
 builder.Services.InitDbContext<ProjectsContext>(
     config,
-    builder.Environment,
+    environment,
     "Projects.Application"
 );
 
-builder.Services.ConfigureSignalRWithRedis(builder.Environment);
+builder.Services.ConfigureSignalRWithRedis(environment);
 builder.Services.InitCors("corsPolicy");
 
 builder.Services.AddFastEndpoints();

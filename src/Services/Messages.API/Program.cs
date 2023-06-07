@@ -36,7 +36,8 @@ builder.Host.UseSerilog(
 // builder.Services.AddApplicationServices(config);
 builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
 builder.Services.AddApplicationServices(config);
-builder.Services.ConfigureJwtAuthentication(config);
+var jwtKey = await builder.Environment.GetSymmetricSecurityKey(config);
+builder.Services.ConfigureJwtAuthentication(config, jwtKey);
 builder.Services.AddAuthorization();
 
 builder.Services.ConfigureSignalRWithRedis(builder.Environment);

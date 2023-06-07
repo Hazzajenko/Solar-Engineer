@@ -3,7 +3,6 @@ using Identity.Application.Exceptions;
 using Identity.Application.Extensions;
 using Identity.Application.Handlers.Images.CreateDpImage;
 using Identity.Application.Mapping;
-using Identity.Application.Services.Images;
 using Identity.Domain.Auth;
 using Mediator;
 using Microsoft.AspNetCore.Authentication;
@@ -14,7 +13,6 @@ namespace Identity.Application.Handlers.Auth.Authorize;
 
 public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, AppUser>
 {
-    private readonly IImagesService _imagesService;
     private readonly ILogger<AuthorizeHandler> _logger;
     private readonly IMediator _mediator;
     private readonly SignInManager<AppUser> _signInManager;
@@ -23,12 +21,11 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, AppUser>
     public AuthorizeHandler(
         UserManager<AppUser> userManager,
         ILogger<AuthorizeHandler> logger,
-        SignInManager<AppUser> signInManager, IImagesService imagesService, IMediator mediator)
+        SignInManager<AppUser> signInManager, IMediator mediator)
     {
         _userManager = userManager;
         _logger = logger;
         _signInManager = signInManager;
-        _imagesService = imagesService;
         _mediator = mediator;
     }
 

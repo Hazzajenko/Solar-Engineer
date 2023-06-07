@@ -11,6 +11,7 @@ builder.ConfigureSerilog();
 
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
+var environment = builder.Environment;
 
 /*
 builder.Host.UseSerilog(
@@ -23,7 +24,9 @@ builder.Host.UseSerilog(
             );
     }
 );*/
-builder.Services.ConfigureJwtAuthentication(config);
+var jwtKey = await environment.GetSymmetricSecurityKey(config);
+
+builder.Services.ConfigureJwtAuthentication(config, jwtKey);
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireAuthenticatedUser", policy => policy.RequireAuthenticatedUser());

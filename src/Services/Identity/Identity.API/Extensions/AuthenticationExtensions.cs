@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Identity.Application.Settings;
 using Infrastructure.Authentication;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication;
@@ -9,7 +10,7 @@ namespace Identity.API.Extensions;
 public static class AuthenticationExtensions
 {
     public static IServiceCollection InitAuthentication(this IServiceCollection services,
-        IConfiguration config, IWebHostEnvironment environment)
+        IConfiguration config, IWebHostEnvironment environment, JwtSettings jwtSettings)
     {
         services
             .AddAuthentication()
@@ -71,16 +72,17 @@ public static class AuthenticationExtensions
                 "bearer",
                 x =>
                 {
-                    var audience = $"{config["Jwt:Audience"]}/auth-api";
+                    // var audience = $"{config["Jwt:Audience"]}/auth-api";
                     x.TokenValidationParameters = new TokenValidationParameters
                     {
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(config["Jwt:Key"]!)
+                            Encoding.UTF8.GetBytes(jwtSettings.Key)
                         ),
+                        // IssuerSigningKey = symmetricSecurityKey,
                         ValidateIssuerSigningKey = true,
                         ValidateLifetime = true,
-                        ValidIssuer = config["Jwt:Issuer"],
-                        ValidAudience = config["Jwt:Audience"],
+                        ValidIssuer = jwtSettings.Issuer,
+                        ValidAudience = jwtSettings.Audience,
                         ValidateIssuer = true,
                         ValidateAudience = true
                     };

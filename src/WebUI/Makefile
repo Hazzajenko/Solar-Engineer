@@ -86,10 +86,15 @@ docker-run-appV3:
 	docker run solarengineer-client:1.0.1 --name solarengineer-client -it -p 4200:80
 
 docker-tag-app:
-	docker image tag solarengineer-client:1.0.1 hazzajenko/solarengineer-client:1.0.1
+	docker image tag solarengineer-web-ui:1.0.2 hazzajenko/solarengineer-web-ui:1.0.2
+
+	#docker image tag solarengineer-client:1.0.1 hazzajenko/solarengineer-client:1.0.1
 
 push-app:
-	docker image push hazzajenko/solarengineer-client:1.0.1
+	docker image push hazzajenko/solarengineer-web-ui:1.0.2
+
+#push-app:
+#	docker image push hazzajenko/solarengineer-client:1.0.1
 
 build-nocache:
 	docker build . -t angularclient:1.0.0  --no-cache --pull

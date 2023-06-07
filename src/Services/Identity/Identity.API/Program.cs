@@ -25,15 +25,20 @@ var builder = WebApplication.CreateBuilder(
 builder.ConfigureSerilog();
 
 var config = builder.Configuration;
+// config.
 config.AddEnvironmentVariables("solarengineer_");
+var environment = builder.Environment;
+// var symmetricSecurityKey = await environment.GetSymmetricSecurityKey(config);
+// var jwtKey = await environment.GetJwtKey(config);
 
 builder.Services.InitOpenTelemetry(config);
 
 builder.Services.AddHealthChecks();
-builder.Services.AddApplicationServices(config, builder.Environment);
+var jwtSettings = await config.GetJwtSettings(environment);
+builder.Services.AddApplicationServices(config, environment);
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddIdentityServices(config);
-builder.Services.InitAuthentication(config, builder.Environment);
+builder.Services.InitAuthentication(config, environment, jwtSettings);
 builder.Services.InitAuthorization(config);
 builder.Services.AddScoped<ApiKeyAuthFilter>();
 
@@ -90,5 +95,4 @@ loginEndpoints.MapGet(
         return Results.Challenge(properties, new List<string> { "google" });
     }
 );
-
 await app.RunAsync();

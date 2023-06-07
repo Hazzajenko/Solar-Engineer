@@ -13,6 +13,10 @@ supabase.d.ts
 
 logs
 
+# solarengineer-vault.pfx
+**.pfx
+# **/*.pfx
+
 
 
 .env

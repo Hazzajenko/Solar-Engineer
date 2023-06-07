@@ -1,0 +1,1 @@
+docker run --name solarengineer-web-ui:1.0.2 -it -p 4200:80 solarengineer-web-ui:1.0.2

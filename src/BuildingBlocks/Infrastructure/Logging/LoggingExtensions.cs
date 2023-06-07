@@ -16,9 +16,21 @@ public static partial class LoggingExtensions
             ?? Assembly.GetEntryAssembly()?.GetName().Name;
         if (appName is null)
             throw new ArgumentNullException(nameof(appName));
+        // builder.Configuration.AddEnvironmentVariables()
         _ = builder.Host.UseSerilog(
             (_, _, loggerConfig) =>
             {
+                // ReadFrom.Configuration(IConfiguration configuration, ConfigurationReaderOptions readerOptions)
+                /*loggerConfig.ReadFrom
+                    .Configuration( )
+                    .Enrich.FromLogContext()
+                    .Enrich.WithProperty("Application", appName)
+                    .Enrich.WithExceptionDetails()
+                    .Enrich.WithMachineName()
+                    .Enrich.WithProcessId()
+                    .Enrich.WithThreadId()
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console();*/
                 loggerConfig.ReadFrom
                     .Configuration(builder.Configuration, "Logging")
                     .Enrich.FromLogContext()

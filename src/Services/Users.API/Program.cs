@@ -37,7 +37,8 @@ config.AddEnvironmentVariables("solarengineer_");
 // builder.Services.InitIdentityAuthUsers(config);
 
 builder.Services.AddApplicationServices(config);
-builder.Services.ConfigureJwtAuthentication(config);
+var jwtKey = await builder.Environment.GetSymmetricSecurityKey(config);
+builder.Services.ConfigureJwtAuthentication(config, jwtKey);
 builder.Services.AddAuthorization();
 
 builder.Services.InitDbContext<UsersContext>(config, builder.Environment);

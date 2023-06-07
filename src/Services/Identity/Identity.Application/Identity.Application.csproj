@@ -4,10 +4,14 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <UserSecretsId>6d05c24e-17b2-4e79-9349-397e9021e606</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AWSSDK.SecretsManager" Version="3.7.102.54" />
+      <PackageReference Include="Azure.Identity" Version="1.9.0" />
       <PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.0.0-beta.9" />
+      <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.5.0" />
       <PackageReference Include="Azure.Storage.Blobs" Version="12.16.0" />
       <PackageReference Include="Bogus" Version="34.0.2" />
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />

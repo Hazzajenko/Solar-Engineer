@@ -1,9 +1,12 @@
 ﻿using System.Text;
 using Duende.IdentityServer.EntityFramework.Entities;
+using Infrastructure.Azure;
 using Infrastructure.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Authentication;
@@ -11,7 +14,7 @@ namespace Infrastructure.Authentication;
 public static class AuthExtensions
 {
     public static IServiceCollection ConfigureJwtAuthentication(this IServiceCollection services,
-        IConfiguration config)
+        IConfiguration config, SymmetricSecurityKey symmetricSecurityKey)
     {
         services.AddAuthentication(x =>
         {
@@ -22,8 +25,7 @@ public static class AuthExtensions
         {
             x.TokenValidationParameters = new TokenValidationParameters
             {
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(config["Jwt:Key"]!)),
+                IssuerSigningKey = symmetricSecurityKey,
                 ValidateIssuerSigningKey = true,
                 ValidateLifetime = true,
                 ValidIssuer = config["Jwt:Issuer"],
@@ -50,6 +52,30 @@ public static class AuthExtensions
         // services.AddAuthorization();
 
         return services;
+    }
+
+    public static async Task<string> GetJwtKey(this IWebHostEnvironment environment,
+        IConfiguration config)
+    {
+        var jwtKey = environment.IsDevelopment()
+            ? config["Jwt:Key"]
+            : await AzureSecrets.GetJwtKey();
+
+        ArgumentNullException.ThrowIfNull(jwtKey);
+
+        return jwtKey;
+    }
+
+    public static async Task<SymmetricSecurityKey> GetSymmetricSecurityKey(this IWebHostEnvironment environment,
+        IConfiguration config)
+    {
+        var jwtKey = environment.IsDevelopment()
+            ? config["Jwt:Key"]
+            : await AzureSecrets.GetJwtKey();
+
+        ArgumentNullException.ThrowIfNull(jwtKey);
+
+        return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
     }
 
     public static IServiceCollection InitIdentityAuth(

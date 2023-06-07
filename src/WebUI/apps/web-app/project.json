@@ -7,11 +7,11 @@
 	"tags": [],
 	"targets": {
 		"deploy": {
-			"builder": "@nrwl/workspace:run-commands",
+			"executor": "nx:run-commands",
 			"options": {
 				"commands": [
-					"nx build design-app --configuration=production",
-					"docker build -f ./apps/design-app/Dockerfile . -t solarengineer-client:1.0.2"
+					"nx build web-app --configuration=production",
+					"docker build -f ./apps/web-app/Dockerfile . -t solarengineer-web-ui:1.0.2"
 				],
 				"parallel": false
 			}

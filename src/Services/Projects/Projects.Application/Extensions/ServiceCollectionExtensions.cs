@@ -2,6 +2,7 @@
 using Infrastructure.SignalR;
 using Mapster;
 using MapsterMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,10 +15,8 @@ namespace Projects.Application.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddApplicationServices(
-        this IServiceCollection services,
-        IConfiguration config
-    )
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+        IConfiguration config, IWebHostEnvironment environment)
     {
         services.AddSingleton<IUserIdProvider, HubsUserIdProvider>();
         services.AddScoped<IProjectsUnitOfWork, ProjectsUnitOfWork>();
@@ -25,7 +24,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAppUserProjectsRepository, AppUserProjectsRepository>();
         services.AddScoped<IProjectUsersRepository, ProjectUsersRepository>();
         services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
-        services.InitMassTransit();
+        services.InitMassTransit(environment);
         services.AddMappings();
 
         return services;
