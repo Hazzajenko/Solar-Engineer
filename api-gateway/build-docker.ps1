@@ -1,0 +1,1 @@
+docker build . -t solarengineer-api-gateway:1.0.2
