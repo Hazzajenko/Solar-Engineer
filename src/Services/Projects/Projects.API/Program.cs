@@ -23,9 +23,10 @@ builder.Services.InitOpenTelemetry(config);
 builder.Services.AddHealthChecks();
 builder.Services.AddApplicationServices(config, environment);
 
-var jwtKey = await environment.GetSymmetricSecurityKey(config);
+// var jwtKey = await environment.GetSymmetricSecurityKey(config);
+var jwtSettings = await config.GetJwtSettings(environment);
 
-builder.Services.ConfigureJwtAuthentication(config, jwtKey);
+builder.Services.ConfigureJwtAuthentication(config, jwtSettings);
 builder.Services.AddAuthorization();
 
 builder.Services.InitDbContext<ProjectsContext>(

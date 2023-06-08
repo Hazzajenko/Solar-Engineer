@@ -8,8 +8,8 @@
 ></canvas>
 
 <div
-	*ngIf="!isProjectReadyToRender() && user()"
-	class="z-50 absolute inset-0 flex items-center justify-center w-full h-full bg-gray-100 dark:bg-gray-900 opacity-60"
+	*ngIf="showProjectSpinner()"
+	class="z-10 absolute inset-0 flex items-center justify-center w-full h-full bg-gray-100 dark:bg-gray-900 opacity-60"
 	role="status"
 >
 	<svg

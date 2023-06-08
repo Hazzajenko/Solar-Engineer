@@ -1,4 +1,4 @@
-$options = "identity-api", "projects-api"
+$options = "web-ui", "identity-api", "projects-api"
 Write-Host "OPTIONS:" -BackgroundColor Black -ForegroundColor White
 For ($i = 0; $i -lt $options.Count; $i++) {
     Write-Host "$($i): $($options[$i])"

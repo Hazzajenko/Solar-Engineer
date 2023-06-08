@@ -1,6 +1,5 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using Infrastructure.Authentication;
 using Infrastructure.Config;
 using Infrastructure.Data;
 using Infrastructure.Logging;
@@ -37,8 +36,8 @@ config.AddEnvironmentVariables("solarengineer_");
 // builder.Services.InitIdentityAuthUsers(config);
 
 builder.Services.AddApplicationServices(config);
-var jwtKey = await builder.Environment.GetSymmetricSecurityKey(config);
-builder.Services.ConfigureJwtAuthentication(config, jwtKey);
+// var jwtKey = await builder.Environment.GetSymmetricSecurityKey(config);
+// builder.Services.ConfigureJwtAuthentication(config, jwtKey);
 builder.Services.AddAuthorization();
 
 builder.Services.InitDbContext<UsersContext>(config, builder.Environment);

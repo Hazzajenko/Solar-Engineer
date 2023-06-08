@@ -39,7 +39,7 @@ export function projectsStoreFactory(store: Store) {
 
 	const dispatch = {
 		createProjectHttp: (request: CreateProjectRequest) =>
-			store.dispatch(ProjectsActions.createProjectHttp(request)),
+			store.dispatch(ProjectsActions.createProjectSignalr(request)),
 		loadUserProjectsSuccess: (projects: ProjectModel[]) =>
 			store.dispatch(ProjectsActions.loadUserProjectsSuccess({ projects })),
 		selectProject: (projectId: ProjectId) =>

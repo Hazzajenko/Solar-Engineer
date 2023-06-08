@@ -1,6 +1,5 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Logging;
 using Infrastructure.SignalR;
@@ -36,8 +35,8 @@ builder.Host.UseSerilog(
 // builder.Services.AddApplicationServices(config);
 builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
 builder.Services.AddApplicationServices(config);
-var jwtKey = await builder.Environment.GetSymmetricSecurityKey(config);
-builder.Services.ConfigureJwtAuthentication(config, jwtKey);
+// var jwtKey = await builder.Environment.GetSymmetricSecurityKey(config);
+// builder.Services.ConfigureJwtAuthentication(config, jwtKey);
 builder.Services.AddAuthorization();
 
 builder.Services.ConfigureSignalRWithRedis(builder.Environment);

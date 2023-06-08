@@ -15,11 +15,7 @@ namespace Identity.API.Endpoints.Auth;
 public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 {
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
-
     private readonly IMediator _mediator;
-
-    // private readonly IMartenOutbox _outbox;
-    // private readonly IDocumentSession _session;
     private readonly UserManager<AppUser> _userManager;
 
     public AuthorizeEndpoint(
@@ -80,15 +76,6 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
             await SendUnauthorizedAsync(cT);
             return;
         }
-
-        /*
-        var guidId = Guid.NewGuid();
-        var userDto = user.Adapt<UserDto>();
-        var appUserCreated = new AppUserCreated(guidId, userDto);
-        var appUserEventV2 = new AppUserEventV2(guidId, appUserCreated);*/
-        // _session.Store(appUserEventV2);
-        // await _outbox.SendAsync(appUserCreated);
-        // await _session.SaveChangesAsync(cT);
 
         Response.Token = token;
         Response.User = user;

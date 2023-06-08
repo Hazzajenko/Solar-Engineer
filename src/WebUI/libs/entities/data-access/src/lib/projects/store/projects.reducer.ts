@@ -18,8 +18,6 @@ export interface ProjectsState extends EntityState<ProjectModel> {
 	selectedProjectId: ProjectId | undefined
 	storesToInit: typeof initialStoresObject
 	storesToClear: typeof initialStoresObject
-	/*	storesToInit: Map<ProjectEntityStore, boolean> | null
-	 storesToClear: Map<ProjectEntityStore, boolean> | null*/
 	loaded: boolean
 	error?: string | null
 }

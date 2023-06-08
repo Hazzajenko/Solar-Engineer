@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using System.Net;
 using Infrastructure.Authentication;
 using Infrastructure.Extensions;
 using Infrastructure.SignalR.HubFilters;
@@ -10,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using StackExchange.Redis;
 
 namespace Infrastructure.SignalR;
 
@@ -21,6 +19,11 @@ public static class SignalRExtensions
         IWebHostEnvironment env
     )
     {
+        /*var redisConnectionString = env.IsDevelopment()
+            ? "localhost"
+            : RedisExtensions.GetRedisConnectionString();*/
+        // var redisConnectionString = "localhost";
+        // : "redis";
         var redisConnectionString = env.IsDevelopment()
             ? "localhost"
             : "redis";
@@ -35,8 +38,8 @@ public static class SignalRExtensions
             })
             // .AddMessagePackProtocol()
             .AddStackExchangeRedis(
-                redisConnectionString,
-                options =>
+                redisConnectionString
+                /*options =>
                 {
                     options.Configuration.ChannelPrefix = "SolarEngineerApp";
                     options.ConnectionFactory = async writer =>
@@ -46,15 +49,17 @@ public static class SignalRExtensions
                             AbortOnConnectFail = false
                         };
                         config.EndPoints.Add(IPAddress.Loopback, 0);
+                        // config.
                         config.SetDefaultPorts();
                         var connection = await ConnectionMultiplexer.ConnectAsync(config, writer);
+                        // var connection = await RedisExtensions.GetConnectionMultiplexerAsync(writer);
                         connection.ConnectionFailed += (_, e) => { Console.WriteLine("Connection to Redis failed."); };
 
                         if (!connection.IsConnected) Console.WriteLine("Did not connect to Redis.");
 
                         return connection;
                     };
-                }
+                }*/
             );
         return services;
     }

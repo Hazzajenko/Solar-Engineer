@@ -13,7 +13,7 @@ export const ProjectsActions = createActionGroup({
 		'Project Entity Store Cleared': props<{
 			store: ProjectEntityStore
 		}>(),
-		'Create Project Http': props<CreateProjectRequest>(),
+		'Create Project Signalr': props<CreateProjectRequest>(),
 		'Select Project': props<{
 			projectId: ProjectId
 		}>(),
@@ -27,6 +27,7 @@ export const ProjectsActions = createActionGroup({
 		'Load User Projects Failure': props<{
 			error: string | null
 		}>(),
+		'User Projects Empty': emptyProps(),
 		'Add Project': props<{
 			project: ProjectModel
 		}>(),

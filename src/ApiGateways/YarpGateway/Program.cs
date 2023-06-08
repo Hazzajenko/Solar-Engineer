@@ -26,7 +26,7 @@ builder.Host.UseSerilog(
 );*/
 var jwtKey = await environment.GetSymmetricSecurityKey(config);
 
-builder.Services.ConfigureJwtAuthentication(config, jwtKey);
+// builder.Services.ConfigureJwtAuthentication(config, jwtKey);
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireAuthenticatedUser", policy => policy.RequireAuthenticatedUser());

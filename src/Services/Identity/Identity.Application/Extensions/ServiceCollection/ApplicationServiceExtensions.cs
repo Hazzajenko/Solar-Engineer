@@ -4,17 +4,17 @@ using Identity.Application.Services.Jwt;
 using Identity.Application.Settings;
 using Identity.SignalR.Services;
 using Infrastructure.Services;
+using Infrastructure.Settings;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Identity.Application.Extensions.ServiceCollection;
 
 public static class ServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
-        IConfiguration config, IWebHostEnvironment environment)
+        IConfiguration config, IWebHostEnvironment environment, JwtSettings jwtSettings)
     {
         // services.Configure<QueueSettings>(config.GetSection("Queues"));
         services.AddSingleton<ConnectionsService>();
@@ -23,21 +23,13 @@ public static class ServiceExtensions
         // services.AddScoped<IImagesService, ImagesService>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
-        if (environment.IsDevelopment())
-            services.Configure<JwtSettings>(config.GetSection("Jwt"));
-        /*else
-            services.Configure<JwtSettings>(new 
-            {
-                Key = jwtKey,
-                Issuer = "https://solarengineer.app",
-                Audience = "https://api.solarengineer.app"
-            });*/
-
-        // services.Configure<JwtSettings>(config.GetSection("Jwt"));
-        /*services.Configure<JwtSettings>(new JwtSettings
+        services.Configure<JwtSettings>(options =>
         {
-            Issuer = 21
-        });*/
+            options.Key = jwtSettings.Key;
+            options.Issuer = jwtSettings.Issuer;
+            options.Audience = jwtSettings.Audience;
+        });
+
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.Configure<StorageSettings>(config.GetSection("Azure:Storage"));
 

@@ -5,11 +5,12 @@ import { ProjectsSignalrService } from '../services'
 import { ProjectsActions } from './projects.actions'
 import { injectEntityStore, PanelsSignalrService } from '@entities/data-access'
 import { AuthActions } from '@auth/data-access'
+import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 
 export const createProjectSignalr$ = createEffect(
 	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
 		return actions$.pipe(
-			ofType(ProjectsActions.createProjectHttp),
+			ofType(ProjectsActions.createProjectSignalr),
 			tap((request) => projectsSignalr.createProject(request)),
 		)
 	},
@@ -54,13 +55,28 @@ export const deleteProjectSignalr$ = createEffect(
 )
 
 export const selectUserProjectOnLoad$ = createEffect(
-	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
+	(
+		actions$ = inject(Actions),
+		projectsSignalr = inject(ProjectsSignalrService),
+		uiStore = injectUiStore(),
+	) => {
 		return actions$.pipe(
 			ofType(ProjectsActions.loadUserProjectsSuccess),
 			map(({ projects }) => {
-				return ProjectsActions.selectProjectInitial({ projectId: projects[0].id })
+				if (projects.length > 0) {
+					return ProjectsActions.selectProjectInitial({ projectId: projects[0].id })
+				}
+				return ProjectsActions.userProjectsEmpty()
 			}),
-			tap((action) => projectsSignalr.getProjectById(action.projectId, true)),
+			tap((action) => {
+				if (action.type === ProjectsActions.selectProjectInitial.type) {
+					projectsSignalr.getProjectById(action.projectId, true)
+					return
+				}
+				uiStore.dispatch.openDialog({
+					component: DIALOG_COMPONENT.CREATE_PROJECT,
+				})
+			}),
 		)
 	},
 	{ functional: true },

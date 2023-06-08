@@ -6,6 +6,7 @@ using Identity.Application.Data;
 using Identity.Application.Extensions.Application;
 using Identity.Application.Extensions.ServiceCollection;
 using Identity.Domain.Auth;
+using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Logging;
 using Infrastructure.OpenTelemetry;
@@ -29,13 +30,13 @@ var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 var environment = builder.Environment;
 // var symmetricSecurityKey = await environment.GetSymmetricSecurityKey(config);
-// var jwtKey = await environment.GetJwtKey(config);
+var jwtKey = await environment.GetJwtKey(config);
 
 builder.Services.InitOpenTelemetry(config);
 
 builder.Services.AddHealthChecks();
 var jwtSettings = await config.GetJwtSettings(environment);
-builder.Services.AddApplicationServices(config, environment);
+builder.Services.AddApplicationServices(config, environment, jwtSettings);
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddIdentityServices(config);
 builder.Services.InitAuthentication(config, environment, jwtSettings);

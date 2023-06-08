@@ -58,6 +58,7 @@ export class ProjectsSignalrService {
 		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.PROJECT_CREATED, (project: ProjectModel) => {
 			console.log(PROJECTS_SIGNALR_EVENT.PROJECT_CREATED, project)
 			this._projectsStore.dispatch.addProject(project)
+			this._projectsStore.dispatch.selectProject(project.id)
 		})
 
 		this.hubConnection.on(

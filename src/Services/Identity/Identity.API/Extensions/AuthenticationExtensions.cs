@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using Identity.Application.Settings;
 using Infrastructure.Authentication;
 using Infrastructure.Extensions;
+using Infrastructure.Settings;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 
