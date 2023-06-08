@@ -1,5 +1,4 @@
-import { makeEnvironmentProviders } from '@angular/core'
-import { provideState, Store } from '@ngrx/store'
+import { Store } from '@ngrx/store'
 import {
 	selectAllSignalrEvents,
 	selectSignalrEventById,
@@ -8,12 +7,7 @@ import {
 import { SignalrEventsActions } from './signalr-events.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { SignalrEventRequest } from '@entities/shared'
-import { SIGNALR_EVENTS_FEATURE_KEY, signalrEventsReducer } from './signalr-events.reducer'
 import { createRootServiceInjector } from '@shared/utils'
-
-export function provideSignalrEventsFeature() {
-	return makeEnvironmentProviders([provideState(SIGNALR_EVENTS_FEATURE_KEY, signalrEventsReducer)])
-}
 
 export function injectSignalrEventsStore(): SignalrEventsStoreFactory {
 	return signalrEventsStoreInjector()

@@ -1,4 +1,6 @@
 export * from './signalr-events.actions'
 export * from './signalr-events.reducer'
+export * from './signalr-events.effects'
+export * from './signalr-events.feature'
 export * from './signalr-events.selectors'
 export * from './signalr-events.store'

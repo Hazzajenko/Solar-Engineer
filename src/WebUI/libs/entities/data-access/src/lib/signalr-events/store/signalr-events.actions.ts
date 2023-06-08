@@ -24,5 +24,6 @@ export const SignalrEventsActions = createActionGroup({
 			signalrEventIds: RequestId[]
 		}>(),
 		'Clear Signalr Events State': emptyProps(),
+		Noop: emptyProps(),
 	},
 })

@@ -1,16 +1,20 @@
 import { ENTITY_TYPE, EntityType } from './entity.type'
 import { AngleRadians, Point, Size } from '@shared/data-access/models'
 import { PanelModel } from '../panels'
+import { z } from 'zod'
 // import { Point } from '@shared/data-access/models'
 
 export type EntityBase = {
 	id: string
 	type: EntityType
 	location: Point
-	// width: number
-	// height: number
 	angle: AngleRadians
 }
+
+export const EntityBase = z.object({
+	location: Point,
+	angle: z.number(),
+})
 
 /*export const EntityFactory = {
  create: (type: EntityType, location: Point): CanvasEntity => {

@@ -30,6 +30,24 @@ export const PanelsActions = createActionGroup({
 		'Delete Many Panels': props<{
 			panelIds: PanelId[]
 		}>(),
+		'Add Panel No Signalr': props<{
+			panel: PanelModel
+		}>(),
+		'Add Many Panels No Signalr': props<{
+			panels: PanelModel[]
+		}>(),
+		'Update Panel No Signalr': props<{
+			update: UpdateStr<PanelModel>
+		}>(),
+		'Update Many Panels No Signalr': props<{
+			updates: UpdateStr<PanelModel>[]
+		}>(),
+		'Delete Panel No Signalr': props<{
+			panelId: PanelId
+		}>(),
+		'Delete Many Panels No Signalr': props<{
+			panelIds: PanelId[]
+		}>(),
 		'Clear Panels State': emptyProps(),
 		Noop: emptyProps(),
 	},
