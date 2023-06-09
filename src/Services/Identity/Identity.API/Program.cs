@@ -5,7 +5,7 @@ using Identity.API.Extensions;
 using Identity.Application.Data;
 using Identity.Application.Extensions.Application;
 using Identity.Application.Extensions.ServiceCollection;
-using Identity.Domain.Auth;
+using Identity.Domain;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Logging;
@@ -17,21 +17,17 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using NSwag;
 
-AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+// AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
 );
 
 builder.ConfigureSerilog();
-
 var config = builder.Configuration;
-// config.
 config.AddEnvironmentVariables("solarengineer_");
-var environment = builder.Environment;
-// var symmetricSecurityKey = await environment.GetSymmetricSecurityKey(config);
-var jwtKey = await environment.GetJwtKey(config);
 
+var environment = builder.Environment;
 builder.Services.InitOpenTelemetry(config);
 
 builder.Services.AddHealthChecks();

@@ -3,7 +3,7 @@ using Identity.Application.Handlers.AppUsers.GetAppUserDto;
 using Identity.Application.Handlers.Auth.Authorize;
 using Identity.Application.Services.Jwt;
 using Identity.Contracts.Responses;
-using Identity.Domain.Auth;
+using Identity.Domain;
 using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Identity;

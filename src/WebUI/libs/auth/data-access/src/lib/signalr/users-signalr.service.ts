@@ -1,19 +1,18 @@
 import { Injectable } from '@angular/core'
 import { HubConnection } from '@microsoft/signalr'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import { ProjectsHubConnection } from '@entities/data-access'
 import { ConnectionModel, CONNECTIONS_SIGNALR_EVENT } from '@auth/shared'
 
-const hubName = 'Connections'
-const hubUrl = '/hubs/connections'
+const hubName = 'Users'
+const hubUrl = '/hubs/users'
 
 @Injectable({
 	providedIn: 'root',
 })
-export class ConnectionsSignalrService {
+export class UsersSignalrService {
 	hubConnection: HubConnection | undefined
 
-	init(token: string): ProjectsHubConnection {
+	init(token: string): HubConnection {
 		const request: HubConnectionRequest = {
 			token,
 			hubName,

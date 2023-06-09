@@ -1,6 +1,17 @@
 version: '3'
 
 services:
+  envoy:
+    image: envoyproxy/envoy:v1.15.0
+    ports:
+      - "9901:9901"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./envoy/envoy.dev.yml:/etc/envoy/envoy.yaml
+      - ./https/solarengineer.net.crt:/etc/ssl/certs/solarengineer.net.crt
+      - ./https/solarengineer.net.rsa:/etc/ssl/certs/solarengineer.net.rsa
+
   postgres:
     image: postgres:14.0
     ports:
@@ -27,13 +38,3 @@ services:
     ports:
       - "6379:6379"
 
-  envoy:
-    image: envoyproxy/envoy:v1.15.0
-    ports:
-      - "9901:9901"
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./api-gateway/envoy.dev.yml:/etc/envoy/envoy.yaml
-      - ./etc/ssl/solarengineer.net/solarengineer.net.crt:/etc/ssl/certs/solarengineer.net.crt
-      - ./etc/ssl/solarengineer.net/solarengineer.net.rsa:/etc/ssl/certs/solarengineer.net.rsa

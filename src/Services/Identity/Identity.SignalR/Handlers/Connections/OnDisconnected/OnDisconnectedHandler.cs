@@ -10,12 +10,12 @@ namespace Identity.SignalR.Handlers.Connections.OnDisconnected;
 public class OnDisconnectedHandler : ICommandHandler<OnDisconnectedCommand, bool>
 {
     private readonly ConnectionsService _connections;
-    private readonly IHubContext<ConnectionsHub, IConnectionsHub> _hubContext;
+    private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
     private readonly ILogger<OnDisconnectedHandler> _logger;
 
     public OnDisconnectedHandler(
         ILogger<OnDisconnectedHandler> logger,
-        IHubContext<ConnectionsHub, IConnectionsHub> hubContext,
+        IHubContext<UsersHub, IUsersHub> hubContext,
         ConnectionsService connections
     )
     {

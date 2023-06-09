@@ -9,14 +9,14 @@ namespace Identity.Application.Consumers;
 
 public class CreateProjectEventConsumer : IConsumer<CreateProjectEvent>
 {
-    private readonly IAppUserRepository _appUserRepository;
+    private readonly IAppUsersRepository _appUsersRepository;
     private readonly ILogger<CreateProjectEventConsumer> _logger;
 
     public CreateProjectEventConsumer(ILogger<CreateProjectEventConsumer> logger,
-        IAppUserRepository appUserRepository)
+        IAppUsersRepository appUsersRepository)
     {
         _logger = logger;
-        _appUserRepository = appUserRepository;
+        _appUsersRepository = appUsersRepository;
     }
 
     public async Task Consume(ConsumeContext<CreateProjectEvent> context)
@@ -24,7 +24,7 @@ public class CreateProjectEventConsumer : IConsumer<CreateProjectEvent>
         _logger.LogInformation("CreateProjectEventConsumer: {@User}",
             context.Message);
         context.Message.DumpObjectJson();
-        var user = await _appUserRepository.GetByIdAsync(context.Message.Id);
+        var user = await _appUsersRepository.GetByIdAsync(context.Message.Id);
         if (user is null)
         {
             await context.RespondAsync(new UserNotFound(context.Message.Id));

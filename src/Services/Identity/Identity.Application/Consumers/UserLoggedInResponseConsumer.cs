@@ -9,14 +9,14 @@ namespace Identity.Application.Consumers;
 
 public class UserLoggedInResponseConsumer : IConsumer<UserLoggedInResponse>
 {
-    private readonly IAppUserRepository _appUserRepository;
+    private readonly IAppUsersRepository _appUsersRepository;
     private readonly ILogger<UserLoggedInResponseConsumer> _logger;
 
     public UserLoggedInResponseConsumer(ILogger<UserLoggedInResponseConsumer> logger,
-        IAppUserRepository appUserRepository)
+        IAppUsersRepository appUsersRepository)
     {
         _logger = logger;
-        _appUserRepository = appUserRepository;
+        _appUsersRepository = appUsersRepository;
     }
 
     public async Task Consume(ConsumeContext<UserLoggedInResponse> context)
@@ -33,7 +33,7 @@ public class UserLoggedInResponseConsumer : IConsumer<UserLoggedInResponse>
             PhotoUrl = context.Message.PhotoUrl
         };
         context.Message.DumpObjectJson();
-        var user = await _appUserRepository.GetByIdAsync(context.Message.Id);
+        var user = await _appUsersRepository.GetByIdAsync(context.Message.Id);
         if (user is null)
         {
             await context.RespondAsync(new UserNotFound(context.Message.Id));

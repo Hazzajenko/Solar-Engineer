@@ -18,7 +18,7 @@ import { UiStoreService } from '@overlays/ui-store/data-access'
 import { SideUiAuthViewComponent } from '../side-ui-auth-view/side-ui-auth-view.component'
 import { SideUiProjectsViewComponent } from '../side-ui-projects-view'
 
-export type SideUiNavBarView = 'auth' | 'projects' | 'data' | 'none'
+export type SideUiNavBarView = 'auth' | 'projects' | 'data' | 'users' | 'none'
 export type SideUiNavBarViewComponent =
 	| typeof SideUiAuthViewComponent
 	| typeof SideUiProjectsViewComponent

@@ -6,11 +6,11 @@ namespace Identity.Application.Handlers.AppUsers.GetAppUserDto;
 
 public class GetAppUserDtoByIdHandler : IQueryHandler<GetAppUserDtoByIdQuery, CurrentUserDto?>
 {
-    private readonly IAppUserRepository _appUserRepository;
+    private readonly IAppUsersRepository _appUsersRepository;
 
-    public GetAppUserDtoByIdHandler(IAppUserRepository appUserRepository)
+    public GetAppUserDtoByIdHandler(IAppUsersRepository appUsersRepository)
     {
-        _appUserRepository = appUserRepository;
+        _appUsersRepository = appUsersRepository;
     }
 
     public async ValueTask<CurrentUserDto?> Handle(
@@ -18,6 +18,6 @@ public class GetAppUserDtoByIdHandler : IQueryHandler<GetAppUserDtoByIdQuery, Cu
         CancellationToken cT
     )
     {
-        return await _appUserRepository.GetAppUserDtoByIdAsync(request.Id);
+        return await _appUsersRepository.GetAppUserDtoByIdAsync(request.Id);
     }
 }

@@ -10,12 +10,12 @@ namespace Identity.SignalR.Handlers.Connections.OnConnected;
 public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
 {
     private readonly ConnectionsService _connections;
-    private readonly IHubContext<ConnectionsHub, IConnectionsHub> _hubContext;
+    private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
     private readonly ILogger<OnConnectedHandler> _logger;
 
     public OnConnectedHandler(
         ILogger<OnConnectedHandler> logger,
-        IHubContext<ConnectionsHub, IConnectionsHub> hubContext,
+        IHubContext<UsersHub, IUsersHub> hubContext,
         ConnectionsService connections
     )
     {

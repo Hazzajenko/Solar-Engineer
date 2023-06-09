@@ -122,7 +122,7 @@ export class ProjectsSignalrService {
 	}
 
 	invokeSignalrEvent(request: Omit<SignalrEventRequest, 'timeStamp'>) {
-		this._signalrEventsStore.dispatch.addSignalrEvent(addTimeStamp(request))
+		this._signalrEventsStore.dispatch.invokeSignalrEvent(addTimeStamp(request))
 		console.log(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
 		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
 		this.hubConnection

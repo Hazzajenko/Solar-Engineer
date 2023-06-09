@@ -7,16 +7,16 @@ namespace Identity.Application.Handlers.AppUsers.GetAppUserDto;
 
 public class GetAppUserDtoHandler : IQueryHandler<GetAppUserDtoQuery, CurrentUserDto?>
 {
-    private readonly IAppUserRepository _appUserRepository;
+    private readonly IAppUsersRepository _appUsersRepository;
 
-    public GetAppUserDtoHandler(IAppUserRepository appUserRepository)
+    public GetAppUserDtoHandler(IAppUsersRepository appUsersRepository)
     {
-        _appUserRepository = appUserRepository;
+        _appUsersRepository = appUsersRepository;
     }
 
     public async ValueTask<CurrentUserDto?> Handle(GetAppUserDtoQuery request, CancellationToken cT)
     {
-        return await _appUserRepository.GetAppUserDtoByIdAsync(
+        return await _appUsersRepository.GetAppUserDtoByIdAsync(
             request.ClaimsPrincipal.GetUserId().ToGuid()
         );
     }

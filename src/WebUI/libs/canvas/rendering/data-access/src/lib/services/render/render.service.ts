@@ -18,7 +18,6 @@ import {
 	drawLinkModeSymbols,
 	drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimisedV2,
 	drawSelectedBox,
-	drawSelectedStringBoxV3,
 	drawSelectedStringBoxWithStats,
 	drawSelectionDragBox,
 	drawTooltipWithOptionsCtx,
@@ -277,15 +276,16 @@ export class RenderService {
 					// assertNotNull(string, 'selectedString')
 					const stringStats = this._stringStats.calculateStringStatsForSelectedString()
 					drawSelectedStringBoxWithStats(ctx, selectedString, selectedStringPanels, stringStats)
-				} else {
-					const stringsWithPanels = this._entities.strings.select.allStrings().map((string) => ({
-						string,
-						panels: this._entities.panels.select.getByStringId(string.id),
-					}))
-					stringsWithPanels.forEach(({ string, panels }) => {
-						drawSelectedStringBoxV3(ctx, string, panels)
-					})
 				}
+				// * draw all string boxes
+				/* else {
+				 const stringsWithPanels = this._entities.strings.select.allStrings().map((string) => ({
+				 string,
+				 panels: this._entities.panels.select.getByStringId(string.id),
+				 }))
+				 stringsWithPanels.forEach(({ string, panels }) => {
+				 drawSelectedStringBoxV3(ctx, string, panels)
+				 }*/
 			}
 
 			if (options?.nearby && graphicsState.nearbyLines) {

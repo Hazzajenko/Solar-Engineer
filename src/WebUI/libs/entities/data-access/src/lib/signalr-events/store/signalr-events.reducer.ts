@@ -21,6 +21,9 @@ export const initialSignalrEventsState: SignalrEventsState = signalrEventsAdapte
 
 const reducer = createReducer(
 	initialSignalrEventsState,
+	on(SignalrEventsActions.invokeSignalrEvent, (state, { signalrEvent }) =>
+		signalrEventsAdapter.addOne(signalrEvent, state),
+	),
 	on(SignalrEventsActions.addSignalrEvent, (state, { signalrEvent }) =>
 		signalrEventsAdapter.addOne(signalrEvent, state),
 	),

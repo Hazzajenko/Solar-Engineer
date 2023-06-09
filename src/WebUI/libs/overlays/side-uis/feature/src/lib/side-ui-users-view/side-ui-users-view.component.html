@@ -1,0 +1,183 @@
+<div
+	class="overflow-y-auto py-4 px-3 h-full w-52 bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+>
+	<div
+		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
+	>
+		<h3>Projects</h3>
+	</div>
+
+	<ng-container *ngIf="user() as user; then loggedIn; else notLoggedIn" />
+	<ng-template #loggedIn>
+		<ng-container *ngIf="projects().length > 0; else noProjects">
+			<ul class="pl-2 space-y-4">
+				<li *ngFor="let project of projects()">
+					<div
+						[ngClass]="{
+							'bg-primary-50 text-primary-700 dark:bg-primary-700 dark:text-primary-100':
+								project.id === selectedProject()?.id,
+							'text-gray-900 dark:text-gray-200': project.id !== selectedProject()?.id
+						}"
+						[ngStyle]="{
+							'border-left-color':
+								project.id === selectedProject()?.id ? project.colour : 'transparent',
+							'border-left-width': project.id === selectedProject()?.id ? '4px' : '0px',
+							'border-left-style': project.id === selectedProject()?.id ? 'solid' : 'none',
+							'margin-left': project.id === selectedProject()?.id ? '-4px' : '0px'
+						}"
+						class="flex items-center py-1 justify-between"
+					>
+						<!--				<div class="min-w-0 flex">-->
+						<div class="flex justify-start">
+							<a
+								(click)="selectProject(project)"
+								[ngClass]="{
+									'font-medium text-gray-900 dark:text-gray-200':
+										project.id === selectedProject()?.id,
+									'font-normal text-gray-500 dark:text-gray-400':
+										project.id !== selectedProject()?.id
+								}"
+								class="flex items-center text-base rounded-lg transition duration-75 hover:underline dark:text-white group"
+							>
+								<span
+									[ngStyle]="{
+										'background-color': project.colour,
+										'border-color':
+											project.id === selectedProject()?.id ? project.colour : 'transparent'
+									}"
+									class="w-4 h-4 rounded ml-2"
+								></span>
+								<span class="ml-3 capitalize text-sm text-gray-900">{{
+									project.name | truncate : 10
+								}}</span>
+							</a>
+						</div>
+						<div class="flex justify-end pr-1">
+							<div class="relative flex-none">
+								<button
+									(click)="toggleProjectView(project)"
+									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+									type="button"
+								>
+									<ng-container
+										*ngIf="openedProjects().get(project.id); then contentOpen; else contentClosed"
+									/>
+								</button>
+							</div>
+							<div class="relative flex-none">
+								<button
+									(click)="openProjectContextMenu($event, project)"
+									aria-expanded="false"
+									aria-haspopup="true"
+									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+									id="options-menu-0-button"
+									type="button"
+								>
+									<span class="sr-only">Open options</span>
+									<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="menus/ellipsis-vertical" />
+								</button>
+							</div>
+							<ul
+								*ngIf="openedProjects().get(project.id)"
+								class="divide-y divide-gray-300 overflow-y-auto"
+								role="list"
+							>
+								{{
+									project.name
+								}}
+							</ul>
+						</div>
+						<!--				</div>-->
+					</div>
+				</li>
+				<li>
+					<a
+						(click)="createProject()"
+						class="flex items-center font-medium text-gray-700 text-sm rounded-lg transition duration-75 dark:text-gray-200 group"
+					>
+						<svg
+							class="w-4 h-4 rounded border border-gray-200 dark:border-gray-400"
+							fill="currentColor"
+							viewBox="0 0 20 20"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								clip-rule="evenodd"
+								d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+								fill-rule="evenodd"
+							></path>
+						</svg>
+						<span class="ml-3 dark:text-gray-400 hover:underline">Add new project</span>
+					</a>
+				</li>
+			</ul>
+		</ng-container>
+	</ng-template>
+</div>
+
+<ng-template #notLoggedIn>
+	<div class="text-center">
+		<!--		<h3 class="mt-2 font-medium text-gray-900">Not Logged In</h3>-->
+		<h3 class="font-medium tracking-tight text-gray-900 dark:text-white">
+			<a href="#">Demo Account</a>
+		</h3>
+		<p class="mt-1 text-sm text-gray-500">To create and save projects get started by signing in.</p>
+		<div class="mt-6">
+			<button
+				(click)="openSignInDialog()"
+				class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+				type="submit"
+			>
+				Sign in
+			</button>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #noProjects>
+	<div class="text-center">
+		<svg
+			aria-hidden="true"
+			class="mx-auto h-12 w-12 text-gray-400"
+			fill="none"
+			stroke="currentColor"
+			viewBox="0 0 24 24"
+		>
+			<path
+				d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				vector-effect="non-scaling-stroke"
+			/>
+		</svg>
+		<h3 class="mt-2 text-sm font-semibold text-gray-900">No projects</h3>
+		<p class="mt-1 text-sm text-gray-500">Get started by creating a new project.</p>
+		<div class="mt-6">
+			<button
+				(click)="createProject()"
+				class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+				type="button"
+			>
+				<svg
+					aria-hidden="true"
+					class="-ml-0.5 mr-1.5 h-5 w-5"
+					fill="currentColor"
+					viewBox="0 0 20 20"
+				>
+					<path
+						d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"
+					/>
+				</svg>
+				New Project
+			</button>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #contentClosed>
+	<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="arrows/chevron-down" />
+</ng-template>
+<ng-template #contentOpen>
+	<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="arrows/chevron-up" />
+</ng-template>

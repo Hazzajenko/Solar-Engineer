@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using Identity.Contracts.Data;
-using Identity.Domain.Auth;
+using Identity.Domain;
 using Infrastructure.Authentication;
 using Microsoft.VisualBasic;
 

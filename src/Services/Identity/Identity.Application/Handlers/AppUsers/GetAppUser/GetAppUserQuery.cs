@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using Identity.Domain.Auth;
+using Identity.Domain;
 using Mediator;
 
 namespace Identity.Application.Handlers.AppUsers.GetAppUser;

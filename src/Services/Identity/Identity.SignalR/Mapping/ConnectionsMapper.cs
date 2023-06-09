@@ -1,19 +1,19 @@
 ﻿using Identity.Contracts.Data;
-using Identity.SignalR.Entities;
+using Identity.Domain;
 
 namespace Identity.SignalR.Mapping;
 
 public static class ConnectionsMapper
 {
-    public static ConnectionDto ToDto(this UserConnection request)
+    public static ConnectionDto ToDto(this AppUserConnection request)
     {
         return new ConnectionDto
         {
-            UserId = request.UserId.ToString()
+            UserId = request.AppUserId.ToString()
         };
     }
 
-    public static List<ConnectionDto> ToDtoList(this UserConnection request)
+    public static List<ConnectionDto> ToDtoList(this AppUserConnection request)
     {
         return new List<ConnectionDto>
         {

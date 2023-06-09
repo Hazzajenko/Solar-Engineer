@@ -1,5 +1,5 @@
 ﻿using Identity.Application.Data;
-using Identity.Domain.Auth;
+using Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

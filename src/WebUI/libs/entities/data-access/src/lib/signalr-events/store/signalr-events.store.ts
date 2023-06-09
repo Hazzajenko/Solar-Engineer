@@ -29,6 +29,8 @@ export function signalrEventsStoreFactory(store: Store) {
 	}
 
 	const dispatch = {
+		invokeSignalrEvent: (signalrEvent: SignalrEventRequest) =>
+			store.dispatch(SignalrEventsActions.invokeSignalrEvent({ signalrEvent })),
 		addSignalrEvent: (signalrEvent: SignalrEventRequest) =>
 			store.dispatch(SignalrEventsActions.addSignalrEvent({ signalrEvent })),
 		addManySignalrEvents: (signalrEvents: SignalrEventRequest[]) =>

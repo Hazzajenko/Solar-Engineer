@@ -60,7 +60,8 @@ public static partial class WebApplicationExtensions
         app.MapHealthChecks("/healthz");
 
         // app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSeconds(120) });
-        app.MapHub<ConnectionsHub>("hubs/connections");
+        app.MapHub<UsersHub>("hubs/users");
+        // app.MapHub<UsersHub>("hubs/connections");
 
         app.UseMiddleware<ValidationMappingMiddleware>();
         IdentityContextSeed.InitializeDatabase(app);

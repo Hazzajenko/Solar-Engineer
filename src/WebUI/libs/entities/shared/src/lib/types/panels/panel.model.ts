@@ -22,7 +22,7 @@ export const PANEL_MODEL = z.object({
 	type: z.string().includes(ENTITY_TYPE.PANEL),
 })
 
-azureApplicationInsightsConnectionString
+// azureApplicationInsightsConnectionString
 
 // PANEL_MODEL.array()
 

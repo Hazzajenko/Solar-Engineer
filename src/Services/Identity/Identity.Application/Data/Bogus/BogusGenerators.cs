@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using Identity.Domain.Auth;
+using Identity.Domain;
 using Infrastructure.Logging;
 
 namespace Identity.Application.Data.Bogus;

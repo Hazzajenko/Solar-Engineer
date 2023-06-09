@@ -4,7 +4,7 @@ import { AuthActions } from './index'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { catchError, map, of, switchMap, tap } from 'rxjs'
 import { Location } from '@angular/common'
-import { ConnectionsSignalrService } from '../signalr'
+import { UsersSignalrService } from '../signalr'
 
 export const getRedirect$ = createEffect(
 	(actions$ = inject(Actions)) => {
@@ -43,7 +43,7 @@ export const isReturningUser$ = createEffect(
 )
 
 export const signInSuccess$ = createEffect(
-	(actions$ = inject(Actions), connectionsSignalr = inject(ConnectionsSignalrService)) => {
+	(actions$ = inject(Actions), connectionsSignalr = inject(UsersSignalrService)) => {
 		return actions$.pipe(
 			ofType(AuthActions.signInSuccess),
 			tap(({ token }) => {

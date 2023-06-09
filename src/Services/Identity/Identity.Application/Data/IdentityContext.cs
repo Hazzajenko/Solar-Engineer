@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
-using Identity.Domain.Auth;
-using Identity.Domain.Users;
+using Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

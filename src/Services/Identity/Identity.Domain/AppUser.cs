@@ -1,9 +1,8 @@
-﻿using Identity.Domain.Users;
-using Infrastructure.Common;
+﻿using Infrastructure.Common;
 using Infrastructure.Common.User;
 using Microsoft.AspNetCore.Identity;
 
-namespace Identity.Domain.Auth;
+namespace Identity.Domain;
 
 public class AppUser : IdentityUser<Guid>, IUser, IEntity
 {

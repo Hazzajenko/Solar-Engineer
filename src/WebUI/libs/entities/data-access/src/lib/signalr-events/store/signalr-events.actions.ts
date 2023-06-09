@@ -5,6 +5,9 @@ import { RequestId, SignalrEventRequest } from '@entities/shared'
 export const SignalrEventsActions = createActionGroup({
 	source: 'Signalr Events Store',
 	events: {
+		'Invoke Signalr Event': props<{
+			signalrEvent: SignalrEventRequest
+		}>(),
 		'Add Signalr Event': props<{
 			signalrEvent: SignalrEventRequest
 		}>(),

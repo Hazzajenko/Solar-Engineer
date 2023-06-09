@@ -19,7 +19,7 @@ public static class ServiceExtensions
         // services.Configure<QueueSettings>(config.GetSection("Queues"));
         services.AddSingleton<ConnectionsService>();
         services.AddScoped<IIdentityUnitOfWork, IdentityUnitOfWork>();
-        services.AddScoped<IAppUserRepository, AppUserRepository>();
+        services.AddScoped<IAppUsersRepository, AppUsersRepository>();
         // services.AddScoped<IImagesService, ImagesService>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 

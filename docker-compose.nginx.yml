@@ -1,8 +1,21 @@
 version: '3'
 
 services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+      - ./nginx/sites-available/solarengineer.net.conf:/etc/nginx/sites-available/solarengineer.net.conf
+      - ./nginx/sites-available/solarengineer.net.conf:/etc/nginx/sites-enabled/solarengineer.net.conf
+      - ./nginx/config/:/etc/nginx/config/:ro
+      - ./https/solarengineer.net.crt:/etc/nginx/solarengineer.net.crt
+      - ./https/solarengineer.net.rsa:/etc/nginx/solarengineer.net.rsa
+    ports:
+      - '443:443'
+      - '80:80'
+
   postgres:
-    image: 'postgres:14.0'
+    image: postgres:14.0
     ports:
       - "5432:5432"
     restart: always
@@ -11,7 +24,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: SolarEngineer.Root
     volumes:
-      - ./src/db-data/postgres/:/var/lib/postgresql/data/
+      - ./db-data/postgres/:/var/lib/postgresql/data/
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -26,13 +39,3 @@ services:
     image: redis
     ports:
       - "6379:6379"
-
-  nginx:
-    image: nginx:1.17.10
-    volumes:
-      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf
-      - ./etc/ssl/solarengineer.net/solarengineer.net.crt:/etc/nginx/solarengineer.net.crt
-      - ./etc/ssl/solarengineer.net/solarengineer.net.rsa:/etc/nginx/solarengineer.net.rsa
-    ports:
-      - 443:443
-      - 80:80

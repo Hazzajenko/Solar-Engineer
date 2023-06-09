@@ -1,4 +1,4 @@
-﻿using Identity.Domain.Auth;
+﻿using Identity.Domain;
 
 namespace Identity.Application.Extensions;
 

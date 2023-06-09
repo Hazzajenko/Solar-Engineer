@@ -3,7 +3,7 @@ using Identity.Application.Exceptions;
 using Identity.Application.Extensions;
 using Identity.Application.Handlers.Images.CreateDpImage;
 using Identity.Application.Mapping;
-using Identity.Domain.Auth;
+using Identity.Domain;
 using Mediator;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;

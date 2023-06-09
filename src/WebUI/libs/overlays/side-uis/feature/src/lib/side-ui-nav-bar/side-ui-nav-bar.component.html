@@ -55,34 +55,25 @@
 					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="hero-icons/data" />
 				</a>
 			</li>
+			<li>
+				<a
+					(click)="changeView('users')"
+					[ngClass]="{
+					'text-gray-900': currentView() === 'users',
+					}"
+					[ngStyle]="{
+						'background-color': currentView() === 'users' ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+						'border-radius': currentView() === 'users' ? '0.375rem' : '0.25rem',
+					}"
+					class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+				>
+					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="profile/users" />
+				</a>
+			</li>
 		</ul>
 	</div>
-	<!--	<ng-container *ngIf='currentViewComponent() !== null'>-->
 
 	<ng-container *ngIf="currentViewComponent() && sideUiInjector">
 		<ng-container *ngComponentOutlet="currentViewComponent(); injector: sideUiInjector" />
 	</ng-container>
-
-	<!--		<ng-container *ngComponentOutlet="currentViewComponent(); injector: sideUiInjector" />-->
-
-	<!--	</ng-container>-->
-	<!--<ng-container [ngSwitch]="currentView()">
-		<ng-container *ngSwitchCase="'auth'">
-			<side-ui-auth-view />
-			&lt;!&ndash;			<side-ui-auth-view @goRight />&ndash;&gt;
-		</ng-container>
-		<ng-container *ngSwitchCase="'data'">
-			<side-ui-data-view />
-			&lt;!&ndash;			<side-ui-data-view @goRight />&ndash;&gt;
-		</ng-container>
-
-		<ng-container *ngSwitchCase="'none'" />
-		<ng-container *ngSwitchDefault />
-	</ng-container>-->
-	<!--	<ng-container *ngIf="dataView">
-			<side-ui-data-view @goRight />
-		</ng-container>
-		<ng-container *ngIf="authView()">
-			<side-ui-auth-view @goRight />
-		</ng-container>-->
 </aside>

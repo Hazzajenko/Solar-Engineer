@@ -1,4 +1,5 @@
-﻿using Identity.SignalR.Handlers.Connections.OnConnected;
+﻿using Identity.Contracts.Data;
+using Identity.SignalR.Handlers.Connections.OnConnected;
 using Identity.SignalR.Handlers.Connections.OnDisconnected;
 using Infrastructure.SignalR;
 using Mediator;
@@ -7,12 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Identity.SignalR.Hubs;
 
-public class ConnectionsHub : Hub<IConnectionsHub>
+public class UsersHub : Hub<IUsersHub>
 {
-    private readonly ILogger<ConnectionsHub> _logger;
+    private readonly ILogger<UsersHub> _logger;
     private readonly IMediator _mediator;
 
-    public ConnectionsHub(IMediator mediator, ILogger<ConnectionsHub> logger)
+    public UsersHub(IMediator mediator, ILogger<UsersHub> logger)
     {
         _mediator = mediator;
         _logger = logger;
@@ -32,5 +33,10 @@ public class ConnectionsHub : Hub<IConnectionsHub>
         await _mediator.Send(new OnDisconnectedCommand(Context.ToHubAppUser()));
 
         await base.OnDisconnectedAsync(exception);
+    }
+
+    public async Task GetOnlineFriends(IEnumerable<ConnectionDto> connections)
+    {
+        await Clients.Caller.GetOnlineUsers(connections);
     }
 }

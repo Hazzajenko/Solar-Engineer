@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Infrastructure.Authentication;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Serilog;
 
 namespace Infrastructure.Extensions;
@@ -26,7 +25,7 @@ public static class ClaimsPrincipleExtensions
 
     public static string GetUserName(this ClaimsPrincipal user)
     {
-        var value = user.FindFirst(JwtRegisteredClaimNames.UniqueName)?.Value;
+        var value = user.FindFirst("userName")?.Value;
         ArgumentNullException.ThrowIfNull(value);
         return value;
     }
