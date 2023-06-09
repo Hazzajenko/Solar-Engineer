@@ -1,9 +1,9 @@
 ﻿using Infrastructure.Logging;
 using Infrastructure.OpenTelemetry;
 
-namespace Identity.SignalR.Services;
+namespace Projects.SignalR.Services;
 
-public class ConnectionsService
+public class ProjectsConnectionsService
 {
 
     private readonly Dictionary<Guid, HashSet<string>> _connections = new();
@@ -25,7 +25,7 @@ public class ConnectionsService
                     new KeyValuePair<string, object?>("Action", nameof(Index)),
                     new KeyValuePair<string, object?>(
                         "ConnectionsCount",
-                        nameof(ConnectionsService)
+                        nameof(ProjectsConnectionsService)
                     )
                 );
             }
@@ -74,7 +74,7 @@ public class ConnectionsService
                         new KeyValuePair<string, object?>("Action", nameof(Index)),
                         new KeyValuePair<string, object?>(
                             "ConnectionsCount",
-                            nameof(ConnectionsService)
+                            nameof(ProjectsConnectionsService)
                         )
                     );
                 }

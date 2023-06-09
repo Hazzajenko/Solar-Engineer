@@ -1,0 +1,110 @@
+version: "3.3"
+services:
+  nginx:
+    image: solarengineer-nginx:1.0.0
+    depends_on:
+      identity-api:
+        condition: service_started
+      projects-api:
+        condition: service_started
+    ports:
+      - '443:443'
+      - '80:80'
+
+  web-ui:
+    hostname: web-ui
+    labels:
+      NAME: web-ui
+    image: solarengineer-web-ui:1.0.3
+    ports:
+      - '4200:80'
+    depends_on:
+      nginx:
+        condition: service_started
+
+  identity-api:
+    hostname: "identity-api"
+    labels:
+      NAME: "identity-api"
+    image: solarengineer-identity-api:1.0.3
+    ports:
+      - ${IDENTITY_HTTPS_PORT}:443
+      - ${IDENTITY_HTTP_PORT}:80
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_DATABASE: ${DATABASE_NAME_IDENTITY}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      ASPNETCORE_URLS: ${ASPNETCORE_URLS}
+      ASPNETCORE_Kestrel__Certificates__Default__Password: ${ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PASSWORD}
+      ASPNETCORE_Kestrel__Certificates__Default__Path: ${ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PATH}
+      AZURE_KEY_VAULT_NAME: ${AZURE_KEY_VAULT_NAME}
+      AZURE_AD_TENANT_ID: ${AZURE_AD_TENANT_ID}
+      AZURE_AD_CLIENT_ID: ${AZURE_AD_CLIENT_ID}
+      AZURE_CLIENT_CERTIFICATE_PATH: ${AZURE_CLIENT_CERTIFICATE_PATH}
+      AZURE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY: ${AZURE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY}
+      AZURE_APPLICATION_INSIGHTS_CONNECTION_STRING: ${AZURE_APPLICATION_INSIGHTS_CONNECTION_STRING}
+    volumes:
+      - ./https:/https:ro
+
+  projects-api:
+    hostname: "projects-api"
+    labels:
+      NAME: "projects-api"
+    image: solarengineer-projects-api:1.0.3
+    ports:
+      - ${PROJECTS_HTTPS_PORT}:443
+      - ${PROJECTS_HTTP_PORT}:80
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_DATABASE: ${DATABASE_NAME_PROJECTS}
+      ASPNETCORE_URLS: ${ASPNETCORE_URLS}
+      ASPNETCORE_Kestrel__Certificates__Default__Password: ${ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PASSWORD}
+      ASPNETCORE_Kestrel__Certificates__Default__Path: ${ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PATH}
+      AZURE_KEY_VAULT_NAME: ${AZURE_KEY_VAULT_NAME}
+      AZURE_AD_TENANT_ID: ${AZURE_AD_TENANT_ID}
+      AZURE_AD_CLIENT_ID: ${AZURE_AD_CLIENT_ID}
+      AZURE_CLIENT_CERTIFICATE_PATH: ${AZURE_CLIENT_CERTIFICATE_PATH}
+      AZURE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY: ${AZURE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY}
+      AZURE_APPLICATION_INSIGHTS_CONNECTION_STRING: ${AZURE_APPLICATION_INSIGHTS_CONNECTION_STRING}
+    volumes:
+      - ./https:/https:ro
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: "rabbitmq"
+    labels:
+      NAME: "rabbitmq"
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 30s
+      retries: 9
+
+  redis:
+    image: redis
+    hostname: "redis"
+    ports:
+      - '6379:6379'
+    command: ["redis-server", "--bind", "redis", "--port", "6379"]

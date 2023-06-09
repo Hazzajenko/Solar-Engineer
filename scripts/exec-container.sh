@@ -1,7 +1,7 @@
 #!/bin/bash
 
 runningContainers=$(docker ps --filter "status=running" --format '{{.Names}}')
-containerArray=($runningContainers)
+containerArray=("$runningContainers")
 
 for i in "${!containerArray[@]}"; do
     echo "Running container: ${containerArray[$i]}"

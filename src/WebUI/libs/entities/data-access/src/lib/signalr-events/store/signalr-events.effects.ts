@@ -3,24 +3,15 @@ import { inject } from '@angular/core'
 import { PanelsActions, SignalrEventsActions } from '@entities/data-access'
 import { map } from 'rxjs'
 import {
-	CREATE_MANY_PANELS_SIGNALR_REQUEST,
-	CREATE_PANEL_SIGNALR_REQUEST,
-	CreateManyPanelsSignalrRequest,
-	CreatePanelSignalrRequest,
-	DELETE_MANY_PANELS_SIGNALR_REQUEST,
-	DELETE_PANEL_SIGNALR_REQUEST,
-	DeleteManyPanelsSignalrRequest,
-	DeletePanelSignalrRequest,
+	PANEL_MODEL,
+	PanelId,
 	PanelModel,
 	SIGNALR_EVENT_ACTION,
 	SIGNALR_EVENT_MODEL,
 	SignalrEventRequest,
-	UPDATE_MANY_PANELS_SIGNALR_REQUEST,
-	UPDATE_PANEL_SIGNALR_REQUEST,
-	UpdateManyPanelsSignalrRequest,
-	UpdatePanelSignalrRequest,
 } from '@entities/shared'
-import { AngleRadians } from '@shared/data-access/models'
+import { UpdateStr } from '@ngrx/entity/src/models'
+import { z } from 'zod'
 
 export const addSignalrEvent$ = createEffect(
 	(actions$ = inject(Actions)) => {
@@ -48,58 +39,71 @@ export const addSignalrEvent$ = createEffect(
 function handlePanelSignalrEvent(signalrEvent: SignalrEventRequest) {
 	switch (signalrEvent.action) {
 		case SIGNALR_EVENT_ACTION.CREATE: {
-			const parsed = CREATE_PANEL_SIGNALR_REQUEST.safeParse(JSON.parse(signalrEvent.data))
+			const parsed = PANEL_MODEL.safeParse(JSON.parse(signalrEvent.data))
 			if (!parsed.success) throw new Error(parsed.error.message)
-			const data = parsed.data as CreatePanelSignalrRequest
-			return PanelsActions.addPanelNoSignalr({ panel: data.panel })
+			const panel = parsed.data as PanelModel
+			return PanelsActions.addPanelNoSignalr({ panel })
 		}
 		case SIGNALR_EVENT_ACTION.CREATE_MANY: {
-			const parsed = CREATE_MANY_PANELS_SIGNALR_REQUEST.safeParse(JSON.parse(signalrEvent.data))
+			const parsed = PANEL_MODEL.array().safeParse(JSON.parse(signalrEvent.data))
 			if (!parsed.success) throw new Error(parsed.error.message)
-			const data = parsed.data as CreateManyPanelsSignalrRequest
-			const panels = data.panels.map(
-				(panel) =>
-					({
-						...panel,
-						panelConfigId: data.panelConfigId,
-						angle: data.angle as AngleRadians,
-						stringId: data.stringId,
-					} as PanelModel),
-			)
+			const panels = parsed.data as PanelModel[]
 			return PanelsActions.addManyPanelsNoSignalr({
 				panels,
 			})
 		}
 		case SIGNALR_EVENT_ACTION.UPDATE: {
-			const parsed = UPDATE_PANEL_SIGNALR_REQUEST.safeParse(JSON.parse(signalrEvent.data))
+			const parsed = PANEL_MODEL.safeParse(JSON.parse(signalrEvent.data))
 			if (!parsed.success) throw new Error(parsed.error.message)
-			const data = parsed.data as UpdatePanelSignalrRequest
+			const data = parsed.data as PanelModel
 			return PanelsActions.updatePanelNoSignalr({
-				update: data.update,
+				update: {
+					id: data.id,
+					changes: data,
+				},
 			})
 		}
 		case SIGNALR_EVENT_ACTION.UPDATE_MANY: {
-			const parsed = UPDATE_MANY_PANELS_SIGNALR_REQUEST.safeParse(JSON.parse(signalrEvent.data))
+			const parsed = PANEL_MODEL.array().safeParse(JSON.parse(signalrEvent.data))
 			if (!parsed.success) throw new Error(parsed.error.message)
-			const data = parsed.data as UpdateManyPanelsSignalrRequest
+			const updates = parsed.data.map(
+				(panel) =>
+					({
+						id: panel.id,
+						changes: panel,
+					} as UpdateStr<PanelModel>),
+			)
 			return PanelsActions.updateManyPanelsNoSignalr({
-				updates: data.updates,
+				updates,
 			})
 		}
 		case SIGNALR_EVENT_ACTION.DELETE: {
-			const parsed = DELETE_PANEL_SIGNALR_REQUEST.safeParse(JSON.parse(signalrEvent.data))
+			const parsed = z
+				.object({
+					id: z.string(),
+				})
+				.safeParse(JSON.parse(signalrEvent.data))
 			if (!parsed.success) throw new Error(parsed.error.message)
-			const data = parsed.data as DeletePanelSignalrRequest
+			const data = parsed.data as {
+				id: PanelId
+			}
 			return PanelsActions.deletePanelNoSignalr({
-				panelId: data.panelId,
+				panelId: data.id,
 			})
 		}
 		case SIGNALR_EVENT_ACTION.DELETE_MANY: {
-			const parsed = DELETE_MANY_PANELS_SIGNALR_REQUEST.safeParse(JSON.parse(signalrEvent.data))
+			const parsed = z
+				.object({
+					id: z.string(),
+				})
+				.array()
+				.safeParse(JSON.parse(signalrEvent.data))
 			if (!parsed.success) throw new Error(parsed.error.message)
-			const data = parsed.data as DeleteManyPanelsSignalrRequest
+			const data = parsed.data as {
+				id: PanelId
+			}[]
 			return PanelsActions.deleteManyPanelsNoSignalr({
-				panelIds: data.panelIds,
+				panelIds: data.map((d) => d.id),
 			})
 		}
 		default:

@@ -4,18 +4,16 @@ namespace Infrastructure.Authentication;
 
 public class AuthUser
 {
-    private AuthUser(Guid id, string idToString)
+    private AuthUser(Guid id)
     {
         Id = id;
-        IdToString = idToString;
     }
 
-    private AuthUser(Guid id, string idToString, bool isSignalR, string connectionId)
+    private AuthUser(Guid id, string userName, string connectionId)
     {
         Id = id;
-        IdToString = idToString;
-        IsSignalR = isSignalR;
         ConnectionId = connectionId;
+        UserName = userName;
     }
 
     public AuthUser()
@@ -23,32 +21,26 @@ public class AuthUser
     }
 
     public Guid Id { get; set; }
-    public bool IsSignalR { get; set; }
+    public string UserName { get; set; } = null!;
     public string? ConnectionId { get; set; }
-    private string IdToString { get; } = null!;
-
-    public override string ToString()
-    {
-        return IdToString;
-    }
 
     public static AuthUser Create(Guid id)
     {
-        return new AuthUser(id, id.ToString());
+        return new AuthUser(id);
     }
 
     public static AuthUser Create(string id)
     {
-        return new AuthUser(id.ToGuid(), id);
+        return new AuthUser(id.ToGuid());
     }
 
-    public static AuthUser Create(Guid id, bool isSignalR, string connectionId)
+    public static AuthUser Create(Guid id, string userName, string connectionId)
     {
-        return new AuthUser(id, id.ToString(), isSignalR, connectionId);
+        return new AuthUser(id, userName, connectionId);
     }
 
-    public static AuthUser Create(string id, bool isSignalR, string connectionId)
+    public static AuthUser Create(string id, string userName, string connectionId)
     {
-        return new AuthUser(id.ToGuid(), id, isSignalR, connectionId);
+        return new AuthUser(id.ToGuid(), userName, connectionId);
     }
 }

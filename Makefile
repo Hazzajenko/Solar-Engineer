@@ -25,3 +25,12 @@ docker-tag:
 
 docker-push:
 	docker image push ${image}
+
+config:
+	docker-compose --env-file .\production.env config
+
+nginx-config:
+	docker-compose --project-directory ./nginx-v2 --env-file .\production.env config
+
+nginx-up:
+	docker-compose --project-directory ./nginx-v2 --env-file .\production.env up -d

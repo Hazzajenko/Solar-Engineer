@@ -34,6 +34,22 @@ const reducer = createReducer(
 	on(PanelsActions.deleteManyPanels, (state, { panelIds }) =>
 		panelsAdapter.removeMany(panelIds, state),
 	),
+	on(PanelsActions.addPanelNoSignalr, (state, { panel }) => panelsAdapter.addOne(panel, state)),
+	on(PanelsActions.addManyPanelsNoSignalr, (state, { panels }) =>
+		panelsAdapter.addMany(panels, state),
+	),
+	on(PanelsActions.updatePanelNoSignalr, (state, { update }) =>
+		panelsAdapter.updateOne(update, state),
+	),
+	on(PanelsActions.updateManyPanelsNoSignalr, (state, { updates }) =>
+		panelsAdapter.updateMany(updates, state),
+	),
+	on(PanelsActions.deletePanelNoSignalr, (state, { panelId }) =>
+		panelsAdapter.removeOne(panelId, state),
+	),
+	on(PanelsActions.deleteManyPanelsNoSignalr, (state, { panelIds }) =>
+		panelsAdapter.removeMany(panelIds, state),
+	),
 	on(PanelsActions.clearPanelsState, () => initialPanelsState),
 )
 

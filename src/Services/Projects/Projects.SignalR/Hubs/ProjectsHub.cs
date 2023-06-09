@@ -25,9 +25,10 @@ public class ProjectsHub : Hub<IProjectsHub>
     {
         var user = Context.ToAuthUser();
         _logger.LogInformation(
-            "Connected: {ConnectionId} - {UserId}",
+            "Connected: {ConnectionId} - {UserId} - {UserName}",
             Context.ConnectionId,
-            user.Id
+            user.Id,
+            user.UserName
         );
         await base.OnConnectedAsync();
     }
@@ -36,9 +37,10 @@ public class ProjectsHub : Hub<IProjectsHub>
     {
         var user = Context.ToAuthUser();
         _logger.LogInformation(
-            "Disconnected: {ConnectionId} - {UserId}",
+            "Disconnected: {ConnectionId} - {UserId} - {UserName}",
             Context.ConnectionId,
-            user.Id
+            user.Id,
+            user.UserName
         );
         await base.OnDisconnectedAsync(exception);
     }
@@ -64,6 +66,11 @@ public class ProjectsHub : Hub<IProjectsHub>
     public async Task GetUserProjects()
     {
         await _mediator.Send(new GetUserProjectsQuery(Context.ToAuthUser()));
+    }
+    
+    public async Task SelectProject(string projectId)
+    {
+        await _mediator.Send(new GetProjectByIdQuery(Context.ToAuthUser(), projectId));
     }
 
     public async Task GetProjectById(string projectId)

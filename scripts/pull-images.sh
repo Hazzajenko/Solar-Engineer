@@ -17,12 +17,11 @@ fi
 
 read -r -p "Please enter a version/tag for the docker image(s): " version
 
-location=$(pwd)
 IFS=', ' read -r -a selection_array <<< "$selection"
 
 for index in "${selection_array[@]}"; do
     service=${options[$index]}
     imageToPull="hazzajenko/solarengineer-$service:$version"
     echo "Pulling $imageToPull"
-    docker pull $imageToPull
+    docker pull "$imageToPull"
 done

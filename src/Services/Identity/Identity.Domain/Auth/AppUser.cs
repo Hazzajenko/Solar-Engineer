@@ -13,11 +13,11 @@ public class AppUser : IdentityUser<Guid>, IUser, IEntity
     }
 
     public ICollection<AppUserRole> AppUserRoles { get; set; } = default!;
-    public override string UserName { get; set; } = default!;
 
-    public ICollection<UserLink> AppUserLinksRequested { get; set; } = default!;
-    public ICollection<UserLink> AppUserLinksReceived { get; set; } = default!;
+    public ICollection<AppUserLink> AppUserLinksRequested { get; set; } = default!;
+    public ICollection<AppUserLink> AppUserLinksReceived { get; set; } = default!;
     public DateTime LastActiveTime { get; set; } = DateTime.Now;
+    public override string UserName { get; set; } = default!;
 
     public string FirstName { get; init; } = default!;
     public string LastName { get; init; } = default!;

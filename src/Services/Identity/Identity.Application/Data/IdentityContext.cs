@@ -18,35 +18,17 @@ public class IdentityContext
         IdentityRoleClaim<Guid>,
         IdentityUserToken<Guid>
     >
-/*IdentityDbContext<
-        AppUser,
-        AppRole,
-        int,
-        AppUserRole,
-        IdentityUserLogin<int>,
-    >,
-    IAuthContext*/
 {
     public IdentityContext(DbContextOptions<IdentityContext> options)
         : base(options)
     {
-        // Database.SetInitializer
-        // Database.CurrentTransaction
     }
 
-    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    // => optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=solardotnetbackend;User ID=postgres;Password=password;");
-
-
-    // public DbSet<AppUser> AppUsers { get; set; } = default!;
-    public DbSet<UserLink> UserLinks { get; set; } = default!;
+    public DbSet<AppUserLink> AppUserLinks { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (!options.IsConfigured)
-            options.UseNpgsql(
-                "Server=localhost;Port=5432;Database=solardotnetbackend;User ID=postgres;Password=password;"
-            );
+        if (!options.IsConfigured) throw new Exception("No connection string configured, Identity API");
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

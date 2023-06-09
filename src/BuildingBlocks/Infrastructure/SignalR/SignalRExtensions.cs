@@ -79,16 +79,24 @@ public static class SignalRExtensions
         return user.TryGetGuidUserId(new HubException("User is not authenticated"));
     }
 
+    public static string GetUserName(this HubCallerContext context)
+    {
+        var user = ThrowHubExceptionIfNull(context.User, "User is not authenticated");
+        return user.GetUserName();
+    }
+
     public static HubAppUser ToHubAppUser(this HubCallerContext context)
     {
         var userId = context.GetGuidUserId();
+
         return HubAppUser.Create(userId, context.ConnectionId);
     }
 
     public static AuthUser ToAuthUser(this HubCallerContext context)
     {
         var userId = context.GetGuidUserId();
-        return AuthUser.Create(userId, true, context.ConnectionId);
+        var userName = context.GetUserName();
+        return AuthUser.Create(userId, userName, context.ConnectionId);
     }
 
     public static T ThrowHubExceptionIfNull<T>([NotNull] T? projectItem, string message)

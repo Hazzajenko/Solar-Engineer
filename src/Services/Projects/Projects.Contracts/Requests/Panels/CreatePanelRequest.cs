@@ -6,13 +6,6 @@ public class CreatePanelRequest : IProjectEventRequest
 {
     public required string ProjectId { get; init; }
     public required PanelObject Panel { get; init; }
-
-
-    /*public required string Id { get; init; }
-    public required string StringId { get; init; }
-    public required Panel.Point Location { get; init; }
-    public required string PanelConfigId { get; init; }
-    public required double Angle { get; init; }*/
 }
 
 public class PanelObject
@@ -35,14 +28,6 @@ public class CreatePanelRequestValidator : AbstractValidator<CreatePanelRequest>
             .WithMessage("Id cannot be empty")
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("Id must be a valid Guid");
-
-        /*RuleFor(v => v.ProjectId)
-            .NotNull()
-            .WithMessage("ProjectId cannot be null")
-            .NotEmpty()
-            .WithMessage("ProjectId cannot be empty")
-            .Must(x => Guid.TryParse(x, out _))
-            .WithMessage("ProjectId must be a valid Guid");*/
 
         RuleFor(v => v.Panel.Location)
             .NotNull()

@@ -5,9 +5,9 @@ using Infrastructure.Common;
 
 namespace Identity.Domain.Users;
 
-public class UserLink : IEntityToEntity
+public class AppUserLink : IEntityToEntity
 {
-    public UserLink(AppUser appUser, AppUser recipient)
+    public AppUserLink(AppUser appUser, AppUser recipient)
     {
         AppUserRequested = appUser;
         AppUserRequestedId = appUser.Id;
@@ -18,7 +18,7 @@ public class UserLink : IEntityToEntity
         CreatedTime = DateTime.Now;
     }
 
-    public UserLink()
+    public AppUserLink()
     {
     }
 
@@ -55,9 +55,9 @@ public class UserLink : IEntityToEntity
         AppUserReceivedStatusTime = DateTime.Now;
     }
 
-    public static UserLink Create(AppUser appUser, AppUser recipient)
+    public static AppUserLink Create(AppUser appUser, AppUser recipient)
     {
-        var userLink = new UserLink(appUser, recipient);
+        var userLink = new AppUserLink(appUser, recipient);
         return userLink;
     }
 }

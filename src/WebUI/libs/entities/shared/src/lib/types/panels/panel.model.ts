@@ -22,6 +22,10 @@ export const PANEL_MODEL = z.object({
 	type: z.string().includes(ENTITY_TYPE.PANEL),
 })
 
+azureApplicationInsightsConnectionString
+
+// PANEL_MODEL.array()
+
 export type PanelId = string & {
 	readonly _type: 'panelId'
 }

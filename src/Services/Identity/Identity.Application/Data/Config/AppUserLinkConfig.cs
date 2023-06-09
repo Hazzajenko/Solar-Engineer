@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Identity.Application.Data.Config;
 
-public class UserLinkConfig : IEntityTypeConfiguration<UserLink>
+public class AppUserLinkConfig : IEntityTypeConfiguration<AppUserLink>
 {
-    public void Configure(EntityTypeBuilder<UserLink> builder)
+    public void Configure(EntityTypeBuilder<AppUserLink> builder)
     {
         builder.HasKey(f => new { f.AppUserRequestedId, f.AppUserReceivedId });
     }

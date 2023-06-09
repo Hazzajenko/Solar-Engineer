@@ -13,8 +13,19 @@ supabase.d.ts
 
 logs
 
-# solarengineer-vault.pfx
 **.pfx
+**/*.pfx
+**.crt
+**/*.crt
+**.key
+**/*.key
+**.pem
+**/*.pem
+**.p12
+**/*.p12
+**.rsa
+**/*.rsa
+
 # **/*.pfx
 
 
