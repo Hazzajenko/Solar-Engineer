@@ -1,5 +1,6 @@
 ﻿using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Repositories.AppUsers;
+using Identity.Application.Services.DockerHub;
 using Identity.Application.Services.Jwt;
 using Identity.Application.Settings;
 using Identity.SignalR.Services;
@@ -21,7 +22,10 @@ public static class ServiceExtensions
         services.AddScoped<IIdentityUnitOfWork, IdentityUnitOfWork>();
         services.AddScoped<IAppUsersRepository, AppUsersRepository>();
         // services.AddScoped<IImagesService, ImagesService>();
+        services.AddScoped<IDockerHubService, DockerHubService>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+
+        services.Configure<DockerHubSettings>(config.GetSection("DockerHub"));
 
         services.Configure<JwtSettings>(options =>
         {

@@ -4,69 +4,65 @@
 	<div
 		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
 	>
-		<h3>Projects</h3>
+		<h3>Friends</h3>
 	</div>
 
 	<ng-container *ngIf="user() as user; then loggedIn; else notLoggedIn" />
 	<ng-template #loggedIn>
-		<ng-container *ngIf="projects().length > 0; else noProjects">
+		<ng-container *ngIf="friends().length > 0; else noProjects">
 			<ul class="pl-2 space-y-4">
-				<li *ngFor="let project of projects()">
+				<li *ngFor="let friend of friends()">
 					<div
 						[ngClass]="{
 							'bg-primary-50 text-primary-700 dark:bg-primary-700 dark:text-primary-100':
-								project.id === selectedProject()?.id,
-							'text-gray-900 dark:text-gray-200': project.id !== selectedProject()?.id
+								friend.id === selectedUserId(),
+							'text-gray-900 dark:text-gray-200': friend.id !== selectedUserId()
 						}"
 						[ngStyle]="{
-							'border-left-color':
-								project.id === selectedProject()?.id ? project.colour : 'transparent',
-							'border-left-width': project.id === selectedProject()?.id ? '4px' : '0px',
-							'border-left-style': project.id === selectedProject()?.id ? 'solid' : 'none',
-							'margin-left': project.id === selectedProject()?.id ? '-4px' : '0px'
+							'border-left-color': friend.id === selectedUserId() ? 'purple' : 'transparent',
+							'border-left-width': friend.id === selectedUserId() ? '4px' : '0px',
+							'border-left-style': friend.id === selectedUserId() ? 'solid' : 'none',
+							'margin-left': friend.id === selectedUserId() ? '-4px' : '0px'
 						}"
 						class="flex items-center py-1 justify-between"
 					>
 						<!--				<div class="min-w-0 flex">-->
 						<div class="flex justify-start">
 							<a
-								(click)="selectProject(project)"
+								(click)="selectUser(friend.id)"
 								[ngClass]="{
-									'font-medium text-gray-900 dark:text-gray-200':
-										project.id === selectedProject()?.id,
-									'font-normal text-gray-500 dark:text-gray-400':
-										project.id !== selectedProject()?.id
+									'font-medium text-gray-900 dark:text-gray-200': friend.id === selectedUserId(),
+									'font-normal text-gray-500 dark:text-gray-400': friend.id !== selectedUserId()
 								}"
 								class="flex items-center text-base rounded-lg transition duration-75 hover:underline dark:text-white group"
 							>
 								<span
 									[ngStyle]="{
-										'background-color': project.colour,
-										'border-color':
-											project.id === selectedProject()?.id ? project.colour : 'transparent'
+										'background-color': '#00000000',
+										'border-color': friend.id === selectedUserId() ? 'purple' : 'transparent'
 									}"
 									class="w-4 h-4 rounded ml-2"
 								></span>
 								<span class="ml-3 capitalize text-sm text-gray-900">{{
-									project.name | truncate : 10
+									friend.displayName | truncate : 10
 								}}</span>
 							</a>
 						</div>
 						<div class="flex justify-end pr-1">
 							<div class="relative flex-none">
 								<button
-									(click)="toggleProjectView(project)"
+									(click)="toggleUserView(friend.id)"
 									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
 									type="button"
 								>
 									<ng-container
-										*ngIf="openedProjects().get(project.id); then contentOpen; else contentClosed"
+										*ngIf="openedUsers().get(friend.id); then contentOpen; else contentClosed"
 									/>
 								</button>
 							</div>
 							<div class="relative flex-none">
 								<button
-									(click)="openProjectContextMenu($event, project)"
+									(click)="openUserContextMenu($event, friend.id)"
 									aria-expanded="false"
 									aria-haspopup="true"
 									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -78,12 +74,12 @@
 								</button>
 							</div>
 							<ul
-								*ngIf="openedProjects().get(project.id)"
+								*ngIf="openedUsers().get(friend.id)"
 								class="divide-y divide-gray-300 overflow-y-auto"
 								role="list"
 							>
 								{{
-									project.name
+									friend.displayName
 								}}
 							</ul>
 						</div>
@@ -92,7 +88,6 @@
 				</li>
 				<li>
 					<a
-						(click)="createProject()"
 						class="flex items-center font-medium text-gray-700 text-sm rounded-lg transition duration-75 dark:text-gray-200 group"
 					>
 						<svg
@@ -124,7 +119,6 @@
 		<p class="mt-1 text-sm text-gray-500">To create and save projects get started by signing in.</p>
 		<div class="mt-6">
 			<button
-				(click)="openSignInDialog()"
 				class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 				type="submit"
 			>
@@ -155,7 +149,6 @@
 		<p class="mt-1 text-sm text-gray-500">Get started by creating a new project.</p>
 		<div class="mt-6">
 			<button
-				(click)="createProject()"
 				class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 				type="button"
 			>

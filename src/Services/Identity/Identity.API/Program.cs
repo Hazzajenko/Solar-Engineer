@@ -49,6 +49,21 @@ builder.Services.InitDbContext<IdentityContext>(
 builder.Services.InitCors("corsPolicy");
 
 builder.Services.AddFastEndpoints();
+
+/*builder.Services.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+});*/
+builder.Services.AddHttpClient(
+    "DockerHub",
+    httpClient =>
+    {
+        var baseUrl = config.GetValue<string>("DockerHub:ApiBaseUrl");
+        ArgumentNullException.ThrowIfNull(baseUrl);
+        httpClient.BaseAddress = new Uri(baseUrl);
+    }
+);
+
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
