@@ -11,6 +11,15 @@ supabase.ts
 supabase.js
 supabase.d.ts
 
+.vs/**
+.vs
+**/.vs
+.vs/
+.vs/*
+
+
+
+
 logs
 
 **.pfx

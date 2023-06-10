@@ -14,8 +14,12 @@ namespace Identity.Application.Extensions.ServiceCollection;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
-        IConfiguration config, IWebHostEnvironment environment, JwtSettings jwtSettings)
+    public static IServiceCollection AddApplicationServices(
+        this IServiceCollection services,
+        IConfiguration config,
+        IWebHostEnvironment environment,
+        JwtSettings jwtSettings
+    )
     {
         // services.Configure<QueueSettings>(config.GetSection("Queues"));
         services.AddSingleton<ConnectionsService>();
@@ -37,9 +41,11 @@ public static class ServiceExtensions
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.Configure<StorageSettings>(config.GetSection("Azure:Storage"));
 
-
-        services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
-// config.
+        services.AddMediator(options =>
+        {
+            options.ServiceLifetime = ServiceLifetime.Transient;
+        });
+        // config.
         services.InitMassTransit(environment);
 
         // services.UseWolverine();
