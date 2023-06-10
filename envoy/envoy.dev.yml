@@ -62,12 +62,11 @@ static_resources:
                   prefix_rewrite: "/"
                   cluster: identity-api
               - match:
-                  prefix: "/login/google"
+                  prefix: "/signin-google"
                 route:
-                  host_rewrite: solarengineer.net
                   cluster: identity-api
               - match:
-                  prefix: "/signin-google"
+                  prefix: "/oauth/github-cb"
                 route:
                   cluster: identity-api
               - match:
@@ -76,9 +75,9 @@ static_resources:
                   prefix_rewrite: "/"
                   cluster: users-api
               - match:
-                  prefix: "/hubs/connections"
+                  prefix: "/hubs/users"
                 route:
-                  prefix_rewrite: "/hubs/connections"
+                  prefix_rewrite: "/hubs/users"
                   cluster: identity-api
                   timeout: 300s
                   upgrade_configs:

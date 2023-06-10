@@ -31,6 +31,7 @@ function authStoreFactory(store: Store) {
 
 	const dispatch = {
 		signInAsGuest: () => store.dispatch(AuthActions.signInAsGuest()),
+		signInWithGithub: () => store.dispatch(AuthActions.signInWithGithub()),
 		signInWithGoogle: () => store.dispatch(AuthActions.signInWithGoogle()),
 		isReturningUser: () => store.dispatch(AuthActions.isReturningUser()),
 		signOut: () => store.dispatch(AuthActions.signOut()),

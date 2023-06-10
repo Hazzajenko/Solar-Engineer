@@ -5,11 +5,9 @@ export type HubConnectionRequest = {
 	token: string
 	hubName: string
 	hubUrl: string
-	invoke?: string
-	params?: unknown[]
 }
 export const createHubConnection = (request: HubConnectionRequest) => {
-	const { token, hubName, hubUrl, invoke, params } = request
+	const { token, hubName, hubUrl } = request
 	const hubConnection = new HubConnectionBuilder()
 		.withUrl(hubUrl, {
 			accessTokenFactory: () => token,
@@ -24,9 +22,6 @@ export const createHubConnection = (request: HubConnectionRequest) => {
 		.start()
 		.then(() => {
 			console.log(hubName + ' Hub Connection started')
-			if (invoke) {
-				invokeHubConnection(hubConnection, invoke, params)
-			}
 		})
 		.catch((err) => {
 			console.error('Error while starting ' + hubName + ' Hub connection: ' + err)

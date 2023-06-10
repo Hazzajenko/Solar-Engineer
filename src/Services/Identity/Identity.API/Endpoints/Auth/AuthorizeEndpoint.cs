@@ -44,24 +44,30 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        var appUser = await _mediator.Send(new AuthorizeCommand(HttpContext), cT);
+        var externalSigninResponse = await _mediator.Send(new AuthorizeCommand(HttpContext), cT);
+        var appUser = externalSigninResponse.AppUser;
+        var loginProvider = externalSigninResponse.LoginProvider;
+
+        Logger.LogInformation(
+            "User {UserId} - {UserName} logged in with {LoginProvider}",
+            appUser.Id,
+            appUser.UserName,
+            loginProvider
+        );
+
         var token = _jwtTokenGenerator.GenerateToken(appUser.Id.ToString(), appUser.UserName);
 
         var storedToken = await _userManager.GetAuthenticationTokenAsync(
             appUser,
-            "google",
+            loginProvider,
             "token"
         );
         if (storedToken is not null)
-            await _userManager.RemoveAuthenticationTokenAsync(
-                appUser,
-                "google",
-                "token"
-            );
+            await _userManager.RemoveAuthenticationTokenAsync(appUser, loginProvider, "token");
 
         var tokenResult = await _userManager.SetAuthenticationTokenAsync(
             appUser,
-            "google",
+            loginProvider,
             "token",
             token
         );
@@ -76,6 +82,13 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
             await SendUnauthorizedAsync(cT);
             return;
         }
+
+        Logger.LogInformation(
+            "User {UserId} - {UserName} logged in with {LoginProvider}",
+            user.Id,
+            user.UserName,
+            loginProvider
+        );
 
         Response.Token = token;
         Response.User = user;

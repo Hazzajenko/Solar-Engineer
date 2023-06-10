@@ -42,7 +42,6 @@ export class ProjectsSignalrService {
 			token,
 			hubName,
 			hubUrl,
-			invoke,
 		}
 		this.hubConnection = createHubConnection(request)
 

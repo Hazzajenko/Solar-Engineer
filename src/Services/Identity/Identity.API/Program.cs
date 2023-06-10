@@ -86,12 +86,26 @@ builder.Services.InitSwaggerDocs(
     }
 );
 
-
 var app = builder.Build();
 app.ConfigurePipeline();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var loginEndpoints = app.MapGroup("login");
+
+loginEndpoints.MapGet(
+    "/github",
+    (SignInManager<AppUser> signInManager) =>
+    {
+        var provider = "github";
+        var redirectUrl = "/?authorize=true";
+        var properties = signInManager.ConfigureExternalAuthenticationProperties(
+            provider,
+            redirectUrl
+        );
+        properties.AllowRefresh = true;
+        return Results.Challenge(properties, new List<string> { "github" });
+    }
+);
 
 loginEndpoints.MapGet(
     "/google",
@@ -107,4 +121,5 @@ loginEndpoints.MapGet(
         return Results.Challenge(properties, new List<string> { "google" });
     }
 );
+
 await app.RunAsync();

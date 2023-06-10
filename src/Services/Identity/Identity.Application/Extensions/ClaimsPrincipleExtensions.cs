@@ -15,7 +15,8 @@ public static class ClaimsPrincipleExtensions
 
         var providerKey =
             user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-            ?? user.FindFirst(CustomClaims.ProviderKey)?.Value;
+            ?? user.FindFirst(CustomClaims.ProviderKey)?.Value
+            ?? user.FindFirst("sub")?.Value;
         // var providerKey = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (providerKey is null)
             throw new ArgumentNullException(nameof(providerKey));

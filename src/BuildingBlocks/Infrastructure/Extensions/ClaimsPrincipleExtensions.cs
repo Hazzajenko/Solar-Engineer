@@ -26,6 +26,10 @@ public static class ClaimsPrincipleExtensions
     public static string GetUserName(this ClaimsPrincipal user)
     {
         var value = user.FindFirst("userName")?.Value;
+        if (value is null)
+        {
+            value = user.FindFirst(ClaimTypes.Name)?.Value;
+        }
         ArgumentNullException.ThrowIfNull(value);
         return value;
     }

@@ -6,12 +6,24 @@ import { catchError, map, of, switchMap, tap } from 'rxjs'
 import { Location } from '@angular/common'
 import { UsersSignalrService } from '../signalr'
 
-export const getRedirect$ = createEffect(
+export const getRedirectForGoogleSignIn$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(
 			ofType(AuthActions.signInWithGoogle),
 			map(() => {
 				window.location.href = '/auth/login/google'
+			}),
+		)
+	},
+	{ functional: true, dispatch: false },
+)
+
+export const getRedirectForGithubSignIn$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(AuthActions.signInWithGithub),
+			map(() => {
+				window.location.href = '/auth/login/github'
 			}),
 		)
 	},

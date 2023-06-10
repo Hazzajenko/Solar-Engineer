@@ -59,6 +59,10 @@ export class SignInDialogComponent {
 		this._auth.dispatch.signInWithGoogle()
 	}
 
+	signInWithGithub() {
+		this._auth.dispatch.signInWithGithub()
+	}
+
 	closeDialog() {
 		this._uiStore.dispatch.closeDialog()
 	}

@@ -1,6 +1,7 @@
 ﻿using Identity.Contracts.Data;
 using Identity.SignalR.Handlers.Connections.OnConnected;
 using Identity.SignalR.Handlers.Connections.OnDisconnected;
+using Identity.SignalR.Handlers.Friends;
 using Infrastructure.SignalR;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
@@ -22,7 +23,8 @@ public class UsersHub : Hub<IUsersHub>
     public override async Task OnConnectedAsync()
     {
         _logger.LogInformation("OnConnectedAsync");
-        await _mediator.Send(new OnConnectedCommand(Context.ToHubAppUser()));
+        await _mediator.Send(new OnConnectedCommand(Context.ToAuthUser()));
+        await _mediator.Send(new GetOnlineFriendsQuery(Context.ToAuthUser()));
 
         await base.OnConnectedAsync();
     }
@@ -30,13 +32,13 @@ public class UsersHub : Hub<IUsersHub>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         _logger.LogInformation("OnDisconnectedAsync");
-        await _mediator.Send(new OnDisconnectedCommand(Context.ToHubAppUser()));
+        await _mediator.Send(new OnDisconnectedCommand(Context.ToAuthUser()));
 
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task GetOnlineFriends(IEnumerable<ConnectionDto> connections)
+    public async Task GetOnlineFriends()
     {
-        await Clients.Caller.GetOnlineUsers(connections);
+        await _mediator.Send(new GetOnlineFriendsQuery(Context.ToAuthUser()));
     }
 }

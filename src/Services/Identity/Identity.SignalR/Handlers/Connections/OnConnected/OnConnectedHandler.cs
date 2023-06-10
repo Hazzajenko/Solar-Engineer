@@ -26,19 +26,19 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
 
     public async ValueTask<bool> Handle(OnConnectedCommand request, CancellationToken cT)
     {
-        var userId = request.User.Id;
+        var userId = request.AuthUser.Id;
         var userConnections = _connections.GetConnections(userId);
 
         if (userConnections.Any())
         {
-            var connectionIdExists = userConnections.Contains(request.User.ConnectionId);
+            var connectionIdExists = userConnections.Contains(request.AuthUser.ConnectionId);
             if (connectionIdExists)
                 return true;
-            _connections.Add(userId, request.User.ConnectionId);
+            _connections.Add(userId, request.AuthUser.ConnectionId);
             return true;
         }
 
-        _connections.Add(userId, request.User.ConnectionId);
+        _connections.Add(userId, request.AuthUser.ConnectionId);
 
         var newConnection = new ConnectionDto { UserId = userId.ToString() };
 

@@ -2,39 +2,60 @@
 using Identity.Contracts.Data;
 using Identity.Domain;
 using Infrastructure.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualBasic;
 
 namespace Identity.Application.Mapping;
 
 public static class AppUserMapper
 {
-    public static AppUser ToAppUser(this ClaimsPrincipal user)
+    public static AppUser ToAppUser(this ClaimsPrincipal user, ExternalLoginInfo externalLoginInfo)
     {
-        var firstName = user.FindFirst(ClaimTypes.GivenName)?.Value;
-        if (firstName is null)
-            throw new ArgumentNullException(nameof(firstName));
-        var lastName = user.FindFirst(ClaimTypes.Surname)?.Value;
-        if (lastName is null)
-            throw new ArgumentNullException(nameof(lastName));
-        var email = user.FindFirst(ClaimTypes.Email)?.Value;
-        if (email is null)
-            throw new ArgumentNullException(nameof(email));
+        var name = user.FindFirst(ClaimTypes.Name)?.Value;
+        ArgumentNullException.ThrowIfNull(name);
         var photoUrl = user.FindFirst(CustomClaims.Picture)?.Value;
-        if (photoUrl is null)
-            throw new ArgumentNullException(nameof(photoUrl));
+        ArgumentNullException.ThrowIfNull(photoUrl);
 
-        var userName = Strings.Split(email, "@")[0];
-
-
-        return new AppUser
+        if (externalLoginInfo.LoginProvider == "google")
         {
-            FirstName = firstName,
-            LastName = lastName,
-            Email = email,
-            UserName = userName,
-            DisplayName = $"{firstName} {lastName}",
-            PhotoUrl = photoUrl
-        };
+            var firstName = user.FindFirst(ClaimTypes.GivenName)?.Value;
+            ArgumentNullException.ThrowIfNull(firstName);
+            var lastName = user.FindFirst(ClaimTypes.Surname)?.Value;
+            ArgumentNullException.ThrowIfNull(lastName);
+            var email = user.FindFirst(ClaimTypes.Email)?.Value;
+            ArgumentNullException.ThrowIfNull(email);
+            var userName = Strings.Split(email, "@")[0];
+            return new AppUser
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                UserName = userName,
+                DisplayName = $"{firstName} {lastName}",
+                PhotoUrl = photoUrl
+            };
+        }
+
+        if (externalLoginInfo.LoginProvider == "github")
+        {
+            var firstName = name.Split(" ")[0];
+            var lastName = name.Split(" ")[1];
+            // * Github does not provide email
+            var email = user.FindFirst(ClaimTypes.Email)?.Value;
+            var userName = user.FindFirst("username")?.Value;
+            ArgumentNullException.ThrowIfNull(userName);
+            return new AppUser
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                UserName = userName,
+                DisplayName = $"{firstName} {lastName}",
+                PhotoUrl = photoUrl
+            };
+        }
+
+        throw new ArgumentException("Invalid login provider");
     }
 
     public static CurrentUserDto ToCurrentUserDto(this AppUser request)

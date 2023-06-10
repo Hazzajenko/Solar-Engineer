@@ -45,7 +45,6 @@ public class GetOnlineFriendsHandler : IQueryHandler<GetOnlineFriendsQuery, GetO
 
 
         var onlineFriendConnections = _connections.GetUserConnectionsByIds(userFriendIds);
-        // var onlineFriendIds = _connections.GetConnectionsByIds(userFriendIds);
         var response = new GetOnlineFriendsResponse
         {
             OnlineFriends = new List<AppUserConnection>(onlineFriendConnections)

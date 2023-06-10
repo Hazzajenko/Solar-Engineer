@@ -55,7 +55,7 @@ public static partial class LoggingExtensions
                 loggerConfig.MinimumLevel
                     .Override("Microsoft", LogEventLevel.Information)
                     // .Override("Microsoft", LogEventLevel.Warning)
-                    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+                    // .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
                     .MinimumLevel.Override(
                         "Microsoft.AspNetCore.SignalR",
                         LogEventLevel.Information
@@ -64,11 +64,11 @@ public static partial class LoggingExtensions
                         "Microsoft.AspNetCore.Http.Connections",
                         LogEventLevel.Information
                     )
-                    .MinimumLevel.Override(
-                        "Microsoft.EntityFrameworkCore",
-                        LogEventLevel.Information
-                    );
-                // .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Error);
+                    // .MinimumLevel.Override(
+                    //     "Microsoft.EntityFrameworkCore",
+                    //     LogEventLevel.Information
+                    // );
+                    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Error);
 
                 /*logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
                 logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debug);*/

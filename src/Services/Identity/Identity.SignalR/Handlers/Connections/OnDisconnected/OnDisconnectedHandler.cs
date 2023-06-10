@@ -26,13 +26,13 @@ public class OnDisconnectedHandler : ICommandHandler<OnDisconnectedCommand, bool
 
     public async ValueTask<bool> Handle(OnDisconnectedCommand request, CancellationToken cT)
     {
-        var userId = request.User.Id;
+        var userId = request.AuthUser.Id;
         var userConnections = _connections.GetConnections(userId);
 
         if (userConnections.Any() is false)
             return true;
 
-        _connections.Remove(userId, request.User.ConnectionId);
+        _connections.Remove(userId, request.AuthUser.ConnectionId);
 
         var existingConnections = _connections.GetConnections(userId);
         if (existingConnections.Any())

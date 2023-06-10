@@ -1,6 +1,7 @@
-﻿using Infrastructure.SignalR;
+﻿using Infrastructure.Authentication;
+using Infrastructure.SignalR;
 using Mediator;
 
 namespace Identity.SignalR.Handlers.Connections.OnDisconnected;
 
-public sealed record OnDisconnectedCommand(HubAppUser User) : ICommand<bool>;
+public sealed record OnDisconnectedCommand(AuthUser AuthUser) : ICommand<bool>;

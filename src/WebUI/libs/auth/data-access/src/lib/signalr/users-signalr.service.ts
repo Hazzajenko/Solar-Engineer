@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core'
 import { HubConnection } from '@microsoft/signalr'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import { ConnectionModel, CONNECTIONS_SIGNALR_EVENT } from '@auth/shared'
+import { ConnectionModel, USERS_SIGNALR_EVENT } from '@auth/shared'
+import { GetOnlineFriendsResponse } from '../contracts'
 
 const hubName = 'Users'
 const hubUrl = '/hubs/users'
@@ -20,24 +21,25 @@ export class UsersSignalrService {
 		}
 		this.hubConnection = createHubConnection(request)
 
-		this.hubConnection.on(
-			CONNECTIONS_SIGNALR_EVENT.USER_IS_ONLINE,
-			(connection: ConnectionModel) => {
-				console.log(CONNECTIONS_SIGNALR_EVENT.USER_IS_ONLINE, connection)
-			},
-		)
+		this.hubConnection.on(USERS_SIGNALR_EVENT.USER_IS_ONLINE, (connection: ConnectionModel) => {
+			console.log(USERS_SIGNALR_EVENT.USER_IS_ONLINE, connection)
+		})
+
+		this.hubConnection.on(USERS_SIGNALR_EVENT.USER_IS_OFFLINE, (connection: ConnectionModel) => {
+			console.log(USERS_SIGNALR_EVENT.USER_IS_OFFLINE, connection)
+		})
 
 		this.hubConnection.on(
-			CONNECTIONS_SIGNALR_EVENT.USER_IS_OFFLINE,
-			(connection: ConnectionModel) => {
-				console.log(CONNECTIONS_SIGNALR_EVENT.USER_IS_OFFLINE, connection)
-			},
-		)
-
-		this.hubConnection.on(
-			CONNECTIONS_SIGNALR_EVENT.GET_ONLINE_USERS,
+			USERS_SIGNALR_EVENT.GET_ONLINE_USERS,
 			(connections: ConnectionModel[]) => {
-				console.log(CONNECTIONS_SIGNALR_EVENT.GET_ONLINE_USERS, connections)
+				console.log(USERS_SIGNALR_EVENT.GET_ONLINE_USERS, connections)
+			},
+		)
+
+		this.hubConnection.on(
+			USERS_SIGNALR_EVENT.GET_ONLINE_FRIENDS,
+			(response: GetOnlineFriendsResponse) => {
+				console.log(USERS_SIGNALR_EVENT.GET_ONLINE_FRIENDS, response)
 			},
 		)
 

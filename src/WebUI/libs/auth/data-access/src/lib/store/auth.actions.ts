@@ -7,6 +7,7 @@ export const AuthActions = createActionGroup({
 		Login: emptyProps(),
 		'Sign In As Guest': emptyProps(),
 		'Sign In With Google': emptyProps(),
+		'Sign In With Github': emptyProps(),
 		'Is Returning User': emptyProps(),
 		'Authorize Request': emptyProps(),
 		'Sign In Success': props<{

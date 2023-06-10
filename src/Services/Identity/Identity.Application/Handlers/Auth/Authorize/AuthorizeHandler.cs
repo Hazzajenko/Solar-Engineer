@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Identity.Application.Handlers.Auth.Authorize;
 
-public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, AppUser>
+public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSigninResponse>
 {
     private readonly ILogger<AuthorizeHandler> _logger;
     private readonly IMediator _mediator;
@@ -21,7 +21,9 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, AppUser>
     public AuthorizeHandler(
         UserManager<AppUser> userManager,
         ILogger<AuthorizeHandler> logger,
-        SignInManager<AppUser> signInManager, IMediator mediator)
+        SignInManager<AppUser> signInManager,
+        IMediator mediator
+    )
     {
         _userManager = userManager;
         _logger = logger;
@@ -29,7 +31,10 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, AppUser>
         _mediator = mediator;
     }
 
-    public async ValueTask<AppUser> Handle(AuthorizeCommand request, CancellationToken cT)
+    public async ValueTask<ExternalSigninResponse> Handle(
+        AuthorizeCommand request,
+        CancellationToken cT
+    )
     {
         var user = request.HttpContext.User;
         var externalLogin = user.GetLogin();
@@ -43,12 +48,16 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, AppUser>
         ArgumentNullException.ThrowIfNull(info);
         ArgumentNullException.ThrowIfNull(info.AuthenticationTokens);
 
-        if (existingAppUser is not null) return await HandleExistingUserSignIn(existingAppUser, info);
+        if (existingAppUser is not null)
+            return await HandleExistingUserSignIn(existingAppUser, info);
 
         return await HandleNewUserSignIn(user, info);
     }
 
-    private async Task<AppUser> HandleExistingUserSignIn(AppUser existingAppUser, ExternalLoginInfo externalLogin)
+    private async Task<ExternalSigninResponse> HandleExistingUserSignIn(
+        AppUser existingAppUser,
+        ExternalLoginInfo externalLogin
+    )
     {
         var props = new AuthenticationProperties();
         props.StoreTokens(externalLogin.AuthenticationTokens!);
@@ -77,13 +86,15 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, AppUser>
             Console.WriteLine(e);
             throw new UnauthorizedException();
         }
-
-        return existingAppUser;
+        return new() { AppUser = existingAppUser, LoginProvider = externalLogin.LoginProvider };
     }
 
-    private async Task<AppUser> HandleNewUserSignIn(ClaimsPrincipal user, ExternalLoginInfo externalLogin)
+    private async Task<ExternalSigninResponse> HandleNewUserSignIn(
+        ClaimsPrincipal user,
+        ExternalLoginInfo externalLogin
+    )
     {
-        var appUser = user.ToAppUser();
+        var appUser = user.ToAppUser(externalLogin);
 
         var createUserResult = await _userManager.CreateAsync(appUser);
 
@@ -128,10 +139,10 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, AppUser>
             throw new UnauthorizedException();
         }
 
-        var initials = appUser.GetInitials();
-        var imageResponse = await _mediator.Send(new CreateDpImageCommand(initials));
-        appUser.PhotoUrl = imageResponse.ImageUrl;
-        await _userManager.UpdateAsync(appUser);
-        return appUser;
+        // var initials = appUser.GetInitials();
+        // var imageResponse = await _mediator.Send(new CreateDpImageCommand(initials));
+        // appUser.PhotoUrl = imageResponse.ImageUrl;
+        // await _userManager.UpdateAsync(appUser);
+        return new() { AppUser = appUser, LoginProvider = externalLogin.LoginProvider };
     }
 }

@@ -30,6 +30,7 @@ public class ProjectsHub : Hub<IProjectsHub>
             user.Id,
             user.UserName
         );
+        await GetUserProjects();
         await base.OnConnectedAsync();
     }
 
@@ -67,7 +68,7 @@ public class ProjectsHub : Hub<IProjectsHub>
     {
         await _mediator.Send(new GetUserProjectsQuery(Context.ToAuthUser()));
     }
-    
+
     public async Task SelectProject(string projectId)
     {
         await _mediator.Send(new GetProjectByIdQuery(Context.ToAuthUser(), projectId));
