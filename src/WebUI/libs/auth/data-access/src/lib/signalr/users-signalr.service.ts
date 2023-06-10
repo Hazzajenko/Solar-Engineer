@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core'
 import { HubConnection } from '@microsoft/signalr'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import { ConnectionModel, USERS_SIGNALR_EVENT } from '@auth/shared'
-import { GetOnlineFriendsResponse } from '../contracts'
+import { ConnectionModel, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD } from '@auth/shared'
+import { GetOnlineFriendsResponse, SearchForUserResponse } from '../contracts'
 
 const hubName = 'Users'
 const hubUrl = '/hubs/users'
@@ -43,7 +43,18 @@ export class UsersSignalrService {
 			},
 		)
 
+		this.hubConnection.on(
+			USERS_SIGNALR_EVENT.RECEIVE_SEARCH_FOR_APP_USER_BY_USER_NAME_RESPONSE,
+			(response: SearchForUserResponse) => {
+				console.log(USERS_SIGNALR_EVENT.RECEIVE_SEARCH_FOR_APP_USER_BY_USER_NAME_RESPONSE, response)
+			},
+		)
+
 		return this.hubConnection
+	}
+
+	searchForAppUserByUserName(userName: string) {
+		this.invokeHubConnection(USERS_SIGNALR_METHOD.SEARCH_FOR_APP_USER_BY_USER_NAME, userName)
 	}
 
 	private invokeHubConnection(invoke: string, params?: unknown) {

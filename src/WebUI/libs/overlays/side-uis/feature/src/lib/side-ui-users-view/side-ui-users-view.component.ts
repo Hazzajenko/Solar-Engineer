@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core'
 import { NgClass, NgForOf, NgIf, NgStyle } from '@angular/common'
 import { ShowSvgNoStylesComponent } from '@shared/ui'
-import { injectAuthStore } from '@auth/data-access'
+import { injectAuthStore, UsersSignalrService } from '@auth/data-access'
 import { injectUiStore } from '@overlays/ui-store/data-access'
 import { AppUserModel } from '@shared/data-access/models'
 import { TruncatePipe } from '@shared/pipes'
@@ -17,6 +17,10 @@ import { TruncatePipe } from '@shared/pipes'
 export class SideUiUsersViewComponent {
 	private _authStore = injectAuthStore()
 	private _uiStore = injectUiStore()
+	private _usersSignalr = inject(UsersSignalrService)
+
+	searchBoxTimer: ReturnType<typeof setTimeout> | undefined
+	lastKeyUpTime = 0
 
 	user = this._authStore.select.user
 
@@ -42,12 +46,34 @@ export class SideUiUsersViewComponent {
 		 })*/
 	}
 
-	/*	openSignInDialog() {
-	 this._uiStore.dispatch.openDialog({
-	 component: DIALOG_COMPONENT.SIGN_IN,
-	 })
-	 }*/
+	onSearchBoxKeyDown(event: KeyboardEvent) {
+		event.preventDefault()
+		event.stopPropagation()
 
-	// protected readonly createProject = createProject
-	// protected readonly createProject = createProject
+		const target = event.target as HTMLInputElement
+		const value = target.value
+		console.log(value)
+		if (event.key === 'Enter') {
+			this.querySearchBox(value)
+			return
+		}
+
+		this.lastKeyUpTime = Date.now()
+		setTimeout(() => {
+			this.querySearchBox(value)
+			// clearTimeout(this.searchBoxTimer)
+		}, 500)
+	}
+
+	private querySearchBox(value: string) {
+		console.log(value)
+		console.log(Date.now() - this.lastKeyUpTime)
+		if (Date.now() - this.lastKeyUpTime < 500) {
+			// if (this.searchBoxTimer) {
+			// clearTimeout(this.searchBoxTimer)
+			return
+		}
+		this._usersSignalr.searchForAppUserByUserName(value)
+		// this._uiStore.dispatch.searchUsers(value)
+	}
 }

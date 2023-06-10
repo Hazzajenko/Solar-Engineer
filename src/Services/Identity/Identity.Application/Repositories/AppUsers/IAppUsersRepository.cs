@@ -7,5 +7,5 @@ namespace Identity.Application.Repositories.AppUsers;
 public interface IAppUsersRepository : IGenericRepository<AppUser>
 {
     Task<CurrentUserDto?> GetAppUserDtoByIdAsync(Guid id);
-    Task<IEnumerable<AppUserDto>> SearchForAppUserByUserNameAsync(string userName);
+    Task<IEnumerable<MinimalAppUserDto>> SearchForAppUserByUserNameAsync(string userName);
 }

@@ -1,4 +1,5 @@
 ﻿using Identity.Contracts.Data;
+using Identity.SignalR.Handlers.AppUsers;
 using Identity.SignalR.Handlers.Connections.OnConnected;
 using Identity.SignalR.Handlers.Connections.OnDisconnected;
 using Identity.SignalR.Handlers.Friends;
@@ -40,5 +41,10 @@ public class UsersHub : Hub<IUsersHub>
     public async Task GetOnlineFriends()
     {
         await _mediator.Send(new GetOnlineFriendsQuery(Context.ToAuthUser()));
+    }
+
+    public async Task SearchForAppUserByUserName(string userName)
+    {
+        await _mediator.Send(new SearchForAppUserByUserNameQuery(Context.ToAuthUser(), userName));
     }
 }

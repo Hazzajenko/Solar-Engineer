@@ -4,15 +4,17 @@ using Mediator;
 
 namespace Identity.SignalR.Handlers.AppUsers;
 
+/*
 public class SearchForAppUserByUserNameRequest : IRequest<SearchForAppUserByUserNameResponse>
 {
     public string UserName { get; set; } = string.Empty;
 }
+*/
 
 public class SearchForAppUserByUserNameResponse
 {
-    public IEnumerable<AppUserDto> AppUsers { get; set; } = new List<AppUserDto>();
+    public IEnumerable<MinimalAppUserDto> AppUsers { get; set; } = new List<MinimalAppUserDto>();
 }
 
-public record SearchForAppUserByUserNameQuery
-    (AuthUser AuthUser, SearchForAppUserByUserNameRequest Request) : IQuery<SearchForAppUserByUserNameResponse>;
+public record SearchForAppUserByUserNameQuery(AuthUser AuthUser, string UserName)
+    : IQuery<SearchForAppUserByUserNameResponse>;

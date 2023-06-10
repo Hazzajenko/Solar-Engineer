@@ -2,6 +2,7 @@
 using Identity.Contracts.Data;
 using Identity.Domain;
 using Infrastructure.Authentication;
+using JasperFx.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualBasic;
 
@@ -44,6 +45,8 @@ public static class AppUserMapper
             var email = user.FindFirst(ClaimTypes.Email)?.Value;
             var userName = user.FindFirst("username")?.Value;
             ArgumentNullException.ThrowIfNull(userName);
+            userName = userName.Replace(" ", "");
+            userName = userName.ToLowerInvariant();
             return new AppUser
             {
                 FirstName = firstName,

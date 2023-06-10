@@ -17,12 +17,14 @@ import { SideUiDataViewComponent } from '../side-ui-data-view/side-ui-data-view.
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { SideUiAuthViewComponent } from '../side-ui-auth-view/side-ui-auth-view.component'
 import { SideUiProjectsViewComponent } from '../side-ui-projects-view'
+import { SideUiUsersViewComponent } from '../side-ui-users-view/side-ui-users-view.component'
 
 export type SideUiNavBarView = 'auth' | 'projects' | 'data' | 'users' | 'none'
 export type SideUiNavBarViewComponent =
 	| typeof SideUiAuthViewComponent
 	| typeof SideUiProjectsViewComponent
 	| typeof SideUiDataViewComponent
+	| typeof SideUiUsersViewComponent
 	| null
 
 export const sideUiInjectionToken = new InjectionToken<unknown>('')
@@ -97,6 +99,9 @@ export class SideUiNavBarComponent {
 				break
 			case 'data':
 				this.currentViewComponent.set(SideUiDataViewComponent)
+				break
+			case 'users':
+				this.currentViewComponent.set(SideUiUsersViewComponent)
 				break
 			default:
 				this.currentViewComponent.set(null)

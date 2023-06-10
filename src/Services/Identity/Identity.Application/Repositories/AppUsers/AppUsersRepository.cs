@@ -13,9 +13,7 @@ public sealed class AppUsersRepository
         IAppUsersRepository
 {
     public AppUsersRepository(IdentityContext context)
-        : base(context)
-    {
-    }
+        : base(context) { }
 
     public async Task<CurrentUserDto?> GetAppUserDtoByIdAsync(Guid id)
     {
@@ -25,11 +23,13 @@ public sealed class AppUsersRepository
             .SingleOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<AppUserDto>> SearchForAppUserByUserNameAsync(string userName)
+    public async Task<IEnumerable<MinimalAppUserDto>> SearchForAppUserByUserNameAsync(
+        string userName
+    )
     {
         return await Queryable
             .Where(x => x.UserName.Contains(userName))
-            .Select(x => x.Adapt<AppUserDto>())
+            .Select(x => x.Adapt<MinimalAppUserDto>())
             .ToListAsync();
     }
 

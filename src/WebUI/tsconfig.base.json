@@ -146,6 +146,8 @@
 			"@undefined/core-components": ["dist/libs/core-components"],
 			"@undefined/core-components/*": ["dist/libs/core-components/dist/components/*"],
 			"@undefined/core-components/loader": ["dist/libs/core-components/loader"],
+			"@users/data-access": ["libs/users/data-access/src/index.ts"],
+			"@users/shared": ["libs/users/shared/src/index.ts"],
 			"ngrx-pull": ["libs/ngrx-pull/src/index.ts"]
 		},
 		"rootDir": ".",

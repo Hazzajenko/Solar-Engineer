@@ -11,3 +11,9 @@ public class AppUserDto
     public DateTime CreatedTime { get; set; }
     public DateTime LastModifiedTime { get; set; }
 }
+
+public class MinimalAppUserDto
+{
+    public string DisplayName { get; set; } = default!;
+    public string PhotoUrl { get; set; } = default!;
+}
