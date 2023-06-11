@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  web-ui:
+    image: solarengineer-web-ui:1.0.3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.web-ui.rule=Host(`solarengineer.net`)"
+      - "traefik.http.routers.web-ui.entrypoints=websecure"
+      - "traefik.http.routers.web-ui.tls=true"
+      - "traefik.http.routers.web-ui.tls.domains[0].main=solarengineer.net"
+
+  traefik:
+    image: traefik:v2.5
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.file.directory=/configuration/"
+      - "--providers.file.watch=true"
+      # global redirect to https
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./traefik/configuration/certificates.yaml:/configuration/certificates.yaml"
+      - "./https:/certs:/certs"
+
+#      - "./letsencrypt:/letsencrypt"
+#      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+#      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+#      - "--certificatesresolvers.myresolver.acme.email=youremail@yourdomain.com"
+#      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+
+
+#  identity-api:
+#    image: identity-api:latest
+#    labels:
+#      - "traefik.http.routers.identity.rule=Host(`solarengineer.app`) && (PathPrefix(`/signin-google`, `/auth/`, `/hubs/connections`))"
+#      - "traefik.http.routers.identity.tls.certresolver=myresolver"
+#      - "traefik.http.services.identity.loadbalancer.server.port=5001"
+#
+#  projects-api:
+#    image: projects-api:latest
+#    labels:
+#      - "traefik.http.routers.projects.rule=Host(`solarengineer.app`) && (PathPrefix(`/projects/`, `/hubs/projects`))"
+#      - "traefik.http.routers.projects.tls.certresolver=myresolver"
+#      - "traefik.http.services.projects.loadbalancer.server.port=5007"

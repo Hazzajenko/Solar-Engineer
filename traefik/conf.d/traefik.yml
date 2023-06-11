@@ -1,0 +1,66 @@
+tls:
+  certificates:
+    # first certificate
+    - certFile: /path/to/example-com.cert
+      keyFile: /path/to/example-com.key
+
+    # second certificate
+    - certFile: /path/to/other.cert
+      keyFile: /path/to/other.key
+
+#entryPoints:
+#  web:
+#    address: ":80"
+#
+#  websecure:
+#    address: ":443"
+
+
+#entryPoints:
+#  web:
+#    address: ":80"
+#
+#  websecure:
+#    address: ":443"
+#    http:
+#      tls:
+#        domains:
+#          - main: "solarengineer.net"
+#            sans:
+#              - "*.solarengineer.net"
+#        certificate:
+#          certFile: "/certs/solarengineer.net.crt"
+#          keyFile: "/certs/solarengineer.net.rsa"
+#
+#
+#
+#### STATIC CONFIGURATION
+##
+##
+##log:
+##  level: INFO
+##
+##api:
+##  insecure: true
+##  dashboard: true
+##
+##entryPoints:
+##  web:
+##    address: ":80"
+##  websecure:
+##    address: ":443"
+##
+##providers:
+##  docker:
+##    endpoint: "unix:///var/run/docker.sock"
+##    exposedByDefault: false
+##
+##certificatesResolvers:
+##  lets-encr:
+##    acme:
+##      #caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+##      storage: acme.json
+##      email: whatever@gmail.com
+##      httpChallenge:
+##        entryPoint: web
+##

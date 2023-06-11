@@ -1,0 +1,107 @@
+#- "traefik.http.routers.web-ui.rule=Host(`solarengineer.net`)"
+#- "traefik.http.routers.web-ui.entrypoints=websecure"
+#- "traefik.http.routers.web-ui.tls=true"
+#- "traefik.http.routers.web-ui.tls.domains[0].main=solarengineer.net"
+#
+#      entryPoints:
+#          - "websecure"
+#      service: "web-ui"
+#      tls:
+#          domains:
+#            - main: "solarengineer.net"
+
+http:
+  routers:
+    auth:
+      rule: "(PathPrefix(`/auth`) || PathPrefix(`/signin-google`) || PathPrefix(`/hubs/connections`))"
+      service: identity-api
+      middlewares:
+        #        - auth-replace-prefix
+        - auth-strip-prefix
+      entryPoints:
+        - websecure
+      tls:
+        domains:
+          - main: "solarengineer.net"
+    web-ui:
+      rule: "Host(`solarengineer.net`)"
+      service: web-ui
+      entryPoints:
+        - websecure
+      tls:
+          domains:
+            - main: "solarengineer.net"
+
+#    auth-replace:
+#      rule: "Host(`solarengineer.net`) && PathPrefix(`/`)"
+#      service: identity-api
+#      middlewares:
+#        - "auth-replace-prefix"
+#      entryPoints:
+#        - websecure
+#      tls:
+#        domains:
+#          - main: "solarengineer.net"
+    signin-google:
+      rule: "Host(`solarengineer.net`) && PathPrefix(`/signin-google`)"
+      service: identity-api
+      entryPoints:
+        - websecure
+    hubs-connections:
+      rule: "PathPrefix(`/hubs/connections`)"
+      service: identity-api
+      entryPoints:
+        - websecure
+    projects:
+      rule: "PathPrefix(`/projects`)"
+      service: projects-api
+      entryPoints:
+        - websecure
+    hubs-projects:
+      rule: "PathPrefix(`/hubs/projects`)"
+      service: projects-api
+      entryPoints:
+        - websecure
+  middlewares:
+    auth-replace-prefix:
+      replacePathRegex:
+        regex: "^/(.*)"
+        replacement: "/auth/$${1}"
+    auth-strip-prefix:
+      stripPrefix:
+        prefixes:
+          - "/auth"
+        forceSlash: false
+
+  services:
+    web-ui:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:4200/"
+    identity-api:
+      loadBalancer:
+        servers:
+          - url: "https://host.docker.internal:5001/"
+    projects-api:
+      loadBalancer:
+        servers:
+          - url: "https://host.docker.internal:5007/"
+
+
+#http:
+#  routers:
+#    web-ui:
+#      rule: "Host(`solarengineer.net`)"
+#      entryPoints:
+#          - "websecure"
+#      service: "web-ui"
+#      tls:
+#          domains:
+#            - main: "solarengineer.net"
+#  services:
+#    web-ui:
+#      loadBalancer:
+#        servers:
+#          - url: "http://host.docker.internal:4200/"
+
+

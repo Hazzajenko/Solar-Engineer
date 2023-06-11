@@ -1,0 +1,10 @@
+log:
+  filePath: "/logs/traefik.log"
+  format: json
+  level: DEBUG
+
+accessLog:
+  filePath: "/logs/traefik-access.log"
+  format: json
+  bufferingSize: 100
+

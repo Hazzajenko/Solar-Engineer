@@ -1,0 +1,9 @@
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: "/certs/solarengineer.net.crt"
+        keyFile: "/certs/solarengineer.net.rsa"
+  certificates:
+    - certFile: "/certs/solarengineer.net.crt"
+      keyFile: "/certs/solarengineer.net.rsa"
