@@ -1,10 +1,12 @@
 ﻿using Identity.Application.Data.UnitOfWork;
+using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Friends;
 using Identity.Domain;
 using Identity.SignalR.Commands.Friends;
 using Identity.SignalR.Hubs;
 using Infrastructure.Extensions;
 using Infrastructure.SignalR;
+using Mapster;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -50,7 +52,6 @@ public class SendFriendRequestHandler : ICommandHandler<SendFriendRequestCommand
             );
         }
         appUserLink.ThrowHubExceptionIfNull();
-        _unitOfWork.Attach(appUserLink);
         var isAppUserRequested = appUserLink.AppUserRequestedId == appUser.Id;
         if (isAppUserRequested)
         {
@@ -73,6 +74,20 @@ public class SendFriendRequestHandler : ICommandHandler<SendFriendRequestCommand
         await _hubContext.Clients
             .User(recipientUser.Id.ToString())
             .ReceiveFriendRequestEvent(response);
+
+        var notification = new Notification(
+            recipientUser,
+            appUser,
+            NotificationType.FriendRequestReceived,
+            "<%= senderAppUser %> sent you a friend request."
+        );
+
+        await _unitOfWork.NotificationsRepository.AddAsync(notification);
+        await _unitOfWork.SaveChangesAsync();
+
+        await _hubContext.Clients
+            .User(recipientUser.Id.ToString())
+            .ReceiveNotification(notification.Adapt<NotificationDto>());
 
         _logger.LogInformation(
             "Friend request sent from AppUserRequested: {AppUserRequestedId} - {AppUserRequestedUserName}, AppUserReceived: {AppUserReceived} - {AppUserReceivedUserName}",

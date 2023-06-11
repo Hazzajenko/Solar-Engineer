@@ -3,9 +3,9 @@ import {
 	notificationsAdapter,
 	NotificationsState,
 } from './notifications.reducer'
-import { ActionNotificationModel } from '../types'
 import { Dictionary } from '@ngrx/entity'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
+import { NotificationModel } from '@auth/shared'
 
 export const selectNotificationsState =
 	createFeatureSelector<NotificationsState>(NOTIFICATIONS_FEATURE_KEY)
@@ -25,5 +25,5 @@ export const selectNotificationsEntities = createSelector(
 export const selectNotificationById = (props: { id: string }) =>
 	createSelector(
 		selectNotificationsEntities,
-		(notifications: Dictionary<ActionNotificationModel>) => notifications[props.id],
+		(notifications: Dictionary<NotificationModel>) => notifications[props.id],
 	)

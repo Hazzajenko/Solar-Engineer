@@ -1,4 +1,4 @@
-import { MinimalWebUser } from '@users/shared'
+import { MinimalWebUser } from './web-user.model'
 
 export type SearchForUserResponse = {
 	appUsers: MinimalWebUser[]

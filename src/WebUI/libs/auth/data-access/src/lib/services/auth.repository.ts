@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { AuthActions } from '../store'
+import { AuthActions } from '../store/auth'
 import { Store } from '@ngrx/store'
 import { AppUserModel } from '@shared/data-access/models'
 

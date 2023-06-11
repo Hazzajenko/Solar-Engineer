@@ -1,5 +1,5 @@
-import { inject, Injectable } from '@angular/core'
-import { SignalrHubsService } from '@app/data-access/signalr'
+import { Injectable } from '@angular/core'
+import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
 import { HubConnection } from '@microsoft/signalr'
 import {
 	CreateProjectRequest,
@@ -21,7 +21,7 @@ import { injectAuthStore } from '@auth/data-access'
 
 const hubName = 'Projects'
 const hubUrl = '/hubs/projects'
-const invoke = 'GetUserProjects'
+// const invoke = 'GetUserProjects'
 
 export type ProjectsHubConnection = HubConnection
 
@@ -33,29 +33,18 @@ export class ProjectsSignalrService {
 	private _entitiesStore = injectEntityStore()
 	private _signalrEventsStore = injectSignalrEventsStore()
 	private _authStore = injectAuthStore()
-	private _signalrHubs = inject(SignalrHubsService)
 
 	user = this._authStore.select.user
 
-	// hubConnection: ProjectsHubConnection | undefined
-	get hubConnection() {
-		return this._signalrHubs.projectsHubConnection
-	}
+	hubConnection: ProjectsHubConnection | undefined
 
-	init() {
-		if (!this.hubConnection) {
-			throw new Error('ProjectsSignalrService: hubConnection is undefined')
+	init(token: string) {
+		const request: HubConnectionRequest = {
+			token,
+			hubName,
+			hubUrl,
 		}
-		// const request: HubConnectionRequest = {
-		// 	token,
-		// 	hubName,
-		// 	hubUrl,
-		// }
-		// this.hubConnection = createHubConnection(request)
-
-		// if (this.hubConnection.state === 'Connected') {
-		// 	this.invokeHubConnection(invoke)
-		// }
+		this.hubConnection = createHubConnection(request)
 
 		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, (projects: ProjectModel[]) => {
 			console.log(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, projects)
@@ -134,7 +123,7 @@ export class ProjectsSignalrService {
 		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
 		this.hubConnection
 			.invoke(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
-			.catch((err) => console.error(err, invoke, request))
+			.catch((err) => console.error(err, request))
 	}
 
 	private receiveProjectEvent(event: SignalrEventResponse) {

@@ -1,1 +1,1 @@
-export * from '../store/auth.effects'
+export * from '../store/auth/auth.effects'

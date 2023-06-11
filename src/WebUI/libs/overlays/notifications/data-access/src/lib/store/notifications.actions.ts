@@ -1,28 +1,36 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { ActionNotificationModel } from '../types'
+import { EntityUpdate } from '@shared/data-access/models'
+import { NotificationModel } from '@auth/shared'
 
 export const NotificationsActions = createActionGroup({
 	source: 'Notifications Store',
 	events: {
-		addNotification: props<{
-			notification: ActionNotificationModel
+		'Load Notifications': props<{
+			notifications: NotificationModel[]
 		}>(),
-		addManyNotifications: props<{
-			notifications: ActionNotificationModel[]
+		'Add Notification': props<{
+			notification: NotificationModel
 		}>(),
-		updateNotification: props<{
-			update: UpdateStr<ActionNotificationModel>
+		'Add Many Notifications': props<{
+			notifications: NotificationModel[]
 		}>(),
-		updateManyNotifications: props<{
-			updates: UpdateStr<ActionNotificationModel>[]
+		'Update Notification': props<{
+			update: UpdateStr<NotificationModel>
 		}>(),
-		deleteNotification: props<{
-			notificationId: string
+		'Update Many Notifications': props<{
+			updates: UpdateStr<NotificationModel>[]
 		}>(),
-		deleteManyNotifications: props<{
-			notificationIds: string[]
+		'Update Many Notifications With String': props<{
+			updates: EntityUpdate<NotificationModel>[]
 		}>(),
-		clearNotificationsState: emptyProps(),
+		'Delete Notification': props<{
+			notificationId: NotificationModel['id']
+		}>(),
+		'Delete Many Notifications': props<{
+			notificationIds: NotificationModel['id'][]
+		}>(),
+		'Clear Notifications State': emptyProps(),
+		Noop: emptyProps(),
 	},
 })

@@ -8,7 +8,7 @@ import {
 import { createRootServiceInjector, isNotNull } from '@shared/utils'
 import { UsersActions } from './users.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { MinimalWebUser, WebUserModel } from '@users/shared'
+import { MinimalWebUser, WebUserModel } from '@auth/shared'
 
 export function injectUsersStore(): UsersStore {
 	return usersStoreInjector()
@@ -35,6 +35,8 @@ function usersStoreFactory(store: Store) {
 	}
 
 	const dispatch = {
+		sendFriendRequest: (userId: string) =>
+			store.dispatch(UsersActions.sendFriendRequest({ userId })),
 		searchForAppUserByUserName: (query: string) =>
 			store.dispatch(UsersActions.searchForAppUserByUserName({ query })),
 		receiveUsersFromSearch: (users: MinimalWebUser[]) =>

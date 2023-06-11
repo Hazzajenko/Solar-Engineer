@@ -20,14 +20,15 @@ import { provideRenderingEffects } from './main.effects'
 import { storeDevtoolsModule } from '@shared/config'
 import { metaReducers, reducers } from '@shared/data-access/store'
 import { provideRouterStore } from '@ngrx/router-store'
-import { provideAuthFeature } from '@auth/data-access'
-import { provideUsersFeature } from '@users/data-access'
+import { provideAuthFeature, provideUsersFeature } from '@auth/data-access'
+import { provideHubsFeature } from '@app/data-access/signalr'
 
 export function provideNgrx() {
 	return makeEnvironmentProviders([
 		provideStore(reducers, { metaReducers }),
 		provideRouterStore(),
 		provideAuthFeature(),
+		provideHubsFeature(),
 		provideUsersFeature(),
 		provideProjectsFeature(),
 		provideSignalrEventsFeature(),

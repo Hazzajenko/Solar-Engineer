@@ -1,7 +1,7 @@
 import { USERS_FEATURE_KEY, usersAdapter, UsersState } from './users.reducer'
-import { MinimalWebUser, WebUserModel } from '@users/shared'
 import { Dictionary } from '@ngrx/entity'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
+import { MinimalWebUser, WebUserModel } from '@auth/shared'
 
 export const selectUsersState = createFeatureSelector<UsersState>(USERS_FEATURE_KEY)
 

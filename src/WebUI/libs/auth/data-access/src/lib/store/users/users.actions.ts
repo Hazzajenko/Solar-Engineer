@@ -1,8 +1,7 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { MinimalWebUser, WebUserModel } from '@users/shared'
+import { FriendRequestResponse, MinimalWebUser, WebUserModel } from '@auth/shared'
 import { EntityUpdate } from '@shared/data-access/models'
-import { FriendRequestResponse } from '@auth/shared'
 
 export const UsersActions = createActionGroup({
 	source: 'Users Store',

@@ -14,12 +14,10 @@ public class Notification : IEntity
         string content
     )
     {
-        AppUser = appUser;
         AppUserId = appUser.Id;
-        AppUserUserName = appUser.UserName!;
-        SenderAppUser = senderAppUser;
+        AppUserUserName = appUser.UserName;
         SenderAppUserId = senderAppUser.Id;
-        SenderAppUserUserName = senderAppUser.UserName!;
+        SenderAppUserUserName = senderAppUser.UserName;
         NotificationType = notificationType;
         Content = content;
     }
@@ -31,6 +29,7 @@ public class Notification : IEntity
     public Guid SenderAppUserId { get; set; }
     public string SenderAppUserUserName { get; set; } = default!;
     public AppUser SenderAppUser { get; set; } = default!;
+    public string SenderAppUserPhotoUrl => SenderAppUser.PhotoUrl;
     public string Content { get; set; } = default!;
     public NotificationType NotificationType { get; set; } = default!;
     public DateTime CreatedTime { get; set; } = DateTime.Now;

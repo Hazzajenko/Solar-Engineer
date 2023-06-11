@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core'
 import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle } from '@angular/common'
 import { ShowSvgNoStylesComponent } from '@shared/ui'
-import { injectAuthStore, UsersSignalrService } from '@auth/data-access'
+import { injectAuthStore, injectUsersStore } from '@auth/data-access'
 import { CONTEXT_MENU_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 import { AppUserModel } from '@shared/data-access/models'
 import { TruncatePipe } from '@shared/pipes'
-import { injectUsersStore } from '@users/data-access'
+// import { injectUsersStore } from '@users/data-access'
+
+// import { injectUsersStore } from '@users/data-access'
 
 @Component({
 	selector: 'side-ui-users-view',
@@ -26,7 +28,7 @@ import { injectUsersStore } from '@users/data-access'
 export class SideUiUsersViewComponent {
 	private _authStore = injectAuthStore()
 	private _uiStore = injectUiStore()
-	private _usersSignalr = inject(UsersSignalrService)
+	// private _usersSignalr = inject(UsersSignalrService)
 	private _usersStore = injectUsersStore()
 
 	searchBoxTimer: ReturnType<typeof setTimeout> | undefined

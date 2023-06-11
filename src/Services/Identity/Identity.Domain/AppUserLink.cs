@@ -8,18 +8,16 @@ public class AppUserLink : IEntityToEntity
 {
     public AppUserLink(AppUser appUser, AppUser recipient)
     {
-        AppUserRequested = appUser;
+        // AppUserRequested = appUser;
         AppUserRequestedId = appUser.Id;
         AppUserRequestedDisplayName = appUser.DisplayName;
-        AppUserReceived = recipient;
+        // AppUserReceived = recipient;
         AppUserReceivedId = recipient.Id;
         AppUserReceivedDisplayName = recipient.DisplayName;
         CreatedTime = DateTime.Now;
     }
 
-    public AppUserLink()
-    {
-    }
+    public AppUserLink() { }
 
     public AppUser AppUserRequested { get; set; } = default!;
     public Guid AppUserRequestedId { get; set; }

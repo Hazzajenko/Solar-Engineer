@@ -1,22 +1,18 @@
-import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
-import { Action, createReducer, on, provideState } from '@ngrx/store'
-import { ActionNotificationModel } from '../types'
 import { NotificationsActions } from './notifications.actions'
-import { Actions, createEffect, ofType, provideEffects } from '@ngrx/effects'
-import { inject, makeEnvironmentProviders } from '@angular/core'
-import { tap } from 'rxjs'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
+import { Action, createReducer, on } from '@ngrx/store'
+import { NotificationModel } from '@auth/shared'
 
 export const NOTIFICATIONS_FEATURE_KEY = 'notifications'
 
-export interface NotificationsState extends EntityState<ActionNotificationModel> {
+export interface NotificationsState extends EntityState<NotificationModel> {
 	loaded: boolean
 	error?: string | null
 }
 
-export const notificationsAdapter: EntityAdapter<ActionNotificationModel> =
-	createEntityAdapter<ActionNotificationModel>({
-		selectId: (notification) => notification.id,
+export const notificationsAdapter: EntityAdapter<NotificationModel> =
+	createEntityAdapter<NotificationModel>({
+		selectId: (string) => string.id,
 	})
 
 export const initialNotificationsState: NotificationsState = notificationsAdapter.getInitialState({
@@ -25,6 +21,9 @@ export const initialNotificationsState: NotificationsState = notificationsAdapte
 
 const reducer = createReducer(
 	initialNotificationsState,
+	on(NotificationsActions.loadNotifications, (state, { notifications }) =>
+		notificationsAdapter.setMany(notifications, state),
+	),
 	on(NotificationsActions.addNotification, (state, { notification }) =>
 		notificationsAdapter.addOne(notification, state),
 	),
@@ -35,6 +34,9 @@ const reducer = createReducer(
 		notificationsAdapter.updateOne(update, state),
 	),
 	on(NotificationsActions.updateManyNotifications, (state, { updates }) =>
+		notificationsAdapter.updateMany(updates, state),
+	),
+	on(NotificationsActions.updateManyNotificationsWithString, (state, { updates }) =>
 		notificationsAdapter.updateMany(updates, state),
 	),
 	on(NotificationsActions.deleteNotification, (state, { notificationId }) =>
@@ -49,28 +51,3 @@ const reducer = createReducer(
 export function notificationsReducer(state: NotificationsState | undefined, action: Action) {
 	return reducer(state, action)
 }
-
-export function provideNotificationsFeature() {
-	return makeEnvironmentProviders([
-		provideState(NOTIFICATIONS_FEATURE_KEY, notificationsReducer),
-		provideEffects({ displayNotification$ }),
-	])
-}
-
-export const displayNotification$ = createEffect(
-	(actions$ = inject(Actions), _snackBar = inject(MatSnackBar)) => {
-		return actions$.pipe(
-			ofType(NotificationsActions.addNotification),
-			tap(({ notification }) => {
-				_snackBar.open(notification.title, 'Ok', {
-					horizontalPosition: 'start',
-					verticalPosition: 'bottom',
-					duration: 2000,
-					direction: 'ltr',
-					politeness: 'assertive',
-				})
-			}),
-		)
-	},
-	{ functional: true, dispatch: false },
-)

@@ -56,7 +56,6 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
             return await _unitOfWork.SaveChangesAsync();
         }
         appUserLink.ThrowHubExceptionIfNull();
-        _unitOfWork.Attach(appUserLink);
         var isAppUserRequested = appUserLink.AppUserRequestedId == appUser.Id;
         if (isAppUserRequested)
         {
@@ -69,6 +68,8 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
             appUserLink.AppUserReceivedStatusEvent = AppUserLink.FriendRequestSent.Rejected;
         }
 
+        // await _unitOfWork.AppUserLinksRepository.UpdateAsync(appUserLink);
+        
         await _unitOfWork.SaveChangesAsync();
 
         var response = new FriendRequestResponse(

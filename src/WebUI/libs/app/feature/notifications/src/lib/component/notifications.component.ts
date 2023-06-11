@@ -21,17 +21,16 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
-import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
 import { AuthStoreService } from '@auth/data-access'
 
 import { AppUserModel, NotificationModel } from '@shared/data-access/models'
-import { NotificationsStoreService } from '@app/data-access/notifications'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { Observable } from 'rxjs'
 import { GetFriendRequestPipe } from '../get-friend-request.pipe'
 import { SortNotificationsPipe } from '../sort-notifications.pipe'
 import { NotificationDirective } from './notification.directive'
+import { NotificationsStoreService } from '@overlays/notifications/data-access'
 
 @Component({
 	selector: 'app-notifications-component',
@@ -68,8 +67,8 @@ import { NotificationDirective } from './notification.directive'
 export class NotificationsComponent {
 	private notificationsStore = inject(NotificationsStoreService)
 	private authStore = inject(AuthStoreService)
-	private friendsService = inject(FriendsService)
-	private friendsStore = inject(FriendsStoreService)
+	// private friendsService = inject(FriendsService)
+	// private friendsStore = inject(FriendsStoreService)
 
 	notifications$: Observable<NotificationModel[]> = this.notificationsStore.select.notifications$
 	user$: Observable<AppUserModel | undefined> = this.authStore.select.user$
@@ -87,7 +86,7 @@ export class NotificationsComponent {
 
 	acceptFriend(requestedByUsername: string) {
 		// console.log(requestedByUsername)
-		this.friendsStore.dispatch.acceptFriendRequest(requestedByUsername)
+		// this.friendsStore.dispatch.acceptFriendRequest(requestedByUsername)
 	}
 
 	readNotification() {

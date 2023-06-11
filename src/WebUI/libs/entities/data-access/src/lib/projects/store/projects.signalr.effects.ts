@@ -24,8 +24,8 @@ export const initProjectsSignalr$ = createEffect(
 	) => {
 		return actions$.pipe(
 			ofType(AuthActions.signInSuccess),
-			tap(() => {
-				projectsSignalr.init()
+			tap(({ token }) => {
+				projectsSignalr.init(token)
 				// const hubConnection = projectsSignalr.init(token)
 				// panelsSignalr.init(hubConnection)
 			}),

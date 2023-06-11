@@ -1,7 +1,7 @@
 import { UsersActions } from './users.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { MinimalWebUser, WebUserModel } from '@users/shared'
+import { MinimalWebUser, WebUserModel } from '@auth/shared'
 
 export const USERS_FEATURE_KEY = 'users'
 

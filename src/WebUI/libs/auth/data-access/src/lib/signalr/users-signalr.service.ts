@@ -1,17 +1,9 @@
 import { Injectable } from '@angular/core'
-import { HubConnection } from '@microsoft/signalr'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import {
-	ConnectionModel,
-	FriendRequestResponse,
-	GetOnlineFriendsResponse,
-	SearchForUserResponse,
-	UpdateNotificationResponse,
-	USERS_SIGNALR_EVENT,
-	USERS_SIGNALR_METHOD,
-} from '@auth/shared'
-import { injectUsersStore } from '@users/data-access'
-import { NotificationModel } from '@users/shared'
+import { ConnectionModel, FriendRequestResponse, GetOnlineFriendsResponse, NotificationModel, SearchForUserResponse, UpdateNotificationResponse, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD } from '@auth/shared'
+import { injectUsersStore } from '../store'
+import { HubConnection } from '@microsoft/signalr'
+// import { NotificationModel } from '@users/shared'
 
 const hubName = 'Users'
 const hubUrl = '/hubs/users'
@@ -21,16 +13,21 @@ const hubUrl = '/hubs/users'
 })
 export class UsersSignalrService {
 	private _usersStore = injectUsersStore()
+	// private _signalrHubs = inject(SignalrHubsService)
 
 	hubConnection: HubConnection | undefined
+	// get hubConnection() {
+	// 	return this._signalrHubs.usersHubConnection
+	// }
 
-	init(token: string): HubConnection {
+	init(token: string) {
 		const request: HubConnectionRequest = {
 			token,
 			hubName,
 			hubUrl,
 		}
 		this.hubConnection = createHubConnection(request)
+		// if (!this.hubConnection) throw new Error('Hub connection is not initialized')
 
 		this.hubConnection.on(USERS_SIGNALR_EVENT.USER_IS_ONLINE, (connection: ConnectionModel) => {
 			console.log(USERS_SIGNALR_EVENT.USER_IS_ONLINE, connection)
