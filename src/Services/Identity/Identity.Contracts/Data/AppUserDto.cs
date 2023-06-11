@@ -14,6 +14,8 @@ public class AppUserDto
 
 public class MinimalAppUserDto
 {
+    public string Id { get; set; } = default!;
+    public string UserName { get; set; } = default!;
     public string DisplayName { get; set; } = default!;
     public string PhotoUrl { get; set; } = default!;
 }

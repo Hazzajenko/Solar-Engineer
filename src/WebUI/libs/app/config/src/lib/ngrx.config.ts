@@ -21,12 +21,14 @@ import { storeDevtoolsModule } from '@shared/config'
 import { metaReducers, reducers } from '@shared/data-access/store'
 import { provideRouterStore } from '@ngrx/router-store'
 import { provideAuthFeature } from '@auth/data-access'
+import { provideUsersFeature } from '@users/data-access'
 
 export function provideNgrx() {
 	return makeEnvironmentProviders([
 		provideStore(reducers, { metaReducers }),
 		provideRouterStore(),
 		provideAuthFeature(),
+		provideUsersFeature(),
 		provideProjectsFeature(),
 		provideSignalrEventsFeature(),
 		provideSelectedFeature(),

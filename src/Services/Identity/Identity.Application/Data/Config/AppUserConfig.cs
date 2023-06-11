@@ -8,9 +8,8 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
 {
     public void Configure(EntityTypeBuilder<AppUser> builder)
     {
-        builder.Property(x => x.Id).HasDefaultValueSql("uuid_generate_v4()").IsRequired();
-
         builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).HasDefaultValueSql("uuid_generate_v4()").IsRequired();
 
         builder
             .HasMany(ur => ur.AppUserRoles)
@@ -28,6 +27,18 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
             .HasMany(ur => ur.AppUserLinksReceived)
             .WithOne(x => x.AppUserReceived)
             .HasForeignKey(ur => ur.AppUserReceivedId)
+            .IsRequired();
+        
+        builder
+            .HasMany(ur => ur.NotificationsRequested)
+            .WithOne(x => x.SenderAppUser)
+            .HasForeignKey(ur => ur.SenderAppUserId)
+            .IsRequired();
+
+        builder
+            .HasMany(ur => ur.NotificationsReceived)
+            .WithOne(x => x.AppUser)
+            .HasForeignKey(ur => ur.AppUserId)
             .IsRequired();
     }
 }

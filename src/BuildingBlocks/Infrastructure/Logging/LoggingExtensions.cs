@@ -1,9 +1,12 @@
 using System.Reflection;
+using Amazon.CloudWatchLogs;
+using Amazon.Runtime.CredentialManagement;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
+using Serilog.Sinks.AwsCloudWatch;
 
 namespace Infrastructure.Logging;
 
@@ -11,6 +14,13 @@ public static partial class LoggingExtensions
 {
     public static WebApplicationBuilder ConfigureSerilog(this WebApplicationBuilder builder)
     {
+        // var options = new CredentialProfileOptions { AccessKey = "access_key", SecretKey = "secret_key" };
+        // var profile = new Amazon.Runtime.CredentialManagement.CredentialProfile("basic_profile", options);
+        // profile.Region = GetBySystemName("eu-west-1"); // OR RegionEndpoint.EUWest1
+        // var netSDKFile = new NetSDKCredentialsFile();
+        // netSDKFile.RegisterProfile(profile);
+
+
         var appName =
             builder.Configuration.GetValue<string>("App:Name")
             ?? Assembly.GetEntryAssembly()?.GetName().Name;
@@ -40,6 +50,12 @@ public static partial class LoggingExtensions
                     .Enrich.WithProcessId()
                     .Enrich.WithThreadId()
                     .Enrich.FromLogContext()
+                    // .WriteTo.AmazonCloudWatch(
+                    //     logGroup: $"{builder.Environment.EnvironmentName}/{builder.Environment.ApplicationName}",
+                    //     createLogGroup: true,
+                    //     logStreamPrefix: DateTime.UtcNow.ToString("yyyyMMddHHmmssfff"),
+                    //     cloudWatchClient: new AmazonCloudWatchLogsClient()
+                    // )
                     .WriteTo.Console();
 
                 loggerConfig.WriteTo.Seq("http://localhost:5341");

@@ -1,5 +1,5 @@
 ﻿using Identity.Application.Data.UnitOfWork;
-using Identity.SignalR.Handlers.AppUsers;
+using Identity.SignalR.Commands.AppUsers;
 using Identity.SignalR.Hubs;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;

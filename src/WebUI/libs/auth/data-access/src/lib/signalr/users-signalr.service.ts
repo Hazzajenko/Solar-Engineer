@@ -1,8 +1,17 @@
 import { Injectable } from '@angular/core'
 import { HubConnection } from '@microsoft/signalr'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import { ConnectionModel, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD } from '@auth/shared'
-import { GetOnlineFriendsResponse, SearchForUserResponse } from '../contracts'
+import {
+	ConnectionModel,
+	FriendRequestResponse,
+	GetOnlineFriendsResponse,
+	SearchForUserResponse,
+	UpdateNotificationResponse,
+	USERS_SIGNALR_EVENT,
+	USERS_SIGNALR_METHOD,
+} from '@auth/shared'
+import { injectUsersStore } from '@users/data-access'
+import { NotificationModel } from '@users/shared'
 
 const hubName = 'Users'
 const hubUrl = '/hubs/users'
@@ -11,6 +20,8 @@ const hubUrl = '/hubs/users'
 	providedIn: 'root',
 })
 export class UsersSignalrService {
+	private _usersStore = injectUsersStore()
+
 	hubConnection: HubConnection | undefined
 
 	init(token: string): HubConnection {
@@ -47,6 +58,28 @@ export class UsersSignalrService {
 			USERS_SIGNALR_EVENT.RECEIVE_SEARCH_FOR_APP_USER_BY_USER_NAME_RESPONSE,
 			(response: SearchForUserResponse) => {
 				console.log(USERS_SIGNALR_EVENT.RECEIVE_SEARCH_FOR_APP_USER_BY_USER_NAME_RESPONSE, response)
+				this._usersStore.dispatch.receiveUsersFromSearch(response.appUsers)
+			},
+		)
+
+		this.hubConnection.on(
+			USERS_SIGNALR_EVENT.RECEIVE_FRIEND_REQUEST_EVENT,
+			(response: FriendRequestResponse) => {
+				console.log(USERS_SIGNALR_EVENT.RECEIVE_FRIEND_REQUEST_EVENT, response)
+			},
+		)
+
+		this.hubConnection.on(
+			USERS_SIGNALR_EVENT.RECEIVE_NOTIFICATION,
+			(response: NotificationModel) => {
+				console.log(USERS_SIGNALR_EVENT.RECEIVE_NOTIFICATION, response)
+			},
+		)
+
+		this.hubConnection.on(
+			USERS_SIGNALR_EVENT.NOTIFICATION_UPDATED,
+			(response: UpdateNotificationResponse) => {
+				console.log(USERS_SIGNALR_EVENT.NOTIFICATION_UPDATED, response)
 			},
 		)
 
@@ -55,6 +88,30 @@ export class UsersSignalrService {
 
 	searchForAppUserByUserName(userName: string) {
 		this.invokeHubConnection(USERS_SIGNALR_METHOD.SEARCH_FOR_APP_USER_BY_USER_NAME, userName)
+	}
+
+	sendFriendRequest(appUserId: string) {
+		this.invokeHubConnection(USERS_SIGNALR_METHOD.SEND_FRIEND_REQUEST, appUserId)
+	}
+
+	acceptFriendRequest(appUserId: string) {
+		this.invokeHubConnection(USERS_SIGNALR_METHOD.ACCEPT_FRIEND_REQUEST, appUserId)
+	}
+
+	rejectFriendRequest(appUserId: string) {
+		this.invokeHubConnection(USERS_SIGNALR_METHOD.REJECT_FRIEND_REQUEST, appUserId)
+	}
+
+	getNotifications() {
+		this.invokeHubConnection(USERS_SIGNALR_METHOD.GET_NOTIFICATIONS)
+	}
+
+	readNotification(notificationId: string) {
+		this.invokeHubConnection(USERS_SIGNALR_METHOD.READ_NOTIFICATION, notificationId)
+	}
+
+	deleteNotification(notificationId: string) {
+		this.invokeHubConnection(USERS_SIGNALR_METHOD.DELETE_NOTIFICATION, notificationId)
 	}
 
 	private invokeHubConnection(invoke: string, params?: unknown) {

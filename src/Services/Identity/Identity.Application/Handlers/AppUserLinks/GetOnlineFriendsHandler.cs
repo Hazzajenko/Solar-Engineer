@@ -1,7 +1,7 @@
 ﻿using Identity.Application.Data.UnitOfWork;
 using Identity.Contracts.Responses.Friends;
 using Identity.Domain;
-using Identity.SignalR.Handlers.Friends;
+using Identity.SignalR.Commands.Friends;
 using Identity.SignalR.Hubs;
 using Identity.SignalR.Services;
 using Mediator;

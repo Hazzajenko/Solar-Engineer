@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using Infrastructure.Authentication;
 using Infrastructure.Extensions;
@@ -19,14 +20,7 @@ public static class SignalRExtensions
         IWebHostEnvironment env
     )
     {
-        /*var redisConnectionString = env.IsDevelopment()
-            ? "localhost"
-            : RedisExtensions.GetRedisConnectionString();*/
-        // var redisConnectionString = "localhost";
-        // : "redis";
-        var redisConnectionString = env.IsDevelopment()
-            ? "localhost"
-            : "redis";
+        var redisConnectionString = env.IsDevelopment() ? "localhost" : "redis";
         services
             .AddSignalR(options =>
             {
@@ -39,43 +33,49 @@ public static class SignalRExtensions
             // .AddMessagePackProtocol()
             .AddStackExchangeRedis(
                 redisConnectionString
-                /*options =>
+            /*options =>
+            {
+                options.Configuration.ChannelPrefix = "SolarEngineerApp";
+                options.ConnectionFactory = async writer =>
                 {
-                    options.Configuration.ChannelPrefix = "SolarEngineerApp";
-                    options.ConnectionFactory = async writer =>
+                    var config = new ConfigurationOptions
                     {
-                        var config = new ConfigurationOptions
-                        {
-                            AbortOnConnectFail = false
-                        };
-                        config.EndPoints.Add(IPAddress.Loopback, 0);
-                        // config.
-                        config.SetDefaultPorts();
-                        var connection = await ConnectionMultiplexer.ConnectAsync(config, writer);
-                        // var connection = await RedisExtensions.GetConnectionMultiplexerAsync(writer);
-                        connection.ConnectionFailed += (_, e) => { Console.WriteLine("Connection to Redis failed."); };
-
-                        if (!connection.IsConnected) Console.WriteLine("Did not connect to Redis.");
-
-                        return connection;
+                        AbortOnConnectFail = false
                     };
-                }*/
+                    config.EndPoints.Add(IPAddress.Loopback, 0);
+                    // config.
+                    config.SetDefaultPorts();
+                    var connection = await ConnectionMultiplexer.ConnectAsync(config, writer);
+                    // var connection = await RedisExtensions.GetConnectionMultiplexerAsync(writer);
+                    connection.ConnectionFailed += (_, e) => { Console.WriteLine("Connection to Redis failed."); };
+
+                    if (!connection.IsConnected) Console.WriteLine("Did not connect to Redis.");
+
+                    return connection;
+                };
+            }*/
             );
         return services;
     }
 
-    public static T ThrowNewHubExceptionIfNull<T>([NotNull] this T? hubItem, string message)
+    public static T ThrowNewHubExceptionIfNull<T>(
+        [NotNull] this T? hubItem,
+        string errorMessage,
+        string exceptionMessage
+    )
         where T : notnull
     {
         if (hubItem is not null)
             return hubItem;
-        Log.Logger.Error("{Message}", message);
-        throw new HubException(message);
+        Log.Logger.Error("{Message}", errorMessage);
+        throw new HubException(exceptionMessage);
     }
 
     public static Guid GetGuidUserId(this HubCallerContext context)
     {
-        var user = ThrowHubExceptionIfNull(context.User, "User is not authenticated");
+        var user = context.User;
+        user.ThrowHubExceptionIfNull("User is not authenticated");
+        // var user = ThrowHubExceptionIfNull(context.User, "User is not authenticated");
         return user.TryGetGuidUserId(new HubException("User is not authenticated"));
     }
 
@@ -99,11 +99,21 @@ public static class SignalRExtensions
         return AuthUser.Create(userId, userName, context.ConnectionId);
     }
 
-    public static T ThrowHubExceptionIfNull<T>([NotNull] T? projectItem, string message)
+    public static T ThrowHubExceptionIfNull<T>([NotNull] this T? item, string? message = null)
     {
-        if (projectItem is not null)
-            return projectItem;
-        Log.Logger.Error("{Message}", message);
+        if (item is not null)
+            return item;
+        StackTrace stackTrace = new StackTrace();
+        var previousFrame = stackTrace.GetFrame(1);
+        var callingClassName = previousFrame?.GetMethod()?.DeclaringType?.Name;
+        var callingMethodName = previousFrame?.GetMethod()?.Name;
+        Log.Logger.Error(
+            "{CallingClassName}.{CallingMethodName}: {Item} is null : {Message}",
+            callingClassName,
+            callingMethodName,
+            nameof(T),
+            message
+        );
         throw new HubException(message);
     }
 

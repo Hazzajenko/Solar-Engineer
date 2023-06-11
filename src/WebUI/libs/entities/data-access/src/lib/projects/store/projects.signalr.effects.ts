@@ -3,7 +3,7 @@ import { inject } from '@angular/core'
 import { map, tap } from 'rxjs'
 import { ProjectsSignalrService } from '../services'
 import { ProjectsActions } from './projects.actions'
-import { injectEntityStore, PanelsSignalrService } from '@entities/data-access'
+import { injectEntityStore } from '@entities/data-access'
 import { AuthActions } from '@auth/data-access'
 import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 
@@ -20,14 +20,14 @@ export const createProjectSignalr$ = createEffect(
 export const initProjectsSignalr$ = createEffect(
 	(
 		actions$ = inject(Actions),
-		projectsSignalr = inject(ProjectsSignalrService),
-		panelsSignalr = inject(PanelsSignalrService),
+		projectsSignalr = inject(ProjectsSignalrService), // panelsSignalr = inject(PanelsSignalrService),
 	) => {
 		return actions$.pipe(
 			ofType(AuthActions.signInSuccess),
-			tap(({ token }) => {
-				const hubConnection = projectsSignalr.init(token)
-				panelsSignalr.init(hubConnection)
+			tap(() => {
+				projectsSignalr.init()
+				// const hubConnection = projectsSignalr.init(token)
+				// panelsSignalr.init(hubConnection)
 			}),
 		)
 	},

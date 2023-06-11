@@ -7,15 +7,34 @@ namespace Infrastructure.Extensions;
 
 public static class DataExtensions
 {
-    public static string GetConnectionString(IConfiguration config, IWebHostEnvironment env)
-    {
-        if (env.IsProduction()) return BuildPostgresConnectionString();
+    private static string PostgresConnectionString { get; set; } = string.Empty;
 
-        return config.GetConnectionString("PostgresConnection") ??
-               throw new ArgumentNullException(nameof(GetConnectionString));
+    public static string GetPostgresConnectionString(IConfiguration config, IWebHostEnvironment env)
+    {
+        if (PostgresConnectionString != string.Empty)
+            return PostgresConnectionString;
+        var connectionString = env.IsDevelopment()
+            ? config.GetConnectionString("PostgresConnection")!
+            : BuildPostgresConnectionString();
+        ArgumentNullException.ThrowIfNull(connectionString);
+        PostgresConnectionString = connectionString;
+        return connectionString;
     }
 
-    public static string BuildPostgresConnectionString()
+    public static string GetRabbitMqConnectionString(IConfiguration config, IWebHostEnvironment env)
+    {
+        var rabbitMqConnectionString = env.IsDevelopment() ? "localhost" : "rabbitmq";
+        ArgumentNullException.ThrowIfNull(rabbitMqConnectionString);
+        return rabbitMqConnectionString;
+    }
+
+    public static string GetRedisConnectionString(IConfiguration config, IWebHostEnvironment env)
+    {
+        var redisConnectionString = env.IsDevelopment() ? "localhost" : "redis";
+        return redisConnectionString;
+    }
+
+    private static string BuildPostgresConnectionString()
     {
         var builder = new NpgsqlConnectionStringBuilder
         {
@@ -33,6 +52,7 @@ public static class DataExtensions
 
     public static string GetEnvironmentVariable(string name)
     {
-        return Environment.GetEnvironmentVariable(name) ?? throw new ArgumentNullException(nameof(name));
+        return Environment.GetEnvironmentVariable(name)
+            ?? throw new ArgumentNullException(nameof(name));
     }
 }

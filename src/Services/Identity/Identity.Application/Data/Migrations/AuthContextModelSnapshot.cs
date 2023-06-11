@@ -22,7 +22,7 @@ namespace Identity.API.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Identity.Domain.Auth.AppRole", b =>
+            modelBuilder.Entity("Identity.Domain.AppRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,7 +50,7 @@ namespace Identity.API.Data.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Identity.Domain.Auth.AppUser", b =>
+            modelBuilder.Entity("Identity.Domain.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,22 +142,7 @@ namespace Identity.API.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Identity.Domain.Auth.AppUserRole", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles", (string)null);
-                });
-
-            modelBuilder.Entity("Identity.Domain.Users.AppUserLink", b =>
+            modelBuilder.Entity("Identity.Domain.AppUserLink", b =>
                 {
                     b.Property<Guid>("AppUserRequestedId")
                         .HasColumnType("uuid");
@@ -204,6 +189,74 @@ namespace Identity.API.Data.Migrations
                     b.HasIndex("AppUserReceivedId");
 
                     b.ToTable("AppUserLinks");
+                });
+
+            modelBuilder.Entity("Identity.Domain.AppUserRole", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Identity.Domain.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AppUserUserName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("CancelledBySender")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("DeletedByAppUser")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastModifiedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NotificationType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("SeenByAppUser")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("SenderAppUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SenderAppUserUserName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("SenderAppUserId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -294,34 +347,15 @@ namespace Identity.API.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Identity.Domain.Auth.AppUserRole", b =>
+            modelBuilder.Entity("Identity.Domain.AppUserLink", b =>
                 {
-                    b.HasOne("Identity.Domain.Auth.AppRole", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Identity.Domain.Auth.AppUser", "User")
-                        .WithMany("AppUserRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Identity.Domain.Users.AppUserLink", b =>
-                {
-                    b.HasOne("Identity.Domain.Auth.AppUser", "AppUserReceived")
+                    b.HasOne("Identity.Domain.AppUser", "AppUserReceived")
                         .WithMany("AppUserLinksReceived")
                         .HasForeignKey("AppUserReceivedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Identity.Domain.Auth.AppUser", "AppUserRequested")
+                    b.HasOne("Identity.Domain.AppUser", "AppUserRequested")
                         .WithMany("AppUserLinksRequested")
                         .HasForeignKey("AppUserRequestedId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -332,9 +366,47 @@ namespace Identity.API.Data.Migrations
                     b.Navigation("AppUserRequested");
                 });
 
+            modelBuilder.Entity("Identity.Domain.AppUserRole", b =>
+                {
+                    b.HasOne("Identity.Domain.AppRole", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Identity.Domain.AppUser", "User")
+                        .WithMany("AppUserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Identity.Domain.Notification", b =>
+                {
+                    b.HasOne("Identity.Domain.AppUser", "AppUser")
+                        .WithMany("NotificationsReceived")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Identity.Domain.AppUser", "SenderAppUser")
+                        .WithMany("NotificationsRequested")
+                        .HasForeignKey("SenderAppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("SenderAppUser");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Identity.Domain.Auth.AppRole", null)
+                    b.HasOne("Identity.Domain.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -343,7 +415,7 @@ namespace Identity.API.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Identity.Domain.Auth.AppUser", null)
+                    b.HasOne("Identity.Domain.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -352,7 +424,7 @@ namespace Identity.API.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Identity.Domain.Auth.AppUser", null)
+                    b.HasOne("Identity.Domain.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -361,25 +433,29 @@ namespace Identity.API.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Identity.Domain.Auth.AppUser", null)
+                    b.HasOne("Identity.Domain.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Identity.Domain.Auth.AppRole", b =>
+            modelBuilder.Entity("Identity.Domain.AppRole", b =>
                 {
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Identity.Domain.Auth.AppUser", b =>
+            modelBuilder.Entity("Identity.Domain.AppUser", b =>
                 {
                     b.Navigation("AppUserLinksReceived");
 
                     b.Navigation("AppUserLinksRequested");
 
                     b.Navigation("AppUserRoles");
+
+                    b.Navigation("NotificationsReceived");
+
+                    b.Navigation("NotificationsRequested");
                 });
 #pragma warning restore 612, 618
         }

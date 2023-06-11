@@ -41,68 +41,77 @@
 					required
 					type="search"
 				/>
-				<!--		<button
-							class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-							type="submit"
-						>
-							Search
-						</button>-->
 			</div>
 		</form>
-		<!--<ng-container *ngIf="friends().length > 0; else noProjects">
+		<div *ngIf="userSearchResults().length" class="pt-2">
 			<ul class="pl-2 space-y-4">
-				<li *ngFor="let friend of friends()">
+				<li *ngFor="let userResult of userSearchResults()">
 					<div
 						[ngClass]="{
 							'bg-primary-50 text-primary-700 dark:bg-primary-700 dark:text-primary-100':
-								friend.id === selectedUserId(),
-							'text-gray-900 dark:text-gray-200': friend.id !== selectedUserId()
+								userResult.id === selectedUserId(),
+							'text-gray-900 dark:text-gray-200': userResult.id !== selectedUserId()
 						}"
 						[ngStyle]="{
-							'border-left-color': friend.id === selectedUserId() ? 'purple' : 'transparent',
-							'border-left-width': friend.id === selectedUserId() ? '4px' : '0px',
-							'border-left-style': friend.id === selectedUserId() ? 'solid' : 'none',
-							'margin-left': friend.id === selectedUserId() ? '-4px' : '0px'
+							'border-left-color': userResult.id === selectedUserId() ? 'purple' : 'transparent',
+							'border-left-width': userResult.id === selectedUserId() ? '4px' : '0px',
+							'border-left-style': userResult.id === selectedUserId() ? 'solid' : 'none',
+							'margin-left': userResult.id === selectedUserId() ? '-4px' : '0px'
 						}"
 						class="flex items-center py-1 justify-between"
 					>
-						&lt;!&ndash;				<div class="min-w-0 flex">&ndash;&gt;
+						<!--						<div class="min-w-0 flex">-->
 						<div class="flex justify-start">
 							<a
-								(click)="selectUser(friend.id)"
+								(click)="selectUser(userResult.id)"
 								[ngClass]="{
-									'font-medium text-gray-900 dark:text-gray-200': friend.id === selectedUserId(),
-									'font-normal text-gray-500 dark:text-gray-400': friend.id !== selectedUserId()
+									'font-medium text-gray-900 dark:text-gray-200':
+										userResult.id === selectedUserId(),
+									'font-normal text-gray-500 dark:text-gray-400': userResult.id !== selectedUserId()
 								}"
 								class="flex items-center text-base rounded-lg transition duration-75 hover:underline dark:text-white group"
 							>
-								<span
-									[ngStyle]="{
-										'background-color': '#00000000',
-										'border-color': friend.id === selectedUserId() ? 'purple' : 'transparent'
-									}"
-									class="w-4 h-4 rounded ml-2"
-								></span>
-								<span class="ml-3 capitalize text-sm text-gray-900">{{
-									friend.displayName | truncate : 10
-								}}</span>
+								<span class="relative inline-block">
+									<img
+										[alt]="userResult.displayName + ' profile picture'"
+										[ngSrc]="userResult.photoUrl"
+										class="h-6 w-6 rounded-full"
+										height="24"
+										width="24"
+									/>
+									<!--If Is Offline-->
+									<!-- <span
+											class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-gray-300 ring-2 ring-white"></span>-->
+									<!-- If Is Online -->
+									<span
+										class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-green-400 ring-2 ring-white"
+									></span>
+								</span>
+								<div class="ml-3">
+									<span class="capitalize text-sm text-gray-900">{{
+										userResult.displayName | truncate : 10
+									}}</span>
+									<p class="text-xs font-medium text-gray-500 group-hover:text-gray-700">
+										{{ userResult.userName | truncate : 15 }}
+									</p>
+								</div>
 							</a>
 						</div>
 						<div class="flex justify-end pr-1">
 							<div class="relative flex-none">
 								<button
-									(click)="toggleUserView(friend.id)"
+									(click)="toggleUserView(userResult.id)"
 									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
 									type="button"
 								>
 									<ng-container
-										*ngIf="openedUsers().get(friend.id); then contentOpen; else contentClosed"
+										*ngIf="openedUsers().get(userResult.id); then contentOpen; else contentClosed"
 									/>
 								</button>
 							</div>
 							<div class="relative flex-none">
 								<button
-									(click)="openUserContextMenu($event, friend.id)"
+									(click)="openUserContextMenu($event, userResult.id)"
 									aria-expanded="false"
 									aria-haspopup="true"
 									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -113,40 +122,12 @@
 									<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="menus/ellipsis-vertical" />
 								</button>
 							</div>
-							<ul
-								*ngIf="openedUsers().get(friend.id)"
-								class="divide-y divide-gray-300 overflow-y-auto"
-								role="list"
-							>
-								{{
-									friend.displayName
-								}}
-							</ul>
 						</div>
-						&lt;!&ndash;				</div>&ndash;&gt;
 					</div>
-				</li>
-				<li>
-					<a
-						class="flex items-center font-medium text-gray-700 text-sm rounded-lg transition duration-75 dark:text-gray-200 group"
-					>
-						<svg
-							class="w-4 h-4 rounded border border-gray-200 dark:border-gray-400"
-							fill="currentColor"
-							viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								clip-rule="evenodd"
-								d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-								fill-rule="evenodd"
-							></path>
-						</svg>
-						<span class="ml-3 dark:text-gray-400 hover:underline">Add new project</span>
-					</a>
+					<!--					</div>-->
 				</li>
 			</ul>
-		</ng-container>-->
+		</div>
 	</ng-template>
 </div>
 

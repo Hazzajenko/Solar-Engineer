@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core'
-import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
+import { inject, Injectable } from '@angular/core'
+import { SignalrHubsService } from '@app/data-access/signalr'
 import { HubConnection } from '@microsoft/signalr'
 import {
 	CreateProjectRequest,
@@ -33,21 +33,29 @@ export class ProjectsSignalrService {
 	private _entitiesStore = injectEntityStore()
 	private _signalrEventsStore = injectSignalrEventsStore()
 	private _authStore = injectAuthStore()
+	private _signalrHubs = inject(SignalrHubsService)
 
 	user = this._authStore.select.user
-	hubConnection: ProjectsHubConnection | undefined
 
-	init(token: string): ProjectsHubConnection {
-		const request: HubConnectionRequest = {
-			token,
-			hubName,
-			hubUrl,
-		}
-		this.hubConnection = createHubConnection(request)
+	// hubConnection: ProjectsHubConnection | undefined
+	get hubConnection() {
+		return this._signalrHubs.projectsHubConnection
+	}
 
-		if (this.hubConnection.state === 'Connected') {
-			this.invokeHubConnection(invoke)
+	init() {
+		if (!this.hubConnection) {
+			throw new Error('ProjectsSignalrService: hubConnection is undefined')
 		}
+		// const request: HubConnectionRequest = {
+		// 	token,
+		// 	hubName,
+		// 	hubUrl,
+		// }
+		// this.hubConnection = createHubConnection(request)
+
+		// if (this.hubConnection.state === 'Connected') {
+		// 	this.invokeHubConnection(invoke)
+		// }
 
 		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, (projects: ProjectModel[]) => {
 			console.log(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, projects)

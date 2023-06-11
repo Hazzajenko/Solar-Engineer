@@ -4,7 +4,7 @@ import { AuthActions } from './index'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { catchError, map, of, switchMap, tap } from 'rxjs'
 import { Location } from '@angular/common'
-import { UsersSignalrService } from '../signalr'
+import { SignalrHubsService } from '@app/data-access/signalr'
 
 export const getRedirectForGoogleSignIn$ = createEffect(
 	(actions$ = inject(Actions)) => {
@@ -55,12 +55,13 @@ export const isReturningUser$ = createEffect(
 )
 
 export const signInSuccess$ = createEffect(
-	(actions$ = inject(Actions), connectionsSignalr = inject(UsersSignalrService)) => {
+	(actions$ = inject(Actions), signalrHubs = inject(SignalrHubsService)) => {
 		return actions$.pipe(
 			ofType(AuthActions.signInSuccess),
 			tap(({ token }) => {
 				localStorage.setItem('token', token)
-				connectionsSignalr.init(token)
+				signalrHubs.initHubs(token)
+				// connectionsSignalr.init(token)
 			}),
 		)
 	},

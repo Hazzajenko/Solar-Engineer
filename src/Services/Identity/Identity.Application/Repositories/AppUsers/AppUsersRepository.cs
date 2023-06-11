@@ -4,6 +4,7 @@ using Identity.Contracts.Data;
 using Identity.Domain;
 using Infrastructure.Repositories;
 using Mapster;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Application.Repositories.AppUsers;
@@ -14,6 +15,18 @@ public sealed class AppUsersRepository
 {
     public AppUsersRepository(IdentityContext context)
         : base(context) { }
+
+    /*public async Task<AppUser?> GetByIdViaHub(Guid appUserId)
+    {
+        return await Queryable
+            .Where(x => x.Id == appUserId)
+            .SingleOrDefaultAsync() ?? throw new HubException("User not found");
+    }*/
+
+    public async Task<AppUser?> GetByUserNameAsync(string userName)
+    {
+        return await Queryable.Where(x => x.UserName == userName).SingleOrDefaultAsync();
+    }
 
     public async Task<CurrentUserDto?> GetAppUserDtoByIdAsync(Guid id)
     {

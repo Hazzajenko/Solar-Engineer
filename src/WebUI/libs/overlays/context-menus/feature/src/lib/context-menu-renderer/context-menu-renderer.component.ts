@@ -26,6 +26,7 @@ import {
 } from '@shared/utils'
 import { ContextMenuProjectComponent } from '../context-menu-project'
 import { ContextMenuModePickerComponent } from '../context-menu-mode-picker/context-menu-mode-picker.component'
+import { ContextMenuUserSearchResultComponent } from '../context-menu-user-search-result/context-menu-user-search-result.component'
 
 export const contextMenuInputInjectionToken = new InjectionToken<ContextMenuInput>('')
 
@@ -106,6 +107,8 @@ export class ContextMenuRendererComponent implements OnDestroy {
 				return ContextMenuProjectComponent
 			case CONTEXT_MENU_COMPONENT.MODE_PICKER_MENU:
 				return ContextMenuModePickerComponent
+			case CONTEXT_MENU_COMPONENT.USER_SEARCH_RESULT_MENU:
+				return ContextMenuUserSearchResultComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

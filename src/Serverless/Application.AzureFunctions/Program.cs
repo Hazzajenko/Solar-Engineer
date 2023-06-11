@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Configuration;
+using Application.AzureFunctions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -44,10 +44,13 @@ string GetEnvironmentVariable(string name)
     return value;
 }
 
-public class DockerHubSettings
+namespace Application.AzureFunctions
 {
-    public string ApiBaseUrl { get; set; } = default!;
-    public string RepositoriesUrl { get; set; } = default!;
-    public string UserName { get; set; } = default!;
-    public string Password { get; set; } = default!;
+    public class DockerHubSettings
+    {
+        public string ApiBaseUrl { get; set; } = default!;
+        public string RepositoriesUrl { get; set; } = default!;
+        public string UserName { get; set; } = default!;
+        public string Password { get; set; } = default!;
+    }
 }
