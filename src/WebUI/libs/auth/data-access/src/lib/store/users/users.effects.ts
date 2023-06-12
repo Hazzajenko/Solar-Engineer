@@ -27,3 +27,39 @@ export const sendFriendRequest$ = createEffect(
 	},
 	{ functional: true, dispatch: false },
 )
+
+export const acceptFriendRequest$ = createEffect(
+	(actions$ = inject(Actions), usersSignalr = inject(UsersSignalrService)) => {
+		return actions$.pipe(
+			ofType(UsersActions.acceptFriendRequest),
+			tap(({ userId }) => {
+				usersSignalr.acceptFriendRequest(userId)
+			}),
+		)
+	},
+	{ functional: true, dispatch: false },
+)
+
+export const rejectFriendRequest$ = createEffect(
+	(actions$ = inject(Actions), usersSignalr = inject(UsersSignalrService)) => {
+		return actions$.pipe(
+			ofType(UsersActions.rejectFriendRequest),
+			tap(({ userId }) => {
+				usersSignalr.rejectFriendRequest(userId)
+			}),
+		)
+	},
+	{ functional: true, dispatch: false },
+)
+
+export const removeFriend$ = createEffect(
+	(actions$ = inject(Actions), usersSignalr = inject(UsersSignalrService)) => {
+		return actions$.pipe(
+			ofType(UsersActions.removeFriend),
+			tap(({ userId }) => {
+				usersSignalr.removeFriend(userId)
+			}),
+		)
+	},
+	{ functional: true, dispatch: false },
+)

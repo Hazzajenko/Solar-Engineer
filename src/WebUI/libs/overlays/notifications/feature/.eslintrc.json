@@ -28,6 +28,7 @@
 						"type": "element",
 						"prefix": [
 							"app",
+							"overlay",
 							"notifications"
 						],
 						"style": "kebab-case"

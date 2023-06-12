@@ -69,7 +69,7 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
         }
 
         // await _unitOfWork.AppUserLinksRepository.UpdateAsync(appUserLink);
-        
+
         await _unitOfWork.SaveChangesAsync();
 
         var response = new FriendRequestResponse(
@@ -80,6 +80,21 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
         await _hubContext.Clients
             .User(recipientUser.Id.ToString())
             .ReceiveFriendRequestEvent(response);
+
+        var originalSenderId = recipientUser.Id;
+        var notificationFromSender =
+            await _unitOfWork.NotificationsRepository.GetNotificationFromSenderToAppUserByTypeAsync(
+                originalSenderId,
+                appUser.Id,
+                NotificationType.FriendRequestReceived
+            );
+        notificationFromSender.ThrowHubExceptionIfNull();
+
+        notificationFromSender.SetAppUserResponded();
+        await _unitOfWork.NotificationsRepository.UpdateAsync(notificationFromSender);
+        await _unitOfWork.SaveChangesAsync();
+
+        // var notification = _unitOfWork.NotificationsRepository.GetByIdAsync()
 
         _logger.LogInformation(
             "Friend request rejected from AppUserRequested: {AppUserRequestedId} - {AppUserRequestedUserName}, AppUserReceived: {AppUserReceived} - {AppUserReceivedUserName}",

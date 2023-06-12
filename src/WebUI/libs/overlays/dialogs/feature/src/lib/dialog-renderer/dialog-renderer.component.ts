@@ -67,7 +67,7 @@ export class DialogRendererComponent implements OnDestroy {
 
 	ngOnDestroy() {
 		this._killEvent?.()
-		this._uiStore.dispatch.closeDialog()
+		// this._uiStore.dispatch.closeDialog()
 	}
 
 	private switchFn(component: DialogInput['component']) {

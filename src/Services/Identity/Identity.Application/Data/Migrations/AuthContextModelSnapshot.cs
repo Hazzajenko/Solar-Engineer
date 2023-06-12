@@ -216,16 +216,14 @@ namespace Identity.API.Data.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AppUserUserName")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<bool>("AppUserResponded")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("AppUserRespondedTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("CancelledBySender")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("timestamp with time zone");
@@ -240,15 +238,17 @@ namespace Identity.API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("ReceivedByAppUser")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("SeenByAppUser")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime?>("SeenByAppUserTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("SenderAppUserId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("SenderAppUserUserName")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

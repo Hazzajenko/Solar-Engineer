@@ -3,6 +3,7 @@ using Identity.Application.Mapping;
 using Identity.Contracts.Data;
 using Identity.Domain;
 using Infrastructure.Repositories;
+using Infrastructure.SignalR;
 using Mapster;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +17,11 @@ public sealed class AppUsersRepository
     public AppUsersRepository(IdentityContext context)
         : base(context) { }
 
-    /*public async Task<AppUser?> GetByIdViaHub(Guid appUserId)
+    public async Task<AppUser> GetCurrentUserAsync(HubCallerContext context)
     {
-        return await Queryable
-            .Where(x => x.Id == appUserId)
-            .SingleOrDefaultAsync() ?? throw new HubException("User not found");
-    }*/
+        return await Queryable.Where(x => x.Id == context.ToAuthUser().Id).SingleOrDefaultAsync()
+            ?? throw new HubException("User is not authenticated.");
+    }
 
     public async Task<AppUser?> GetByUserNameAsync(string userName)
     {

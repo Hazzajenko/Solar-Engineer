@@ -27,3 +27,14 @@ export const selectNotificationById = (props: { id: string }) =>
 		selectNotificationsEntities,
 		(notifications: Dictionary<NotificationModel>) => notifications[props.id],
 	)
+
+export const selectAmountOfNotifications = createSelector(
+	selectAllNotifications,
+	(notifications: NotificationModel[]) => notifications.length,
+)
+
+export const selectAmountOfUnreadNotifications = createSelector(
+	selectAllNotifications,
+	(notifications: NotificationModel[]) =>
+		notifications.filter((notification) => !notification.seenByAppUser).length,
+)

@@ -17,7 +17,10 @@
           "error",
           {
             "type": "element",
-            "prefix": "app",
+            "prefix": [
+							"app",
+							"svg"
+						],
             "style": "kebab-case"
           }
         ]

@@ -1,5 +1,9 @@
 import { Store } from '@ngrx/store'
-import { selectAllNotifications, selectNotificationsEntities } from './notifications.selectors'
+import {
+	selectAllNotifications,
+	selectAmountOfUnreadNotifications,
+	selectNotificationsEntities,
+} from './notifications.selectors'
 import { createRootServiceInjector } from '@shared/utils'
 import { NotificationsActions } from './notifications.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
@@ -22,6 +26,7 @@ function notificationsStoreFactory(store: Store) {
 	const select = {
 		allNotifications,
 		getById: (id: NotificationModel['id']) => entities()[id],
+		amountOfUnreadNotifications: store.selectSignal(selectAmountOfUnreadNotifications),
 	}
 
 	const dispatch = {

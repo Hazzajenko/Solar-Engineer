@@ -71,14 +71,9 @@ public class AcceptFriendRequestHandler : ICommandHandler<AcceptFriendRequestCom
             appUserLink.AppUserReceivedStatusEvent = AppUserLink.FriendRequestSent.Accepted;
         }
 
-        var notification = new Notification(
-            recipientUser,
-            appUser,
-            NotificationType.FriendRequestReceived,
-            "<%= name %> accepted your friend request."
-        );
+        appUserLink.BecomeFriends();
 
-        await _unitOfWork.NotificationsRepository.AddAsync(notification);
+        await _unitOfWork.AppUserLinksRepository.UpdateAsync(appUserLink);
         await _unitOfWork.SaveChangesAsync();
 
         var response = new FriendRequestResponse(
@@ -90,9 +85,36 @@ public class AcceptFriendRequestHandler : ICommandHandler<AcceptFriendRequestCom
             .User(recipientUser.Id.ToString())
             .ReceiveFriendRequestEvent(response);
 
+        var notification = new Notification(
+            recipientUser,
+            appUser,
+            NotificationType.FriendRequestAccepted
+        );
+
+        await _unitOfWork.NotificationsRepository.AddAsync(notification);
+        await _unitOfWork.SaveChangesAsync();
+
+        var originalSenderId = recipientUser.Id;
+        var notificationFromSender =
+            await _unitOfWork.NotificationsRepository.GetNotificationFromSenderToAppUserByTypeAsync(
+                originalSenderId,
+                appUser.Id,
+                NotificationType.FriendRequestReceived
+            );
+        notificationFromSender.ThrowHubExceptionIfNull();
+
+        notificationFromSender.SetAppUserResponded();
+        await _unitOfWork.NotificationsRepository.UpdateAsync(notificationFromSender);
+        await _unitOfWork.SaveChangesAsync();
+
+        var notificationDto = await _unitOfWork.NotificationsRepository.GetNotificationDtoByIdAsync(
+            notification.Id
+        );
+        notificationDto.ThrowHubExceptionIfNull();
+
         await _hubContext.Clients
             .User(recipientUser.Id.ToString())
-            .ReceiveNotification(notification.Adapt<NotificationDto>());
+            .ReceiveNotification(notificationDto);
 
         _logger.LogInformation(
             "Friend request accepted from AppUserRequested: {AppUserRequestedId} - {AppUserRequestedUserName}, AppUserReceived: {AppUserReceived} - {AppUserReceivedUserName}",

@@ -19,12 +19,16 @@ export const UsersActions = createActionGroup({
 		'Reject Friend Request': props<{
 			userId: string
 		}>(),
+		'Remove Friend': props<{
+			userId: string
+		}>(),
 		'Search For App User By User Name': props<{
 			query: string
 		}>(),
 		'Receive Users From Search': props<{
 			users: MinimalWebUser[]
 		}>(),
+		'Clear User Search Results': emptyProps(),
 		'Load Users': props<{
 			users: WebUserModel[]
 		}>(),

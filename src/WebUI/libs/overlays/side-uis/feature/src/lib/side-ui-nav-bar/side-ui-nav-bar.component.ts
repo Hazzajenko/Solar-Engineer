@@ -1,4 +1,4 @@
-import { Component, inject, InjectionToken, Injector, signal } from '@angular/core'
+import { Component, computed, inject, InjectionToken, Injector, signal } from '@angular/core'
 import {
 	NgClass,
 	NgComponentOutlet,
@@ -9,22 +9,26 @@ import {
 	NgSwitchDefault,
 } from '@angular/common'
 import { goRightWithConfig } from '@shared/animations'
-import { toSignal } from '@angular/core/rxjs-interop'
 import { LogoComponent } from '@shared/ui/logo'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { MouseOverRenderDirective } from '@canvas/rendering/data-access'
 import { SideUiDataViewComponent } from '../side-ui-data-view/side-ui-data-view.component'
-import { UiStoreService } from '@overlays/ui-store/data-access'
+import { injectUiStore } from '@overlays/ui-store/data-access'
 import { SideUiAuthViewComponent } from '../side-ui-auth-view/side-ui-auth-view.component'
 import { SideUiProjectsViewComponent } from '../side-ui-projects-view'
 import { SideUiUsersViewComponent } from '../side-ui-users-view/side-ui-users-view.component'
+import { SideUiNotificationsViewComponent } from '../side-ui-notifications-view/side-ui-notifications-view.component'
+import { injectNotificationsStore } from '@overlays/notifications/data-access'
+import { injectAuthStore } from '@auth/data-access'
+import { LetDirective } from '@ngrx/component'
 
-export type SideUiNavBarView = 'auth' | 'projects' | 'data' | 'users' | 'none'
+export type SideUiNavBarView = 'auth' | 'projects' | 'data' | 'users' | 'notifications' | 'none'
 export type SideUiNavBarViewComponent =
 	| typeof SideUiAuthViewComponent
 	| typeof SideUiProjectsViewComponent
 	| typeof SideUiDataViewComponent
 	| typeof SideUiUsersViewComponent
+	| typeof SideUiNotificationsViewComponent
 	| null
 
 export const sideUiInjectionToken = new InjectionToken<unknown>('')
@@ -47,18 +51,24 @@ export const sideUiInjectionToken = new InjectionToken<unknown>('')
 		NgStyle,
 		NgClass,
 		NgComponentOutlet,
+		LetDirective,
 	],
 	hostDirectives: [MouseOverRenderDirective],
 })
 export class SideUiNavBarComponent {
-	private _uiStore = inject(UiStoreService)
-	private _sideUiNavBarOpen = toSignal(this._uiStore.sideUiNav$, {
-		initialValue: this._uiStore.sideUiNav,
-	})
+	private _authStore = injectAuthStore()
+	private _uiStore = injectUiStore()
 	private _injector = inject(Injector)
 
-	private _dataView = signal(false)
-	authView = signal(true)
+	private _notificationsStore = injectNotificationsStore()
+
+	amountOfUnreadNotifications = computed(() => {
+		if (!this._authStore.select.user()) return undefined
+		return this._notificationsStore.select.amountOfUnreadNotifications()
+	})
+	// amountOfUnreadNotifications = this._notificationsStore.select.amountOfUnreadNotifications
+
+	sideUiNavBarOpen = this._uiStore.select.sideUiNavOpen
 	currentView = signal<SideUiNavBarView>('auth')
 	currentViewComponent = signal<SideUiNavBarViewComponent>(SideUiAuthViewComponent)
 
@@ -71,16 +81,6 @@ export class SideUiNavBarComponent {
 		],
 		parent: this._injector,
 	})
-
-	// sideUiInjector: Injector | undefined
-
-	get dataView() {
-		return this._dataView()
-	}
-
-	get sideUiNavBarOpen() {
-		return this._sideUiNavBarOpen()
-	}
 
 	changeView(view: SideUiNavBarView) {
 		if (this.currentView() === view) {
@@ -103,6 +103,9 @@ export class SideUiNavBarComponent {
 			case 'users':
 				this.currentViewComponent.set(SideUiUsersViewComponent)
 				break
+			case 'notifications':
+				this.currentViewComponent.set(SideUiNotificationsViewComponent)
+				break
 			default:
 				this.currentViewComponent.set(null)
 		}
@@ -120,13 +123,5 @@ export class SideUiNavBarComponent {
 
 	toggle() {
 		this._uiStore.dispatch.toggleSideUiNav()
-	}
-
-	toggleDataView() {
-		this._dataView.mutate((dataView) => !dataView)
-	}
-
-	toggleAuthView() {
-		this.authView.mutate((authView) => !authView)
 	}
 }

@@ -14,6 +14,44 @@ public sealed class NotificationsRepository
     public NotificationsRepository(IdentityContext context)
         : base(context) { }
 
+    public new async Task<Notification?> GetByIdAsync(Guid id)
+    {
+        return await Queryable
+            .Where(x => x.Id == id)
+            .Include(x => x.AppUser)
+            .Include(x => x.SenderAppUser)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<Notification?> GetNotificationFromSenderToAppUserByTypeAsync(
+        Guid senderAppUserId,
+        Guid appUserId,
+        NotificationType notificationType
+    )
+    {
+        return await Queryable
+            .Where(
+                x =>
+                    x.SenderAppUserId == senderAppUserId
+                    && x.AppUserId == appUserId
+                    && !x.CancelledBySender
+                    && !x.DeletedByAppUser
+                    && !x.AppUserResponded
+                    && x.NotificationType == notificationType
+            )
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<NotificationDto?> GetNotificationDtoByIdAsync(Guid id)
+    {
+        return await Queryable
+            .Where(x => x.Id == id)
+            .Include(x => x.AppUser)
+            .Include(x => x.SenderAppUser)
+            .ProjectToType<NotificationDto>()
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<IEnumerable<NotificationDto>> GetAppUsersNotificationsAsync(AppUser appUser)
     {
         return await Queryable

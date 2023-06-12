@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core'
-import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle } from '@angular/common'
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core'
+import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle, NgTemplateOutlet } from '@angular/common'
 import { ShowSvgNoStylesComponent } from '@shared/ui'
 import { injectAuthStore, injectUsersStore } from '@auth/data-access'
 import { CONTEXT_MENU_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
-import { AppUserModel } from '@shared/data-access/models'
 import { TruncatePipe } from '@shared/pipes'
+import { isWebUser, minimalToWebUser, WebUserModel } from '@auth/shared'
+import { notification } from '@tauri-apps/api'
 // import { injectUsersStore } from '@users/data-access'
 
 // import { injectUsersStore } from '@users/data-access'
@@ -20,6 +21,7 @@ import { TruncatePipe } from '@shared/pipes'
 		NgStyle,
 		TruncatePipe,
 		NgOptimizedImage,
+		NgTemplateOutlet,
 	],
 	templateUrl: './side-ui-users-view.component.html',
 	styles: [],
@@ -36,11 +38,18 @@ export class SideUiUsersViewComponent {
 
 	user = this._authStore.select.user
 
-	userSearchResults = this._usersStore.select.userSearchResults
+	userSearchResults = computed(() => {
+		const results = this._usersStore.select.userSearchResults()
+		const filteredNotAuthUser = results.filter((r) => r.id !== this.user()?.id)
+		return filteredNotAuthUser.map(minimalToWebUser)
+	})
+	// userSearchResults = this._usersStore.select.userSearchResults
 
-	friends = signal<AppUserModel[]>([])
+	friends = this._usersStore.select.friends
 	openedUsers = signal<Map<string, boolean>>(new Map())
 	selectedUserId = signal<string | undefined>(undefined)
+	protected readonly isWebUser = isWebUser
+	protected readonly notification = notification
 
 	selectUser(userId: string) {
 		if (this.selectedUserId() === userId) return
@@ -52,10 +61,21 @@ export class SideUiUsersViewComponent {
 		this.openedUsers.set(new Map(this.openedUsers()).set(id, !this.openedUsers().get(id)))
 	}
 
-	openUserContextMenu(event: MouseEvent, userId: string) {
+	openUserContextMenu(event: MouseEvent, user: WebUserModel) {
+		event.preventDefault()
+		event.stopPropagation()
+
+		if (user.isFriend) {
+			this._uiStore.dispatch.openContextMenu({
+				component: CONTEXT_MENU_COMPONENT.FRIEND_MENU,
+				data: { userId: user.id },
+				location: { x: event.clientX, y: event.clientY },
+			})
+			return
+		}
 		this._uiStore.dispatch.openContextMenu({
 			component: CONTEXT_MENU_COMPONENT.USER_SEARCH_RESULT_MENU,
-			data: { userId },
+			data: { userId: user.id },
 			location: { x: event.clientX, y: event.clientY },
 		})
 	}
@@ -81,6 +101,11 @@ export class SideUiUsersViewComponent {
 
 	private querySearchBox(value: string) {
 		if (Date.now() - this.lastKeyUpTime < 500) {
+			return
+		}
+
+		if (value.length < 1) {
+			this._usersStore.dispatch.clearUserSearchResults()
 			return
 		}
 		// this._usersSignalr.searchForAppUserByUserName(value)

@@ -26,7 +26,7 @@ import {
 
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
-import { ActionNotificationsDisplayComponent } from '@overlays/notifications/feature'
+import { OverlayNotificationModalComponent } from '@overlays/notifications/feature'
 import { SideUiAuthViewComponent, SideUiNavBarComponent } from '@overlays/side-uis/feature'
 import {
 	MobileBottomToolbarComponent,
@@ -44,6 +44,7 @@ import { selectSelectedStringId } from '@canvas/selected/data-access'
 import { DialogRendererComponent } from '@overlays/dialogs/feature'
 import { injectProjectsStore } from '@entities/data-access'
 import { injectAuthStore } from '@auth/data-access'
+import { LoadingProjectSpinnerComponent } from '../loading-project-spinner/loading-project-spinner.component'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,7 +60,7 @@ import { injectAuthStore } from '@auth/data-access'
 		DynamicContextMenuDirective,
 		ActionsNotificationComponent,
 		UndoActionNotificationComponent,
-		ActionNotificationsDisplayComponent,
+		OverlayNotificationModalComponent,
 		SideUiNavBarComponent,
 		OverlayToolBarComponent,
 		ContextMenuRendererComponent,
@@ -67,6 +68,7 @@ import { injectAuthStore } from '@auth/data-access'
 		MobileBottomToolbarComponent,
 		DialogRendererComponent,
 		SideUiAuthViewComponent,
+		LoadingProjectSpinnerComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
@@ -112,7 +114,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		return !this.isProjectReadyToRender() && !!this.user() && this.userProjects().length > 0
 	})
 
-	version = signal('1.0.1')
+	version = signal('1.0.4')
 	showFpsState = toSignal(this._graphicsStore.state$.pipe(map((state) => state.showFps)), {
 		initialValue: this._graphicsStore.state.showFps,
 	})

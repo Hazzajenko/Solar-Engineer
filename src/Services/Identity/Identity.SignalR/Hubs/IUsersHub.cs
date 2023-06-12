@@ -11,10 +11,11 @@ public interface IUsersHub
     Task UserIsOffline(ConnectionDto connection);
     Task GetOnlineUsers(IEnumerable<ConnectionDto> connections);
     Task GetOnlineFriends(GetOnlineFriendsResponse response);
+    Task GetUserFriends(GetUserFriendsResponse response);
 
     Task ReceiveSearchForAppUserByUserNameResponse(SearchForAppUserByUserNameResponse response);
     Task ReceiveFriendRequestEvent(FriendRequestResponse response);
-
+    Task ReceiveAppUserNotifications(ReceiveAppUserNotificationsResponse response);
     Task NotificationUpdated(UpdateNotificationResponse response);
     Task ReceiveNotification(NotificationDto response);
 }

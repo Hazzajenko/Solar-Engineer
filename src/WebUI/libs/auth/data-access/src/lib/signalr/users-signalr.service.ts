@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import { ConnectionModel, FriendRequestResponse, GetOnlineFriendsResponse, NotificationModel, SearchForUserResponse, UpdateNotificationResponse, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD } from '@auth/shared'
+import { ConnectionModel, FriendRequestResponse, GetOnlineFriendsResponse, GetUserFriendsResponse, NotificationModel, ReceiveAppUserNotificationsResponse, SearchForUserResponse, UpdateNotificationResponse, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD } from '@auth/shared'
 import { injectUsersStore } from '../store'
 import { HubConnection } from '@microsoft/signalr'
+import { injectNotificationsStore } from '@overlays/notifications/data-access'
+import { friendToWebUser } from '@auth/utils'
 // import { NotificationModel } from '@users/shared'
 
 const hubName = 'Users'
@@ -13,6 +15,7 @@ const hubUrl = '/hubs/users'
 })
 export class UsersSignalrService {
 	private _usersStore = injectUsersStore()
+	private _notificationsStore = injectNotificationsStore()
 	// private _signalrHubs = inject(SignalrHubsService)
 
 	hubConnection: HubConnection | undefined
@@ -52,6 +55,15 @@ export class UsersSignalrService {
 		)
 
 		this.hubConnection.on(
+			USERS_SIGNALR_EVENT.GET_USER_FRIENDS,
+			(response: GetUserFriendsResponse) => {
+				console.log(USERS_SIGNALR_EVENT.GET_USER_FRIENDS, response)
+				const webUsers = response.friends.map(friendToWebUser)
+				this._usersStore.dispatch.addManyUsers(webUsers)
+			},
+		)
+
+		this.hubConnection.on(
 			USERS_SIGNALR_EVENT.RECEIVE_SEARCH_FOR_APP_USER_BY_USER_NAME_RESPONSE,
 			(response: SearchForUserResponse) => {
 				console.log(USERS_SIGNALR_EVENT.RECEIVE_SEARCH_FOR_APP_USER_BY_USER_NAME_RESPONSE, response)
@@ -67,9 +79,19 @@ export class UsersSignalrService {
 		)
 
 		this.hubConnection.on(
+			USERS_SIGNALR_EVENT.RECEIVE_APP_USER_NOTIFICATIONS,
+			(response: ReceiveAppUserNotificationsResponse) => {
+				console.log(USERS_SIGNALR_EVENT.RECEIVE_APP_USER_NOTIFICATIONS, response)
+				this._notificationsStore.dispatch.addManyNotifications(response.notifications)
+			},
+		)
+
+		this.hubConnection.on(
 			USERS_SIGNALR_EVENT.RECEIVE_NOTIFICATION,
 			(response: NotificationModel) => {
 				console.log(USERS_SIGNALR_EVENT.RECEIVE_NOTIFICATION, response)
+				this._notificationsStore.dispatch.addNotification(response)
+				this.receiveNotification(response.id)
 			},
 		)
 
@@ -99,12 +121,22 @@ export class UsersSignalrService {
 		this.invokeHubConnection(USERS_SIGNALR_METHOD.REJECT_FRIEND_REQUEST, appUserId)
 	}
 
+	removeFriend(appUserId: string) {
+		// TODO: implement
+		console.log('removeFriend', appUserId)
+		// this.invokeHubConnection(USERS_SIGNALR_METHOD.REMOVE_FRIEND, appUserId)
+	}
+
 	getNotifications() {
 		this.invokeHubConnection(USERS_SIGNALR_METHOD.GET_NOTIFICATIONS)
 	}
 
 	readNotification(notificationId: string) {
 		this.invokeHubConnection(USERS_SIGNALR_METHOD.READ_NOTIFICATION, notificationId)
+	}
+
+	receiveNotification(notificationId: string) {
+		this.invokeHubConnection(USERS_SIGNALR_METHOD.RECEIVE_NOTIFICATION, notificationId)
 	}
 
 	deleteNotification(notificationId: string) {

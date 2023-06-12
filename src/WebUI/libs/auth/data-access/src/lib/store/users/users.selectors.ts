@@ -32,3 +32,7 @@ export const selectUserSearchResultById = (props: { id: string }) =>
 	createSelector(selectUserSearchResults, (users: MinimalWebUser[]) =>
 		users.find((u) => u.id === props.id),
 	)
+
+export const selectFriends = createSelector(selectAllUsers, (users: WebUserModel[]) =>
+	users.filter((user) => user.isFriend),
+)

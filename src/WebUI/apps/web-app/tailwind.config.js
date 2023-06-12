@@ -1,6 +1,6 @@
 const { createGlobPatternsForDependencies } = require('@nx/angular/tailwind')
 const { join } = require('path')
-const sharedTailwindConfig = require('../../libs/tailwind-preset/tailwind.config')
+const sharedTailwindConfig = require('../../conf/tailwind.config')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -17,4 +17,3 @@ module.exports = {
 		...createGlobPatternsForDependencies(__dirname),
 	],
 }
-// libs/overlays/context-menus/feature/src/lib/context-menu-mode-picker/context-menu-mode-picker.component.html

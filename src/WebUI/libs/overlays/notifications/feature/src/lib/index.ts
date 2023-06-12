@@ -1,1 +1,1 @@
-export * from './action-notifications-display/index'
+export * from './overlay-notification-modal/index'

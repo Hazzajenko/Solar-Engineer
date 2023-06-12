@@ -36,6 +36,11 @@ const reducer = createReducer(
 		...state,
 		isSearching: true,
 	})),
+	on(UsersActions.clearUserSearchResults, (state) => ({
+		...state,
+		userSearchResults: [],
+		isSearching: false,
+	})),
 	on(UsersActions.receiveUsersFromSearch, (state, { users }) => ({
 		...state,
 		userSearchResults: users,

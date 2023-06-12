@@ -1,0 +1,217 @@
+<div
+	*ngrxLet="vm() as vm"
+	class="overflow-y-auto py-4 px-3 h-full w-64 bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+>
+	<div
+		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
+	>
+		<h3>Notifications</h3>
+	</div>
+
+	<ng-container *ngIf="vm.user; then loggedIn; else notLoggedIn" />
+	<ng-template #loggedIn>
+		<ng-container *ngIf="vm.notifications.length > 0; else noNotifications">
+			<ul class="space-y-1" role="list">
+				<ng-container *ngFor="let notification of vm.notifications">
+					<div>
+						<ng-container
+							*ngTemplateOutlet="
+								notificationPreview;
+								context: {
+									notificationId: notification.id,
+									isOpen: vm.openedNotifications.get(notification.id)
+								}
+							"
+						/>
+						<ng-container *ngIf="vm.openedNotifications.get(notification.id)">
+							<ng-container
+								*ngTemplateOutlet="
+									openedNotification;
+									context: {
+										notificationId: notification.id
+									}
+								"
+							/>
+						</ng-container>
+					</div>
+				</ng-container>
+			</ul>
+		</ng-container>
+	</ng-template>
+</div>
+
+<ng-template #notLoggedIn>
+	<div class="text-center">
+		<h3 class="font-medium tracking-tight text-gray-900 dark:text-white">
+			<a href="#">Demo Account</a>
+		</h3>
+		<div class="mt-6">
+			<button
+				class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+				type="submit"
+			>
+				Sign in
+			</button>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #noNotifications>
+	<div class="text-center">
+		<h3 class="mt-2 text-sm font-semibold text-gray-900">No notifications</h3>
+	</div>
+</ng-template>
+
+<!--'rounded-t-lg': isFirstInList(notification)-->
+<ng-template #notificationPreview let-isOpen="isOpen" let-notificationId="notificationId">
+	<div
+		*ngIf="notificationById(notificationId) as notification"
+		[ngClass]="{
+			'bg-blue-50 dark:bg-gray-800': isOpen,
+			'bg-white dark:bg-gray-900 rounded-b-lg': !isOpen,
+		}"
+		class="rounded-t-lg flex border border-gray-200 dark:border-gray-700 items-center justify-between group hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer px-4 py-1 transition duration-75"
+	>
+		<div class="flex justify-start">
+			<input
+				(click)="toggleNotificationMultiSelect(notification)"
+				[checked]="multiSelectedNotificationIds().includes(notification.id)"
+				aria-describedby="comments-description"
+				centerThisElement
+				class="h-4 w-4 mr-2 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+				id="comments"
+				name="comments"
+				type="checkbox"
+			/>
+		</div>
+		<div (click)="toggleNotificationView(notification)" class="flex items-center justify-evenly">
+			<img
+				[alt]="notification.senderAppUserUserName + ' profile picture'"
+				[ngSrc]="notification.senderAppUserPhotoUrl"
+				centerThisElement
+				class="h-6 w-6 flex-none rounded-full bg-gray-800"
+				height="24"
+				width="24"
+			/>
+			<a
+				class="flex items-center text-base rounded-lg transition duration-75 dark:text-white group"
+			>
+				<div class="ml-3">
+					<span class="capitalize text-sm text-gray-900">{{
+						notification.senderAppUserDisplayName | truncate : 20
+					}}</span>
+					<p
+						[ngClass]="{
+							'text-gray-500 dark:text-gray-400': !isOpen,
+							'text-gray-700 dark:text-gray-300': isOpen
+						}"
+						class="text-xs font-medium group-hover:text-gray-700"
+					>
+						{{ getNotificationTypeToText(notification) | truncate : 25 }}
+					</p>
+				</div>
+			</a>
+
+			<div class="flex justify-end pr-1">
+				<div class="relative flex-none">
+					<button
+						[ngClass]="{
+							'text-gray-500 dark:text-gray-400': !isOpen,
+							'text-gray-700 dark:text-gray-300': isOpen
+						}"
+						class="flex mr-1 items-center justify-between w-full font-medium text-left group-hover:bg-gray-100 dark:group-hover:bg-gray-800"
+						type="button"
+					>
+						<ng-container *ngIf="isOpen; then contentOpen; else contentClosed" />
+					</button>
+				</div>
+				<div class="justify-end">
+					<time
+						[ngClass]="{
+							'text-gray-500 dark:text-gray-400': !isOpen,
+							'text-gray-700 dark:text-gray-300': isOpen
+						}"
+						class="flex-none text-xs"
+						datetime="2023-01-23T11:00"
+						>1h
+					</time>
+				</div>
+			</div>
+			<!--			</div>-->
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #openedNotification let-notificationId="notificationId">
+	<!--	selected ? { value: 'visible', params: { transitionParams: transitionOptions } } : { value: 'hidden', params: { transitionParams: transitionOptions } }"-->
+	<div
+		*ngIf="notificationById(notificationId) as notification"
+		@heightInOut
+		class="flex rounded-b-lg flex-col pb-1 border border-t-0 border-gray-200 dark:border-gray-700"
+	>
+		<p
+			[innerHTML]="getContentMessageHtmlBasedOnType(notification) | toSafeHtml"
+			class="pt-2 text-sm text-gray-500 text-center"
+		></p>
+		<div class="text-end p-1">
+			<ng-container
+				*ngIf="
+					notification.notificationType === NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED ||
+					notification.notificationType === NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED
+				"
+			>
+				<button
+					(click)="acceptNotification(notification)"
+					class="inline-flex items-center rounded-md bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+					type="button"
+				>
+					Accept
+				</button>
+				<button
+					(click)="declineNotification(notification)"
+					class="ml-3 inline-flex items-center rounded-md bg-white p-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+					type="button"
+				>
+					Decline
+				</button>
+			</ng-container>
+			<ng-container
+				*ngIf="
+					notification.notificationType === NOTIFICATION_TYPE.FRIEND_REQUEST_ACCEPTED ||
+					notification.notificationType === NOTIFICATION_TYPE.PROJECT_INVITE_ACCEPTED
+				"
+			>
+				<button
+					(click)="dismissNotification(notification)"
+					class="inline-flex items-center rounded-md bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+					type="button"
+				>
+					Dismiss
+				</button>
+			</ng-container>
+			<ng-container *ngIf="notification.notificationType === NOTIFICATION_TYPE.MESSAGE_RECEIVED">
+				<button
+					(click)="replyToMessage(notification)"
+					class="inline-flex items-center rounded-md bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+					type="button"
+				>
+					Reply
+				</button>
+				<button
+					(click)="dismissNotification(notification)"
+					class="inline-flex items-center rounded-md bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+					type="button"
+				>
+					Dismiss
+				</button>
+			</ng-container>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #contentClosed>
+	<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="arrows/chevron-down" />
+</ng-template>
+<ng-template #contentOpen>
+	<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="arrows/chevron-up" />
+</ng-template>

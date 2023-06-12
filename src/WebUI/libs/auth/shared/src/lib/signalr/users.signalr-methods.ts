@@ -7,6 +7,7 @@ export const USERS_SIGNALR_METHOD = {
 	GET_NOTIFICATIONS: 'GetNotifications',
 	READ_NOTIFICATION: 'ReadNotification',
 	DELETE_NOTIFICATION: 'DeleteNotification',
+	RECEIVE_NOTIFICATION: 'ReceiveNotification',
 } as const
 
 export type UsersSignalrMethods = (typeof USERS_SIGNALR_METHOD)[keyof typeof USERS_SIGNALR_METHOD]

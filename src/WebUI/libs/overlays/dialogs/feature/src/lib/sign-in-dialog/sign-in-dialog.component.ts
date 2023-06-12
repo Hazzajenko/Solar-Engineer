@@ -48,11 +48,14 @@ export class SignInDialogComponent {
 	user = this._auth.select.user
 
 	constructor() {
-		effect(() => {
-			if (this.user()) {
-				this.closeDialog()
-			}
-		})
+		effect(
+			() => {
+				if (this.user()) {
+					this.closeDialog()
+				}
+			},
+			{ allowSignalWrites: true },
+		)
 	}
 
 	signInWithGoogle() {

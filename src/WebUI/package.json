@@ -36,19 +36,19 @@
   },
   "svg-to-ts": {
     "srcFiles": [
-      "./libs/shared/svgs/src/lib/**/*.svg"
+      "./libs/shared/assets/src/lib/svg-to-ts/**/*.svg"
     ],
-    "outputDirectory": "./libs/shared/svgs/src/dist",
-    "interfaceName": "AppIcon",
-    "typeName": "appIcon",
-    "prefix": "appIcon",
+    "outputDirectory": "./libs/shared/assets/src/lib/ts-svgs",
+    "interfaceName": "AppSvgWrapper",
+    "typeName": "AppSvg",
+    "prefix": "Svg",
     "svgoConfig": {
       "plugins": [
         "cleanupAttrs"
       ]
     },
-    "fileName": "app-icon.types",
-    "additionalModelOutputPath": "./libs/shared/svgs/src/lib/dist/types",
+    "fileName": "app-svg.types",
+    "additionalModelOutputPath": "./libs/shared/assets/src/lib/ts-svgs-types",
     "compileSources": true
   },
   "private": true,
@@ -104,6 +104,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rxjs": "7.8.0",
+    "tailwindcss-animate": "^1.0.6",
     "tippy.js": "^6.3.7",
     "ts-toolbelt": "^9.6.0",
     "tslib": "^2.3.0",

@@ -7,7 +7,8 @@
 	id="canvas"
 ></canvas>
 
-<div
+<app-loading-project-spinner *ngIf="showProjectSpinner()" />
+<!--<div
 	*ngIf="showProjectSpinner()"
 	class="z-10 absolute inset-0 flex items-center justify-center w-full h-full bg-gray-100 dark:bg-gray-900 opacity-60"
 	role="status"
@@ -29,7 +30,7 @@
 		/>
 	</svg>
 	<span class="sr-only">Loading...</span>
-</div>
+</div>-->
 
 <div #appStats class="absolute z-50">
 	<div *ngIf="showFpsState()" id="fps"></div>
@@ -45,7 +46,7 @@
 <overlay-selected-string-tool-bar *ngIf="stringIsSelected()" />
 <overlay-mobile-bottom-toolbar class="md:hidden" />
 
-<app-action-notifications-display />
+<overlay-notification-modal />
 
 <div
 	class="absolute bottom-0 left-2 font-medium tracking-tight z-50 text-2xs text-gray-700 font-consolas"

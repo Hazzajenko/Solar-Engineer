@@ -9,7 +9,7 @@
 
 	<ng-container *ngIf="user() as user; then loggedIn; else notLoggedIn" />
 	<ng-template #loggedIn>
-		<form>
+		<form class="mb-2">
 			<label
 				class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
 				for="default-search"
@@ -44,91 +44,73 @@
 			</div>
 		</form>
 		<div *ngIf="userSearchResults().length" class="pt-2">
-			<ul class="pl-2 space-y-4">
-				<li *ngFor="let userResult of userSearchResults()">
-					<div
-						[ngClass]="{
-							'bg-primary-50 text-primary-700 dark:bg-primary-700 dark:text-primary-100':
-								userResult.id === selectedUserId(),
-							'text-gray-900 dark:text-gray-200': userResult.id !== selectedUserId()
-						}"
-						[ngStyle]="{
-							'border-left-color': userResult.id === selectedUserId() ? 'purple' : 'transparent',
-							'border-left-width': userResult.id === selectedUserId() ? '4px' : '0px',
-							'border-left-style': userResult.id === selectedUserId() ? 'solid' : 'none',
-							'margin-left': userResult.id === selectedUserId() ? '-4px' : '0px'
-						}"
-						class="flex items-center py-1 justify-between"
-					>
-						<!--						<div class="min-w-0 flex">-->
-						<div class="flex justify-start">
-							<a
-								(click)="selectUser(userResult.id)"
-								[ngClass]="{
-									'font-medium text-gray-900 dark:text-gray-200':
-										userResult.id === selectedUserId(),
-									'font-normal text-gray-500 dark:text-gray-400': userResult.id !== selectedUserId()
-								}"
-								class="flex items-center text-base rounded-lg transition duration-75 hover:underline dark:text-white group"
-							>
-								<span class="relative inline-block">
-									<img
-										[alt]="userResult.displayName + ' profile picture'"
-										[ngSrc]="userResult.photoUrl"
-										class="h-6 w-6 rounded-full"
-										height="24"
-										width="24"
-									/>
-									<!--If Is Offline-->
-									<!-- <span
-											class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-gray-300 ring-2 ring-white"></span>-->
-									<!-- If Is Online -->
-									<span
-										class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-green-400 ring-2 ring-white"
-									></span>
-								</span>
-								<div class="ml-3">
-									<span class="capitalize text-sm text-gray-900">{{
-										userResult.displayName | truncate : 10
-									}}</span>
-									<p class="text-xs font-medium text-gray-500 group-hover:text-gray-700">
-										{{ userResult.userName | truncate : 15 }}
-									</p>
-								</div>
-							</a>
-						</div>
-						<div class="flex justify-end pr-1">
-							<div class="relative flex-none">
-								<button
-									(click)="toggleUserView(userResult.id)"
-									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-									type="button"
-								>
-									<ng-container
-										*ngIf="openedUsers().get(userResult.id); then contentOpen; else contentClosed"
-									/>
-								</button>
-							</div>
-							<div class="relative flex-none">
-								<button
-									(click)="openUserContextMenu($event, userResult.id)"
-									aria-expanded="false"
-									aria-haspopup="true"
-									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-									id="options-menu-0-button"
-									type="button"
-								>
-									<span class="sr-only">Open options</span>
-									<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="menus/ellipsis-vertical" />
-								</button>
-							</div>
-						</div>
-					</div>
-					<!--					</div>-->
-				</li>
+			<ul>
+				<ng-container *ngFor="let userResult of userSearchResults()">
+					<ng-container
+						*ngTemplateOutlet="
+							userView;
+							context: {
+								user: userResult
+							}
+						"
+					/>
+				</ng-container>
 			</ul>
 		</div>
 	</ng-template>
+	<ng-container *ngIf="friends().length; then friendsList; else noFriends" />
+	<ng-template #friendsList>
+		<ul>
+			<ng-container *ngFor="let friend of friends()">
+				<ng-container
+					*ngTemplateOutlet="
+						userView;
+						context: {
+							user: friend
+						}
+					"
+				/>
+			</ng-container>
+		</ul>
+	</ng-template>
+	<ng-template #noFriends>
+		<div class="text-center">
+			<svg
+				aria-hidden="true"
+				class="mx-auto h-12 w-12 text-gray-400"
+				fill="none"
+				stroke="currentColor"
+				viewBox="0 0 24 24"
+			>
+				<path
+					d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					vector-effect="non-scaling-stroke"
+				/>
+			</svg>
+			<h3 class="mt-2 font-medium text-gray-900 dark:text-white">No Friends</h3>
+			<p class="mt-1 text-sm text-gray-500">
+				To add friends, search for them by username or email address.
+			</p>
+		</div>
+	</ng-template>
+	<!--	<ul class="divide-y divide-gray-100" role="list">
+			<li *ngFor="let friend of friends()" class="flex gap-x-4 px-3 py-5">
+				<img
+					[ngSrc]="friend.photoUrl"
+					alt=""
+					class="h-12 w-12 flex-none rounded-full bg-gray-50"
+					height="48"
+					width="48"
+				/>
+				<div class="min-w-0">
+					<p class="text-sm font-semibold leading-6 text-gray-900">{{ friend.displayName }}</p>
+					<p class="mt-1 truncate text-xs leading-5 text-gray-500">{{ friend.userName }}</p>
+				</div>
+			</li>
+		</ul>-->
 </div>
 
 <ng-template #notLoggedIn>
@@ -137,7 +119,7 @@
 		<h3 class="font-medium tracking-tight text-gray-900 dark:text-white">
 			<a href="#">Demo Account</a>
 		</h3>
-		<p class="mt-1 text-sm text-gray-500">To create and save projects get started by signing in.</p>
+		<!--		<p class="mt-1 text-sm text-gray-500">To create and save projects get started by signing in.</p>-->
 		<div class="mt-6">
 			<button
 				class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -149,42 +131,65 @@
 	</div>
 </ng-template>
 
-<ng-template #noProjects>
-	<div class="text-center">
-		<svg
-			aria-hidden="true"
-			class="mx-auto h-12 w-12 text-gray-400"
-			fill="none"
-			stroke="currentColor"
-			viewBox="0 0 24 24"
-		>
-			<path
-				d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-width="2"
-				vector-effect="non-scaling-stroke"
-			/>
-		</svg>
-		<h3 class="mt-2 text-sm font-semibold text-gray-900">No projects</h3>
-		<p class="mt-1 text-sm text-gray-500">Get started by creating a new project.</p>
-		<div class="mt-6">
-			<button
-				class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-				type="button"
+<ng-template #userView let-user="user">
+	<div *ngIf="isWebUser(user) as user" class="flex justify-evenly">
+		<div class="flex justify-start">
+			<a
+				(click)="selectUser(user.id)"
+				[ngClass]="{
+					'font-medium text-gray-900 dark:text-gray-200': user.id === selectedUserId(),
+					'font-normal text-gray-500 dark:text-gray-400': user.id !== selectedUserId()
+				}"
+				class="flex items-center text-base rounded-lg transition duration-75 hover:underline dark:text-white group"
 			>
-				<svg
-					aria-hidden="true"
-					class="-ml-0.5 mr-1.5 h-5 w-5"
-					fill="currentColor"
-					viewBox="0 0 20 20"
-				>
-					<path
-						d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"
+				<span class="relative inline-block">
+					<img
+						[alt]="user.displayName + ' profile picture'"
+						[ngSrc]="user.photoUrl"
+						class="h-6 w-6 rounded-full"
+						height="24"
+						width="24"
 					/>
-				</svg>
-				New Project
-			</button>
+					<!--If Is Offline-->
+					<!-- <span
+											class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-gray-300 ring-2 ring-white"></span>-->
+					<!-- If Is Online -->
+					<span
+						class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-green-400 ring-2 ring-white"
+					></span>
+				</span>
+				<div class="ml-3">
+					<span class="capitalize text-sm text-gray-900">{{
+						user.displayName | truncate : 10
+					}}</span>
+					<p class="text-xs font-medium text-gray-500 group-hover:text-gray-700">
+						{{ user.userName | truncate : 15 }}
+					</p>
+				</div>
+			</a>
+		</div>
+		<div class="flex justify-end items-center">
+			<div class="flex-none">
+				<button
+					(click)="toggleUserView(user.id)"
+					class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+					type="button"
+				>
+					<ng-container *ngIf="openedUsers().get(user.id); then contentOpen; else contentClosed" />
+				</button>
+			</div>
+			<div class="flex-none">
+				<button
+					(click)="openUserContextMenu($event, user)"
+					aria-expanded="false"
+					aria-haspopup="true"
+					class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+					type="button"
+				>
+					<span class="sr-only">Open options</span>
+					<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="menus/ellipsis-vertical" />
+				</button>
+			</div>
 		</div>
 	</div>
 </ng-template>

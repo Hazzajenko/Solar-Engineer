@@ -7,7 +7,8 @@ namespace Identity.Application.Repositories.AppUserLinks;
 public interface IAppUserLinksRepository : IEntityToEntityRepository<AppUserLink>
 {
     Task<AppUserLink?> GetByBothUserIdsAsync(Guid appUserId, Guid recipientId);
+    Task<IEnumerable<FriendDto>> GetUserFriendsDtosAsync(Guid appUserId);
     Task<AppUserLink?> GetByBothUsersAsync(AppUser appUser, AppUser recipient);
-    Task<IEnumerable<AppUserLinkDto>> GetUserFriendsAsync(Guid appUserId);
+    Task<IEnumerable<AppUserLinkDto>> GetUserFriendsAsAppUserLinkDtoAsync(Guid appUserId);
     Task<IEnumerable<Guid>> GetUserFriendIdsAsync(Guid appUserId);
 }

@@ -27,6 +27,7 @@ import {
 import { ContextMenuProjectComponent } from '../context-menu-project'
 import { ContextMenuModePickerComponent } from '../context-menu-mode-picker/context-menu-mode-picker.component'
 import { ContextMenuUserSearchResultComponent } from '../context-menu-user-search-result/context-menu-user-search-result.component'
+import { ContextMenuFriendComponent } from '../context-menu-friend/context-menu-friend.component'
 
 export const contextMenuInputInjectionToken = new InjectionToken<ContextMenuInput>('')
 
@@ -35,7 +36,7 @@ export const contextMenuInputInjectionToken = new InjectionToken<ContextMenuInpu
 	standalone: true,
 	imports: [NgIf, NgComponentOutlet],
 	template: `
-		<ng-container *ngIf="contextMenu && component && contextMenuInjector">
+		<ng-container *ngIf="contextMenu() && component && contextMenuInjector">
 			<ng-container *ngComponentOutlet="component; injector: contextMenuInjector" />
 		</ng-container>
 	`,
@@ -45,34 +46,33 @@ export const contextMenuInputInjectionToken = new InjectionToken<ContextMenuInpu
 export class ContextMenuRendererComponent implements OnDestroy {
 	private _uiStore = injectUiStore()
 	private _renderer = inject(Renderer2)
-	private _contextMenu = this._uiStore.select.currentContextMenu
 	private _injector = inject(Injector)
-
 	private killClickListener?: () => void
-
+	contextMenu = this._uiStore.select.currentContextMenu
 	contextMenuInjector: Injector | undefined
 
 	component: ReturnType<typeof this.switchFn> | undefined
 
 	constructor() {
 		effect(() => {
-			if (!this.contextMenu) {
+			const contextMenu = this.contextMenu()
+			if (!contextMenu) {
 				return
 			}
 
-			this.component = this.switchFn(this.contextMenu.component)
+			this.component = this.switchFn(contextMenu.component)
 
 			this.contextMenuInjector = Injector.create({
 				providers: [
 					{
 						provide: contextMenuInputInjectionToken,
-						useValue: this.contextMenu,
+						useValue: contextMenu,
 					},
 				],
 				parent: this._injector,
 			})
 
-			const componentId = this.contextMenu.component
+			const componentId = contextMenu.component
 
 			setTimeout(() => {
 				const div = getElementByIdWithRetry(componentId)
@@ -81,10 +81,6 @@ export class ContextMenuRendererComponent implements OnDestroy {
 				})
 			}, 100)
 		})
-	}
-
-	get contextMenu() {
-		return this._contextMenu()
 	}
 
 	ngOnDestroy() {
@@ -109,6 +105,8 @@ export class ContextMenuRendererComponent implements OnDestroy {
 				return ContextMenuModePickerComponent
 			case CONTEXT_MENU_COMPONENT.USER_SEARCH_RESULT_MENU:
 				return ContextMenuUserSearchResultComponent
+			case CONTEXT_MENU_COMPONENT.FRIEND_MENU:
+				return ContextMenuFriendComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

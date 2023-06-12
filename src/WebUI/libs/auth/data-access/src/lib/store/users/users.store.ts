@@ -1,6 +1,8 @@
 import { Store } from '@ngrx/store'
 import {
 	selectAllUsers,
+	selectFriends,
+	selectUserById,
 	selectUserSearchResultById,
 	selectUserSearchResults,
 	selectUsersEntities,
@@ -27,20 +29,26 @@ function usersStoreFactory(store: Store) {
 
 	const select = {
 		allUsers,
-		getById: (id: WebUserModel['id']) => entities()[id],
+		getById: (id: string) => store.selectSignal(selectUserById({ id })),
 		getByIdOrUndefined: (id: WebUserModel['id'] | undefined) => (id ? entities()[id] : undefined),
 		getByIds: (ids: WebUserModel['id'][]) => ids.map((id) => entities()[id]).filter(isNotNull),
 		userSearchResults: store.selectSignal(selectUserSearchResults),
 		userSearchResultById: (id: string) => store.selectSignal(selectUserSearchResultById({ id })),
+		friends: store.selectSignal(selectFriends),
 	}
-
 	const dispatch = {
+		removeFriend: (userId: string) => store.dispatch(UsersActions.removeFriend({ userId })),
+		acceptFriendRequest: (userId: string) =>
+			store.dispatch(UsersActions.acceptFriendRequest({ userId })),
+		rejectFriendRequest: (userId: string) =>
+			store.dispatch(UsersActions.rejectFriendRequest({ userId })),
 		sendFriendRequest: (userId: string) =>
 			store.dispatch(UsersActions.sendFriendRequest({ userId })),
 		searchForAppUserByUserName: (query: string) =>
 			store.dispatch(UsersActions.searchForAppUserByUserName({ query })),
 		receiveUsersFromSearch: (users: MinimalWebUser[]) =>
 			store.dispatch(UsersActions.receiveUsersFromSearch({ users })),
+		clearUserSearchResults: () => store.dispatch(UsersActions.clearUserSearchResults()),
 		loadUsers: (users: WebUserModel[]) => store.dispatch(UsersActions.loadUsers({ users })),
 		addUser: (user: WebUserModel) => store.dispatch(UsersActions.addUser({ user })),
 		addManyUsers: (users: WebUserModel[]) => store.dispatch(UsersActions.addManyUsers({ users })),

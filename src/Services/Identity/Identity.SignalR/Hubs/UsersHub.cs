@@ -1,5 +1,6 @@
 ﻿using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Friends;
+using Identity.Domain;
 using Identity.SignalR.Commands.AppUsers;
 using Identity.SignalR.Commands.Connections.OnConnected;
 using Identity.SignalR.Commands.Connections.OnDisconnected;
@@ -7,6 +8,7 @@ using Identity.SignalR.Commands.Friends;
 using Identity.SignalR.Commands.Notifications;
 using Infrastructure.SignalR;
 using Mediator;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
@@ -16,19 +18,25 @@ public class UsersHub : Hub<IUsersHub>
 {
     private readonly ILogger<UsersHub> _logger;
     private readonly IMediator _mediator;
+    private readonly UserManager<AppUser> _userManager;
 
-    public UsersHub(IMediator mediator, ILogger<UsersHub> logger)
+    public UsersHub(IMediator mediator, ILogger<UsersHub> logger, UserManager<AppUser> userManager)
     {
         _mediator = mediator;
         _logger = logger;
+        _userManager = userManager;
     }
 
     public override async Task OnConnectedAsync()
     {
         _logger.LogInformation("OnConnectedAsync");
+        var user = await _userManager.GetUserAsync(Context.User!);
+        _logger.LogInformation("User: {@User}", user);
         var authUser = Context.ToAuthUser();
         await _mediator.Send(new OnConnectedCommand(authUser));
+        await _mediator.Send(new GetUserFriendsCommand(authUser));
         await _mediator.Send(new GetOnlineFriendsQuery(authUser));
+        await _mediator.Send(new GetUserNotificationsCommand(authUser));
 
         await base.OnConnectedAsync();
     }
@@ -66,6 +74,11 @@ public class UsersHub : Hub<IUsersHub>
         await _mediator.Send(new RejectFriendRequestCommand(Context.ToAuthUser(), senderUserId));
     }
 
+    public async Task ReceiveNotification(string notificationId)
+    {
+        await _mediator.Send(new ReceiveNotificationCommand(Context.ToAuthUser(), notificationId));
+    }
+
     /*public async Task CancelFriendRequest(string recipientUserId)
     {
         // await _mediator.Send(new CancelFriendRequestCommand(Context.ToAuthUser(), recipientUserId));
@@ -75,7 +88,7 @@ public class UsersHub : Hub<IUsersHub>
     {
         // await _mediator.Send(new UnfriendCommand(Context.ToAuthUser(), friendUserId));
     }*/
-    
+
     public async Task GetNotifications()
     {
         await _mediator.Send(new GetUserNotificationsCommand(Context.ToAuthUser()));

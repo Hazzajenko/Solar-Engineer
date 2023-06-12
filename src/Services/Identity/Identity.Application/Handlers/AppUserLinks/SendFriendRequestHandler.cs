@@ -78,16 +78,20 @@ public class SendFriendRequestHandler : ICommandHandler<SendFriendRequestCommand
         var notification = new Notification(
             recipientUser,
             appUser,
-            NotificationType.FriendRequestReceived,
-            "<%= senderAppUser %> sent you a friend request."
+            NotificationType.FriendRequestReceived
         );
 
         await _unitOfWork.NotificationsRepository.AddAsync(notification);
         await _unitOfWork.SaveChangesAsync();
 
+        var notificationDto = await _unitOfWork.NotificationsRepository.GetNotificationDtoByIdAsync(
+            notification.Id
+        );
+        notificationDto.ThrowHubExceptionIfNull();
+
         await _hubContext.Clients
             .User(recipientUser.Id.ToString())
-            .ReceiveNotification(notification.Adapt<NotificationDto>());
+            .ReceiveNotification(notificationDto);
 
         _logger.LogInformation(
             "Friend request sent from AppUserRequested: {AppUserRequestedId} - {AppUserRequestedUserName}, AppUserReceived: {AppUserReceived} - {AppUserReceivedUserName}",

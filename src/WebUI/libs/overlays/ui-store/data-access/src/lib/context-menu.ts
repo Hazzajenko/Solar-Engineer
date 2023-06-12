@@ -10,6 +10,7 @@ export const CONTEXT_MENU_COMPONENT = {
 	MODE_PICKER_MENU: 'context-menu-mode-picker-menu',
 	PROJECT_MENU: 'context-menu-project',
 	USER_SEARCH_RESULT_MENU: 'context-menu-user-search-result',
+	FRIEND_MENU: 'context-menu-friend',
 } as const
 export type ContextMenuComponent =
 	(typeof CONTEXT_MENU_COMPONENT)[keyof typeof CONTEXT_MENU_COMPONENT]
@@ -71,6 +72,13 @@ export type ContextMenuUserSearchResultMenu = ContextMenuTemplate & {
 	}
 }
 
+export type ContextMenuFriendMenu = ContextMenuTemplate & {
+	component: typeof CONTEXT_MENU_COMPONENT.FRIEND_MENU
+	data: {
+		userId: string
+	}
+}
+
 export type ContextMenuInput =
 	| ContextMenuSinglePanelMenu
 	| ContextMenuMultiplePanelsMenu
@@ -80,6 +88,7 @@ export type ContextMenuInput =
 	| ContextMenuProjectMenu
 	| ContextMenuModePickerMenu
 	| ContextMenuUserSearchResultMenu
+	| ContextMenuFriendMenu
 // export const
 /*
  const uhm: ContextMenuInput = {

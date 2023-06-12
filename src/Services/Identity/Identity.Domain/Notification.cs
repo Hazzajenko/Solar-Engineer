@@ -7,40 +7,46 @@ public class Notification : IEntity
 {
     public Notification() { }
 
-    public Notification(
-        AppUser appUser,
-        AppUser senderAppUser,
-        NotificationType notificationType,
-        string content
-    )
+    public Notification(AppUser appUser, AppUser senderAppUser, NotificationType notificationType)
     {
         AppUserId = appUser.Id;
-        AppUserUserName = appUser.UserName;
         SenderAppUserId = senderAppUser.Id;
-        SenderAppUserUserName = senderAppUser.UserName;
         NotificationType = notificationType;
-        Content = content;
     }
 
     public Guid Id { get; set; }
     public Guid AppUserId { get; set; }
-    public string AppUserUserName { get; set; } = default!;
     public AppUser AppUser { get; set; } = default!;
     public Guid SenderAppUserId { get; set; }
-    public string SenderAppUserUserName { get; set; } = default!;
     public AppUser SenderAppUser { get; set; } = default!;
-    public string SenderAppUserPhotoUrl => SenderAppUser.PhotoUrl;
-    public string Content { get; set; } = default!;
     public NotificationType NotificationType { get; set; } = default!;
+
     public DateTime CreatedTime { get; set; } = DateTime.Now;
     public DateTime LastModifiedTime { get; set; } = DateTime.Now;
+
+    public bool ReceivedByAppUser { get; set; }
     public bool SeenByAppUser { get; set; }
+    public DateTime? SeenByAppUserTime { get; set; }
+    public bool AppUserResponded { get; set; }
+    public DateTime? AppUserRespondedTime { get; set; }
     public bool DeletedByAppUser { get; set; }
     public bool CancelledBySender { get; set; }
+
+    public void SetReceivedByAppUser()
+    {
+        ReceivedByAppUser = true;
+    }
 
     public void SetSeenByAppUser()
     {
         SeenByAppUser = true;
+        SeenByAppUserTime = DateTime.Now;
+    }
+
+    public void SetAppUserResponded()
+    {
+        AppUserResponded = true;
+        AppUserRespondedTime = DateTime.Now;
     }
 }
 
@@ -61,22 +67,3 @@ public sealed class NotificationType : SmartEnum<NotificationType>
     private NotificationType(string name, int value)
         : base(name, value) { }
 }
-
-/*public static class NotificationType
-{
-    public const string Message = "MESSAGE";
-
-    public static class FriendRequest
-    {
-        public const string Sent = "FRIEND_REQUEST_SENT";
-        public const string Accepted = "FRIEND_REQUEST_ACCEPTED";
-        public const string Rejected = "FRIEND_REQUEST_REJECTED";
-    }
-
-    public static class ProjectInvite
-    {
-        public const string Sent = "PROJECT_INVITE_SENT";
-        public const string Accepted = "PROJECT_INVITE_ACCEPTED";
-        public const string Rejected = "PROJECT_INVITE_REJECTED";
-    }
-}*/

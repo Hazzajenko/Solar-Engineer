@@ -1,4 +1,5 @@
 using Identity.Application.Data;
+using Identity.Application.Mapping;
 using Identity.Contracts.Data;
 using Identity.Domain;
 using Infrastructure.Repositories;
@@ -36,7 +37,23 @@ public sealed class AppUserLinksRepository
             .SingleOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<AppUserLinkDto>> GetUserFriendsAsync(Guid appUserId)
+    public async Task<IEnumerable<FriendDto>> GetUserFriendsDtosAsync(Guid appUserId)
+    {
+        return await Queryable
+            .Where(
+                x =>
+                    (x.AppUserReceivedId == appUserId || x.AppUserRequestedId == appUserId)
+                    && x.Friends
+            )
+            .Include(x => x.AppUserReceived)
+            .Include(x => x.AppUserRequested)
+            .Select(x => x.ToFriendDto(appUserId))
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<AppUserLinkDto>> GetUserFriendsAsAppUserLinkDtoAsync(
+        Guid appUserId
+    )
     {
         return await Queryable
             .Where(

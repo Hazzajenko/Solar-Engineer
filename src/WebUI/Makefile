@@ -164,13 +164,13 @@ xstate-selected:
 	xstate typegen "libs/design-app/data-access/src/lib/selected/selected-state.machine.ts" --watch
 
 run-plugin:
-	nx generate ngrx-pull:ngrx-entity mylib
+	nx generate ngrx-generator:ngrx-entity mylib
 
 run-plugin-none:
-	nx generate ngrx-pull:ngrx-entity
+	nx generate ngrx-generator:ngrx-entity
 
 run-plugin-dry:
-	nx generate ngrx-pull:ngrx-entity mylib --dry-run
+	nx generate ngrx-generator:ngrx-entity mylib --dry-run
 
 #install-storybook:
 	#nx g @nx/angular:storybook-configuration --storybook7Configuration --storybook7UiFramework=@storybook/angular --uiFramework=@storybook/angular --generateStories
