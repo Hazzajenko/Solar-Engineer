@@ -3,6 +3,7 @@ import {
 	selectAllNotifications,
 	selectAmountOfUnreadNotifications,
 	selectNotificationsEntities,
+	selectNotificationsThatUserHasNotReceived,
 } from './notifications.selectors'
 import { createRootServiceInjector } from '@shared/utils'
 import { NotificationsActions } from './notifications.actions'
@@ -27,6 +28,9 @@ function notificationsStoreFactory(store: Store) {
 		allNotifications,
 		getById: (id: NotificationModel['id']) => entities()[id],
 		amountOfUnreadNotifications: store.selectSignal(selectAmountOfUnreadNotifications),
+		notificationsThatUserHasNotReceived: store.selectSignal(
+			selectNotificationsThatUserHasNotReceived,
+		),
 	}
 
 	const dispatch = {

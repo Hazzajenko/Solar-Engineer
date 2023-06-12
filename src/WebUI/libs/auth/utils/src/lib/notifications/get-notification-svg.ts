@@ -22,11 +22,11 @@ export const getNotificationTypeToText = (notification: NotificationModel) => {
 		case NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED:
 			return 'Friend Request'
 		case NOTIFICATION_TYPE.FRIEND_REQUEST_ACCEPTED:
-			return 'Friend Request Accepted'
+			return 'Request Accepted'
 		case NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED:
-			return 'Project Invite Received'
+			return 'Project Invite'
 		case NOTIFICATION_TYPE.PROJECT_INVITE_ACCEPTED:
-			return 'Project Invite Accepted'
+			return 'Request Accepted'
 		case NOTIFICATION_TYPE.MESSAGE_RECEIVED:
 			return 'Message Received'
 	}

@@ -14,8 +14,13 @@ import { injectNotificationsStore } from '@overlays/notifications/data-access'
 import { NOTIFICATION_TYPE, NotificationModel } from '@auth/shared'
 import { TruncatePipe } from '@shared/pipes'
 import { LetDirective } from '@ngrx/component'
-import { getContentMessageHtmlBasedOnType, getNotificationTypeToText } from '@auth/utils'
-import { CenterThisElementDirective } from '@shared/directives'
+import {
+	getContentMessageBasedOnType,
+	getContentMessageBasedOnTypeWithoutDisplayName,
+	getContentMessageHtmlBasedOnType,
+	getNotificationTypeToText,
+} from '@auth/utils'
+import { CenterThisElementDirective, DefaultHoverEffectsDirective } from '@shared/directives'
 import { notification } from '@tauri-apps/api'
 import { ToSafeHtmlPipe } from '@shared/utils'
 import { heightInOutWithConfig } from '@shared/animations'
@@ -37,6 +42,7 @@ import { heightInOutWithConfig } from '@shared/animations'
 		InputSvgComponent,
 		CenterThisElementDirective,
 		ToSafeHtmlPipe,
+		DefaultHoverEffectsDirective,
 	],
 	templateUrl: './side-ui-notifications-view.component.html',
 	styles: [],
@@ -53,6 +59,11 @@ export class SideUiNotificationsViewComponent {
 	openedNotifications = signal<Map<string, boolean>>(new Map())
 
 	multiSelectedNotificationIds = signal<string[]>([])
+	allNotificationsSelected = computed(() => {
+		const notifications = this.notifications()
+		const multiSelectedNotificationIds = this.multiSelectedNotificationIds()
+		return notifications.length === multiSelectedNotificationIds.length
+	})
 
 	vm = computed(() => {
 		const user = this._authStore.select.user()
@@ -60,12 +71,14 @@ export class SideUiNotificationsViewComponent {
 		const openedNotifications = this.openedNotifications()
 		const selectedNotificationId = this.selectedNotificationId()
 		const multiSelectedNotificationIds = this.multiSelectedNotificationIds()
+		const allNotificationsSelected = this.allNotificationsSelected()
 		return {
 			user,
 			notifications,
 			openedNotifications,
 			selectedNotificationId,
 			multiSelectedNotificationIds,
+			allNotificationsSelected,
 		}
 	})
 
@@ -73,6 +86,20 @@ export class SideUiNotificationsViewComponent {
 	protected readonly notification = notification
 	protected readonly getContentMessageHtmlBasedOnType = getContentMessageHtmlBasedOnType
 	protected readonly NOTIFICATION_TYPE = NOTIFICATION_TYPE
+	protected readonly getContentMessageBasedOnType = getContentMessageBasedOnType
+	protected readonly getContentMessageBasedOnTypeWithoutDisplayName =
+		getContentMessageBasedOnTypeWithoutDisplayName
+
+	selectAllNotifications() {
+		if (!this.allNotificationsSelected()) {
+			this.multiSelectedNotificationIds.set(
+				this.notifications().map((notification) => notification.id),
+			)
+			return
+		}
+		this.multiSelectedNotificationIds.set([])
+		console.log('selectAllNotifications', this.multiSelectedNotificationIds())
+	}
 
 	notificationById(id: string) {
 		return this.notifications().find((notification) => notification.id === id)
@@ -150,5 +177,13 @@ export class SideUiNotificationsViewComponent {
 			return
 		}
 		this.multiSelectedNotificationIds.set([...this.multiSelectedNotificationIds(), notification.id])
+	}
+
+	deleteSelectedNotifications() {
+		const multiSelectedNotificationIds = this.multiSelectedNotificationIds()
+		console.log('deleteSelectedNotifications', multiSelectedNotificationIds)
+		// TODO: implement
+		// this._notificationsStore.dispatch.deleteNotifications(multiSelectedNotificationIds)
+		this.multiSelectedNotificationIds.set([])
 	}
 }

@@ -1,17 +1,33 @@
 import { NOTIFICATION_TYPE, NotificationModel } from '@auth/shared'
 
+export const getContentMessageBasedOnTypeWithoutDisplayName = (notification: NotificationModel) => {
+	switch (notification.notificationType) {
+		case NOTIFICATION_TYPE.MESSAGE_RECEIVED:
+			return 'sent you a message'
+		case NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED:
+			return 'sent you a friend request'
+		case NOTIFICATION_TYPE.FRIEND_REQUEST_ACCEPTED:
+			return 'accepted your friend request'
+		case NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED:
+			return 'invited you to a project'
+		case NOTIFICATION_TYPE.PROJECT_INVITE_ACCEPTED:
+			return 'accepted your project invite'
+		default:
+			throw new Error('Unknown notification type')
+	}
+}
 export const getContentMessageBasedOnType = (notification: NotificationModel) => {
 	switch (notification.notificationType) {
 		case NOTIFICATION_TYPE.MESSAGE_RECEIVED:
-			return `${notification.senderAppUserUserName} sent you a message`
+			return `${notification.senderAppUserDisplayName} sent you a message`
 		case NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED:
-			return `${notification.senderAppUserUserName} sent you a friend request`
+			return `${notification.senderAppUserDisplayName} sent you a friend request`
 		case NOTIFICATION_TYPE.FRIEND_REQUEST_ACCEPTED:
-			return `${notification.senderAppUserUserName} accepted your friend request`
+			return `${notification.senderAppUserDisplayName} accepted your friend request`
 		case NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED:
-			return `${notification.senderAppUserUserName} invited you to a project`
+			return `${notification.senderAppUserDisplayName} invited you to a project`
 		case NOTIFICATION_TYPE.PROJECT_INVITE_ACCEPTED:
-			return `${notification.senderAppUserUserName} accepted your project invite`
+			return `${notification.senderAppUserDisplayName} accepted your project invite`
 		default:
 			throw new Error('Unknown notification type')
 	}

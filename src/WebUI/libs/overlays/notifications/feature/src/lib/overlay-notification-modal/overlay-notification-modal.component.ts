@@ -34,7 +34,12 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 	private _renderer = inject(Renderer2)
 	private _notificationsStore = injectNotificationsStore()
 	private _notificationStartTimeMap = signal(new Map<string, number>())
-	notifications = this._notificationsStore.select.allNotifications
+	/*	notifications = computed(() =>
+	 this._notificationsStore.select
+	 .allNotifications()
+	 .filter((notification) => !notification.receivedByAppUser),
+	 )*/
+	notifications = this._notificationsStore.select.notificationsThatUserHasNotReceived
 	@ViewChildren('notificationEl') notificationEls!: QueryList<HTMLDivElement>
 	@ViewChildren('progressBar') progressBarEls!: QueryList<ElementRef<HTMLDivElement>>
 	protected readonly getContentMessageBasedOnType = getContentMessageBasedOnType
@@ -42,7 +47,7 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 	constructor() {
 		effect(() => {
 			this.notifications().forEach((notification) => {
-				if (!notification || notification.receivedByAppUser) {
+				if (!notification) {
 					return
 				}
 				setTimeout(() => {

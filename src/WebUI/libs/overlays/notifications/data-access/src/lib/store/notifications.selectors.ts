@@ -38,3 +38,9 @@ export const selectAmountOfUnreadNotifications = createSelector(
 	(notifications: NotificationModel[]) =>
 		notifications.filter((notification) => !notification.seenByAppUser).length,
 )
+
+export const selectNotificationsThatUserHasNotReceived = createSelector(
+	selectAllNotifications,
+	(notifications: NotificationModel[]) =>
+		notifications.filter((notification) => !notification.receivedByAppUser),
+)

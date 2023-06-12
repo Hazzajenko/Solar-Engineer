@@ -10,6 +10,27 @@
 
 	<ng-container *ngIf="vm.user; then loggedIn; else notLoggedIn" />
 	<ng-template #loggedIn>
+		<div class="relative flex items-start mb-2">
+			<div class="flex h-6 items-center">
+				<input
+					(click)="selectAllNotifications()"
+					[checked]="vm.allNotificationsSelected"
+					centerThisElement
+					class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+					type="checkbox"
+				/>
+			</div>
+			<div class="ml-3 text-sm leading-6">
+				<label class="font-medium text-gray-900" for="comments">Select all</label>
+			</div>
+			<svg-input
+				(click)="deleteSelectedNotifications()"
+				class="absolute right-0 top-0 mt-1 mr-2"
+				enableDefaultHoverEffects
+				svgName="SvgTrash"
+			/>
+		</div>
+
 		<ng-container *ngIf="vm.notifications.length > 0; else noNotifications">
 			<ul class="space-y-1" role="list">
 				<ng-container *ngFor="let notification of vm.notifications">
@@ -70,31 +91,31 @@
 			'bg-blue-50 dark:bg-gray-800': isOpen,
 			'bg-white dark:bg-gray-900 rounded-b-lg': !isOpen,
 		}"
-		class="rounded-t-lg flex border border-gray-200 dark:border-gray-700 items-center justify-between group hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer px-4 py-1 transition duration-75"
+		class="rounded-t-lg flex border border-gray-200 dark:border-gray-700 items-center justify-between group hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer pr-4 py-1 transition duration-75"
 	>
-		<div class="flex justify-start">
+		<div (click)="toggleNotificationMultiSelect(notification)" class="flex justify-start pl-2">
 			<input
-				(click)="toggleNotificationMultiSelect(notification)"
 				[checked]="multiSelectedNotificationIds().includes(notification.id)"
 				aria-describedby="comments-description"
 				centerThisElement
-				class="h-4 w-4 mr-2 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+				class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
 				id="comments"
 				name="comments"
 				type="checkbox"
 			/>
 		</div>
-		<div (click)="toggleNotificationView(notification)" class="flex items-center justify-evenly">
-			<img
-				[alt]="notification.senderAppUserUserName + ' profile picture'"
-				[ngSrc]="notification.senderAppUserPhotoUrl"
-				centerThisElement
-				class="h-6 w-6 flex-none rounded-full bg-gray-800"
-				height="24"
-				width="24"
-			/>
+		<div (click)="toggleNotificationView(notification)" class="grid grid-cols-5 items-center">
+			<div class="flex items-center justify-end">
+				<img
+					[alt]="notification.senderAppUserUserName + ' profile picture'"
+					[ngSrc]="notification.senderAppUserPhotoUrl"
+					class="h-6 w-6 flex-none rounded-full bg-gray-800"
+					height="24"
+					width="24"
+				/>
+			</div>
 			<a
-				class="flex items-center text-base rounded-lg transition duration-75 dark:text-white group"
+				class="flex col-span-3 items-center text-base rounded-lg transition duration-75 dark:text-white group"
 			>
 				<div class="ml-3">
 					<span class="capitalize text-sm text-gray-900">{{
@@ -107,7 +128,10 @@
 						}"
 						class="text-xs font-medium group-hover:text-gray-700"
 					>
-						{{ getNotificationTypeToText(notification) | truncate : 25 }}
+						<!--						{{ getNotificationTypeToText(notification) | truncate : 25 }}-->
+						<span class="pt-2 text-xs text-gray-500 truncate capitalize">
+							{{ getContentMessageBasedOnTypeWithoutDisplayName(notification) | truncate : 10 }}
+						</span>
 					</p>
 				</div>
 			</a>
