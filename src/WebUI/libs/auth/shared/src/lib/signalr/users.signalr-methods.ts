@@ -4,8 +4,9 @@ export const USERS_SIGNALR_METHOD = {
 	SEND_FRIEND_REQUEST: 'SendFriendRequest',
 	ACCEPT_FRIEND_REQUEST: 'AcceptFriendRequest',
 	REJECT_FRIEND_REQUEST: 'RejectFriendRequest',
-	GET_NOTIFICATIONS: 'GetNotifications',
-	READ_NOTIFICATION: 'ReadNotification',
+	GET_NOTIFICATIONS: 'GetNotifications', // READ_NOTIFICATION: 'ReadNotification',
+	READ_MANY_NOTIFICATIONS: 'ReadManyNotifications',
+	COMPLETE_MANY_NOTIFICATIONS: 'CompleteManyNotifications',
 	DELETE_NOTIFICATION: 'DeleteNotification',
 	RECEIVE_NOTIFICATION: 'ReceiveNotification',
 } as const

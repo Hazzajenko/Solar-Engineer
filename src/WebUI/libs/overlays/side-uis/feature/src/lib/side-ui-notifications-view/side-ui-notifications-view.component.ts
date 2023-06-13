@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core'
+import {
+	ChangeDetectionStrategy,
+	Component,
+	computed,
+	ElementRef,
+	inject,
+	OnDestroy,
+	OnInit,
+	Renderer2,
+	signal,
+} from '@angular/core'
 import {
 	DatePipe,
 	NgClass,
@@ -12,7 +22,7 @@ import { InputSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { injectAuthStore, injectUsersStore } from '@auth/data-access'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
 import { NOTIFICATION_TYPE, NotificationModel } from '@auth/shared'
-import { TruncatePipe } from '@shared/pipes'
+import { TimeDifferenceFromNowPipe, TruncatePipe } from '@shared/pipes'
 import { LetDirective } from '@ngrx/component'
 import {
 	getContentMessageBasedOnType,
@@ -22,8 +32,9 @@ import {
 } from '@auth/utils'
 import { CenterThisElementDirective, DefaultHoverEffectsDirective } from '@shared/directives'
 import { notification } from '@tauri-apps/api'
-import { ToSafeHtmlPipe } from '@shared/utils'
+import { assertNotNull, getTimeDifferenceFromNow, ToSafeHtmlPipe } from '@shared/utils'
 import { heightInOutWithConfig } from '@shared/animations'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @Component({
 	selector: 'side-ui-notifications-view',
@@ -43,18 +54,24 @@ import { heightInOutWithConfig } from '@shared/animations'
 		CenterThisElementDirective,
 		ToSafeHtmlPipe,
 		DefaultHoverEffectsDirective,
+		TimeDifferenceFromNowPipe,
+		MatTooltipModule,
 	],
 	templateUrl: './side-ui-notifications-view.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	animations: [heightInOutWithConfig(0.1)],
 })
-export class SideUiNotificationsViewComponent {
+export class SideUiNotificationsViewComponent implements OnInit, OnDestroy {
 	private _authStore = injectAuthStore()
 	private _usersStore = injectUsersStore()
 	private _notificationsStore = injectNotificationsStore()
+	private _elementRef = inject(ElementRef)
+	private _renderer = inject(Renderer2)
+	private _disposeClickListener!: ReturnType<typeof Renderer2.prototype.listen>
+
 	user = this._authStore.select.user
-	notifications = this._notificationsStore.select.allNotifications
+	notifications = this._notificationsStore.select.notCompletedNotifications
 	selectedNotificationId = signal<string | undefined>(undefined)
 	openedNotifications = signal<Map<string, boolean>>(new Map())
 
@@ -89,6 +106,31 @@ export class SideUiNotificationsViewComponent {
 	protected readonly getContentMessageBasedOnType = getContentMessageBasedOnType
 	protected readonly getContentMessageBasedOnTypeWithoutDisplayName =
 		getContentMessageBasedOnTypeWithoutDisplayName
+	protected readonly getTimeDifferenceFromNow = getTimeDifferenceFromNow
+
+	ngOnInit() {
+		this._disposeClickListener = this._renderer.listen(
+			this._elementRef.nativeElement,
+			'click',
+			(event) => {
+				event.preventDefault()
+				event.stopPropagation()
+
+				const target = event.target as HTMLElement
+				const contains = Array.from(target.children).find((child) => {
+					const childAttributes = Array.from(child.attributes)
+					const dataType = childAttributes.find((attr) => attr.value === 'notification-preview')
+					return !!dataType
+				})
+				if (contains) {
+					const notificationId = contains.id
+					if (notificationId) {
+						this.toggleNotificationView(notificationId)
+					}
+				}
+			},
+		)
+	}
 
 	selectAllNotifications() {
 		if (!this.allNotificationsSelected()) {
@@ -114,11 +156,16 @@ export class SideUiNotificationsViewComponent {
 		this.selectedNotificationId.set(notification.id)
 	}
 
-	toggleNotificationView(notification: NotificationModel) {
-		const id = notification.id
+	toggleNotificationView(notification: NotificationModel | string) {
+		const id = typeof notification === 'string' ? notification : notification.id
 		this.openedNotifications.set(
 			new Map(this.openedNotifications()).set(id, !this.openedNotifications().get(id)),
 		)
+		const getNotification = this.notificationById(id)
+		assertNotNull(getNotification, 'Notification not found')
+		if (!getNotification.seenByAppUser) {
+			this._notificationsStore.dispatch.markManyNotificationsAsRead([id])
+		}
 	}
 
 	acceptNotification(notification: NotificationModel) {
@@ -159,6 +206,7 @@ export class SideUiNotificationsViewComponent {
 
 	dismissNotification(notification: NotificationModel) {
 		console.log('dismissNotification', notification)
+		this._notificationsStore.dispatch.markNotificationsAsCompleted([notification.id])
 	}
 
 	replyToMessage(notification: NotificationModel) {
@@ -182,8 +230,17 @@ export class SideUiNotificationsViewComponent {
 	deleteSelectedNotifications() {
 		const multiSelectedNotificationIds = this.multiSelectedNotificationIds()
 		console.log('deleteSelectedNotifications', multiSelectedNotificationIds)
-		// TODO: implement
-		// this._notificationsStore.dispatch.deleteNotifications(multiSelectedNotificationIds)
+		this._notificationsStore.dispatch.markNotificationsAsCompleted(multiSelectedNotificationIds)
 		this.multiSelectedNotificationIds.set([])
+	}
+
+	markSelectedNotificationsAsRead() {
+		const multiSelectedNotificationIds = this.multiSelectedNotificationIds()
+		console.log('markSelectedNotificationsAsRead', multiSelectedNotificationIds)
+		this._notificationsStore.dispatch.markManyNotificationsAsRead(multiSelectedNotificationIds)
+	}
+
+	ngOnDestroy() {
+		this._disposeClickListener()
 	}
 }

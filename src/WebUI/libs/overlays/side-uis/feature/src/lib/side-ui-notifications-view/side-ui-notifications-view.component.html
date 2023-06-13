@@ -10,30 +10,42 @@
 
 	<ng-container *ngIf="vm.user; then loggedIn; else notLoggedIn" />
 	<ng-template #loggedIn>
-		<div class="relative flex items-start mb-2">
-			<div class="flex h-6 items-center">
-				<input
-					(click)="selectAllNotifications()"
-					[checked]="vm.allNotificationsSelected"
-					centerThisElement
-					class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-					type="checkbox"
+		<div class="flex items-center justify-between mb-2">
+			<div class="flex items-start justify-center">
+				<div class="flex h-6 items-center">
+					<input
+						(click)="selectAllNotifications()"
+						[checked]="vm.allNotificationsSelected"
+						centerThisElement
+						class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+						type="checkbox"
+					/>
+				</div>
+				<div class="ml-3 text-sm leading-6">
+					<label class="font-medium text-gray-900" for="comments">Select all</label>
+				</div>
+			</div>
+			<div class="flex items-center justify-end">
+				<svg-input
+					(click)="markSelectedNotificationsAsRead()"
+					enableDefaultHoverEffects
+					matTooltip="Mark selected as read"
+					matTooltipPosition="above"
+					svgName="SvgEnvelopeOpen"
+				/>
+				<svg-input
+					(click)="deleteSelectedNotifications()"
+					enableDefaultHoverEffects
+					matTooltip="Delete selected"
+					matTooltipPosition="above"
+					svgName="SvgTrash"
 				/>
 			</div>
-			<div class="ml-3 text-sm leading-6">
-				<label class="font-medium text-gray-900" for="comments">Select all</label>
-			</div>
-			<svg-input
-				(click)="deleteSelectedNotifications()"
-				class="absolute right-0 top-0 mt-1 mr-2"
-				enableDefaultHoverEffects
-				svgName="SvgTrash"
-			/>
 		</div>
 
 		<ng-container *ngIf="vm.notifications.length > 0; else noNotifications">
 			<ul class="space-y-1" role="list">
-				<ng-container *ngFor="let notification of vm.notifications">
+				<ng-container *ngFor="let notification of notifications()">
 					<div>
 						<ng-container
 							*ngTemplateOutlet="
@@ -89,9 +101,11 @@
 		*ngIf="notificationById(notificationId) as notification"
 		[ngClass]="{
 			'bg-blue-50 dark:bg-gray-800': isOpen,
-			'bg-white dark:bg-gray-900 rounded-b-lg': !isOpen,
+			'rounded-b-lg': !isOpen,
+			'bg-white dark:bg-gray-900': !notification.seenByAppUser,
+			'bg-gray-100 dark:bg-gray-800': notification.seenByAppUser
 		}"
-		class="rounded-t-lg flex border border-gray-200 dark:border-gray-700 items-center justify-between group hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer pr-4 py-1 transition duration-75"
+		class="rounded-t-lg flex border border-gray-200 dark:border-gray-700 items-center relative group hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer pr-4 py-1 transition duration-75"
 	>
 		<div (click)="toggleNotificationMultiSelect(notification)" class="flex justify-start pl-2">
 			<input
@@ -104,51 +118,59 @@
 				type="checkbox"
 			/>
 		</div>
-		<div (click)="toggleNotificationView(notification)" class="grid grid-cols-5 items-center">
-			<div class="flex items-center justify-end">
-				<img
-					[alt]="notification.senderAppUserUserName + ' profile picture'"
-					[ngSrc]="notification.senderAppUserPhotoUrl"
-					class="h-6 w-6 flex-none rounded-full bg-gray-800"
-					height="24"
-					width="24"
-				/>
+		<div
+			(click)="toggleNotificationView(notification)"
+			[id]="notification.id"
+			attr.data-target="notification{{ notification.id }}"
+			attr.data-type="notification-preview"
+			class="flex justify-between items-center"
+		>
+			<div class="flex items-center justify-start ml-4">
+				<div class="flex items-center justify-end">
+					<img
+						[alt]="notification.senderAppUserUserName + ' profile picture'"
+						[ngSrc]="notification.senderAppUserPhotoUrl"
+						class="h-6 w-6 flex-none rounded-full bg-gray-800"
+						height="24"
+						width="24"
+					/>
+				</div>
+				<a
+					class="flex items-center text-base rounded-lg transition duration-75 dark:text-white group"
+				>
+					<div class="ml-3">
+						<span class="capitalize text-sm text-gray-900">{{
+							notification.senderAppUserDisplayName | truncate : 20
+						}}</span>
+						<p
+							[ngClass]="{
+								'text-gray-500 dark:text-gray-400': !isOpen,
+								'text-gray-700 dark:text-gray-300': isOpen
+							}"
+							class="text-xs font-medium group-hover:text-gray-700"
+						>
+							<!--						{{ getNotificationTypeToText(notification) | truncate : 25 }}-->
+							<span class="pt-2 text-xs text-gray-500 truncate capitalize">
+								{{ getContentMessageBasedOnTypeWithoutDisplayName(notification) | truncate : 10 }}
+							</span>
+						</p>
+					</div>
+				</a>
 			</div>
-			<a
-				class="flex col-span-3 items-center text-base rounded-lg transition duration-75 dark:text-white group"
-			>
-				<div class="ml-3">
-					<span class="capitalize text-sm text-gray-900">{{
-						notification.senderAppUserDisplayName | truncate : 20
-					}}</span>
-					<p
-						[ngClass]="{
-							'text-gray-500 dark:text-gray-400': !isOpen,
-							'text-gray-700 dark:text-gray-300': isOpen
-						}"
-						class="text-xs font-medium group-hover:text-gray-700"
-					>
-						<!--						{{ getNotificationTypeToText(notification) | truncate : 25 }}-->
-						<span class="pt-2 text-xs text-gray-500 truncate capitalize">
-							{{ getContentMessageBasedOnTypeWithoutDisplayName(notification) | truncate : 10 }}
-						</span>
-					</p>
-				</div>
-			</a>
 
-			<div class="flex justify-end pr-1">
-				<div class="relative flex-none">
-					<button
-						[ngClass]="{
-							'text-gray-500 dark:text-gray-400': !isOpen,
-							'text-gray-700 dark:text-gray-300': isOpen
-						}"
-						class="flex mr-1 items-center justify-between w-full font-medium text-left group-hover:bg-gray-100 dark:group-hover:bg-gray-800"
-						type="button"
-					>
-						<ng-container *ngIf="isOpen; then contentOpen; else contentClosed" />
-					</button>
-				</div>
+			<div class="flex justify-end pr-1 absolute right-4">
+				<!--			<div class="relative flex-none">
+								<button
+									[ngClass]="{
+										'text-gray-500 dark:text-gray-400': !isOpen,
+										'text-gray-700 dark:text-gray-300': isOpen
+									}"
+									class="flex mr-1 items-center justify-between w-full font-medium text-left group-hover:bg-gray-100 dark:group-hover:bg-gray-800"
+									type="button"
+								>
+									<ng-container *ngIf="isOpen; then contentOpen; else contentClosed" />
+								</button>
+							</div>-->
 				<div class="justify-end">
 					<time
 						[ngClass]="{
@@ -157,7 +179,9 @@
 						}"
 						class="flex-none text-xs"
 						datetime="2023-01-23T11:00"
-						>1h
+					>
+						{{ getTimeDifferenceFromNow(notification.createdTime) }}
+						<!--						{{ notification.createdTime | timeDifferenceFromNow }}-->
 					</time>
 				</div>
 			</div>

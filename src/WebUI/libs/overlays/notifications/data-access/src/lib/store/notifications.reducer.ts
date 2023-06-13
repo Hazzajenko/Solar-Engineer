@@ -21,6 +21,28 @@ export const initialNotificationsState: NotificationsState = notificationsAdapte
 
 const reducer = createReducer(
 	initialNotificationsState,
+	on(NotificationsActions.markNotificationsAsCompleted, (state, { notificationIds }) =>
+		notificationsAdapter.updateMany(
+			notificationIds.map((notificationId) => ({
+				id: notificationId,
+				changes: {
+					completed: true,
+				},
+			})),
+			state,
+		),
+	),
+	on(NotificationsActions.markManyNotificationsAsRead, (state, { notificationIds }) =>
+		notificationsAdapter.updateMany(
+			notificationIds.map((notificationId) => ({
+				id: notificationId,
+				changes: {
+					seenByAppUser: true,
+				},
+			})),
+			state,
+		),
+	),
 	on(NotificationsActions.loadNotifications, (state, { notifications }) =>
 		notificationsAdapter.setMany(notifications, state),
 	),

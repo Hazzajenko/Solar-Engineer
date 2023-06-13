@@ -6,6 +6,12 @@ import { NotificationModel } from '@auth/shared'
 export const NotificationsActions = createActionGroup({
 	source: 'Notifications Store',
 	events: {
+		'Mark Notifications As Completed': props<{
+			notificationIds: string[]
+		}>(),
+		'Mark Many Notifications As Read': props<{
+			notificationIds: string[]
+		}>(),
 		'Load Notifications': props<{
 			notifications: NotificationModel[]
 		}>(),

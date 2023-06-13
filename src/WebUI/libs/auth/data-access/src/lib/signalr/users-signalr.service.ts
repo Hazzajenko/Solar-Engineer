@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import { ConnectionModel, FriendRequestResponse, GetOnlineFriendsResponse, GetUserFriendsResponse, NotificationModel, ReceiveAppUserNotificationsResponse, SearchForUserResponse, UpdateNotificationResponse, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD } from '@auth/shared'
+import { ConnectionModel, FriendModel, FriendRequestResponse, GetOnlineFriendsResponse, GetUserFriendsResponse, NotificationModel, ReceiveAppUserNotificationsResponse, SearchForUserResponse, UpdateNotificationResponse, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD } from '@auth/shared'
 import { injectUsersStore } from '../store'
 import { HubConnection } from '@microsoft/signalr'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
@@ -63,6 +63,12 @@ export class UsersSignalrService {
 			},
 		)
 
+		this.hubConnection.on(USERS_SIGNALR_EVENT.RECEIVE_FRIEND, (response: FriendModel) => {
+			console.log(USERS_SIGNALR_EVENT.RECEIVE_FRIEND, response)
+			const webUser = friendToWebUser(response)
+			this._usersStore.dispatch.addUser(webUser)
+		})
+
 		this.hubConnection.on(
 			USERS_SIGNALR_EVENT.RECEIVE_SEARCH_FOR_APP_USER_BY_USER_NAME_RESPONSE,
 			(response: SearchForUserResponse) => {
@@ -92,6 +98,17 @@ export class UsersSignalrService {
 				console.log(USERS_SIGNALR_EVENT.RECEIVE_NOTIFICATION, response)
 				this._notificationsStore.dispatch.addNotification(response)
 				this.receiveNotification(response.id)
+			},
+		)
+
+		this.hubConnection.on(
+			USERS_SIGNALR_EVENT.UPDATE_NOTIFICATION,
+			(response: NotificationModel) => {
+				console.log(USERS_SIGNALR_EVENT.UPDATE_NOTIFICATION, response)
+				this._notificationsStore.dispatch.updateNotification({
+					id: response.id,
+					changes: response,
+				})
 			},
 		)
 
@@ -131,8 +148,16 @@ export class UsersSignalrService {
 		this.invokeHubConnection(USERS_SIGNALR_METHOD.GET_NOTIFICATIONS)
 	}
 
-	readNotification(notificationId: string) {
-		this.invokeHubConnection(USERS_SIGNALR_METHOD.READ_NOTIFICATION, notificationId)
+	// readNotification(notificationId: string) {
+	// 	this.invokeHubConnection(USERS_SIGNALR_METHOD.READ_NOTIFICATION, notificationId)
+	// }
+
+	readManyNotifications(notificationIds: string[]) {
+		this.invokeHubConnection(USERS_SIGNALR_METHOD.READ_MANY_NOTIFICATIONS, notificationIds)
+	}
+
+	completeManyNotifications(notificationIds: string[]) {
+		this.invokeHubConnection(USERS_SIGNALR_METHOD.COMPLETE_MANY_NOTIFICATIONS, notificationIds)
 	}
 
 	receiveNotification(notificationId: string) {

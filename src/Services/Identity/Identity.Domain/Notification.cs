@@ -27,8 +27,8 @@ public class Notification : IEntity
     public bool ReceivedByAppUser { get; set; }
     public bool SeenByAppUser { get; set; }
     public DateTime? SeenByAppUserTime { get; set; }
-    public bool AppUserResponded { get; set; }
-    public DateTime? AppUserRespondedTime { get; set; }
+    public bool Completed { get; set; }
+    public DateTime? CompletedTime { get; set; }
     public bool DeletedByAppUser { get; set; }
     public bool CancelledBySender { get; set; }
 
@@ -43,10 +43,10 @@ public class Notification : IEntity
         SeenByAppUserTime = DateTime.Now;
     }
 
-    public void SetAppUserResponded()
+    public void SetNotificationCompleted()
     {
-        AppUserResponded = true;
-        AppUserRespondedTime = DateTime.Now;
+        Completed = true;
+        CompletedTime = DateTime.Now;
     }
 }
 

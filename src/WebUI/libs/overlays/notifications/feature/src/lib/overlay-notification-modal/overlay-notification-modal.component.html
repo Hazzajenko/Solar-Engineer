@@ -21,28 +21,82 @@
 						</div>
 						<div class="ml-3 w-0 flex-1">
 							<p class="text-sm font-medium text-gray-900">
-								{{ notification.senderAppUserUserName }}
+								{{ notification.senderAppUserDisplayName }}
 							</p>
 							<p class="text-xs text-gray-900">
-								{{ notification.createdTime | date : "medium" }}
+								{{ notification.senderAppUserUserName }}
+								<!--								{{ notification.createdTime | date : "medium" }}-->
 							</p>
 							<p class="mt-1 text-sm text-gray-500">
 								{{ getContentMessageBasedOnType(notification) }}
 							</p>
 							<!--							<p class="mt-1 text-sm text-gray-500">Sent you an invite to connect.</p>-->
 							<div class="mt-4 flex">
-								<button
-									class="inline-flex items-center rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-									type="button"
+								<ng-container
+									*ngIf="
+										notification.notificationType === NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED ||
+										notification.notificationType === NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED
+									"
 								>
-									Accept
-								</button>
-								<button
-									class="ml-3 inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-									type="button"
+									<button
+										(click)="acceptNotification(notification)"
+										class="inline-flex items-center rounded-md bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										type="button"
+									>
+										Accept
+									</button>
+									<button
+										(click)="declineNotification(notification)"
+										class="ml-3 inline-flex items-center rounded-md bg-white p-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+										type="button"
+									>
+										Decline
+									</button>
+								</ng-container>
+								<ng-container
+									*ngIf="
+										notification.notificationType === NOTIFICATION_TYPE.FRIEND_REQUEST_ACCEPTED ||
+										notification.notificationType === NOTIFICATION_TYPE.PROJECT_INVITE_ACCEPTED
+									"
 								>
-									Decline
-								</button>
+									<button
+										(click)="dismissNotification(notification)"
+										class="inline-flex items-center rounded-md bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										type="button"
+									>
+										Dismiss
+									</button>
+								</ng-container>
+								<ng-container
+									*ngIf="notification.notificationType === NOTIFICATION_TYPE.MESSAGE_RECEIVED"
+								>
+									<button
+										(click)="replyToMessage(notification)"
+										class="inline-flex items-center rounded-md bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										type="button"
+									>
+										Reply
+									</button>
+									<button
+										(click)="dismissNotification(notification)"
+										class="inline-flex items-center rounded-md bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										type="button"
+									>
+										Dismiss
+									</button>
+								</ng-container>
+								<!--			<button
+												class="inline-flex items-center rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+												type="button"
+											>
+												Accept
+											</button>
+											<button
+												class="ml-3 inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+												type="button"
+											>
+												Decline
+											</button>-->
 							</div>
 						</div>
 						<div class="ml-4 flex flex-shrink-0">

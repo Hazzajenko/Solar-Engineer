@@ -18,8 +18,10 @@ import {
 	DEFAULT_NOTIFICATION_DURATION,
 	injectNotificationsStore,
 } from '@overlays/notifications/data-access'
-import { NotificationModel } from '@auth/shared'
+import { NOTIFICATION_TYPE, NotificationModel } from '@auth/shared'
 import { getContentMessageBasedOnType } from '@auth/utils'
+import { notification } from '@tauri-apps/api'
+import { injectUsersStore } from '@auth/data-access'
 
 @Component({
 	selector: 'overlay-notification-modal',
@@ -31,6 +33,7 @@ import { getContentMessageBasedOnType } from '@auth/utils'
 	animations: [notificationAnimation],
 })
 export class OverlayNotificationModalComponent implements AfterViewInit {
+	private _usersStore = injectUsersStore()
 	private _renderer = inject(Renderer2)
 	private _notificationsStore = injectNotificationsStore()
 	private _notificationStartTimeMap = signal(new Map<string, number>())
@@ -43,6 +46,8 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 	@ViewChildren('notificationEl') notificationEls!: QueryList<HTMLDivElement>
 	@ViewChildren('progressBar') progressBarEls!: QueryList<ElementRef<HTMLDivElement>>
 	protected readonly getContentMessageBasedOnType = getContentMessageBasedOnType
+	protected readonly NOTIFICATION_TYPE = NOTIFICATION_TYPE
+	protected readonly notification = notification
 
 	constructor() {
 		effect(() => {
@@ -62,6 +67,23 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 			})
 		})
 	}
+
+	/*	getContentMessageBasedOnType(notification: NotificationModel) {
+	 switch (notification.notificationType) {
+	 case NOTIFICATION_TYPE.MESSAGE_RECEIVED:
+	 return `${notification.senderAppUserUserName} sent you a message`
+	 case NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED:
+	 return `${notification.senderAppUserUserName} sent you a friend request`
+	 case NOTIFICATION_TYPE.FRIEND_REQUEST_ACCEPTED:
+	 return `${notification.senderAppUserUserName} accepted your friend request`
+	 case NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED:
+	 return `${notification.senderAppUserUserName} invited you to a project`
+	 case NOTIFICATION_TYPE.PROJECT_INVITE_ACCEPTED:
+	 return `${notification.senderAppUserUserName} accepted your project invite`
+	 default:
+	 throw new Error('Unknown notification type')
+	 }
+	 }*/
 
 	get notificationStartTimeMap() {
 		return this._notificationStartTimeMap()
@@ -86,23 +108,6 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 		}
 	}
 
-	/*	getContentMessageBasedOnType(notification: NotificationModel) {
-	 switch (notification.notificationType) {
-	 case NOTIFICATION_TYPE.MESSAGE_RECEIVED:
-	 return `${notification.senderAppUserUserName} sent you a message`
-	 case NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED:
-	 return `${notification.senderAppUserUserName} sent you a friend request`
-	 case NOTIFICATION_TYPE.FRIEND_REQUEST_ACCEPTED:
-	 return `${notification.senderAppUserUserName} accepted your friend request`
-	 case NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED:
-	 return `${notification.senderAppUserUserName} invited you to a project`
-	 case NOTIFICATION_TYPE.PROJECT_INVITE_ACCEPTED:
-	 return `${notification.senderAppUserUserName} accepted your project invite`
-	 default:
-	 throw new Error('Unknown notification type')
-	 }
-	 }*/
-
 	triggerNotificationTimer(notification: NotificationModel, progressBar: HTMLDivElement) {
 		this.notificationStartTimeMap.set(notification.id, Date.now())
 		const duration = DEFAULT_NOTIFICATION_DURATION
@@ -110,7 +115,7 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 			this._notificationsStore.dispatch.updateNotification({
 				id: notification.id,
 				changes: {
-					seenByAppUser: true,
+					receivedByAppUser: true,
 				},
 			})
 		}, duration)
@@ -129,5 +134,50 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 				seenByAppUser: true,
 			},
 		})
+	}
+
+	acceptNotification(notification: NotificationModel) {
+		switch (notification.notificationType) {
+			case NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED:
+				{
+					console.log('acceptNotification', notification)
+				}
+				break
+			case NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED:
+				{
+					console.log('acceptNotification', notification)
+					this._usersStore.dispatch.acceptFriendRequest(notification.senderAppUserId)
+				}
+				break
+			default:
+				throw new Error('Unknown notification type')
+		}
+	}
+
+	declineNotification(notification: NotificationModel) {
+		switch (notification.notificationType) {
+			case NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED:
+				{
+					console.log('declineNotification', notification)
+				}
+				break
+			case NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED:
+				{
+					console.log('declineNotification', notification)
+					this._usersStore.dispatch.rejectFriendRequest(notification.senderAppUserId)
+				}
+				break
+			default:
+				throw new Error('Unknown notification type')
+		}
+	}
+
+	dismissNotification(notification: NotificationModel) {
+		console.log('dismissNotification', notification)
+		this._notificationsStore.dispatch.markNotificationsAsCompleted([notification.id])
+	}
+
+	replyToMessage(notification: NotificationModel) {
+		console.log('replyToMessage', notification)
 	}
 }

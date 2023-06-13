@@ -30,15 +30,37 @@ public sealed class NotificationsRepository
     )
     {
         return await Queryable
+            .Include(x => x.SenderAppUser)
             .Where(
                 x =>
                     x.SenderAppUserId == senderAppUserId
                     && x.AppUserId == appUserId
                     && !x.CancelledBySender
                     && !x.DeletedByAppUser
-                    && !x.AppUserResponded
+                    && !x.Completed
                     && x.NotificationType == notificationType
             )
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<NotificationDto?> GetNotificationDtoFromSenderToAppUserByTypeAsync(
+        Guid senderAppUserId,
+        Guid appUserId,
+        NotificationType notificationType
+    )
+    {
+        return await Queryable
+            .Include(x => x.SenderAppUser)
+            .Where(
+                x =>
+                    x.SenderAppUserId == senderAppUserId
+                    && x.AppUserId == appUserId
+                    && !x.CancelledBySender
+                    && !x.DeletedByAppUser
+                    && !x.Completed
+                    && x.NotificationType == notificationType
+            )
+            .ProjectToType<NotificationDto>()
             .FirstOrDefaultAsync();
     }
 
@@ -56,10 +78,17 @@ public sealed class NotificationsRepository
     {
         return await Queryable
             .Where(x => x.AppUserId == appUser.Id)
-            .OrderBy(x => x.CreatedTime)
-            .Where(x => !x.SeenByAppUser || x.CancelledBySender || x.DeletedByAppUser)
+            .OrderByDescending(x => x.CreatedTime)
+            .Where(x => !x.CancelledBySender || !x.DeletedByAppUser || !x.Completed)
             .Take(10)
             .ProjectToType<NotificationDto>()
             .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Notification>> GetManyNotificationsByIdsAsync(
+        IEnumerable<Guid> ids
+    )
+    {
+        return await Queryable.Where(x => ids.Contains(x.Id)).ToListAsync();
     }
 }

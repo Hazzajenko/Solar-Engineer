@@ -13,4 +13,5 @@ public class NotificationDto
     public bool SeenByAppUser { get; set; }
     public bool DeletedByAppUser { get; set; }
     public bool CancelledBySender { get; set; }
+    public bool Completed { get; set; }
 }

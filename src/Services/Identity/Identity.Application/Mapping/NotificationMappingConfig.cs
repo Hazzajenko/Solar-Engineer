@@ -22,6 +22,7 @@ public class NotificationMappingConfig : IRegister
             .Map(dest => dest.ReceivedByAppUser, src => src.ReceivedByAppUser)
             .Map(dest => dest.SeenByAppUser, src => src.SeenByAppUser)
             .Map(dest => dest.DeletedByAppUser, src => src.DeletedByAppUser)
-            .Map(dest => dest.CancelledBySender, src => src.CancelledBySender);
+            .Map(dest => dest.CancelledBySender, src => src.CancelledBySender)
+            .Map(dest => dest.Completed, src => src.Completed);
     }
 }

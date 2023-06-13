@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using DotNetCore.EntityFrameworkCore;
 using Infrastructure.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Infrastructure.Repositories;
 
@@ -24,6 +25,11 @@ public abstract class GenericRepository<TContext, TModel>
         // Queryable.Find
         // base.Find(id);
         return Queryable.SingleOrDefaultAsync(user => user.Id == id);
+    }
+
+    public async Task<TModel?> GetByIdNoTracking(Guid id)
+    {
+        return await Queryable.AsNoTracking().SingleOrDefaultAsync(user => user.Id == id);
     }
 
     public async Task<TModel> AddAndSaveChangesAsync(TModel model)
@@ -78,6 +84,11 @@ public abstract class GenericRepository<TContext, TModel>
         await Queryable.Where(where).ExecuteDeleteAsync();
         // await Queryable.Where(where).ExecuteDeleteAsync();
         return await SaveChangesAsync();
+    }
+
+    public async Task<int> ExecuteUpdateAsync(Expression<Func<SetPropertyCalls<TModel>,SetPropertyCalls<TModel>>> updateFunc)
+    {
+        return await Queryable.ExecuteUpdateAsync(updateFunc);
     }
 
     public async Task<IEnumerable<TModel>> UpdateManyAndSaveChangesAsync(IEnumerable<TModel> items)

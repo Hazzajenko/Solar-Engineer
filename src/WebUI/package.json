@@ -41,15 +41,15 @@
     "outputDirectory": "./libs/shared/assets/src/lib/ts-svgs",
     "interfaceName": "AppSvgWrapper",
     "typeName": "AppSvg",
-    "prefix": "Svg",
     "svgoConfig": {
       "plugins": [
         "cleanupAttrs"
       ]
     },
-    "fileName": "app-svg.types",
-    "additionalModelOutputPath": "./libs/shared/assets/src/lib/ts-svgs-types",
-    "compileSources": true
+    "prefix": "Svg",
+    "additionalModelOutputPath": "./libs/shared/assets/src/lib/svg-to-ts/",
+    "modelFileName": "app-svg.model.ts",
+    "compileSources": false
   },
   "private": true,
   "dependencies": {

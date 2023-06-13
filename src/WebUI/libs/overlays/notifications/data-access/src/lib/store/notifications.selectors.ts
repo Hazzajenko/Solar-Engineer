@@ -44,3 +44,15 @@ export const selectNotificationsThatUserHasNotReceived = createSelector(
 	(notifications: NotificationModel[]) =>
 		notifications.filter((notification) => !notification.receivedByAppUser),
 )
+
+export const selectNotCompletedNotifications = createSelector(
+	selectAllNotifications,
+	(notifications: NotificationModel[]) =>
+		notifications.filter((notification) => !notification.completed),
+)
+
+export const selectNotCompletedNotificationsSortedByCreatedTime = createSelector(
+	selectNotCompletedNotifications,
+	(notifications: NotificationModel[]) =>
+		notifications.sort((a, b) => (new Date(b.createdTime) > new Date(a.createdTime) ? -1 : 1)),
+)

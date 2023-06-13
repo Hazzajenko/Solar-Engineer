@@ -35,6 +35,8 @@ public class IdentityContext
     {
         base.OnModelCreating(builder);
 
+        builder.ConfigureSmartEnum();
+
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 

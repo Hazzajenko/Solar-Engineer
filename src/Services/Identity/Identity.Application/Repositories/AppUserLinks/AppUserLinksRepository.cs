@@ -26,6 +26,37 @@ public sealed class AppUserLinksRepository
             .SingleOrDefaultAsync();
     }
 
+    public async Task<AppUserLink?> GetByBothUserIdsIncludeBothUsersAsync(
+        Guid appUserId,
+        Guid recipientId
+    )
+    {
+        return await Queryable
+            .Where(
+                m =>
+                    (m.AppUserRequestedId == appUserId && m.AppUserReceivedId == recipientId)
+                    || (m.AppUserRequestedId == recipientId && m.AppUserReceivedId == appUserId)
+            )
+            .Include(x => x.AppUserReceived)
+            .Include(x => x.AppUserRequested)
+            .SingleOrDefaultAsync();
+    }
+
+    public async Task<AppUserLink?> GetByBothUserIdsNoTrackingAsync(
+        Guid appUserId,
+        Guid recipientId
+    )
+    {
+        return await Queryable
+            .AsNoTracking()
+            .Where(
+                m =>
+                    (m.AppUserRequestedId == appUserId && m.AppUserReceivedId == recipientId)
+                    || (m.AppUserRequestedId == recipientId && m.AppUserReceivedId == appUserId)
+            )
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<AppUserLink?> GetByBothUsersAsync(AppUser appUser, AppUser recipient)
     {
         return await Queryable

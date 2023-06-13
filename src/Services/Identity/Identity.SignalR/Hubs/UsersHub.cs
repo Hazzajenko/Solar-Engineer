@@ -74,6 +74,11 @@ public class UsersHub : Hub<IUsersHub>
         await _mediator.Send(new RejectFriendRequestCommand(Context.ToAuthUser(), senderUserId));
     }
 
+    public async Task RemoveFriend(string recipientUserId)
+    {
+        await _mediator.Send(new RemoveFriendCommand(Context.ToAuthUser(), recipientUserId));
+    }
+
     public async Task ReceiveNotification(string notificationId)
     {
         await _mediator.Send(new ReceiveNotificationCommand(Context.ToAuthUser(), notificationId));
@@ -94,13 +99,18 @@ public class UsersHub : Hub<IUsersHub>
         await _mediator.Send(new GetUserNotificationsCommand(Context.ToAuthUser()));
     }
 
-    public async Task ReadNotification(string notificationId)
+    public async Task CompleteManyNotifications(IEnumerable<string> notificationIds)
     {
-        await _mediator.Send(new ReadNotificationCommand(Context.ToAuthUser(), notificationId));
+        await _mediator.Send(
+            new CompleteManyNotificationsCommand(Context.ToAuthUser(), notificationIds)
+        );
     }
 
-    public async Task DeleteNotification(string notificationId)
+    public async Task ReadManyNotifications(IEnumerable<string> notificationIds)
     {
-        await _mediator.Send(new DeleteNotificationCommand(Context.ToAuthUser(), notificationId));
+        await _mediator.Send(
+            new ReadManyNotificationsCommand(Context.ToAuthUser(), notificationIds)
+        );
     }
+
 }

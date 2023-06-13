@@ -150,27 +150,13 @@ namespace Identity.API.Data.Migrations
                     b.Property<Guid>("AppUserReceivedId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AppUserReceivedDisplayName")
+                    b.Property<string>("AppUserReceivedFriendRequestStatus")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("AppUserReceivedStatusEvent")
+                    b.Property<string>("AppUserRequestedFriendRequestStatus")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateTime>("AppUserReceivedStatusTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("AppUserRequestedDisplayName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("AppUserRequestedStatusEvent")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("AppUserRequestedStatusTime")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("BecameFriendsTime")
                         .HasColumnType("timestamp with time zone");
@@ -181,6 +167,9 @@ namespace Identity.API.Data.Migrations
                     b.Property<bool>("Friends")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime>("LastFriendRequestStatusChangeTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("LastModifiedTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -188,7 +177,7 @@ namespace Identity.API.Data.Migrations
 
                     b.HasIndex("AppUserReceivedId");
 
-                    b.ToTable("AppUserLinks");
+                    b.ToTable("AppUserLinks", (string)null);
                 });
 
             modelBuilder.Entity("Identity.Domain.AppUserRole", b =>
@@ -216,14 +205,14 @@ namespace Identity.API.Data.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("AppUserResponded")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("AppUserRespondedTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<bool>("CancelledBySender")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("Completed")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("CompletedTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("timestamp with time zone");
@@ -256,7 +245,7 @@ namespace Identity.API.Data.Migrations
 
                     b.HasIndex("SenderAppUserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

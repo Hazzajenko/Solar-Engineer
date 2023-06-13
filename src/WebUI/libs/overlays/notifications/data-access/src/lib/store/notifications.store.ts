@@ -2,6 +2,7 @@ import { Store } from '@ngrx/store'
 import {
 	selectAllNotifications,
 	selectAmountOfUnreadNotifications,
+	selectNotCompletedNotificationsSortedByCreatedTime,
 	selectNotificationsEntities,
 	selectNotificationsThatUserHasNotReceived,
 } from './notifications.selectors'
@@ -31,9 +32,16 @@ function notificationsStoreFactory(store: Store) {
 		notificationsThatUserHasNotReceived: store.selectSignal(
 			selectNotificationsThatUserHasNotReceived,
 		),
+		notCompletedNotifications: store.selectSignal(
+			selectNotCompletedNotificationsSortedByCreatedTime,
+		),
 	}
 
 	const dispatch = {
+		markNotificationsAsCompleted: (notificationIds: string[]) =>
+			store.dispatch(NotificationsActions.markNotificationsAsCompleted({ notificationIds })),
+		markManyNotificationsAsRead: (notificationIds: string[]) =>
+			store.dispatch(NotificationsActions.markManyNotificationsAsRead({ notificationIds })),
 		loadNotifications: (notifications: NotificationModel[]) =>
 			store.dispatch(NotificationsActions.loadNotifications({ notifications })),
 		addNotification: (notification: NotificationModel) =>

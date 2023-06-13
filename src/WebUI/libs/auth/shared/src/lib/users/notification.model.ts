@@ -13,6 +13,7 @@ export type NotificationModel = {
 	seenByAppUser: boolean
 	deletedByAppUser: boolean
 	cancelledBySender: boolean
+	completed: boolean
 }
 
 export const NOTIFICATION_TYPE = {
