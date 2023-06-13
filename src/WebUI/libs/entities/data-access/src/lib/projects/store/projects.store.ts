@@ -10,7 +10,12 @@ import {
 } from './projects.selectors'
 import { ProjectsActions } from './projects.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { CreateProjectRequest, ProjectId, ProjectModel } from '@entities/shared'
+import {
+	CreateProjectRequest,
+	InviteToProjectRequest,
+	ProjectId,
+	ProjectModel,
+} from '@entities/shared'
 import { createRootServiceInjector } from '@shared/utils'
 import { EntityUpdate } from '@shared/data-access/models'
 
@@ -44,6 +49,12 @@ export function projectsStoreFactory(store: Store) {
 			store.dispatch(ProjectsActions.loadUserProjectsSuccess({ projects })),
 		selectProject: (projectId: ProjectId) =>
 			store.dispatch(ProjectsActions.selectProject({ projectId })),
+		inviteUsersToProject: (request: InviteToProjectRequest) =>
+			store.dispatch(ProjectsActions.inviteUsersToProject({ request })),
+		acceptProjectInvite: (projectId: ProjectId) =>
+			store.dispatch(ProjectsActions.acceptProjectInvite({ projectId })),
+		rejectProjectInvite: (projectId: ProjectId) =>
+			store.dispatch(ProjectsActions.rejectProjectInvite({ projectId })),
 		addProject: (project: ProjectModel) => store.dispatch(ProjectsActions.addProject({ project })),
 		addManyProjects: (projects: ProjectModel[]) =>
 			store.dispatch(ProjectsActions.addManyProjects({ projects })),

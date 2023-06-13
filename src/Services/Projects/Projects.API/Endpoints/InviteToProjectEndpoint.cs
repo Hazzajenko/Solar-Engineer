@@ -6,7 +6,7 @@ using Projects.SignalR.Commands.Projects;
 
 namespace Projects.API.Endpoints;
 
-public class InviteToProjectEndpoint : Endpoint<InviteToProjectRequest>
+public class InviteToProjectEndpoint : Endpoint<InviteUserToProjectRequest>
 {
     private readonly IMediator _mediator;
 
@@ -27,9 +27,9 @@ public class InviteToProjectEndpoint : Endpoint<InviteToProjectRequest>
         });
     }
 
-    public override async Task HandleAsync(InviteToProjectRequest request, CancellationToken cT)
+    public override async Task HandleAsync(InviteUserToProjectRequest request, CancellationToken cT)
     {
-        await _mediator.Send(new InviteToProjectCommand(User.ClaimsToAuthUser(), request), cT);
+        await _mediator.Send(new InviteUsersToProjectCommand(User.ClaimsToAuthUser(), request), cT);
         await SendNoContentAsync(cT);
     }
 }

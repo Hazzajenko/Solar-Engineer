@@ -13,7 +13,8 @@ namespace Identity.Application.Handlers.Notifications;
 public record DispatchNotificationCommand(
     AppUser AppUser,
     AppUser RecipientUser,
-    NotificationType NotificationType
+    NotificationType NotificationType,
+    ProjectInvite? ProjectInvite = null
 ) : ICommand<bool>;
 
 public class DispatchNotificationHandler : ICommandHandler<DispatchNotificationCommand, bool>
@@ -38,7 +39,9 @@ public class DispatchNotificationHandler : ICommandHandler<DispatchNotificationC
         var recipientUser = command.RecipientUser;
         var appUser = command.AppUser;
         var notificationType = command.NotificationType;
-        var notification = new Notification(recipientUser, appUser, notificationType);
+        var projectData = command.ProjectInvite;
+
+        var notification = new Notification(recipientUser, appUser, notificationType, projectData);
 
         await _unitOfWork.NotificationsRepository.AddAsync(notification);
         await _unitOfWork.SaveChangesAsync();

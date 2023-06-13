@@ -16,7 +16,10 @@ public interface IGenericRepository<TModel>
     Task UpdateAsync(TModel item);
     Task UpdateRangeAsync(IEnumerable<TModel> items);
 
-    Task<int> ExecuteUpdateAsync(Expression<Func<SetPropertyCalls<TModel>, SetPropertyCalls<TModel>>> updateFunc);
+    Task<int> ExecuteUpdateAsync(
+        Expression<Func<TModel, bool>> predicate,
+        Expression<Func<SetPropertyCalls<TModel>, SetPropertyCalls<TModel>>> updateFunc
+    );
     Task<TModel> UpdateAndSaveChangesAsync(TModel model);
     Task<IEnumerable<TModel>> UpdateManyAndSaveChangesAsync(IEnumerable<TModel> items);
     Task<bool> FindAndDeleteAsync(Expression<Func<TModel, bool>> where);

@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Infrastructure.Logging;
 using Infrastructure.Services;
 using Infrastructure.Settings;
 using Microsoft.Extensions.Options;
@@ -22,10 +23,13 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
     public string GenerateToken(string id, string userName)
     {
-        var signingCredentials = new SigningCredentials(
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key)),
-            SecurityAlgorithms.HmacSha256
-        );
+        var tokenHandler = new JwtSecurityTokenHandler();
+        // _jwtSettings.DumpObjectJson();
+        var key = Encoding.UTF8.GetBytes(_jwtSettings.Key);
+        // var signingCredentials = new SigningCredentials(
+        //     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key)),
+        //     SecurityAlgorithms.HmacSha256
+        // );
 
         var claims = new List<Claim>
         {
@@ -35,14 +39,30 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             new("userName", userName)
         };
 
-        var securityToken = new JwtSecurityToken(
-            _jwtSettings.Issuer,
-            _jwtSettings.Audience,
-            claims,
-            expires: _dateTimeProvider.UtcNow.Add(TokenLifetime),
-            signingCredentials: signingCredentials
-        );
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.Add(TokenLifetime),
+            Issuer = _jwtSettings.Issuer,
+            Audience = _jwtSettings.Audience,
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature
+            )
+        };
+        //
+        // var securityToken = new JwtSecurityToken(
+        //     _jwtSettings.Issuer,
+        //     _jwtSettings.Audience,
+        //     claims,
+        //     expires: _dateTimeProvider.UtcNow.Add(TokenLifetime),
+        //     signingCredentials: signingCredentials
+        // );
 
-        return new JwtSecurityTokenHandler().WriteToken(securityToken);
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+
+        return tokenHandler.WriteToken(token);
+
+        // return new JwtSecurityTokenHandler().WriteToken(securityToken);
     }
 }

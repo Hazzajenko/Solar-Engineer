@@ -1,3 +1,5 @@
+import { ProjectId } from '@entities/shared'
+
 export type NotificationModel = {
 	id: string
 	appUserId: string
@@ -14,6 +16,17 @@ export type NotificationModel = {
 	deletedByAppUser: boolean
 	cancelledBySender: boolean
 	completed: boolean
+}
+
+export type NotificationWithProjectInvite = NotificationModel & {
+	projectInvite: ProjectInvite
+	projectId: ProjectId
+}
+
+export type ProjectInvite = {
+	projectId: string
+	projectName: string
+	projectPhotoUrl: string
 }
 
 export const NOTIFICATION_TYPE = {

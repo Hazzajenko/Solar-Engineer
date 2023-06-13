@@ -1,6 +1,11 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { CreateProjectRequest, ProjectId, ProjectModel } from '@entities/shared'
+import {
+	CreateProjectRequest,
+	InviteToProjectRequest,
+	ProjectId,
+	ProjectModel,
+} from '@entities/shared'
 import { ProjectEntityStore } from './projects.reducer'
 import { EntityUpdate } from '@shared/data-access/models'
 
@@ -28,6 +33,15 @@ export const ProjectsActions = createActionGroup({
 			error: string | null
 		}>(),
 		'User Projects Empty': emptyProps(),
+		'Invite Users To Project': props<{
+			request: InviteToProjectRequest
+		}>(),
+		'Accept Project Invite': props<{
+			projectId: ProjectId
+		}>(),
+		'Reject Project Invite': props<{
+			projectId: ProjectId
+		}>(),
 		'Add Project': props<{
 			project: ProjectModel
 		}>(),

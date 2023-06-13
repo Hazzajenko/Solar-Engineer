@@ -42,6 +42,88 @@
 				Open Profile
 			</a>
 		</li>
+		<li class="relative">
+			<div
+				(click)="
+					inviteToProjectMenu.style.display === 'block'
+						? (inviteToProjectMenu.style.display = 'none')
+						: (inviteToProjectMenu.style.display = 'block')
+				"
+				class="group hover:bg-gray-100 flex items-center justify-between"
+			>
+				<div class="group flex items-center justify-center">
+					<a
+						class="flex items-center px-4 py-2 text-sm text-gray-700 group-hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white"
+						role="menuitem"
+						tabindex="-1"
+					>
+						<app-show-svg-no-styles
+							class="mr-1 group-hover:text-gray-600"
+							svgPath="profile/user-plus"
+						/>
+						Invite to Project
+					</a>
+				</div>
+				<a class="flex group justify-end items-center pr-1 text-sm" role="menuitem" tabindex="-1">
+					<app-show-svg-no-styles class="group-hover:text-gray-600" svgPath="arrows/right" />
+				</a>
+			</div>
+			<ul
+				#inviteToProjectMenu
+				@increaseScaleAndOpacity
+				class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute top-1 left-full ml-2 z-50 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+				style="display: none"
+			>
+				<div
+					*ngFor="let project of projects()"
+					class="group hover:bg-gray-100 flex items-center justify-between"
+				>
+					<div
+						(click)="openInviteToProjectDialog(project)"
+						class="group flex items-center justify-center"
+					>
+						<span
+							[ngStyle]="{
+								'background-color': project.colour,
+								'border-color': project.colour
+							}"
+							class="w-4 h-4 rounded ml-3"
+						></span>
+						<div class="flex flex-col items-center justify-center">
+							<a
+								class="flex items-center px-4 py-2 text-sm text-gray-700 group-hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white"
+								role="menuitem"
+								tabindex="-1"
+							>
+								<app-show-svg-no-styles
+									class="mr-1 group-hover:text-gray-600"
+									svgPath="profile/user-plus"
+								/>
+								{{ project.name }}
+							</a>
+
+							<!--							<span class="text-xs text-gray-500">{{ project.members.length }} members</span>-->
+							<!--							<span-->
+							<!--								class='text-xs text-gray-500'-->
+							<!--							-->
+							<!--							>-->
+							<!--								{{ project.}}-->
+							<!--								-->
+							<!--							</span>-->
+						</div>
+
+						<!--						<span></span>-->
+						<!--					<span class="animate-pulse ml-2">
+												&lt;!&ndash;							<app-show-svg-no-styles&ndash;&gt;
+												&lt;!&ndash;								class="group-hover:text-gray-600"&ndash;&gt;
+												&lt;!&ndash;								svgPath="profile/check"&ndash;&gt;
+												&lt;!&ndash;							/>&ndash;&gt;
+												<svg-input class="group-hover:text-gray-600" svgName="SvgUserPlus" />
+											</span>-->
+					</div>
+				</div>
+			</ul>
+		</li>
 		<li>
 			<a
 				(click)="sendMessage()"

@@ -1,5 +1,6 @@
 ﻿using Ardalis.SmartEnum;
 using Infrastructure.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Domain;
 
@@ -14,6 +15,19 @@ public class Notification : IEntity
         NotificationType = notificationType;
     }
 
+    public Notification(
+        AppUser appUser,
+        AppUser senderAppUser,
+        NotificationType notificationType,
+        ProjectInvite? projectInvite = null
+    )
+    {
+        AppUserId = appUser.Id;
+        SenderAppUserId = senderAppUser.Id;
+        NotificationType = notificationType;
+        ProjectInvite = projectInvite;
+    }
+
     public Guid Id { get; set; }
     public Guid AppUserId { get; set; }
     public AppUser AppUser { get; set; } = default!;
@@ -23,6 +37,9 @@ public class Notification : IEntity
 
     public DateTime CreatedTime { get; set; } = DateTime.Now;
     public DateTime LastModifiedTime { get; set; } = DateTime.Now;
+
+    public ProjectInvite? ProjectInvite { get; set; }
+    public Guid? ProjectId { get; set; }
 
     public bool ReceivedByAppUser { get; set; }
     public bool SeenByAppUser { get; set; }
@@ -47,6 +64,7 @@ public class Notification : IEntity
     {
         Completed = true;
         CompletedTime = DateTime.Now;
+        SetSeenByAppUser();
     }
 }
 
@@ -67,3 +85,66 @@ public sealed class NotificationType : SmartEnum<NotificationType>
     private NotificationType(string name, int value)
         : base(name, value) { }
 }
+
+public class ProjectInvite
+{
+    public ProjectInvite() { }
+
+    public ProjectInvite(Guid projectId, string projectName, string projectPhotoUrl)
+    {
+        ProjectId = projectId;
+        ProjectName = projectName;
+        ProjectPhotoUrl = projectPhotoUrl;
+    }
+
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = default!;
+    public string ProjectPhotoUrl { get; set; } = default!;
+}
+
+/*public class ProjectData
+{
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = default!;
+    public string ProjectPhotoUrl { get; set; } = default!;
+}*/
+
+/*
+public class ProjectInviteReceivedNotification : Notification
+{
+    public ProjectInviteReceivedNotification() { }
+
+    public ProjectInviteReceivedNotification(
+        AppUser appUser,
+        AppUser senderAppUser,
+        ProjectData projectData
+    )
+        : base(appUser, senderAppUser, NotificationType.ProjectInviteReceived)
+    {
+        ProjectInvite = new ProjectInvite(nameof(ProjectInviteReceivedNotification), projectData);
+        ProjectId = projectData.ProjectId;
+    }
+
+    public new ProjectInvite ProjectInvite { get; set; } = default!;
+    public new Guid ProjectId { get; set; }
+}
+
+public class ProjectInviteAcceptedNotification : Notification
+{
+    public ProjectInviteAcceptedNotification() { }
+
+    public ProjectInviteAcceptedNotification(
+        AppUser appUser,
+        AppUser senderAppUser,
+        ProjectData projectData
+    )
+        : base(appUser, senderAppUser, NotificationType.ProjectInviteAccepted)
+    {
+        ProjectInvite = new ProjectInvite(nameof(ProjectInviteAcceptedNotification), projectData);
+        ProjectId = projectData.ProjectId;
+    }
+
+    public new ProjectInvite ProjectInvite { get; set; } = default!;
+    public new Guid ProjectId { get; set; }
+}
+*/

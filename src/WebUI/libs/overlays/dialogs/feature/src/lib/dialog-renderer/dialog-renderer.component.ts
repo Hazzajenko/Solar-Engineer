@@ -16,6 +16,7 @@ import { SignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.componen
 import { DialogCreateProjectComponent } from '../dialog-create-project'
 import { handleAllSwitchCases } from '@shared/utils'
 import { DialogDeleteProjectWarningComponent } from '../dialog-delete-project-warning'
+import { DialogInviteToProjectConfirmComponent } from '../dialog-invite-to-project-confirm/dialog-invite-to-project-confirm.component'
 
 export const dialogInputInjectionToken = new InjectionToken<DialogInput>('')
 
@@ -84,6 +85,8 @@ export class DialogRendererComponent implements OnDestroy {
 				return DialogCreateProjectComponent
 			case DIALOG_COMPONENT.DELETE_PROJECT_WARNING:
 				return DialogDeleteProjectWarningComponent
+			case DIALOG_COMPONENT.INVITE_TO_PROJECT_CONFIRM:
+				return DialogInviteToProjectConfirmComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

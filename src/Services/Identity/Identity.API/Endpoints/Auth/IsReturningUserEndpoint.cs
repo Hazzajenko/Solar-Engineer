@@ -15,7 +15,11 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IMediator _mediator;
 
-    public IsReturningUserEndpoint(IMediator mediator, IJwtTokenGenerator jwtTokenGenerator, IBus bus)
+    public IsReturningUserEndpoint(
+        IMediator mediator,
+        IJwtTokenGenerator jwtTokenGenerator,
+        IBus bus
+    )
     {
         _mediator = mediator;
         _jwtTokenGenerator = jwtTokenGenerator;
@@ -47,9 +51,13 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
         var token = _jwtTokenGenerator.GenerateToken(appUser.Id, appUser.UserName);
 
-        var message = new UserLoggedIn(appUser.Id.ToGuid(), appUser.UserName, appUser.DisplayName, appUser.PhotoUrl);
+        var message = new UserLoggedIn(
+            appUser.Id.ToGuid(),
+            appUser.UserName,
+            appUser.DisplayName,
+            appUser.PhotoUrl
+        );
         await _bus.Publish(message, cT);
-        // _bus.GetR
 
         Response.Token = token;
         Response.User = appUser;

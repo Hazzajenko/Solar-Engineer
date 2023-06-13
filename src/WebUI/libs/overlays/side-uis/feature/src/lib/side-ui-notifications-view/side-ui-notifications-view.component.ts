@@ -29,12 +29,14 @@ import {
 	getContentMessageBasedOnTypeWithoutDisplayName,
 	getContentMessageHtmlBasedOnType,
 	getNotificationTypeToText,
+	isProjectNotification,
 } from '@auth/utils'
 import { CenterThisElementDirective, DefaultHoverEffectsDirective } from '@shared/directives'
 import { notification } from '@tauri-apps/api'
 import { assertNotNull, getTimeDifferenceFromNow, ToSafeHtmlPipe } from '@shared/utils'
 import { heightInOutWithConfig } from '@shared/animations'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { injectProjectsStore } from '@entities/data-access'
 
 @Component({
 	selector: 'side-ui-notifications-view',
@@ -66,6 +68,7 @@ export class SideUiNotificationsViewComponent implements OnInit, OnDestroy {
 	private _authStore = injectAuthStore()
 	private _usersStore = injectUsersStore()
 	private _notificationsStore = injectNotificationsStore()
+	private _projectsStore = injectProjectsStore()
 	private _elementRef = inject(ElementRef)
 	private _renderer = inject(Renderer2)
 	private _disposeClickListener!: ReturnType<typeof Renderer2.prototype.listen>
@@ -173,6 +176,10 @@ export class SideUiNotificationsViewComponent implements OnInit, OnDestroy {
 			case NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED:
 				{
 					console.log('acceptNotification', notification)
+					if (!isProjectNotification(notification)) {
+						throw new Error('Notification is not a project notification')
+					}
+					this._projectsStore.dispatch.acceptProjectInvite(notification.projectId)
 				}
 				break
 			case NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED:

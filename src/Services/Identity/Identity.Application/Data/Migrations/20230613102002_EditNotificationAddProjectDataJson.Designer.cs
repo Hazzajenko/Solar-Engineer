@@ -4,17 +4,20 @@ using Identity.Application.Data;
 using Identity.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Identity.API.Data.Migrations
+namespace Identity.Application.Data.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    partial class AuthContextModelSnapshot : ModelSnapshot
+    [Migration("20230613102002_EditNotificationAddProjectDataJson")]
+    partial class EditNotificationAddProjectDataJson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

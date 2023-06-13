@@ -1,11 +1,13 @@
 ﻿using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Handlers.Notifications;
+using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Friends;
 using Identity.Domain;
 using Identity.SignalR.Commands.Friends;
 using Identity.SignalR.Hubs;
 using Infrastructure.Extensions;
 using Infrastructure.SignalR;
+using Mapster;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -62,20 +64,6 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
         appUserLink.ThrowHubExceptionIfNull();
         appUserLink.RejectFriendRequest(appUser);
         await _unitOfWork.AppUserLinksRepository.UpdateAsync(appUserLink);
-        /*var isAppUserRequested = appUserLink.AppUserRequestedId == appUser.Id;
-        if (isAppUserRequested)
-        {
-            appUserLink.AppUserRequestedStatusEvent = AppUserLink.FriendRequestSent.Rejected;
-            appUserLink.AppUserReceivedStatusEvent = AppUserLink.FriendRequestReceived.Rejected;
-        }
-        else
-        {
-            appUserLink.AppUserRequestedStatusEvent = AppUserLink.FriendRequestReceived.Rejected;
-            appUserLink.AppUserReceivedStatusEvent = AppUserLink.FriendRequestSent.Rejected;
-        }*/
-
-        // await _unitOfWork.AppUserLinksRepository.UpdateAsync(appUserLink);
-
         await _unitOfWork.SaveChangesAsync();
 
         var notificationCommand = new DispatchNotificationCommand(
@@ -84,6 +72,23 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
             NotificationType.FriendRequestReceived
         );
         await _mediator.Send(notificationCommand, cT);
+        
+        var originalSenderId = recipientUser.Id;
+        var friendRequestNotification =
+            await _unitOfWork.NotificationsRepository.GetNotificationFromSenderToAppUserByTypeAsync(
+                originalSenderId,
+                appUser.Id,
+                NotificationType.FriendRequestReceived
+            );
+        friendRequestNotification.ThrowHubExceptionIfNull();
+        friendRequestNotification.SetNotificationCompleted();
+
+        await _unitOfWork.NotificationsRepository.UpdateAsync(friendRequestNotification);
+        await _unitOfWork.SaveChangesAsync();
+
+        var notificationDto = friendRequestNotification.Adapt<NotificationDto>();
+
+        await _hubContext.Clients.User(appUser.Id.ToString()).UpdateNotification(notificationDto);
 
         _logger.LogInformation(
             "Friend request rejected from AppUserRequested: {AppUserRequestedId} - {AppUserRequestedUserName}, AppUserReceived: {AppUserReceived} - {AppUserReceivedUserName}",

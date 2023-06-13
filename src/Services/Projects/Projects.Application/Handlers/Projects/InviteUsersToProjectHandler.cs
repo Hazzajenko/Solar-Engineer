@@ -1,9 +1,11 @@
 ﻿using EventBus.Domain.ProjectsEvents;
 using FluentValidation;
 using FluentValidation.Results;
+using Infrastructure.Events;
 using Infrastructure.Extensions;
 using Infrastructure.Logging;
 using Infrastructure.Mapping;
+using MassTransit;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
@@ -15,42 +17,34 @@ using Projects.SignalR.Hubs;
 
 namespace Projects.Application.Handlers.Projects;
 
-public class InviteToProjectHandler
-    : ICommandHandler<InviteToProjectCommand, InviteToProjectResponse?>
+public class InviteUsersToProjectHandler
+    : ICommandHandler<InviteUsersToProjectCommand, InviteToProjectResponse?>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger _logger;
     private readonly IProjectsUnitOfWork _unitOfWork;
+    private readonly IBus _bus;
 
-    public InviteToProjectHandler(
-        ILogger<InviteToProjectHandler> logger,
+    public InviteUsersToProjectHandler(
+        ILogger<InviteUsersToProjectHandler> logger,
         IProjectsUnitOfWork unitOfWork,
-        IHubContext<ProjectsHub, IProjectsHub> hubContext
+        IHubContext<ProjectsHub, IProjectsHub> hubContext,
+        IBus bus
     )
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
         _hubContext = hubContext;
+        _bus = bus;
     }
 
     public async ValueTask<InviteToProjectResponse?> Handle(
-        InviteToProjectCommand command,
+        InviteUsersToProjectCommand command,
         CancellationToken cT
     )
     {
         var appUserId = command.User.Id;
         var projectIdGuid = command.Request.ProjectId.ToGuid();
-        /*var project = await _unitOfWork.ProjectsRepository.GetByIdAsync(projectIdGuid);
-        if (project is null)
-        {
-            _logger.LogError(
-                "User {User} tried to invite to project {Project} that does not exist",
-                appUserId,
-                projectIdGuid
-            );
-            var message = $"Project {projectIdGuid} does not exist";
-            throw new ValidationException(message, message.ToValidationFailure<Project>());
-        }*/
 
         var appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
@@ -65,10 +59,9 @@ public class InviteToProjectHandler
                 projectIdGuid
             );
 
-            return null;
-            // return new ErrorOr.ErrorOr<InviteToProjectResponse?>(null);
-            // var message = $"User {appUserId} is not apart of project {projectIdGuid}";
-            // throw new ValidationException(message, message.ToValidationFailure<AppUserProject>());
+            var message = "User does not have invite permissions in project";
+            var errors = new ValidationFailure(nameof(AppUserProject), message).ToArray();
+            throw new ValidationException(message, errors);
         }
 
         if (appUserProject.CanInvite is false)
@@ -80,11 +73,7 @@ public class InviteToProjectHandler
             );
             var message = "User does not have invite permissions in project";
             var errors = new ValidationFailure(nameof(AppUserProject), message).ToArray();
-            throw new ValidationException(
-                message,
-                errors
-            );
-            // throw new ValidationException("User does not have invite permissions in this project");
+            throw new ValidationException(message, errors);
         }
 
         foreach (var requestInvite in command.Request.Invites)
@@ -104,15 +93,10 @@ public class InviteToProjectHandler
                     requestInvite.UserId,
                     projectIdGuid
                 );
-                continue;
-                /*var message =
+                var message =
                     $"User {requestInvite.UserId} is already apart of project {projectIdGuid}";
                 var errors = new ValidationFailure(nameof(AppUserProject), message).ToArray();
-                throw new ValidationException(
-                    message,
-                    errors
-                    // message.ToValidationFailure<AppUserProject>()
-                );*/
+                throw new ValidationException(message, errors);
             }
 
             var requestAppUserProject = AppUserProject.Create(
@@ -151,8 +135,16 @@ public class InviteToProjectHandler
             appUserProject.Project.Name
         );
 
-        var projectEvent = new ProjectEvent(projectIdGuid, ProjectEventType.Invited, userIds);
-        projectEvent.DumpObjectJson();
+        var invitedUsersToProjectMessage = new InvitedUsersToProject(
+            Guid.NewGuid(),
+            appUserId,
+            projectIdGuid,
+            userIds
+        );
+        await _bus.Publish(invitedUsersToProjectMessage, cT);
+
+        // var projectEvent = new ProjectEvent(projectIdGuid, ProjectEventType.Invited, userIds);
+        // projectEvent.DumpObjectJson();
         // await _bus.SendAsync(projectEvent);
         // return
 

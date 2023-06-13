@@ -86,9 +86,12 @@ public abstract class GenericRepository<TContext, TModel>
         return await SaveChangesAsync();
     }
 
-    public async Task<int> ExecuteUpdateAsync(Expression<Func<SetPropertyCalls<TModel>,SetPropertyCalls<TModel>>> updateFunc)
+    public async Task<int> ExecuteUpdateAsync(
+        Expression<Func<TModel, bool>> predicate,
+        Expression<Func<SetPropertyCalls<TModel>, SetPropertyCalls<TModel>>> updateFunc
+    )
     {
-        return await Queryable.ExecuteUpdateAsync(updateFunc);
+        return await Queryable.Where(predicate).ExecuteUpdateAsync(updateFunc);
     }
 
     public async Task<IEnumerable<TModel>> UpdateManyAndSaveChangesAsync(IEnumerable<TModel> items)

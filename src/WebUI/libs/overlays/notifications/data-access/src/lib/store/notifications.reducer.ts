@@ -26,6 +26,7 @@ const reducer = createReducer(
 			notificationIds.map((notificationId) => ({
 				id: notificationId,
 				changes: {
+					seenByAppUser: true,
 					completed: true,
 				},
 			})),

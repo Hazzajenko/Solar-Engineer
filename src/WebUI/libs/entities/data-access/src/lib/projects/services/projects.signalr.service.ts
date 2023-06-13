@@ -3,6 +3,8 @@ import { createHubConnection, HubConnectionRequest } from '@app/data-access/sign
 import { HubConnection } from '@microsoft/signalr'
 import {
 	CreateProjectRequest,
+	InviteToProjectRequest,
+	InviteToProjectResponse,
 	ProjectDataModel,
 	ProjectId,
 	ProjectModel,
@@ -88,6 +90,18 @@ export class ProjectsSignalrService {
 			// this._entitiesStore.panelLinks.addManyPanelLinks(response.panelLinks)
 		})
 
+		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.INVITED_TO_PROJECT, (response: ProjectModel) => {
+			console.log(PROJECTS_SIGNALR_EVENT.INVITED_TO_PROJECT, response)
+			this._projectsStore.dispatch.addProject(response)
+		})
+
+		this.hubConnection.on(
+			PROJECTS_SIGNALR_EVENT.NEW_PROJECT_MEMBERS,
+			(response: InviteToProjectResponse) => {
+				console.log(PROJECTS_SIGNALR_EVENT.NEW_PROJECT_MEMBERS, response)
+			},
+		)
+
 		return this.hubConnection
 	}
 
@@ -111,6 +125,18 @@ export class ProjectsSignalrService {
 			projectId: update.id,
 			changes: update.changes,
 		})
+	}
+
+	inviteUsersToProject(request: InviteToProjectRequest) {
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.INVITE_USERS_TO_PROJECT, request)
+	}
+
+	acceptProjectInvite(projectId: ProjectId) {
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.ACCEPT_PROJECT_INVITE, { projectId })
+	}
+
+	rejectProjectInvite(projectId: ProjectId) {
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.REJECT_PROJECT_INVITE, { projectId })
 	}
 
 	deleteProject(projectId: ProjectId) {

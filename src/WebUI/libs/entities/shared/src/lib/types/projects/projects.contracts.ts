@@ -40,3 +40,9 @@ export type ProjectInvite = {
 export type GetUserProjectsResponse = {
 	projects: ProjectModel[]
 }
+
+export type InviteToProjectResponse = {
+	projectId: ProjectId
+	invitedByUserId: string
+	invitedUserIds: string[]
+}

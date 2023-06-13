@@ -35,17 +35,20 @@ public class CompleteManyNotificationsHandler
 
         var notificationIds = command.NotificationIds.Select(Guid.Parse);
 
-        var notifications =
-            await _unitOfWork.NotificationsRepository.GetManyNotificationsByIdsAsync(
-                notificationIds
-            );
-        // Parallel.ForEach(notifications, notification => notification.SetNotificationCompleted());
+        // var notifications =
+        //     await _unitOfWork.NotificationsRepository.GetManyNotificationsByIdsAsync(
+        //         notificationIds
+        //     );
 
-        // context.Employees.ExecuteUpdate(s => s.SetProperty(e => e.Salary, e => e.Salary + 1000));
         await _unitOfWork.NotificationsRepository.ExecuteUpdateAsync(
-            notification => notification.SetProperty(x => x.Completed, x => true)
+            notification => notificationIds.Contains(notification.Id),
+            notification =>
+                notification
+                    .SetProperty(x => x.Completed, x => true)
+                    .SetProperty(x => x.CompletedTime, x => DateTime.UtcNow)
+                    .SetProperty(x => x.SeenByAppUser, x => true)
+                    .SetProperty(x => x.SeenByAppUserTime, x => DateTime.UtcNow)
         );
-        // await _unitOfWork.NotificationsRepository.UpdateRangeAsync(notifications);
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation(

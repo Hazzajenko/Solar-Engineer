@@ -28,6 +28,11 @@ public sealed class AppUsersRepository
         return await Queryable.Where(x => x.UserName == userName).SingleOrDefaultAsync();
     }
 
+    public async Task<IEnumerable<AppUser>> GetAppUsersByIdsAsync(IEnumerable<Guid> ids)
+    {
+        return await Queryable.Where(x => ids.Contains(x.Id)).ToListAsync();
+    }
+
     public async Task<CurrentUserDto?> GetAppUserDtoByIdAsync(Guid id)
     {
         return await Queryable

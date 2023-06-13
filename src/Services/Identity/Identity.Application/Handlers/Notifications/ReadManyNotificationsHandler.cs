@@ -35,9 +35,18 @@ public class ReadManyNotificationsHandler : ICommandHandler<ReadManyNotification
             await _unitOfWork.NotificationsRepository.GetManyNotificationsByIdsAsync(
                 notificationIds
             );
-        Parallel.ForEach(notifications, notification => notification.SetSeenByAppUser());
+        // Parallel.ForEach(notifications, notification => notification.SetSeenByAppUser());
 
-        await _unitOfWork.NotificationsRepository.UpdateRangeAsync(notifications);
+        // await _unitOfWork.NotificationsRepository.UpdateRangeAsync(notifications);
+
+        await _unitOfWork.NotificationsRepository.ExecuteUpdateAsync(
+            notification => notificationIds.Contains(notification.Id),
+            notification =>
+                notification
+                    .SetProperty(x => x.SeenByAppUser, x => true)
+                    .SetProperty(x => x.SeenByAppUserTime, x => DateTime.UtcNow)
+        );
+
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation(

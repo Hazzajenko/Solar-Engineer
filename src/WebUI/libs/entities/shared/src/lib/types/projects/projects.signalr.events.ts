@@ -8,6 +8,9 @@ export const PROJECTS_SIGNALR_METHOD = {
 	DELETE_MANY_PROJECTS: 'DeleteManyProjects',
 	SEND_PROJECT_EVENT: 'SendProjectEvent',
 	GET_PROJECT_BY_ID: 'GetProjectById',
+	INVITE_USERS_TO_PROJECT: 'InviteUsersToProject',
+	ACCEPT_PROJECT_INVITE: 'AcceptProjectInvite',
+	REJECT_PROJECT_INVITE: 'RejectProjectInvite',
 } as const
 export type ProjectsSignalrMethod =
 	(typeof PROJECTS_SIGNALR_METHOD)[keyof typeof PROJECTS_SIGNALR_METHOD]
@@ -19,6 +22,8 @@ export const PROJECTS_SIGNALR_EVENT = {
 	PROJECT_UPDATED: 'ProjectUpdated',
 	PROJECT_DELETED: 'ProjectDeleted',
 	RECEIVE_PROJECT_EVENT: 'ReceiveProjectEvent',
+	INVITED_TO_PROJECT: 'InvitedToProject',
+	NEW_PROJECT_MEMBERS: 'NewProjectMembers',
 } as const
 
 export type ProjectsSignalrEvent =

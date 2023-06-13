@@ -11,6 +11,7 @@ export const DIALOG_COMPONENT = {
 	SIGN_IN: 'SignInDialogComponent',
 	CREATE_PROJECT: 'DialogCreateProjectComponent',
 	DELETE_PROJECT_WARNING: 'DialogDeleteProjectWarningComponent',
+	INVITE_TO_PROJECT_CONFIRM: 'DialogInviteToProjectConfirmComponent',
 } as const
 
 export type DialogComponent = (typeof DIALOG_COMPONENT)[keyof typeof DIALOG_COMPONENT]
@@ -45,6 +46,14 @@ export type DialogInputDeleteProjectWarning = DialogInputTemplate & {
 	}
 }
 
+export type DialogInputInviteToProjectConfirm = DialogInputTemplate & {
+	component: typeof DIALOG_COMPONENT.INVITE_TO_PROJECT_CONFIRM
+	data: {
+		projectId: ProjectId
+		userIdToInvite: string
+	}
+}
+
 export type DialogInput =
 	| DialogInputMovePanelsToString
 	| DialogInputAppSettings
@@ -52,3 +61,4 @@ export type DialogInput =
 	| DialogInputSignIn
 	| DialogInputCreateProject
 	| DialogInputDeleteProjectWarning
+	| DialogInputInviteToProjectConfirm

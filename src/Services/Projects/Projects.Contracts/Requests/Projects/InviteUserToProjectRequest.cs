@@ -2,24 +2,24 @@
 
 namespace Projects.Contracts.Requests.Projects;
 
-public class InviteToProjectRequest
+public class InviteUserToProjectRequest
 {
     public string ProjectId { get; set; } = default!;
 
-    public IEnumerable<ProjectInvite> Invites { get; set; } = default!;
+    public IEnumerable<UserProjectInvite> Invites { get; set; } = default!;
 }
 
-public class ProjectInvite
+public class UserProjectInvite
 {
-    public string UserId { get; set; } = default!;
-    public string Role { get; set; } = default!;
+    public required string UserId { get; set; } = default!;
+    public required string Role { get; set; } = "Member";
     public bool CanCreate { get; set; }
     public bool CanDelete { get; set; }
     public bool CanInvite { get; set; }
     public bool CanKick { get; set; }
 }
 
-public class InviteToProjectRequestValidator : AbstractValidator<InviteToProjectRequest>
+public class InviteToProjectRequestValidator : AbstractValidator<InviteUserToProjectRequest>
 {
     public InviteToProjectRequestValidator()
     {
