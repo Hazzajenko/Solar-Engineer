@@ -1,10 +1,12 @@
 ﻿using Infrastructure.Contracts.Events;
+using Infrastructure.Events;
 using MassTransit;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
 using Projects.Contracts.Events;
+using Projects.Contracts.Responses.Projects;
 using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Projects;
 using Projects.SignalR.Hubs;
@@ -13,63 +15,95 @@ namespace Projects.Application.Handlers.Projects;
 
 public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
 {
-    private readonly IRequestClient<CreateProjectEvent> _client;
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger _logger;
     private readonly IProjectsUnitOfWork _unitOfWork;
+    private readonly IBus _bus;
 
     public CreateProjectHandler(
         ILogger<CreateProjectHandler> logger,
         IProjectsUnitOfWork unitOfWork,
-        IHubContext<ProjectsHub, IProjectsHub> hubContext, IRequestClient<CreateProjectEvent> client)
+        IHubContext<ProjectsHub, IProjectsHub> hubContext, IBus bus)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
         _hubContext = hubContext;
-        _client = client;
+        _bus = bus;
     }
 
     public async ValueTask<Guid> Handle(CreateProjectCommand command, CancellationToken cT)
     {
         var appUserId = command.User.Id;
 
-        var eventResponse =
-            await _client.GetResponse<UserFound, UserNotFound>(new CreateProjectEvent(command.User.Id), cT);
-
-        if (eventResponse.Is(out Response<UserNotFound>? userNotFoundResponse))
-        {
-            var userNotFound = userNotFoundResponse!.Message;
-            _logger.LogError("User {User} not found", userNotFound.Id);
-            throw new Exception($"User {appUserId} not found");
-        }
-
-        if (eventResponse.Is(out Response<UserFound>? userFoundResponse) is false)
-        {
-            _logger.LogError("Response is not UserFound: {Response}", eventResponse.GetType().Name);
-            throw new InvalidOperationException();
-        }
-
-        ArgumentNullException.ThrowIfNull(userFoundResponse);
-
-        appUserId = userFoundResponse.Message.Id;
-
         var request = command.CreateProjectRequest;
-        var appUserProject = AppUserProject.CreateAsOwner(
-            appUserId,
-            request.Name,
-            request.Colour
-        );
+        var appUserProject = AppUserProject.CreateAsOwner(appUserId, request.Name, request.Colour);
         await _unitOfWork.AppUserProjectsRepository.AddAsync(appUserProject);
         await _unitOfWork.SaveChangesAsync();
 
-        var response = appUserProject.Project.ToDto();
+        var project = appUserProject.Project;
+        var projectDto = appUserProject.Project.ToDto();
 
-        await _hubContext.Clients.User(appUserId.ToString()).ProjectCreated(response);
+        var projectCreatedResponse = new ProjectCreatedResponse
+        {
+            Project = projectDto
+        };
+
+        await _hubContext.Clients.User(appUserId.ToString()).ProjectCreated(projectCreatedResponse);
+        
         _logger.LogInformation(
             "User {User} created project {Project}",
             appUserId,
             appUserProject.Project.Name
         );
+
+        if (command.CreateProjectRequest.MemberIds.Any() is false)
+        {
+            return project.Id;
+        }
+
+        var userIds = command.CreateProjectRequest.MemberIds;
+        var projectId = project.Id;
+        var projectMemberIds =
+            await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(projectId);
+
+        var newProjectMembers = new UsersSentInviteToProjectResponse
+        {
+            ProjectId = projectId.ToString(),
+            InvitedByUserId = appUserId.ToString(),
+            InvitedUserIds = userIds
+        };
+
+        // var projectDto = appUserProject.Project.ToDto();
+
+        var invitedToProjectResponse = new InvitedToProjectResponse
+        {
+            Project = projectDto
+        };
+        
+        await _hubContext.Clients.Users(userIds).InvitedToProject(invitedToProjectResponse);
+        await _hubContext.Clients.Users(projectMemberIds).UsersSentInviteToProject(newProjectMembers);
+
+        _logger.LogInformation(
+            "User {User} invited users {Users} to project {Project}",
+            appUserId,
+            userIds,
+            appUserProject.Project.Name
+        );
+
+        var projectName = project.Name;
+        // TODO get project photo url
+        var projectPhotoUrl = "";
+
+        var invitedUsersToProjectMessage = new InvitedUsersToProject(
+            Guid.NewGuid(),
+            appUserId,
+            projectId,
+            projectName,
+            projectPhotoUrl,
+            userIds
+        );
+        await _bus.Publish(invitedUsersToProjectMessage, cT);
+
 
         return appUserProject.Project.Id;
     }

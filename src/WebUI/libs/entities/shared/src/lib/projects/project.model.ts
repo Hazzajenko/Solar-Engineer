@@ -2,6 +2,7 @@ import { StringBackendModel } from '../strings'
 import { PanelBackendModel } from '../panels'
 import { PanelLinkBackendModel } from '../panel-links'
 import { PanelConfigModel } from '../panel-configs'
+import { WebUserModel } from '@auth/shared'
 
 export type ProjectModel = {
 	id: ProjectId
@@ -28,13 +29,25 @@ export type ProjectUserModel = {
 	joinedAtTime: string
 }
 
+export type ProjectWebModel = ProjectModel & {
+	members: ProjectWebUserModel[]
+}
+
+/*const asdas: ProjectWebModel = {
+ members: [{
+
+ }],
+ }*/
+
+export type ProjectWebUserModel = ProjectUserModel & WebUserModel
+
 export type ProjectUserId = string & {
 	readonly _type: 'projectUserId'
 }
 
 export type ProjectUserRole = 'owner' | 'admin' | 'member'
 
-export type ProjectDataModel = {
+export type GetProjectDataResponse = {
 	id: string
 	name: string
 	strings: StringBackendModel[]

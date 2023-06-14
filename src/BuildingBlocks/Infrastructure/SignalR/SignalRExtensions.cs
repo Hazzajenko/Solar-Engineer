@@ -30,7 +30,7 @@ public static class SignalRExtensions
 
                 options.AddFilter<HubLoggerFilter>();
             })
-            // .AddMessagePackProtocol()
+            .AddMessagePackProtocol()
             .AddStackExchangeRedis(
                 redisConnectionString
             /*options =>

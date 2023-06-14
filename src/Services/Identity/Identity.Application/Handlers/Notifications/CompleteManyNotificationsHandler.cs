@@ -35,11 +35,6 @@ public class CompleteManyNotificationsHandler
 
         var notificationIds = command.NotificationIds.Select(Guid.Parse);
 
-        // var notifications =
-        //     await _unitOfWork.NotificationsRepository.GetManyNotificationsByIdsAsync(
-        //         notificationIds
-        //     );
-
         await _unitOfWork.NotificationsRepository.ExecuteUpdateAsync(
             notification => notificationIds.Contains(notification.Id),
             notification =>

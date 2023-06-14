@@ -54,6 +54,96 @@ export const deleteProjectSignalr$ = createEffect(
 	{ functional: true, dispatch: false },
 )
 
+/*
+ export const mapProjectUsersToWebUsers$ = createEffect(
+ (
+ actions$ = inject(Actions),
+ { mapProjectUsersToWebUsers } = injectMapProjectUsersToWebUsersFactory(),
+ ) => {
+ return actions$.pipe(ofType(ProjectsActions.loadUserProjects), mapProjectUsersToWebUsers())
+ },
+ { functional: true, dispatch: false },
+ )
+ */
+
+/*export const mapProjectUsersToWebUsers$ = createEffect(
+ (actions$ = inject(Actions), store = inject(Store), http = inject(HttpClient)) => {
+ return actions$.pipe(
+ ofType(ProjectsActions.loadUserProjects),
+ switchMap(({ projects }) => {
+ const projectsWithInStoreWebUsers = projects.map((project) => {
+ return store.select(selectUsersByIdArray({ ids: project.memberIds })).pipe(
+ map((webUsers) => {
+ const projectWebUsers = webUsers.map((webUser) => {
+ const existingProjectUser = project.members.find(
+ (projectMember) => projectMember.id === webUser.id,
+ )
+ return {
+ ...existingProjectUser,
+ ...webUser,
+ } as ProjectWebUserModel
+ })
+ return {
+ ...project,
+ members: projectWebUsers,
+ }
+ }),
+ )
+ })
+ return forkJoin(projectsWithInStoreWebUsers)
+ }),
+ switchMap((projects) => {
+ const projectsWithMissingWebUsers = projects.filter((project) => {
+ return project.memberIds.filter(
+ (id) => !project.members.find((member) => member.id === id),
+ )
+ })
+ const projectsWithInStoreWebUsers = projects.filter((project) => {
+ return !projectsWithMissingWebUsers.find((proj) => proj.id === project.id)
+ })
+ if (projectsWithMissingWebUsers.length === 0) return of(projectsWithInStoreWebUsers)
+ const webMembersIdsNotLoaded = projectsWithMissingWebUsers.map(
+ (project) => project.memberIds,
+ )
+ const appUserIds = webMembersIdsNotLoaded.reduce((acc, curr) => [...acc, ...curr], [])
+ if (appUserIds.length === 0) return of(projectsWithInStoreWebUsers)
+ const projectsWithFetchedWebUsers = of(projectsWithMissingWebUsers).pipe(
+ switchMap((projects) => {
+ const projectsWithInStoreWebUsers = projects.map((project) => {
+ return http
+ .get<{
+ appUsers: WebUserModel[]
+ }>('/auth/users', { params: { appUserIds } })
+ .pipe(
+ tap((res) => console.log(res)),
+ map(({ appUsers }) => {
+ const members = project.members.map((projectWebUser) => {
+ const webUser = appUsers.find((appUser) => appUser.id === projectWebUser.id)
+ if (!webUser) return projectWebUser
+ return {
+ ...webUser,
+ ...projectWebUser,
+ }
+ })
+ return { ...project, members }
+ }),
+ )
+ })
+ return forkJoin(projectsWithInStoreWebUsers)
+ }),
+ )
+ return combineLatest([of(projectsWithInStoreWebUsers), projectsWithFetchedWebUsers]).pipe(
+ map(([projectsWithInStoreWebUsers, projectsWithFetchedWebUsers]) => {
+ return [...projectsWithInStoreWebUsers, ...projectsWithFetchedWebUsers]
+ }),
+ )
+ }),
+ tap((res) => console.log(res)),
+ )
+ },
+ { functional: true, dispatch: false },
+ )*/
+
 export const selectUserProjectOnLoad$ = createEffect(
 	(
 		actions$ = inject(Actions),
@@ -116,7 +206,7 @@ export const acceptProjectInvite$ = createEffect(
 	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
 		return actions$.pipe(
 			ofType(ProjectsActions.acceptProjectInvite),
-			tap(({ projectId }) => projectsSignalr.acceptProjectInvite(projectId)),
+			tap(({ request }) => projectsSignalr.acceptProjectInvite(request)),
 		)
 	},
 	{ functional: true, dispatch: false },
@@ -126,7 +216,7 @@ export const rejectProjectInvite$ = createEffect(
 	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
 		return actions$.pipe(
 			ofType(ProjectsActions.rejectProjectInvite),
-			tap(({ projectId }) => projectsSignalr.rejectProjectInvite(projectId)),
+			tap(({ request }) => projectsSignalr.rejectProjectInvite(request)),
 		)
 	},
 	{ functional: true, dispatch: false },

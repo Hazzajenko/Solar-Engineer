@@ -4,7 +4,7 @@ using Mediator;
 
 namespace Identity.Application.Handlers.AppUsers.GetAppUserDto;
 
-public class GetAppUserDtoByIdHandler : IQueryHandler<GetAppUserDtoByIdQuery, CurrentUserDto?>
+public class GetAppUserDtoByIdHandler : IQueryHandler<GetAppUserDtoByIdQuery, AppUserDto?>
 {
     private readonly IAppUsersRepository _appUsersRepository;
 
@@ -13,10 +13,7 @@ public class GetAppUserDtoByIdHandler : IQueryHandler<GetAppUserDtoByIdQuery, Cu
         _appUsersRepository = appUsersRepository;
     }
 
-    public async ValueTask<CurrentUserDto?> Handle(
-        GetAppUserDtoByIdQuery request,
-        CancellationToken cT
-    )
+    public async ValueTask<AppUserDto?> Handle(GetAppUserDtoByIdQuery request, CancellationToken cT)
     {
         return await _appUsersRepository.GetAppUserDtoByIdAsync(request.Id);
     }

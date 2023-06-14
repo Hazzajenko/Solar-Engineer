@@ -4,5 +4,5 @@ using Mediator;
 
 namespace Identity.Application.Handlers.AppUsers.GetAppUserDto;
 
-public record GetAppUserDtoQuery(ClaimsPrincipal ClaimsPrincipal) : IQuery<CurrentUserDto?>;
+public record GetAppUserDtoQuery(ClaimsPrincipal ClaimsPrincipal) : IQuery<AppUserDto?>;
 // public record GetAppUserDtoQuery(Guid Id) : IQuery<CurrentUserDto?>;

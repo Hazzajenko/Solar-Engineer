@@ -4,6 +4,8 @@ public record InvitedUsersToProject(
     Guid Id,
     Guid AppUserId,
     Guid ProjectId,
+    string ProjectName,
+    string ProjectPhotoUrl,
     IEnumerable<string> UserIds
 );
 

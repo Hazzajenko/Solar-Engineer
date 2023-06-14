@@ -2,23 +2,37 @@ import { Injectable } from '@angular/core'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
 import { HubConnection } from '@microsoft/signalr'
 import {
+	AcceptInviteToProjectResponse,
+	AcceptProjectInviteRequest,
 	CreateProjectRequest,
+	GetManyProjectsResponse,
+	GetProjectDataResponse,
+	InvitedToProjectResponse,
 	InviteToProjectRequest,
-	InviteToProjectResponse,
-	ProjectDataModel,
+	ProjectCreatedResponse,
+	ProjectDeletedResponse,
 	ProjectId,
 	ProjectModel,
 	PROJECTS_SIGNALR_EVENT,
 	PROJECTS_SIGNALR_METHOD,
+	ProjectSignalrEvent,
+	ProjectUpdatedResponse,
+	RejectInviteToProjectResponse,
+	RejectProjectInviteRequest,
 	SignalrEventRequest,
 	SignalrEventResponse,
+	UsersSentInviteToProjectResponse,
 } from '@entities/shared'
 import { injectProjectsStore } from '../store'
 import { EntityUpdate } from '@shared/data-access/models'
 import { injectSignalrEventsStore } from '../../signalr-events'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { injectEntityStore } from '../../shared'
-import { retryCheck } from '@shared/utils'
+import {
+	camelCaseToPascaleCaseNested,
+	pascalCaseToCamelCaseNested,
+	retryCheck,
+} from '@shared/utils'
 import { injectAuthStore } from '@auth/data-access'
 
 const hubName = 'Projects'
@@ -48,57 +62,61 @@ export class ProjectsSignalrService {
 		}
 		this.hubConnection = createHubConnection(request)
 
-		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, (projects: ProjectModel[]) => {
-			console.log(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, projects)
-			this._projectsStore.dispatch.loadUserProjectsSuccess(projects)
+		this.onHub(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, (response: GetManyProjectsResponse) => {
+			console.log(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, response)
+			this._projectsStore.dispatch.loadUserProjectsSuccess(response.projects)
 		})
 
-		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.PROJECT_CREATED, (project: ProjectModel) => {
-			console.log(PROJECTS_SIGNALR_EVENT.PROJECT_CREATED, project)
-			this._projectsStore.dispatch.addProject(project)
-			this._projectsStore.dispatch.selectProject(project.id)
+		this.onHub(PROJECTS_SIGNALR_EVENT.PROJECT_CREATED, (response: ProjectCreatedResponse) => {
+			console.log(PROJECTS_SIGNALR_EVENT.PROJECT_CREATED, response)
+			this._projectsStore.dispatch.addProject(response.project)
+			this._projectsStore.dispatch.selectProject(response.project.id)
 		})
 
-		this.hubConnection.on(
-			PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED,
-			(response: EntityUpdate<ProjectModel>) => {
-				console.log(PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED, response)
-			},
-		)
+		this.onHub(PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED, (response: ProjectUpdatedResponse) => {
+			console.log(PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED, response)
+		})
 
-		this.hubConnection.on(
-			PROJECTS_SIGNALR_EVENT.PROJECT_DELETED,
-			(response: { projectId: ProjectId }) => {
-				console.log(PROJECTS_SIGNALR_EVENT.PROJECT_DELETED, response)
-			},
-		)
+		this.onHub(PROJECTS_SIGNALR_EVENT.PROJECT_DELETED, (response: ProjectDeletedResponse) => {
+			console.log(PROJECTS_SIGNALR_EVENT.PROJECT_DELETED, response)
+		})
 
-		this.hubConnection.on(
-			PROJECTS_SIGNALR_EVENT.RECEIVE_PROJECT_EVENT,
-			(response: SignalrEventResponse) => {
-				console.log(PROJECTS_SIGNALR_EVENT.RECEIVE_PROJECT_EVENT, response)
-				this.receiveProjectEvent(response)
-			},
-		)
+		this.onHub(PROJECTS_SIGNALR_EVENT.RECEIVE_PROJECT_EVENT, (response: SignalrEventResponse) => {
+			console.log(PROJECTS_SIGNALR_EVENT.RECEIVE_PROJECT_EVENT, response)
+			this.receiveProjectEvent(response)
+		})
 
-		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.GET_PROJECT, (response: ProjectDataModel) => {
+		this.onHub(PROJECTS_SIGNALR_EVENT.GET_PROJECT, (response: GetProjectDataResponse) => {
 			console.log(PROJECTS_SIGNALR_EVENT.GET_PROJECT, response)
 			this._entitiesStore.panels.dispatch.loadPanels(response.panels)
 			this._entitiesStore.strings.dispatch.loadStrings(response.strings)
-			// this._entitiesStore.panelLinks.addManyPanelLinks(response.panelLinks)
 			this._entitiesStore.panelConfigs.dispatch.loadPanelConfigs(response.panelConfigs)
 			// this._entitiesStore.panelLinks.addManyPanelLinks(response.panelLinks)
 		})
 
-		this.hubConnection.on(PROJECTS_SIGNALR_EVENT.INVITED_TO_PROJECT, (response: ProjectModel) => {
+		this.onHub(PROJECTS_SIGNALR_EVENT.INVITED_TO_PROJECT, (response: InvitedToProjectResponse) => {
 			console.log(PROJECTS_SIGNALR_EVENT.INVITED_TO_PROJECT, response)
-			this._projectsStore.dispatch.addProject(response)
+			this._projectsStore.dispatch.addProject(response.project)
 		})
 
-		this.hubConnection.on(
-			PROJECTS_SIGNALR_EVENT.NEW_PROJECT_MEMBERS,
-			(response: InviteToProjectResponse) => {
-				console.log(PROJECTS_SIGNALR_EVENT.NEW_PROJECT_MEMBERS, response)
+		this.onHub(
+			PROJECTS_SIGNALR_EVENT.USERS_SENT_INVITE_TO_PROJECT,
+			(response: UsersSentInviteToProjectResponse) => {
+				console.log(PROJECTS_SIGNALR_EVENT.USERS_SENT_INVITE_TO_PROJECT, response)
+			},
+		)
+
+		this.onHub(
+			PROJECTS_SIGNALR_EVENT.USER_ACCEPTED_INVITE_TO_PROJECT,
+			(response: AcceptInviteToProjectResponse) => {
+				console.log(PROJECTS_SIGNALR_EVENT.USER_ACCEPTED_INVITE_TO_PROJECT, response)
+			},
+		)
+
+		this.onHub(
+			PROJECTS_SIGNALR_EVENT.USER_REJECTED_INVITE_TO_PROJECT,
+			(response: RejectInviteToProjectResponse) => {
+				console.log(PROJECTS_SIGNALR_EVENT.USER_REJECTED_INVITE_TO_PROJECT, response)
 			},
 		)
 
@@ -131,12 +149,12 @@ export class ProjectsSignalrService {
 		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.INVITE_USERS_TO_PROJECT, request)
 	}
 
-	acceptProjectInvite(projectId: ProjectId) {
-		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.ACCEPT_PROJECT_INVITE, { projectId })
+	acceptProjectInvite(request: AcceptProjectInviteRequest) {
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.ACCEPT_PROJECT_INVITE, request)
 	}
 
-	rejectProjectInvite(projectId: ProjectId) {
-		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.REJECT_PROJECT_INVITE, { projectId })
+	rejectProjectInvite(request: RejectProjectInviteRequest) {
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.REJECT_PROJECT_INVITE, request)
 	}
 
 	deleteProject(projectId: ProjectId) {
@@ -146,9 +164,10 @@ export class ProjectsSignalrService {
 	invokeSignalrEvent(request: Omit<SignalrEventRequest, 'timeStamp'>) {
 		this._signalrEventsStore.dispatch.invokeSignalrEvent(addTimeStamp(request))
 		console.log(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
+		const pascalCaseRequest = camelCaseToPascaleCaseNested(request)
 		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
 		this.hubConnection
-			.invoke(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
+			.invoke(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, pascalCaseRequest)
 			.catch((err) => console.error(err, request))
 	}
 
@@ -178,11 +197,27 @@ export class ProjectsSignalrService {
 		this._signalrEventsStore.dispatch.updateSignalrEvent(update)
 	}
 
+	private onHub<T extends Record<string, any>>(
+		event: ProjectSignalrEvent,
+		callback: (response: T) => void,
+	) {
+		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
+		this.hubConnection.on(event, (response: T) => {
+			const camelCase = pascalCaseToCamelCaseNested(response) as T
+			callback(camelCase)
+		})
+	}
+
 	private invokeHubConnection(invoke: string, params?: unknown) {
 		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
 		if (this.hubConnection.state !== 'Connected') throw new Error('Hub connection is not connected')
-		if (invoke && params)
-			this.hubConnection.invoke(invoke, params).catch((err) => console.error(err, invoke, params))
+
+		if (invoke && params) {
+			const pascalCaseRequest = camelCaseToPascaleCaseNested(params)
+			this.hubConnection
+				.invoke(invoke, params)
+				.catch((err) => console.error(err, invoke, pascalCaseRequest))
+		}
 		if (invoke && !params) {
 			this.hubConnection.invoke(invoke).catch((err) => console.error(err, invoke))
 		}

@@ -101,6 +101,8 @@
     "lodash": "^4.17.21",
     "ngx-toastr": "^16.2.0",
     "patch-package": "^6.5.1",
+    "primeicons": "^6.0.1",
+    "primeng": "^16.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rxjs": "7.8.0",

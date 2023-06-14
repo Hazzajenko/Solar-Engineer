@@ -5,4 +5,4 @@ using Projects.Contracts.Responses.Projects;
 namespace Projects.SignalR.Commands.Projects;
 
 public sealed record InviteUsersToProjectCommand(AuthUser User, InviteUserToProjectRequest Request)
-    : ICommand<InviteToProjectResponse?>;
+    : ICommand<UsersSentInviteToProjectResponse?>;

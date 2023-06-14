@@ -1,5 +1,5 @@
 export type AppUserModel = {
-	id: AppUserId
+	id: string
 	displayName: string
 	userName: string
 	firstName: string

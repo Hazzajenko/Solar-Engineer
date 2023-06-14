@@ -1,4 +1,5 @@
 using Infrastructure.Repositories;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Projects.Application.Data;
 using Projects.Application.Mapping;
@@ -14,9 +15,7 @@ public sealed class AppUserProjectsRepository
         IAppUserProjectsRepository
 {
     public AppUserProjectsRepository(ProjectsContext context)
-        : base(context)
-    {
-    }
+        : base(context) { }
 
     public async Task<IEnumerable<AppUserProject>> GetByAppUserIdAsync(Guid appUserId)
     {
@@ -76,41 +75,35 @@ public sealed class AppUserProjectsRepository
             .Where(x => x.AppUserId == appUserId)
             .Include(x => x.Project)
             .ThenInclude(x => x.AppUserProjects)
-            // .ThenInclude(x => x.ProjectUser)
-            .Select(
-                x =>
-                    new ProjectDto
-                    {
-                        Id = x.Project.Id.ToString(),
-                        Name = x.Project.Name,
-                        Colour = x.Project.Colour,
-                        CreatedTime = x.Project.CreatedTime,
-                        LastModifiedTime = x.Project.LastModifiedTime,
-                        CreatedById = x.Project.CreatedById.ToString(),
-                        MemberIds = x.Project.AppUserProjects.Select(
-                            z => z.AppUserId.ToString()
-                        ),
-                        Members = x.Project.AppUserProjects.Select(
-                            z =>
-                                new ProjectUserDto
-                                {
-                                    Id = z.AppUserId.ToString(),
-                                    Role = z.Role,
-                                    CanCreate = z.CanCreate,
-                                    CanDelete = z.CanDelete,
-                                    CanInvite = z.CanInvite,
-                                    CanKick = z.CanKick,
-                                    JoinedAtTime = z.CreatedTime
-                                }
-                        )
-                    }
-            )
-            // .Select(x => x.ToDto())
+            .ProjectToType<ProjectDto>()
+            // .Select(
+            //     x =>
+            //         new ProjectDto
+            //         {
+            //             Id = x.Project.Id.ToString(),
+            //             Name = x.Project.Name,
+            //             Colour = x.Project.Colour,
+            //             CreatedTime = x.Project.CreatedTime,
+            //             LastModifiedTime = x.Project.LastModifiedTime,
+            //             CreatedById = x.Project.CreatedById.ToString(),
+            //             MemberIds = x.Project.AppUserProjects
+            //                 .Where(c => c.AppUserId != appUserId)
+            //                 .Select(z => z.AppUserId.ToString()),
+            //             Members = x.Project.AppUserProjects.Select(
+            //                 z =>
+            //                     new ProjectUserDto
+            //                     {
+            //                         Id = z.AppUserId.ToString(),
+            //                         Role = z.Role,
+            //                         CanCreate = z.CanCreate,
+            //                         CanDelete = z.CanDelete,
+            //                         CanInvite = z.CanInvite,
+            //                         CanKick = z.CanKick,
+            //                         JoinedAtTime = z.CreatedTime
+            //                     }
+            //             )
+            //         }
+            // )
             .ToListAsync();
-        /*public string Name { get; set; } = default!;
-        public string Id { get; set; } = default!;
-        public DateTime CreatedTime { get; set; }
-        public DateTime LastModifiedTime { get; set; }
-        public string CreatedById { get; set; } = default!;*/
     }
 }

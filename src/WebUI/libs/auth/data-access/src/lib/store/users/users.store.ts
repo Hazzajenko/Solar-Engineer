@@ -1,7 +1,9 @@
 import { Store } from '@ngrx/store'
 import {
+	selectAllFriends,
+	selectAllFriendsGroupedByFirstLetter,
 	selectAllUsers,
-	selectFriends,
+	selectFourMostRecentFriends,
 	selectUserById,
 	selectUserSearchResultById,
 	selectUserSearchResults,
@@ -34,7 +36,9 @@ function usersStoreFactory(store: Store) {
 		getByIds: (ids: WebUserModel['id'][]) => ids.map((id) => entities()[id]).filter(isNotNull),
 		userSearchResults: store.selectSignal(selectUserSearchResults),
 		userSearchResultById: (id: string) => store.selectSignal(selectUserSearchResultById({ id })),
-		friends: store.selectSignal(selectFriends),
+		allFriends: store.selectSignal(selectAllFriends),
+		fourMostRecentFriends: store.selectSignal(selectFourMostRecentFriends),
+		allFriendsGroupedByFirstLetter: store.selectSignal(selectAllFriendsGroupedByFirstLetter),
 	}
 	const dispatch = {
 		removeFriend: (userId: string) => store.dispatch(UsersActions.removeFriend({ userId })),

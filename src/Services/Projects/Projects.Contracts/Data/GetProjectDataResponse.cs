@@ -1,6 +1,6 @@
 ﻿namespace Projects.Contracts.Data;
 
-public class ProjectDataDto : IProjectItemDto
+public class GetProjectDataResponse : IProjectItemDto
 {
     public string Name { get; set; } = default!;
     public IEnumerable<StringDto> Strings { get; set; } = default!;

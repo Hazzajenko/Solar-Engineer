@@ -6,7 +6,8 @@ namespace Identity.Application.Repositories.AppUsers;
 
 public interface IAppUsersRepository : IGenericRepository<AppUser>
 {
-    Task<CurrentUserDto?> GetAppUserDtoByIdAsync(Guid id);
-    Task<IEnumerable<AppUser>> GetAppUsersByIdsAsync(IEnumerable<Guid> ids);
+    Task<AppUserDto?> GetAppUserDtoByIdAsync(Guid id);
+    Task<IEnumerable<AppUser>> GetManyAppUsersByIdsAsync(IEnumerable<Guid> ids);
+    Task<IEnumerable<AppUserDto>> GetManyAppUserDtosByIdsAsync(IEnumerable<Guid> ids);
     Task<IEnumerable<MinimalAppUserDto>> SearchForAppUserByUserNameAsync(string userName);
 }

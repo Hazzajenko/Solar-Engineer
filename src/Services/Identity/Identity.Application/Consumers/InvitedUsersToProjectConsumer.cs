@@ -44,7 +44,7 @@ public class InvitedUsersToProjectConsumer : IConsumer<InvitedUsersToProject>
 
         var userIds = context.Message.UserIds.Select(Guid.Parse);
 
-        var recipientUsers = await _unitOfWork.AppUsersRepository.GetAppUsersByIdsAsync(userIds);
+        var recipientUsers = await _unitOfWork.AppUsersRepository.GetManyAppUsersByIdsAsync(userIds);
 
         if (recipientUsers.Count() != context.Message.UserIds.Count())
         {
@@ -62,13 +62,14 @@ public class InvitedUsersToProjectConsumer : IConsumer<InvitedUsersToProject>
             var notificationCommand = new DispatchNotificationCommand(
                 appUser,
                 recipientUser,
-                NotificationType.ProjectInviteReceived
-/*new Dictionary<string, string>
+                NotificationType.ProjectInviteReceived,
+                new ProjectInvite
                 {
-                    {"ProjectId", context.Message.ProjectId.ToString()},
-                    {"ProjectName", context.Message.ProjectName}
-                }*/
-                
+                    ProjectId = context.Message.ProjectId,
+                    ProjectName = context.Message.ProjectName,
+                    ProjectPhotoUrl = context.Message.ProjectPhotoUrl,
+                }
+
             );
             await _mediator.Send(notificationCommand);
         }

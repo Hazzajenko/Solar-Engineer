@@ -18,6 +18,8 @@ public class NotificationMappingConfig : IRegister
             .Map(dest => dest.SenderAppUserDisplayName, src => src.SenderAppUser.DisplayName)
             .Map(dest => dest.SenderAppUserPhotoUrl, src => src.SenderAppUser.PhotoUrl)
             .Map(dest => dest.NotificationType, src => src.NotificationType.Name)
+            .Map(dest => dest.ProjectId, src => src.ProjectId.ToString())
+            .Map(dest => dest.ProjectInvite, src => src.ProjectInvite)
             .Map(dest => dest.CreatedTime, src => src.CreatedTime)
             .Map(dest => dest.ReceivedByAppUser, src => src.ReceivedByAppUser)
             .Map(dest => dest.SeenByAppUser, src => src.SeenByAppUser)

@@ -58,7 +58,8 @@ public class SendFriendRequestHandler : ICommandHandler<SendFriendRequestCommand
                 recipientUser.UserName
             );
             await _unitOfWork.SaveChangesAsync().ConfigureAwait(false);
-            return await _mediator.Send(notificationCommand, cT);
+            await _mediator.Send(notificationCommand, cT);
+            return true;
         }
         appUserLink.ThrowHubExceptionIfNull();
         appUserLink.SendFriendRequest(appUser);

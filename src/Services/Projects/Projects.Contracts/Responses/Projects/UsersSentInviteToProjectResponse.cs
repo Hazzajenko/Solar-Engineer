@@ -1,6 +1,6 @@
 ﻿namespace Projects.Contracts.Responses.Projects;
 
-public class InviteToProjectResponse
+public class UsersSentInviteToProjectResponse
 {
     public string ProjectId { get; set; } = default!;
     public string InvitedByUserId { get; set; } = default!;

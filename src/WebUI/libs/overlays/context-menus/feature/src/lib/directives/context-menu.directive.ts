@@ -10,9 +10,6 @@ import { ContextMenuInput } from '@overlays/ui-store/data-access'
 export class ContextMenuDirective {
 	private _element = inject(ElementRef).nativeElement
 	private _renderer = inject(Renderer2)
-
-	// @Input({ required: true }) set location(location: Point) {
-
 	@Input({ required: true }) set contextMenuInput(contextMenuInput: ContextMenuInput) {
 		if (!contextMenuInput) {
 			console.error('no contextMenuInput')
@@ -25,16 +22,6 @@ export class ContextMenuDirective {
 		this._renderer.setProperty(this._element, 'id', contextMenuInput.component)
 	}
 
-	/*	@Input({ required: true }) set location(location: Point) {
-	 if (!location) {
-	 console.error('no location')
-	 return
-	 }
-	 const { x, y } = location
-	 this._renderer.setStyle(this._element, 'top', `${y}px`)
-	 this._renderer.setStyle(this._element, 'left', `${x}px`)
-	 }*/
-
 	@Input() set leftAndRight(leftAndRight: { left: number; right: number }) {
 		if (!leftAndRight) {
 			console.error('no leftAndRight')
@@ -43,9 +30,6 @@ export class ContextMenuDirective {
 		const { left, right } = leftAndRight
 		console.log('leftAndRight', leftAndRight)
 		this._renderer.setStyle(this._element, 'left', `${left}px`)
-		// const width = right - left
-		// const child = this._element.children[0]
-		// this._renderer.setStyle(child, 'width', `${width}px`)
 	}
 
 	@Input() set trackLeftOfDiv(data: { divId: string }) {

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import { ConnectionModel, FriendModel, FriendRequestResponse, GetOnlineFriendsResponse, GetUserFriendsResponse, NotificationModel, ReceiveAppUserNotificationsResponse, SearchForUserResponse, UpdateNotificationResponse, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD } from '@auth/shared'
+import { ConnectionModel, FriendModel, FriendRequestResponse, GetOnlineFriendsResponse, GetUserFriendsResponse, NotificationModel, ReceiveAppUserNotificationsResponse, SearchForUserResponse, UpdateNotificationResponse, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD, UsersSignalrEvent } from '@auth/shared'
 import { injectUsersStore } from '../store'
 import { HubConnection } from '@microsoft/signalr'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
 import { friendToWebUser } from '@auth/utils'
+import { camelCaseToPascaleCaseNested, pascalCaseToCamelCaseNested } from '@shared/utils'
 // import { NotificationModel } from '@users/shared'
 
 const hubName = 'Users'
@@ -40,12 +41,16 @@ export class UsersSignalrService {
 			console.log(USERS_SIGNALR_EVENT.USER_IS_OFFLINE, connection)
 		})
 
-		this.hubConnection.on(
-			USERS_SIGNALR_EVENT.GET_ONLINE_USERS,
-			(connections: ConnectionModel[]) => {
-				console.log(USERS_SIGNALR_EVENT.GET_ONLINE_USERS, connections)
-			},
-		)
+		/*		this.hubConnection.on(
+		 USERS_SIGNALR_EVENT.GET_ONLINE_USERS,
+		 (connections: ConnectionModel[]) => {
+		 console.log(USERS_SIGNALR_EVENT.GET_ONLINE_USERS, connections)
+		 },
+		 )*/
+
+		this.onHub(USERS_SIGNALR_EVENT.GET_ONLINE_USERS, (connections: ConnectionModel[]) => {
+			console.log(USERS_SIGNALR_EVENT.GET_ONLINE_USERS, connections)
+		})
 
 		this.hubConnection.on(
 			USERS_SIGNALR_EVENT.GET_ONLINE_FRIENDS,
@@ -54,14 +59,21 @@ export class UsersSignalrService {
 			},
 		)
 
-		this.hubConnection.on(
-			USERS_SIGNALR_EVENT.GET_USER_FRIENDS,
-			(response: GetUserFriendsResponse) => {
-				console.log(USERS_SIGNALR_EVENT.GET_USER_FRIENDS, response)
-				const webUsers = response.friends.map(friendToWebUser)
-				this._usersStore.dispatch.addManyUsers(webUsers)
-			},
-		)
+		/*		this.hubConnection.on(
+		 USERS_SIGNALR_EVENT.GET_USER_FRIENDS,
+		 (response: GetUserFriendsResponse) => {
+		 console.log(USERS_SIGNALR_EVENT.GET_USER_FRIENDS, response)
+		 const camelCase = pascalCaseToCamelCaseNested(response)
+		 console.log(camelCase)
+		 const webUsers = response.friends.map(friendToWebUser)
+		 this._usersStore.dispatch.addManyUsers(webUsers)
+		 },
+		 )*/
+
+		this.onHub(USERS_SIGNALR_EVENT.GET_USER_FRIENDS, (response: GetUserFriendsResponse) => {
+			const webUsers = response.friends.map(friendToWebUser)
+			this._usersStore.dispatch.addManyUsers(webUsers)
+		})
 
 		this.hubConnection.on(USERS_SIGNALR_EVENT.RECEIVE_FRIEND, (response: FriendModel) => {
 			console.log(USERS_SIGNALR_EVENT.RECEIVE_FRIEND, response)
@@ -168,11 +180,29 @@ export class UsersSignalrService {
 		this.invokeHubConnection(USERS_SIGNALR_METHOD.DELETE_NOTIFICATION, notificationId)
 	}
 
+	private onHub<T extends Record<string, any>>(
+		event: UsersSignalrEvent,
+		callback: (response: T) => void,
+	) {
+		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
+		this.hubConnection.on(event, (response: T) => {
+			console.log(event, response)
+			const camelCase = pascalCaseToCamelCaseNested(response) as T
+			callback(camelCase)
+		})
+	}
+
 	private invokeHubConnection(invoke: string, params?: unknown) {
 		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
 		if (this.hubConnection.state !== 'Connected') throw new Error('Hub connection is not connected')
-		if (invoke && params)
-			this.hubConnection.invoke(invoke, params).catch((err) => console.error(err, invoke, params))
+
+		if (invoke && params) {
+			const pascalCaseRequest = camelCaseToPascaleCaseNested(params)
+			console.log('invokeHubConnection', invoke, pascalCaseRequest)
+			this.hubConnection
+				.invoke(invoke, params)
+				.catch((err) => console.error(err, invoke, pascalCaseRequest))
+		}
 		if (invoke && !params) {
 			this.hubConnection.invoke(invoke).catch((err) => console.error(err, invoke))
 		}

@@ -28,16 +28,24 @@ public sealed class AppUsersRepository
         return await Queryable.Where(x => x.UserName == userName).SingleOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<AppUser>> GetAppUsersByIdsAsync(IEnumerable<Guid> ids)
+    public async Task<IEnumerable<AppUser>> GetManyAppUsersByIdsAsync(IEnumerable<Guid> ids)
     {
         return await Queryable.Where(x => ids.Contains(x.Id)).ToListAsync();
     }
 
-    public async Task<CurrentUserDto?> GetAppUserDtoByIdAsync(Guid id)
+    public async Task<IEnumerable<AppUserDto>> GetManyAppUserDtosByIdsAsync(IEnumerable<Guid> ids)
+    {
+        return await Queryable
+            .Where(x => ids.Contains(x.Id))
+            .ProjectToType<AppUserDto>()
+            .ToListAsync();
+    }
+
+    public async Task<AppUserDto?> GetAppUserDtoByIdAsync(Guid id)
     {
         return await Queryable
             .Where(x => x.Id == id)
-            .Select(x => x.ToCurrentUserDto())
+            .ProjectToType<AppUserDto>()
             .SingleOrDefaultAsync();
     }
 

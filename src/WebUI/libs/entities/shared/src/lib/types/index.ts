@@ -1,6 +1,0 @@
-export * from './panel-configs/index'
-export * from './panel-links/index'
-export * from './common/index'
-export * from './strings/index'
-export * from './panels/index'
-export * from './projects/index'

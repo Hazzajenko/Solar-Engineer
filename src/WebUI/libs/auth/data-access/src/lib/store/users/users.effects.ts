@@ -1,8 +1,30 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
-import { tap } from 'rxjs'
+import { map, switchMap, tap } from 'rxjs'
 import { UsersActions } from './users.actions'
 import { UsersSignalrService } from '../../signalr'
+import { ProjectsActions } from '@entities/data-access'
+import { HttpClient } from '@angular/common/http'
+import { WebUserModel } from '@auth/shared'
+import { AuthActions } from '../auth'
+
+export const addAppUserToUsersStore$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(AuthActions.signInSuccess),
+			map(({ user }) => {
+				const webUserModel: WebUserModel = {
+					...user,
+					isFriend: false,
+					isOnline: true,
+					lastSeen: new Date().toISOString(),
+				}
+				return UsersActions.addUser({ user: webUserModel })
+			}),
+		)
+	},
+	{ functional: true },
+)
 
 export const searchForUsers$ = createEffect(
 	(actions$ = inject(Actions), usersSignalr = inject(UsersSignalrService)) => {
@@ -62,4 +84,28 @@ export const removeFriend$ = createEffect(
 		)
 	},
 	{ functional: true, dispatch: false },
+)
+
+export const fetchWebUsersForProjectMembers$ = createEffect(
+	(actions$ = inject(Actions), http = inject(HttpClient)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.loadUserProjectsSuccess),
+			map(({ projects }) => {
+				const projectMemberIds = projects.map((project) => project.memberIds).flat()
+				return [...new Set(projectMemberIds)]
+			}),
+			switchMap((projectMemberIds) => {
+				return http
+					.get<{
+						appUsers: WebUserModel[]
+					}>('/auth/users', { params: { projectMemberIds } })
+					.pipe(
+						map(({ appUsers }) => {
+							return UsersActions.addManyUsers({ users: appUsers })
+						}),
+					)
+			}),
+		)
+	},
+	{ functional: true },
 )

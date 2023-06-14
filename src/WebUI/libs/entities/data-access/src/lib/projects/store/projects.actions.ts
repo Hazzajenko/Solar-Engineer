@@ -1,10 +1,12 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import {
+	AcceptProjectInviteRequest,
 	CreateProjectRequest,
 	InviteToProjectRequest,
 	ProjectId,
 	ProjectModel,
+	RejectProjectInviteRequest,
 } from '@entities/shared'
 import { ProjectEntityStore } from './projects.reducer'
 import { EntityUpdate } from '@shared/data-access/models'
@@ -37,10 +39,10 @@ export const ProjectsActions = createActionGroup({
 			request: InviteToProjectRequest
 		}>(),
 		'Accept Project Invite': props<{
-			projectId: ProjectId
+			request: AcceptProjectInviteRequest
 		}>(),
 		'Reject Project Invite': props<{
-			projectId: ProjectId
+			request: RejectProjectInviteRequest
 		}>(),
 		'Add Project': props<{
 			project: ProjectModel

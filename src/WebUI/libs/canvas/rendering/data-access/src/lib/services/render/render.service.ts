@@ -502,8 +502,11 @@ export class RenderService {
 			if (graphicsState.colouredStrings) {
 				if (entity.stringId !== UNDEFINED_STRING_ID) {
 					const string = this._entities.strings.select.getById(entity.stringId)
-					assertNotNull(string, JSON.stringify(entity, null, 2))
-					fillStyle = string.colour
+					// assertNotNull(string, JSON.stringify(entity, null, 2))
+					if (string && string.colour) {
+					fillStyle = string.colour	
+					}
+					
 				}
 			}
 

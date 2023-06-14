@@ -4,6 +4,18 @@ import { Store } from '@ngrx/store'
 import { AppUserModel } from '@shared/data-access/models'
 import { createRootServiceInjector } from '@shared/utils'
 
+export function injectGetCurrentUserFactory(): Signal<AppUserModel | undefined> {
+	return getCurrentUserFactoryInjector()
+}
+
+const getCurrentUserFactoryInjector = createRootServiceInjector(getCurrentUserFactory, {
+	deps: [Store],
+})
+
+function getCurrentUserFactory(store: Store) {
+	return store.selectSignal(authFeature.selectUser) as Signal<AppUserModel | undefined>
+}
+
 export function injectAuthStore(): AuthStore {
 	return authStoreInjector()
 }

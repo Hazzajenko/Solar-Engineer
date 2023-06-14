@@ -15,3 +15,10 @@ export function uppercaseObjectKeys<T extends Record<any, any>>(existingObject: 
 		return acc
 	}, {} as UppercaseObjectKeys<T>)
 }
+
+type dfsfdsf = {
+	test: string
+}
+const asdsa: UppercaseObjectKeys<dfsfdsf> = {
+	TEST: 'Test',
+}

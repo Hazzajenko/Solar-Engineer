@@ -2,14 +2,109 @@
 	class="overflow-y-auto py-4 px-3 h-full w-52 bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
 >
 	<div
+		#contextTarget
 		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
 	>
 		<h3>Projects</h3>
 	</div>
+	<p-contextMenu
+		[model]="items"
+		[target]="contextTarget"
+		styleClass="bg-white dark:bg-gray-800 dark:text-gray-200 text-xs text-gray-900"
+		triggerEvent="click"
+	></p-contextMenu>
 
 	<ng-container *ngIf="user() as user; then loggedIn; else notLoggedIn" />
 	<ng-template #loggedIn>
 		<ng-container *ngIf="projects().length > 0; else noProjects">
+			<!--<p-accordion class="w-full">
+				<p-accordionTab
+					*ngrxLet="projects()[0] as project"
+					headerStyleClass="p-2"
+					tabStyleClass="p-2"
+				>
+					<ng-template pTemplate="header">
+						<div class="flex items-center justify-between">
+							<div
+								(click)="selectProject(project)"
+								[ngClass]="{
+									'font-medium text-gray-900 dark:text-gray-200':
+										project.id === selectedProject()?.id,
+									'font-normal text-gray-500 dark:text-gray-400':
+										project.id !== selectedProject()?.id
+								}"
+								class="flex items-center justify-start text-base rounded-lg transition duration-75 hover:underline dark:text-white group"
+							>
+								<span
+									[ngStyle]="{
+										'background-color': project.colour,
+										'border-color':
+											project.id === selectedProject()?.id ? project.colour : 'transparent'
+									}"
+									class="w-4 h-4 rounded"
+								></span>
+								<span class="ml-3 capitalize text-sm text-gray-900">{{
+									project.name | truncate : 10
+								}}</span>
+							</div>
+							<div class="flex justify-end pr-1">
+								&lt;!&ndash;								(click)="openProjectContextMenu($event, project)"&ndash;&gt;
+								<button
+									(click)="openProjectContextMenu($event, project)"
+									aria-expanded="false"
+									aria-haspopup="true"
+									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+									type="button"
+								>
+									<span class="sr-only">Open options</span>
+									<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="menus/ellipsis-vertical" />
+								</button>
+							</div>
+						</div>
+						&lt;!&ndash;			<div class="flex align-items-center">
+										<i class="pi pi-calendar mr-2"></i>
+										<span class="vertical-align-middle">Header I</span>
+									</div>&ndash;&gt;
+					</ng-template>
+					<ng-template pTemplate="content">
+						<ul
+							class="py-1 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+						>
+							<li
+								*ngFor="let member of getProjectWebMembers(project)"
+								class="group hover:bg-gray-100 flex items-center justify-between"
+							>
+								<div
+									*ngrxLet="user()?.id === member.id as memberIsUser"
+									class="group flex items-center justify-center"
+								>
+									<div class="flex items-center justify-end ml-4">
+										<img
+											[alt]="member.userName + ' profile picture'"
+											[ngSrc]="member.photoUrl"
+											class="h-6 w-6 flex-none rounded-full bg-gray-800"
+											height="24"
+											width="24"
+										/>
+									</div>
+									<div class="flex flex-col items-center justify-center">
+										<a
+											class="flex items-center px-4 py-2 text-sm text-gray-700 group-hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white"
+											role="menuitem"
+											tabindex="-1"
+										>
+											<span *ngIf="memberIsUser" class="text-xs font-semibold mr-1"> (You) </span>
+											<span class="text-xs font-semibold">
+												{{ member.displayName }}
+											</span>
+										</a>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</ng-template>
+				</p-accordionTab>
+			</p-accordion>-->
 			<ul class="pl-2 space-y-4">
 				<li *ngFor="let project of projects()">
 					<div
@@ -53,7 +148,7 @@
 							</a>
 						</div>
 						<div class="flex justify-end pr-1">
-							<div class="relative flex-none">
+							<div class="flex-none">
 								<button
 									(click)="toggleProjectView(project)"
 									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -64,7 +159,7 @@
 									/>
 								</button>
 							</div>
-							<div class="relative flex-none">
+							<div class="flex-none">
 								<button
 									(click)="openProjectContextMenu($event, project)"
 									aria-expanded="false"
@@ -77,18 +172,50 @@
 									<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="menus/ellipsis-vertical" />
 								</button>
 							</div>
-							<ul
-								*ngIf="openedProjects().get(project.id)"
-								class="divide-y divide-gray-300 overflow-y-auto"
-								role="list"
-							>
-								{{
-									project.name
-								}}
-							</ul>
 						</div>
-						<!--				</div>-->
 					</div>
+					<ul
+						*ngIf="openedProjects().get(project.id)"
+						@heightInOut
+						class="divide-y divide-gray-300 overflow-y-auto"
+						role="list"
+					>
+						<ul
+							class="py-1 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+						>
+							<li
+								*ngFor="let member of project.members"
+								class="group hover:bg-gray-100 flex items-center justify-between"
+							>
+								<div
+									*ngrxLet="user()?.id === member.id as memberIsUser"
+									class="group flex items-center justify-center"
+								>
+									<div class="flex items-center justify-end ml-4">
+										<img
+											[alt]="member.userName + ' profile picture'"
+											[ngSrc]="member.photoUrl"
+											class="h-6 w-6 flex-none rounded-full bg-gray-800"
+											height="24"
+											width="24"
+										/>
+									</div>
+									<div class="flex flex-col items-center justify-center">
+										<a
+											class="flex items-center px-4 py-2 text-sm text-gray-700 group-hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white"
+											role="menuitem"
+											tabindex="-1"
+										>
+											<span *ngIf="memberIsUser" class="text-xs font-semibold mr-1"> (You) </span>
+											<span class="text-xs font-semibold">
+												{{ member.displayName | truncate : 10 }}
+											</span>
+										</a>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</ul>
 				</li>
 				<li>
 					<a

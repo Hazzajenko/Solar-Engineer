@@ -2,6 +2,7 @@ import { Store } from '@ngrx/store'
 import {
 	selectAllProjects,
 	selectProjectById,
+	selectProjectByIdWithProjectWebUsers,
 	selectProjectReadyForReset,
 	selectProjectReadyToRender,
 	selectProjectsEntities,
@@ -11,10 +12,12 @@ import {
 import { ProjectsActions } from './projects.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import {
+	AcceptProjectInviteRequest,
 	CreateProjectRequest,
 	InviteToProjectRequest,
 	ProjectId,
 	ProjectModel,
+	RejectProjectInviteRequest,
 } from '@entities/shared'
 import { createRootServiceInjector } from '@shared/utils'
 import { EntityUpdate } from '@shared/data-access/models'
@@ -39,22 +42,25 @@ export function projectsStoreFactory(store: Store) {
 		getById: (id: ProjectId) => entities()[id],
 		selectById: (id: ProjectId) => store.selectSignal(selectProjectById({ id })),
 		projectReadyToRender: store.selectSignal(selectProjectReadyToRender),
-		projectReadyForReset: store.selectSignal(selectProjectReadyForReset),
+		projectReadyForReset: store.selectSignal(selectProjectReadyForReset), // allWebProjects: store.selectSignal(selectAllWebProjects),
+		projectByIdWithProjectWebUsers: (id: ProjectId) =>
+			store.selectSignal(selectProjectByIdWithProjectWebUsers({ id })),
 	}
 
 	const dispatch = {
-		createProjectHttp: (request: CreateProjectRequest) =>
+		createProjectSignalr: (request: CreateProjectRequest) =>
 			store.dispatch(ProjectsActions.createProjectSignalr(request)),
+		loadUserProjects: () => store.dispatch(ProjectsActions.loadUserProjects()),
 		loadUserProjectsSuccess: (projects: ProjectModel[]) =>
 			store.dispatch(ProjectsActions.loadUserProjectsSuccess({ projects })),
 		selectProject: (projectId: ProjectId) =>
 			store.dispatch(ProjectsActions.selectProject({ projectId })),
 		inviteUsersToProject: (request: InviteToProjectRequest) =>
 			store.dispatch(ProjectsActions.inviteUsersToProject({ request })),
-		acceptProjectInvite: (projectId: ProjectId) =>
-			store.dispatch(ProjectsActions.acceptProjectInvite({ projectId })),
-		rejectProjectInvite: (projectId: ProjectId) =>
-			store.dispatch(ProjectsActions.rejectProjectInvite({ projectId })),
+		acceptProjectInvite: (request: AcceptProjectInviteRequest) =>
+			store.dispatch(ProjectsActions.acceptProjectInvite({ request })),
+		rejectProjectInvite: (request: RejectProjectInviteRequest) =>
+			store.dispatch(ProjectsActions.rejectProjectInvite({ request })),
 		addProject: (project: ProjectModel) => store.dispatch(ProjectsActions.addProject({ project })),
 		addManyProjects: (projects: ProjectModel[]) =>
 			store.dispatch(ProjectsActions.addManyProjects({ projects })),

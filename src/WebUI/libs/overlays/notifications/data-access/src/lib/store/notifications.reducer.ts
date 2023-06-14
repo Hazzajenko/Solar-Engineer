@@ -10,9 +10,13 @@ export interface NotificationsState extends EntityState<NotificationModel> {
 	error?: string | null
 }
 
+const sortByCreatedAtDesc = (a: NotificationModel, b: NotificationModel) =>
+	new Date(b.createdTime) > new Date(a.createdTime) ? -1 : 1
+
 export const notificationsAdapter: EntityAdapter<NotificationModel> =
 	createEntityAdapter<NotificationModel>({
 		selectId: (string) => string.id,
+		sortComparer: sortByCreatedAtDesc,
 	})
 
 export const initialNotificationsState: NotificationsState = notificationsAdapter.getInitialState({

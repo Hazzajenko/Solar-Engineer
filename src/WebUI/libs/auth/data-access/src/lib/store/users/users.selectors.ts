@@ -33,6 +33,41 @@ export const selectUserSearchResultById = (props: { id: string }) =>
 		users.find((u) => u.id === props.id),
 	)
 
-export const selectFriends = createSelector(selectAllUsers, (users: WebUserModel[]) =>
+export const selectAllFriends = createSelector(selectAllUsers, (users: WebUserModel[]) =>
 	users.filter((user) => user.isFriend),
+)
+
+export const selectFourMostRecentFriends = createSelector(
+	selectAllFriends,
+	(users: WebUserModel[]) => users.slice(0, 4),
+)
+
+export const selectAllFriendsGroupedByFirstLetter = createSelector(
+	selectAllFriends,
+	(users: WebUserModel[]) => {
+		const firstLetters = users.map((user) => user.displayName[0])
+		const uniqueFirstLetters = [...new Set(firstLetters)]
+		const grouped = uniqueFirstLetters.reduce(
+			(acc, firstLetter) => {
+				const usersWithFirstLetter = users.filter((user) => user.displayName[0] === firstLetter)
+				return {
+					...acc,
+					[firstLetter]: usersWithFirstLetter,
+				}
+			},
+			{} as {
+				[key: string]: WebUserModel[]
+			},
+		)
+		const entries = Object.entries(grouped)
+		return entries.map(([firstLetter, users]) => {
+			return {
+				firstLetter,
+				users,
+			}
+		})
+	},
+)
+export const selectAllNonFriends = createSelector(selectAllUsers, (users: WebUserModel[]) =>
+	users.filter((user) => !user.isFriend),
 )

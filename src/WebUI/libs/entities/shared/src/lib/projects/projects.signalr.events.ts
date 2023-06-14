@@ -23,10 +23,12 @@ export const PROJECTS_SIGNALR_EVENT = {
 	PROJECT_DELETED: 'ProjectDeleted',
 	RECEIVE_PROJECT_EVENT: 'ReceiveProjectEvent',
 	INVITED_TO_PROJECT: 'InvitedToProject',
-	NEW_PROJECT_MEMBERS: 'NewProjectMembers',
+	USERS_SENT_INVITE_TO_PROJECT: 'UsersSentInviteToProject',
+	USER_ACCEPTED_INVITE_TO_PROJECT: 'UserAcceptedInviteToProject',
+	USER_REJECTED_INVITE_TO_PROJECT: 'UserRejectedInviteToProject',
 } as const
 
-export type ProjectsSignalrEvent =
+export type ProjectSignalrEvent =
 	(typeof PROJECTS_SIGNALR_EVENT)[keyof typeof PROJECTS_SIGNALR_EVENT]
 
 export type RequestId = CustomIdType<'requestId'>

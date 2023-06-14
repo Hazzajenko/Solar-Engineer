@@ -1,3 +1,8 @@
-﻿namespace Projects.Contracts.Responses.Projects;
+﻿using Projects.Contracts.Data;
 
-public record ProjectCreatedResponse(Guid ProjectId);
+namespace Projects.Contracts.Responses.Projects;
+
+public class ProjectCreatedResponse
+{
+    public ProjectDto Project { get; set; } = default!;
+}

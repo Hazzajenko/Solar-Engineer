@@ -4,4 +4,16 @@
 
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
+@import "primeng/resources/themes/lara-light-indigo/theme.css";
+//@import "primeng/resources/themes/mdc-dark-deeppurple/theme.css";
+//@import "primeng/resources/themes/mdc-light-deeppurple/theme.css";
+//@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+
+body {
+	font-family: var(--font-family);
+}
+
+
 /* You can add global styles to this file, and also import other style files */

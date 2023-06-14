@@ -49,7 +49,7 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, bool>
             panelConfigIds
         );
 
-        var response = new ProjectDataDto
+        var response = new GetProjectDataResponse
         {
             Name = project.Name,
             Id = project.Id,

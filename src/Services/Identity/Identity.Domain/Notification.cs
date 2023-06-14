@@ -26,6 +26,7 @@ public class Notification : IEntity
         SenderAppUserId = senderAppUser.Id;
         NotificationType = notificationType;
         ProjectInvite = projectInvite;
+        ProjectId = projectInvite?.ProjectId;
     }
 
     public Guid Id { get; set; }

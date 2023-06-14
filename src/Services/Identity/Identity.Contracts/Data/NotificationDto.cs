@@ -1,4 +1,6 @@
-﻿namespace Identity.Contracts.Data;
+﻿using Identity.Domain;
+
+namespace Identity.Contracts.Data;
 
 public class NotificationDto
 {
@@ -14,4 +16,6 @@ public class NotificationDto
     public bool DeletedByAppUser { get; set; }
     public bool CancelledBySender { get; set; }
     public bool Completed { get; set; }
+    public string? ProjectId { get; set; }
+    public ProjectInvite? ProjectInvite { get; set; }
 }

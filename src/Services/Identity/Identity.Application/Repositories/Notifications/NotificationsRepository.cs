@@ -43,6 +43,26 @@ public sealed class NotificationsRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<Notification?> GetNotificationByAppUserIdAndProjectIdAndTypeAsync(
+        Guid appUserId,
+        Guid projectId,
+        NotificationType notificationType
+    )
+    {
+        return await Queryable
+            .Include(x => x.SenderAppUser)
+            .Where(
+                x =>
+                    x.ProjectId == projectId
+                    && x.AppUserId == appUserId
+                    && !x.CancelledBySender
+                    && !x.DeletedByAppUser
+                    && !x.Completed
+                    && x.NotificationType == notificationType
+            )
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<NotificationDto?> GetNotificationDtoFromSenderToAppUserByTypeAsync(
         Guid senderAppUserId,
         Guid appUserId,

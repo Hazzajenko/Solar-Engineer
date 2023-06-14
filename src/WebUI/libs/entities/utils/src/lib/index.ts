@@ -1,6 +1,6 @@
 export * from './strings/index'
 export * from './panels/index'
-export * from './panel-links/index'
+export * from './panel-links'
 export * from './projects/index'
 // export * from './shared-selectors/index'
 export * from './signalr-events/index'

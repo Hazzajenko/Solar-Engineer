@@ -45,7 +45,7 @@ export class SideUiUsersViewComponent {
 	})
 	// userSearchResults = this._usersStore.select.userSearchResults
 
-	friends = this._usersStore.select.friends
+	friends = this._usersStore.select.allFriends
 	openedUsers = signal<Map<string, boolean>>(new Map())
 	selectedUserId = signal<string | undefined>(undefined)
 	protected readonly isWebUser = isWebUser

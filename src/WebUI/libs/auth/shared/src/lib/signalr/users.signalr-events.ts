@@ -13,4 +13,4 @@ export const USERS_SIGNALR_EVENT = {
 	RECEIVE_APP_USER_NOTIFICATIONS: 'ReceiveAppUserNotifications',
 } as const
 
-export type UsersSignalrEvents = (typeof USERS_SIGNALR_EVENT)[keyof typeof USERS_SIGNALR_EVENT]
+export type UsersSignalrEvent = (typeof USERS_SIGNALR_EVENT)[keyof typeof USERS_SIGNALR_EVENT]

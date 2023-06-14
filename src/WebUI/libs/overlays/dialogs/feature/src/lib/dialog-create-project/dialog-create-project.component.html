@@ -68,53 +68,245 @@
 							Project name requires at least 3 characters
 						</span>
 
-						<div class="flex items-center">
-							<div class="flex -space-x-4">
-								<img
-									alt="Helene Engles"
-									class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800"
-									height="32"
-									ngSrc="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/helene-engels.png"
-									width="32"
-								/>
-								<img
-									alt="Robert Brown"
-									class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800"
-									height="32"
-									ngSrc="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/robert-brown.png"
-									width="32"
-								/>
-								<img
-									alt="Bonnie Green"
-									class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800"
-									height="32"
-									ngSrc="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/bonnie-green.png"
-									width="32"
-								/>
+						<!--						<div class="flex items-center">-->
+						<div class="flex items-center justify-center">
+							<!--		<div class="flex items-center mr-2">
+										<img
+											*ngFor="let recentFriend of recentFriends()"
+											[ngSrc]="recentFriend.photoUrl"
+											alt="{{ recentFriend.userName }} profile picture"
+											class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800"
+											height="32"
+											width="32"
+										/>
+										<a
+											*ngIf="friends().length - recentFriends().length > 0"
+											class="flex justify-center items-center w-8 h-8 text-xs font-medium text-white bg-gray-700 rounded-full border-2 border-white hover:bg-gray-600 dark:border-gray-800"
+											>+{{ friends().length - recentFriends().length }}</a
+										>
+									</div>-->
+							<!--<div class="flex items-center">
 								<a
 									class="flex justify-center items-center w-8 h-8 text-xs font-medium text-white bg-gray-700 rounded-full border-2 border-white hover:bg-gray-600 dark:border-gray-800"
-									href="#"
-									>+9</a
+									>+{{ friends().length - recentFriends().length }}</a
 								>
-							</div>
-							<button
-								class="inline-flex items-center py-2 px-3 ml-3 text-xs font-medium text-gray-900 bg-white rounded-lg border border-gray-200 focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-								type="button"
+							</div>-->
+
+							<div
+								class="items-center justify-between w-full py-2.5 px-4 text-sm font-medium text-gray-900 dark:text-white"
 							>
-								<svg
-									class="mr-1 -ml-1 w-4 h-4"
-									fill="currentColor"
-									viewBox="0 0 20 20"
-									xmlns="http://www.w3.org/2000/svg"
+								<span class="text-xs font-normal text-gray-500 dark:text-gray-400">
+									{{ friends().length }} friends
+								</span>
+								<ul
+									class="border rounded-md max-h-[300px] min-h-[50px] items-center justify-center w-full py-2.5 px-4 text-sm font-medium text-gray-900 dark:text-white"
 								>
-									<path
-										clip-rule="evenodd"
-										d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-										fill-rule="evenodd"
-									></path>
-								</svg>
-								Add members
-							</button>
+									<ng-container *ngFor="let startingLetter of allFriendsGroupedByFirstLetter()">
+										<li
+											class="flex items-center justify-between w-full py-2.5 px-4 text-sm font-medium text-gray-900 dark:text-white"
+										>
+											{{ startingLetter.firstLetter }}
+											<span class="text-xs font-normal text-gray-500 dark:text-gray-400">
+												{{ startingLetter.users.length }}
+											</span>
+										</li>
+										<li *ngFor="let friend of startingLetter.users">
+											<div
+												class="bg-white dark:bg-gray-900 rounded-t-lg rounded-b-lg flex border border-gray-200 dark:border-gray-700 items-center group hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer pr-4 py-1 transition duration-75"
+											>
+												<div (click)="multiSelectFriend(friend)" class="flex justify-start pl-2">
+													<input
+														[checked]="multiSelectedFriendIds().includes(friend.id)"
+														aria-describedby="comments-description"
+														centerThisElement
+														class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+														formControlName="invites"
+														id="invites"
+														name="invites"
+														type="checkbox"
+													/>
+												</div>
+												<div
+													[ngClass]="{
+														'opacity-50': multiSelectedFriendIds().includes(friend.id)
+													}"
+													attr.data-type="notification-preview"
+													class="flex justify-between items-center"
+												>
+													<div class="flex items-center justify-start ml-4">
+														<div class="flex items-center justify-end">
+															<img
+																[alt]="friend.userName + ' profile picture'"
+																[ngSrc]="friend.photoUrl"
+																class="h-6 w-6 flex-none rounded-full bg-gray-800"
+																height="24"
+																width="24"
+															/>
+														</div>
+														<a
+															class="flex items-center text-base rounded-lg transition duration-75 dark:text-white group"
+														>
+															<div class="ml-3">
+																<span class="capitalize text-sm text-gray-900">{{
+																	friend.displayName | truncate : 20
+																}}</span>
+															</div>
+														</a>
+													</div>
+
+													<!--<div class="flex justify-end pr-1 absolute right-4">
+														<div class="justify-end">
+															<time
+																class="flex-none text-xs text-gray-700 dark:text-gray-300"
+																datetime="2023-01-23T11:00"
+															>
+																{{ getTimeDifferenceFromNow(friend.lastSeen) }}
+															</time>
+														</div>
+													</div>-->
+												</div>
+											</div>
+										</li>
+									</ng-container>
+								</ul>
+							</div>
+
+							<!--<p-multiSelect
+								[options]="friends()"
+								formControlName="invites"
+								optionLabel="displayName"
+								styleClass="w-full ml-2 flex items-center bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+							>
+								<ng-template let-value pTemplate="selectedItems">
+									<div *ngFor="let option of invites" class="flex align-items-center gap-2">
+										&lt;!&ndash;										<img&ndash;&gt;
+										&lt;!&ndash;											[ngSrc]="option.photoUrl"&ndash;&gt;
+										&lt;!&ndash;											alt="{{ option.userName }} profile picture"&ndash;&gt;
+										&lt;!&ndash;											height="32"&ndash;&gt;
+										&lt;!&ndash;											width="32"&ndash;&gt;
+										&lt;!&ndash;										/>&ndash;&gt;
+										<img
+											[alt]="option.userName + ' profile picture'"
+											[ngSrc]="option.photoUrl"
+											class="h-6 w-6 flex-none rounded-full bg-gray-800"
+											height="24"
+											width="24"
+										/>
+										<div>{{ option.displayName }}</div>
+									</div>
+									<div *ngIf="!invites || invites.length === 0">No friends selected</div>
+								</ng-template>
+								<ng-template let-friend pTemplate="item">
+									<div *ngIf="isWebUser(friend) as friend" class="flex align-items-center gap-2">
+										&lt;!&ndash;					<img
+																[ngSrc]="friend.photoUrl"
+																alt="{{ friend.userName }} profile picture"
+																class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800"
+																height="32"
+																width="32"
+															/>&ndash;&gt;
+										<img
+											[alt]="friend.userName + ' profile picture'"
+											[ngSrc]="friend.photoUrl"
+											class="h-6 w-6 flex-none rounded-full bg-gray-800"
+											height="24"
+											width="24"
+										/>
+										<div>{{ friend.displayName }}</div>
+									</div>
+								</ng-template>
+							</p-multiSelect>-->
+						</div>
+						<!--<button
+							class="inline-flex items-center py-2 px-3 ml-3 text-xs font-medium text-gray-900 bg-white rounded-lg border border-gray-200 focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+							type="button"
+						>
+							<svg
+								class="mr-1 -ml-1 w-4 h-4"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									clip-rule="evenodd"
+									d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+									fill-rule="evenodd"
+								></path>
+							</svg>
+							Add members
+						</button>-->
+						<!--						</div>-->
+						<div class="flex items-center justify-start">
+							<!--<p-multiSelect
+								[options]="friends()"
+								formControlName="invites"
+								optionLabel="displayName"
+								styleClass="w-full bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+							>
+								<ng-template let-value pTemplate="selectedItems">
+									<div *ngFor="let option of invites" class="flex align-items-center gap-2">
+										&lt;!&ndash;										<img&ndash;&gt;
+										&lt;!&ndash;											[ngSrc]="option.photoUrl"&ndash;&gt;
+										&lt;!&ndash;											alt="{{ option.userName }} profile picture"&ndash;&gt;
+										&lt;!&ndash;											height="32"&ndash;&gt;
+										&lt;!&ndash;											width="32"&ndash;&gt;
+										&lt;!&ndash;										/>&ndash;&gt;
+										<img
+											[alt]="option.userName + ' profile picture'"
+											[ngSrc]="option.photoUrl"
+											class="h-6 w-6 flex-none rounded-full bg-gray-800"
+											height="24"
+											width="24"
+										/>
+										<div>{{ option.displayName }}</div>
+									</div>
+									<div *ngIf="!invites || invites.length === 0">No friends selected</div>
+								</ng-template>
+								<ng-template let-friend pTemplate="item">
+									<div *ngIf="isWebUser(friend) as friend" class="flex align-items-center gap-2">
+										&lt;!&ndash;					<img
+																[ngSrc]="friend.photoUrl"
+																alt="{{ friend.userName }} profile picture"
+																class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800"
+																height="32"
+																width="32"
+															/>&ndash;&gt;
+										<img
+											[alt]="friend.userName + ' profile picture'"
+											[ngSrc]="friend.photoUrl"
+											class="h-6 w-6 flex-none rounded-full bg-gray-800"
+											height="24"
+											width="24"
+										/>
+										<div>{{ friend.displayName }}</div>
+									</div>
+								</ng-template>
+							</p-multiSelect>-->
+						</div>
+						<div>
+							<label
+								class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+								for="description"
+								>Description</label
+							>
+							<textarea
+								(keyup)="inputChange()"
+								[ngClass]="{
+									'border-red-500 dark:border-red-500':
+										createProjectForm.get('description')?.invalid &&
+										createProjectForm.get('description')?.touched,
+									'border-gray-500 dark:border-gray-600':
+										createProjectForm.get('description')?.valid &&
+										createProjectForm.get('description')?.touched
+								}"
+								class="bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								formControlName="description"
+								id="description"
+								name="description"
+								placeholder="Add description here"
+								required
+								rows="3"
+							></textarea>
 						</div>
 						<div>
 							<div class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">

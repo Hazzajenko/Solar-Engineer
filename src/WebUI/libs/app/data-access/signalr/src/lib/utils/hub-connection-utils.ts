@@ -1,5 +1,6 @@
 import * as signalR from '@microsoft/signalr'
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
+import { MessagePackHubProtocol } from '@microsoft/signalr-protocol-msgpack'
 
 export type HubConnectionRequest = {
 	token: string
@@ -14,7 +15,7 @@ export const createHubConnection = (request: HubConnectionRequest) => {
 			skipNegotiation: true,
 			transport: signalR.HttpTransportType.WebSockets,
 		})
-		// .withHubProtocol(new MessagePackHubProtocol())
+		.withHubProtocol(new MessagePackHubProtocol())
 		.configureLogging(LogLevel.Information)
 		.withAutomaticReconnect()
 		.build()

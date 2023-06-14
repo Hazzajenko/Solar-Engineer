@@ -1,9 +1,11 @@
 ﻿using Identity.Application.Data.UnitOfWork;
+using Identity.Contracts.Data;
 using Identity.Domain;
 using Identity.SignalR.Commands.Notifications;
 using Identity.SignalR.Hubs;
 using Infrastructure.Extensions;
 using Infrastructure.SignalR;
+using Mapster;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -15,9 +17,9 @@ public record DispatchNotificationCommand(
     AppUser RecipientUser,
     NotificationType NotificationType,
     ProjectInvite? ProjectInvite = null
-) : ICommand<bool>;
+) : ICommand<Notification>;
 
-public class DispatchNotificationHandler : ICommandHandler<DispatchNotificationCommand, bool>
+public class DispatchNotificationHandler : ICommandHandler<DispatchNotificationCommand, Notification>
 {
     private readonly ILogger<DispatchNotificationHandler> _logger;
     private readonly IIdentityUnitOfWork _unitOfWork;
@@ -34,7 +36,7 @@ public class DispatchNotificationHandler : ICommandHandler<DispatchNotificationC
         _hubContext = hubContext;
     }
 
-    public async ValueTask<bool> Handle(DispatchNotificationCommand command, CancellationToken cT)
+    public async ValueTask<Notification> Handle(DispatchNotificationCommand command, CancellationToken cT)
     {
         var recipientUser = command.RecipientUser;
         var appUser = command.AppUser;
@@ -45,16 +47,16 @@ public class DispatchNotificationHandler : ICommandHandler<DispatchNotificationC
 
         await _unitOfWork.NotificationsRepository.AddAsync(notification);
         await _unitOfWork.SaveChangesAsync();
-
-        var notificationDto = await _unitOfWork.NotificationsRepository.GetNotificationDtoByIdAsync(
+        
+        notification = await _unitOfWork.NotificationsRepository.GetByIdAsync(
             notification.Id
         );
-        notificationDto.ThrowHubExceptionIfNull();
+        notification.ThrowHubExceptionIfNull();
 
         await _hubContext.Clients
             .User(recipientUser.Id.ToString())
-            .ReceiveNotification(notificationDto);
+            .ReceiveNotification(notification.Adapt<NotificationDto>());
 
-        return true;
+        return notification;
     }
 }

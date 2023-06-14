@@ -9,6 +9,11 @@ public interface INotificationsRepository : IGenericRepository<Notification>
     new Task<Notification?> GetByIdAsync(Guid id);
     Task<IEnumerable<Notification>> GetManyNotificationsByIdsAsync(IEnumerable<Guid> ids);
 
+    Task<Notification?> GetNotificationByAppUserIdAndProjectIdAndTypeAsync(
+        Guid appUserId,
+        Guid projectId,
+        NotificationType notificationType
+    );
     Task<Notification?> GetNotificationFromSenderToAppUserByTypeAsync(
         Guid senderAppUserId,
         Guid appUserId,

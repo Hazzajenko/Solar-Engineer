@@ -7,7 +7,7 @@ public class ProjectDto : IProjectItemDto
 
     public IEnumerable<string> MemberIds { get; set; } = default!;
 
-    public IEnumerable<ProjectUserDto> Members { get; set; } = default!;
+    public IEnumerable<ProjectUserDto> Members { get; set; } = new List<ProjectUserDto>();
     public string Id { get; set; } = default!;
 
     public DateTime CreatedTime { get; set; }

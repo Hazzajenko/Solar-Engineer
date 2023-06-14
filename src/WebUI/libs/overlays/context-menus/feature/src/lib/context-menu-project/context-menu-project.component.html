@@ -1,85 +1,109 @@
-<div *ngIf="project() as project" [contextMenuInput]="contextMenu" appContextMenu class="absolute">
-	<ul
-		@increaseScaleAndOpacity
-		class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-	>
-		<div class="px-4 py-3" role="none">
-			<p class="truncate capitalize text-sm font-medium text-gray-900" role="none">
-				{{ project.name }}
-			</p>
-		</div>
-		<li class="relative">
-			<ul
-				#childMenu
-				@increaseScaleAndOpacity
-				class="py-1 top-0 left-[105%] text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-44 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-				style="display: none"
+<div *ngIf="vm() as vm" [contextMenuInput]="contextMenu" appContextMenu class="absolute">
+	<context-menu-base [heading]="vm.project.name">
+		<context-menu-expand label="Edit Project Colour" svgName="SvgPaintBrush">
+			<li
+				(click)="setProjectColour(colour)"
+				*ngFor="let colour of TAILWIND_COLOUR_500_VALUES"
+				class="group hover:bg-gray-100 flex items-center justify-between p-1 py-2"
 			>
-				<li>
-					<a
-						class="group flex items-center px-4 py-2 text-sm text-gray-700"
-						role="menuitem"
-						tabindex="-1"
-					>
-						<div class="grid grid-cols-4 gap-4 justify-items-center">
-							<button
-								(click)="setProjectColour(colour)"
-								*ngFor="let colour of TAILWIND_COLOUR_500_VALUES"
-								[ngClass]="{
-									'ring-2 ring-black': project.colour === colour
-								}"
-								[ngStyle]="{
-									'background-color': colour,
-									'border-color': colour
-								}"
-								class="w-6 h-6 rounded-sm"
-								type="button"
-							></button>
-						</div>
-					</a>
-				</li>
-			</ul>
-
-			<div
-				(click)="
-					childMenu.style.display === 'block'
-						? (childMenu.style.display = 'none')
-						: (childMenu.style.display = 'block')
-				"
-				class="flex justify-between group text-sm text-gray-700 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+				<div class="flex items-center justify-center ml-4">
+					<div class="flex items-center justify-center">
+						<div
+							[ngClass]="{
+								'ring-2 ring-black': vm.project.colour === colour
+							}"
+							[ngStyle]="{
+								'background-color': colour,
+								'border-color': colour
+							}"
+							class="w-6 h-6 rounded-sm"
+						></div>
+					</div>
+					<div class="ml-2 text-xs text-gray-700 dark:text-gray-200">
+						<span class="text-xs font-medium uppercase tracking-wide">
+							{{ colour }}
+						</span>
+					</div>
+				</div>
+			</li>
+		</context-menu-expand>
+		<context-menu-item label="Open Project Settings" svgName="SvgEdit" />
+		<context-menu-expand label="Project Members" svgName="SvgUserPlus">
+			<context-menu-sub-heading heading="{{ vm.project.members.length }} Members" />
+			<li
+				*ngFor="let member of vm.project.members"
+				class="group hover:bg-gray-100 flex items-center justify-between p-1 rounded-md"
 			>
-				<a class="group flex justify-start items-center px-4 py-2" role="menuitem" tabindex="-1">
-					<app-show-svg-no-styles
-						class="mr-1 group-hover:text-gray-600"
-						svgPath="menus/paint-brush"
-					/>
-					Edit Project Colour
-				</a>
-				<a class="group flex justify-end items-center pr-1 text-sm" role="menuitem" tabindex="-1">
-					<app-show-svg-no-styles class="group-hover:text-gray-600" svgPath="arrows/right" />
-				</a>
-			</div>
-		</li>
-		<li>
-			<a
-				class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-				role="menuitem"
-				tabindex="-1"
+				<div
+					*ngrxLet="vm.user.id === member.id as memberIsUser"
+					class="group flex items-center justify-center"
+				>
+					<div class="flex items-center justify-end ml-4">
+						<img
+							[alt]="member.userName + ' profile picture'"
+							[ngSrc]="member.photoUrl"
+							class="h-6 w-6 flex-none rounded-full bg-gray-800"
+							height="24"
+							width="24"
+						/>
+					</div>
+					<div class="flex flex-col items-center justify-center">
+						<a
+							class="flex items-center px-4 py-2 text-sm text-gray-700 group-hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white"
+							role="menuitem"
+							tabindex="-1"
+						>
+							<span *ngIf="memberIsUser" class="text-xs font-semibold mr-1"> (You) </span>
+							<span class="text-xs font-semibold">
+								{{ member.displayName }}
+							</span>
+						</a>
+					</div>
+				</div>
+			</li>
+		</context-menu-expand>
+		<context-menu-expand
+			*ngrxLet="friendsArentInProject() as friendsNotInProject"
+			label="Invite Friend to Project"
+			svgName="SvgUserPlus"
+		>
+			<context-menu-sub-heading
+				*ngIf="friendsNotInProject && friendsNotInProject.length > 0"
+				heading="{{ friendsNotInProject.length }} Friends Not in this Project"
+			/>
+			<context-menu-sub-heading
+				*ngIf="!friendsNotInProject || friendsNotInProject.length < 1"
+				heading="No Friends Not in this Project"
+			/>
+			<li
+				(click)="openInviteToProjectConfirmDialog(friendNotInProject)"
+				*ngFor="let friendNotInProject of friendsNotInProject"
+				class="group hover:bg-gray-100 flex items-center justify-between p-1 rounded-md"
 			>
-				<app-show-svg-no-styles class="mr-1 group-hover:text-gray-600" svgPath="toolbar/settings" />
-				Open Project Settings
-			</a>
-		</li>
-		<li>
-			<a
-				(click)="deleteProject(project)"
-				class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-				role="menuitem"
-				tabindex="-1"
-			>
-				<app-show-svg-no-styles class="mr-1 group-hover:text-gray-600" svgPath="menus/trash" />
-				Delete Project
-			</a>
-		</li>
-	</ul>
+				<div class="group flex items-center justify-center">
+					<div class="flex items-center justify-end ml-4">
+						<img
+							[alt]="friendNotInProject.userName + ' profile picture'"
+							[ngSrc]="friendNotInProject.photoUrl"
+							class="h-6 w-6 flex-none rounded-full bg-gray-800"
+							height="24"
+							width="24"
+						/>
+					</div>
+					<div class="flex flex-col items-center justify-center">
+						<a
+							class="flex items-center px-4 py-2 text-sm text-gray-700 group-hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white"
+							role="menuitem"
+							tabindex="-1"
+						>
+							<span class="text-xs font-semibold">
+								{{ friendNotInProject.displayName }}
+							</span>
+						</a>
+					</div>
+				</div>
+			</li>
+		</context-menu-expand>
+		<context-menu-item (click)="deleteProject()" label="Delete Project" svgName="SvgTrash" />
+	</context-menu-base>
 </div>

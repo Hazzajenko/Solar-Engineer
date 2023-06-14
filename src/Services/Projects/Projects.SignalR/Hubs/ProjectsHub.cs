@@ -85,6 +85,18 @@ public class ProjectsHub : Hub<IProjectsHub>
         await _mediator.Send(command);
     }
 
+    public async Task AcceptProjectInvite(AcceptProjectInviteRequest request)
+    {
+        var command = new AcceptProjectInviteCommand(Context.ToAuthUser(), request);
+        await _mediator.Send(command);
+    }
+
+    public async Task RejectProjectInvite(RejectProjectInviteRequest request)
+    {
+        var command = new RejectProjectInviteCommand(Context.ToAuthUser(), request);
+        await _mediator.Send(command);
+    }
+
     public async Task SendProjectEvent(ProjectGridEvent projectGridEvent)
     {
         projectGridEvent.DumpObjectJson();

@@ -179,7 +179,10 @@ export class SideUiNotificationsViewComponent implements OnInit, OnDestroy {
 					if (!isProjectNotification(notification)) {
 						throw new Error('Notification is not a project notification')
 					}
-					this._projectsStore.dispatch.acceptProjectInvite(notification.projectId)
+					this._projectsStore.dispatch.acceptProjectInvite({
+						projectId: notification.projectId,
+						notificationId: notification.id,
+					})
 				}
 				break
 			case NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED:

@@ -95,7 +95,6 @@
 	</div>
 </ng-template>
 
-<!--'rounded-t-lg': isFirstInList(notification)-->
 <ng-template #notificationPreview let-isOpen="isOpen" let-notificationId="notificationId">
 	<div
 		*ngIf="notificationById(notificationId) as notification"
@@ -149,7 +148,6 @@
 							}"
 							class="text-xs font-medium group-hover:text-gray-700"
 						>
-							<!--						{{ getNotificationTypeToText(notification) | truncate : 25 }}-->
 							<span class="pt-2 text-xs text-gray-500 truncate capitalize">
 								{{ getContentMessageBasedOnTypeWithoutDisplayName(notification) | truncate : 10 }}
 							</span>
@@ -159,18 +157,6 @@
 			</div>
 
 			<div class="flex justify-end pr-1 absolute right-4">
-				<!--			<div class="relative flex-none">
-								<button
-									[ngClass]="{
-										'text-gray-500 dark:text-gray-400': !isOpen,
-										'text-gray-700 dark:text-gray-300': isOpen
-									}"
-									class="flex mr-1 items-center justify-between w-full font-medium text-left group-hover:bg-gray-100 dark:group-hover:bg-gray-800"
-									type="button"
-								>
-									<ng-container *ngIf="isOpen; then contentOpen; else contentClosed" />
-								</button>
-							</div>-->
 				<div class="justify-end">
 					<time
 						[ngClass]="{
@@ -181,11 +167,9 @@
 						datetime="2023-01-23T11:00"
 					>
 						{{ getTimeDifferenceFromNow(notification.createdTime) }}
-						<!--						{{ notification.createdTime | timeDifferenceFromNow }}-->
 					</time>
 				</div>
 			</div>
-			<!--			</div>-->
 		</div>
 	</div>
 </ng-template>

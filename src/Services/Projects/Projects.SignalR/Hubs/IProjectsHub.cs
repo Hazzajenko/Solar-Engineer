@@ -6,19 +6,22 @@ namespace Projects.SignalR.Hubs;
 
 public interface IProjectsHub
 {
-    Task GetManyProjects(IEnumerable<ProjectDto> projects);
+    Task GetManyProjects(GetManyProjectsResponse response);
     Task GetUserProject(ProjectDto project);
-    Task GetProject(ProjectDataDto projectData);
+    Task GetProject(GetProjectDataResponse response);
 
-    Task ProjectCreated(ProjectDto project);
+    Task ProjectCreated(ProjectCreatedResponse response);
 
     // Task UpdateProject(ProjectDto project);
     // Task ProjectUpdated(ProjectDto project);
-    Task NewProjectMembers(InviteToProjectResponse response);
+    Task UsersSentInviteToProject(UsersSentInviteToProjectResponse response);
+    Task UserAcceptedInviteToProject(AcceptInviteToProjectResponse response);
+    Task UserRejectedInviteToProject(RejectInviteToProjectResponse response);
     Task ProjectDeleted(DeleteProjectResponse response);
-    Task InvitedToProject(ProjectDto project);
+    Task InvitedToProject(InvitedToProjectResponse response);
 
     Task ProjectUpdated(UpdateProjectResponse response);
+
     // Task UpdateProject(ProjectChanges projectChanges);
 
     Task PanelsCreated(IEnumerable<PanelCreatedResponse> panels);
