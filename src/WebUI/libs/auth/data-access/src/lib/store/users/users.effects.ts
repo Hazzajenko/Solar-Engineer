@@ -8,6 +8,15 @@ import { HttpClient } from '@angular/common/http'
 import { WebUserModel } from '@auth/shared'
 import { AuthActions } from '../auth'
 
+/*export const initializeUsersHub$ = createEffect(
+ (actions$ = inject(Actions), usersSignalr = inject(UsersSignalrService)) => {
+ return actions$.pipe(
+ ofType(AuthActions.initializeApp),
+ tap(({ token, deviceInfo }) => usersSignalr.init(token, deviceInfo)),
+ )
+ },
+ { functional: true, dispatch: false },
+ )*/
 export const addAppUserToUsersStore$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(
@@ -17,9 +26,11 @@ export const addAppUserToUsersStore$ = createEffect(
 					...user,
 					isFriend: false,
 					isOnline: true,
-					lastSeen: new Date().toISOString(),
+					lastActiveTime: new Date().toISOString(),
+					becameFriendsTime: undefined,
+					registeredAtTime: new Date().toISOString(),
 				}
-				return UsersActions.addUser({ user: webUserModel })
+				return UsersActions.addAppUser({ user: webUserModel })
 			}),
 		)
 	},

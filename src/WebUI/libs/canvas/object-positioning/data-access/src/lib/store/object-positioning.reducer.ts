@@ -1,7 +1,7 @@
 import { ObjectPositioningActions } from './object-positioning.actions'
 import { Action, createReducer, on } from '@ngrx/store'
 
-export const OBJECT_POSITIONING_FEATURE_KEY = 'object-positioning'
+export const OBJECT_POSITIONING_FEATURE_KEY = 'objectPositioning'
 
 export const MOVE_ENTITY_STATE = {
 	MOVING_SINGLE_ENTITY: 'MovingSingleEntity',

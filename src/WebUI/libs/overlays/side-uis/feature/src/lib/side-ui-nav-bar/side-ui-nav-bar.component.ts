@@ -58,17 +58,15 @@ export const sideUiInjectionToken = new InjectionToken<unknown>('')
 export class SideUiNavBarComponent {
 	private _authStore = injectAuthStore()
 	private _uiStore = injectUiStore()
+	private _notificationsStore = injectNotificationsStore()
 	private _injector = inject(Injector)
 
-	private _notificationsStore = injectNotificationsStore()
+	sideUiNavBarOpen = this._uiStore.select.sideUiNavOpen
 
 	amountOfUnreadNotifications = computed(() => {
 		if (!this._authStore.select.user()) return undefined
 		return this._notificationsStore.select.amountOfUnreadNotifications()
 	})
-	// amountOfUnreadNotifications = this._notificationsStore.select.amountOfUnreadNotifications
-
-	sideUiNavBarOpen = this._uiStore.select.sideUiNavOpen
 	currentView = signal<SideUiNavBarView>('auth')
 	currentViewComponent = signal<SideUiNavBarViewComponent>(SideUiAuthViewComponent)
 

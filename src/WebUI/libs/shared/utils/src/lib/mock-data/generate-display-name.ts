@@ -25,8 +25,7 @@ export function generateUserModel(): AppUserModel {
 		displayName: displayName,
 		firstName: firstName,
 		lastName: lastName,
-		photoUrl: photoUrl,
-		email: faker.internet.email(firstName, lastName),
+		photoUrl: photoUrl, // email: faker.internet.email(firstName, lastName),
 	}
 }
 

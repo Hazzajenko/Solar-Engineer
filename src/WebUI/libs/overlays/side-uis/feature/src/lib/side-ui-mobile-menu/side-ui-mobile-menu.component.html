@@ -1,0 +1,120 @@
+<div
+	(touchstart)="toggle()"
+	*ngIf="sideUiMobileMenuOpen()"
+	class="z-[45] fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-50"
+	id="mobile-menu-backdrop"
+></div>
+
+<aside
+	[sideUiMobileMenu]="sideUiMobileMenuOpen()"
+	aria-label="Sidebar"
+	class="flex z-50 fixed top-0 left-0 h-full transition-transform -translate-x-full sm:translate-x-0"
+	id="sidebar-double"
+>
+	<ng-container *ngIf="user(); then userContent; else noUserContent" />
+	<ng-template #userContent>
+		<div
+			*ngIf="user() as user"
+			class="overflow-y-auto z-30 py-5 px-3 w-16 h-full bg-gray-100 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+		>
+			<app-show-svg svgPath="solar/solar-panels-colour" />
+			<ul class="space-y-2">
+				<li>
+					<a
+						(click)="changeView('auth')"
+						[ngClass]="{
+					'text-gray-900': currentView() === 'auth',
+					}"
+						[ngStyle]="{
+						'background-color': currentView() === 'auth' ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+						'border-radius': currentView() === 'auth' ? '0.375rem' : '0.25rem',
+					}"
+						class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+					>
+						<svg-input inputClass="w-5 h-5" svgName="SvgUserCircle" />
+					</a>
+				</li>
+				<li>
+					<a
+						(click)="changeView('projects')"
+						[ngClass]="{
+					'text-gray-900': currentView() === 'projects',
+					}"
+						[ngStyle]="{
+						'background-color': currentView() === 'projects' ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+						'border-radius': currentView() === 'projects' ? '0.375rem' : '0.25rem',
+					}"
+						class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+					>
+						<svg-input inputClass="w-5 h-5" svgName="SvgFolder" />
+					</a>
+				</li>
+				<li>
+					<a
+						(click)="changeView('data')"
+						[ngClass]="{
+					'text-gray-900': currentView() === 'data',
+					}"
+						[ngStyle]="{
+						'background-color': currentView() === 'data' ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+						'border-radius': currentView() === 'data' ? '0.375rem' : '0.25rem',
+					}"
+						class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+					>
+						<svg-input inputClass="w-5 h-5" svgName="SvgData" />
+					</a>
+				</li>
+				<li>
+					<a
+						(click)="changeView('users')"
+						[ngClass]="{
+					'text-gray-900': currentView() === 'users',
+					}"
+						[ngStyle]="{
+						'background-color': currentView() === 'users' ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+						'border-radius': currentView() === 'users' ? '0.375rem' : '0.25rem',
+					}"
+						class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+					>
+						<svg-input inputClass="w-5 h-5" svgName="SvgUsers" />
+					</a>
+				</li>
+				<li>
+					<a
+						(click)="changeView('notifications')"
+						*ngrxLet="amountOfUnreadNotifications() as amountOfUnreadNotifications"
+						[ngClass]="{
+					'text-gray-900': currentView() === 'notifications',
+					}"
+						[ngStyle]="{
+						'background-color': currentView() === 'notifications' ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+						'border-radius': currentView() === 'notifications' ? '0.375rem' : '0.25rem',
+					}"
+						class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+					>
+						<svg-input inputClass="w-5 h-5" svgName="SvgBell" />
+						<div
+							*ngIf="amountOfUnreadNotifications && amountOfUnreadNotifications > 0"
+							class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2 dark:border-gray-900"
+						>
+							{{ amountOfUnreadNotifications }}
+						</div>
+					</a>
+				</li>
+				<li class="absolute bottom-5">
+					<a
+						(click)="toggle()"
+						class="flex items-center justify-end p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+					>
+						<svg-input inputClass="w-5 h-5" svgName="SvgChevronDoubleLeft" />
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<ng-container *ngIf="currentViewComponent() && sideUiInjector">
+			<ng-container *ngComponentOutlet="currentViewComponent(); injector: sideUiInjector" />
+		</ng-container>
+	</ng-template>
+	<ng-template #noUserContent></ng-template>
+</aside>

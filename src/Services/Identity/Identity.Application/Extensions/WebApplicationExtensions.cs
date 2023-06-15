@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using FastEndpoints;
 using Identity.Application.Data.Seed;
+using Identity.Application.Middleware;
 using Identity.SignalR.Hubs;
 using Infrastructure.Validation;
 using Microsoft.AspNetCore.Builder;
@@ -63,6 +64,7 @@ public static partial class WebApplicationExtensions
         app.MapHub<UsersHub>("hubs/users");
 
         app.UseMiddleware<ValidationMappingMiddleware>();
+        app.UseLastActiveMiddleware();
 
         IdentityContextSeed.InitializeDatabase(app);
 

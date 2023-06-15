@@ -1,9 +1,9 @@
-import { AppStateStoreService } from '@canvas/app/data-access'
 import { ENTITY_SELECTED_STATE, injectSelectedStore } from '../store'
-import { inject, Injectable } from '@angular/core'
+import { Injectable } from '@angular/core'
 import { assertNotNull } from '@shared/utils'
 import { injectEntityStore } from '@entities/data-access'
 import { EntityBase, PanelId, PanelModel } from '@entities/shared'
+import { injectAppStateStore } from '@canvas/app/data-access'
 
 @Injectable({
 	providedIn: 'root',
@@ -12,7 +12,7 @@ export class SelectedService {
 	// private _entities = injectEntityStore()
 	private _entities = injectEntityStore()
 	// private _app = inject(AppStoreService)
-	private _appStore = inject(AppStateStoreService)
+	private _appStore = injectAppStateStore()
 	private _selectedStore = injectSelectedStore()
 	// private _selectedStore = inject(SelectedStoreService)
 
@@ -43,8 +43,7 @@ export class SelectedService {
 		 type: 'SetMultipleSelectedEntities',
 		 payload: { ids: [selectedId] },
 		 })*/
-		const currentSelected = this._appStore.state
-		console.log('currentSelected', currentSelected)
+
 		this._selectedStore.dispatch.selectPanel(selectedId)
 		// this._appStore.dispatch.setSelectedState(SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED)
 		// this._app.sendEvent({ type: 'SetMultipleSelectedEntities', payload: { ids: [selectedId] } })

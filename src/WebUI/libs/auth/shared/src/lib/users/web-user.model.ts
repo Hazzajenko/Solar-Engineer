@@ -6,8 +6,10 @@ export type WebUserModel = {
 	displayName: string
 	photoUrl: string
 	isFriend: boolean
+	becameFriendsTime: string | undefined
 	isOnline: boolean
-	lastSeen: string
+	lastActiveTime: string
+	registeredAtTime: string
 }
 
 export const WEB_USER_MODEL = z.object({
@@ -16,8 +18,10 @@ export const WEB_USER_MODEL = z.object({
 	displayName: z.string(),
 	photoUrl: z.string(),
 	isFriend: z.boolean(),
+	becameFriendsTime: z.string(),
 	isOnline: z.boolean(),
-	lastSeen: z.string(),
+	lastActiveTime: z.string(),
+	registeredAtTime: z.string(),
 })
 
 export const isWebUser = (user: WebUserModel): WebUserModel => {
@@ -31,7 +35,7 @@ export const minimalToWebUser = (user: MinimalWebUser): WebUserModel => {
 		...user,
 		isFriend: false,
 		isOnline: false,
-		lastSeen: new Date().toISOString(),
+		lastActiveTime: new Date().toISOString(),
 	} as WebUserModel
 }
 

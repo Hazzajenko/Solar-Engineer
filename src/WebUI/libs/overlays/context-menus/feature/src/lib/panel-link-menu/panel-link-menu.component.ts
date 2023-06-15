@@ -10,7 +10,6 @@ import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { PanelId, PanelLinkModel } from '@entities/shared'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { NgIf } from '@angular/common'
-import { AppStateStoreService } from '@canvas/app/data-access'
 import { injectEntityStore } from '@entities/data-access'
 
 @Component({
@@ -25,7 +24,6 @@ export class PanelLinkMenuComponent implements OnInit {
 	private _entityStore = injectEntityStore()
 	private _render = inject(RenderService)
 	private _uiStore = inject(UiStoreService)
-	private _appStore = inject(AppStateStoreService)
 
 	id = CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU
 

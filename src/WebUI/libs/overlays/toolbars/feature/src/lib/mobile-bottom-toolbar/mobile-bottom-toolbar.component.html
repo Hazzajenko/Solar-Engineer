@@ -5,12 +5,13 @@
 <!--[ngStyle]="{
 height: mobileToolbarHeight()
 }"-->
+
 <div
 	#mobileToolbar
 	@goTop
 	[currentContextMenuDiv]="currentContextMenuDiv()"
 	appMobileBottomToolbar
-	class="flex overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 rounded-lg z-50 absolute bottom-8 left-1/2 -translate-x-1/2"
+	class="flex overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 rounded-lg z-40 absolute bottom-8 left-1/2 -translate-x-1/2"
 	id="mobile-toolbar"
 >
 	<ul

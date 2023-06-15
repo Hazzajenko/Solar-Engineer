@@ -4,7 +4,7 @@ export const friendToWebUser = (friend: FriendModel): WebUserModel => {
 	return {
 		...friend,
 		isFriend: true,
-		lastSeen: new Date().toISOString(),
+		lastActiveTime: new Date().toISOString(),
 		isOnline: false,
 	} as WebUserModel
 }

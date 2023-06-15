@@ -1,11 +1,16 @@
 using System.Reflection;
 using Amazon.CloudWatchLogs;
 using Amazon.Runtime.CredentialManagement;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
+using Serilog.Settings.Configuration;
 using Serilog.Sinks.AwsCloudWatch;
 
 namespace Infrastructure.Logging;
@@ -14,64 +19,33 @@ public static partial class LoggingExtensions
 {
     public static WebApplicationBuilder ConfigureSerilog(this WebApplicationBuilder builder)
     {
-        // var options = new CredentialProfileOptions { AccessKey = "access_key", SecretKey = "secret_key" };
-        // var profile = new Amazon.Runtime.CredentialManagement.CredentialProfile("basic_profile", options);
-        // profile.Region = GetBySystemName("eu-west-1"); // OR RegionEndpoint.EUWest1
-        // var netSDKFile = new NetSDKCredentialsFile();
-        // netSDKFile.RegisterProfile(profile);
-
-
         var appName =
             builder.Configuration.GetValue<string>("App:Name")
             ?? Assembly.GetEntryAssembly()?.GetName().Name;
         if (appName is null)
             throw new ArgumentNullException(nameof(appName));
-        // builder.Configuration.AddEnvironmentVariables()
+
+        var environment = builder.Environment;
+        var config = builder.Configuration;
+
         _ = builder.Host.UseSerilog(
             (_, _, loggerConfig) =>
             {
-                // ReadFrom.Configuration(IConfiguration configuration, ConfigurationReaderOptions readerOptions)
-                /*loggerConfig.ReadFrom
-                    .Configuration( )
-                    .Enrich.FromLogContext()
+                loggerConfig.Enrich
+                    .FromLogContext()
                     .Enrich.WithProperty("Application", appName)
                     .Enrich.WithExceptionDetails()
                     .Enrich.WithMachineName()
                     .Enrich.WithProcessId()
                     .Enrich.WithThreadId()
                     .Enrich.FromLogContext()
-                    .WriteTo.Console();*/
-                loggerConfig.ReadFrom
-                    .Configuration(builder.Configuration, "Logging")
-                    .Enrich.FromLogContext()
-                    .Enrich.WithProperty("Application", appName)
-                    .Enrich.WithExceptionDetails()
-                    .Enrich.WithMachineName()
-                    .Enrich.WithProcessId()
-                    .Enrich.WithThreadId()
-                    .Enrich.FromLogContext()
-                    // .WriteTo.AmazonCloudWatch(
-                    //     logGroup: $"{builder.Environment.EnvironmentName}/{builder.Environment.ApplicationName}",
-                    //     createLogGroup: true,
-                    //     logStreamPrefix: DateTime.UtcNow.ToString("yyyyMMddHHmmssfff"),
-                    //     cloudWatchClient: new AmazonCloudWatchLogsClient()
-                    // )
+                    .AddApplicationInsightsLogging(config, environment)
                     .WriteTo.Console();
 
                 loggerConfig.WriteTo.Seq("http://localhost:5341");
 
-                /*loggerConfig.WriteTo.File(
-                    new CompactJsonFormatter(),
-                    "Logs/log.json",
-                    LogEventLevel.Information,
-                    rollingInterval: RollingInterval.Day,
-                    retainedFileCountLimit: 5
-                );*/
-
                 loggerConfig.MinimumLevel
                     .Override("Microsoft", LogEventLevel.Information)
-                    // .Override("Microsoft", LogEventLevel.Warning)
-                    // .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
                     .MinimumLevel.Override(
                         "Microsoft.AspNetCore.SignalR",
                         LogEventLevel.Information
@@ -80,17 +54,35 @@ public static partial class LoggingExtensions
                         "Microsoft.AspNetCore.Http.Connections",
                         LogEventLevel.Information
                     )
-                    // .MinimumLevel.Override(
-                    //     "Microsoft.EntityFrameworkCore",
-                    //     LogEventLevel.Information
-                    // );
                     .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Error);
-
-                /*logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
-                logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debug);*/
             }
         );
 
         return builder;
+    }
+
+    private static LoggerConfiguration AddApplicationInsightsLogging(
+        this LoggerConfiguration loggerConfiguration,
+        IConfiguration config,
+        IWebHostEnvironment environment
+    )
+    {
+        var applicationInsightsConnectionString = environment.IsDevelopment()
+            ? config["Azure:ApplicationInsights:ConnectionString"]
+            : GetEnvironmentVariable("AZURE_APPLICATION_INSIGHTS_CONNECTION_STRING");
+        var instrumentationKey = environment.IsDevelopment()
+            ? config["Azure:ApplicationInsights:InstrumentationKey"]
+            : GetEnvironmentVariable("AZURE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY");
+        TelemetryConfiguration telemetryConfiguration = new TelemetryConfiguration
+        {
+            ConnectionString = applicationInsightsConnectionString,
+            InstrumentationKey = instrumentationKey,
+        };
+        loggerConfiguration.WriteTo.ApplicationInsights(
+            telemetryConfiguration,
+            TelemetryConverter.Traces
+        );
+
+        return loggerConfiguration;
     }
 }

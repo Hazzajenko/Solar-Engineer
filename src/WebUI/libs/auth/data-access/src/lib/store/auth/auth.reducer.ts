@@ -1,9 +1,10 @@
 import { AuthActions } from './auth.actions'
 import { Action, createReducer, on } from '@ngrx/store'
-import { AppUserModel } from '@shared/data-access/models'
+import { AppUserModel, DeviceInfoModel } from '@shared/data-access/models'
 
 export interface AuthState {
 	user?: AppUserModel
+	deviceInfo?: DeviceInfoModel
 	guest: boolean
 	error: string | null
 }
@@ -28,6 +29,11 @@ export const reducer = createReducer(
 		...state,
 		user,
 		guest: false,
+	})),
+
+	on(AuthActions.initializeApp, (state, { deviceInfo }) => ({
+		...state,
+		deviceInfo,
 	})),
 
 	on(AuthActions.signInFetchUserSuccess, (state, { user }) => ({

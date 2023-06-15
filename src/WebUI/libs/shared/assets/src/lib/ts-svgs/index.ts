@@ -6,12 +6,21 @@ export type AppSvgWrapperNameSubset<
   T extends Readonly<AppSvgWrapper[]>
 > = T[number]['name'];
 
+export * from './build/Svg-arrow-down-small.icon';
+export * from './build/Svg-arrow-up-small.icon';
 export * from './build/Svg-arrow-uturn-left.icon';
 export * from './build/Svg-arrow-uturn-right.icon';
 export * from './build/Svg-bars-arrow-up.icon';
 export * from './build/Svg-bell-slash.icon';
 export * from './build/Svg-bell.icon';
 export * from './build/Svg-chat-bubble-left.icon';
+export * from './build/Svg-chevron-double-down.icon';
+export * from './build/Svg-chevron-double-left.icon';
+export * from './build/Svg-chevron-double-right.icon';
+export * from './build/Svg-chevron-double-up.icon';
+export * from './build/Svg-chevron-down.icon';
+export * from './build/Svg-chevron-up.icon';
+export * from './build/Svg-data.icon';
 export * from './build/Svg-edit.icon';
 export * from './build/Svg-ellipsis-vertical.icon';
 export * from './build/Svg-envelope-open.icon';
@@ -23,6 +32,7 @@ export * from './build/Svg-inbox.icon';
 export * from './build/Svg-link.icon';
 export * from './build/Svg-paint-brush.icon';
 export * from './build/Svg-pencil-square.icon';
+export * from './build/Svg-right.icon';
 export * from './build/Svg-trash.icon';
 export * from './build/Svg-user-circle.icon';
 export * from './build/Svg-user-minus.icon';

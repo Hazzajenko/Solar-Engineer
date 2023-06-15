@@ -5,5 +5,5 @@ namespace Identity.Contracts.Responses.Friends;
 
 public class GetUserFriendsResponse
 {
-    public IEnumerable<FriendDto> Friends { get; set; } = new List<FriendDto>();
+    public IEnumerable<WebUserDto> Friends { get; set; } = new List<WebUserDto>();
 }

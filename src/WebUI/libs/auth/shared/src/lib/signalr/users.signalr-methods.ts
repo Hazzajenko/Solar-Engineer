@@ -1,4 +1,5 @@
 export const USERS_SIGNALR_METHOD = {
+	SEND_DEVICE_INFO: 'SendDeviceInfo',
 	GET_ONLINE_FRIENDS: 'GetOnlineFriends',
 	SEARCH_FOR_APP_USER_BY_USER_NAME: 'SearchForAppUserByUserName',
 	SEND_FRIEND_REQUEST: 'SendFriendRequest',

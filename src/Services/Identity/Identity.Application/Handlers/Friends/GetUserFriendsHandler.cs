@@ -1,8 +1,8 @@
 ﻿using Identity.Application.Data.UnitOfWork;
+using Identity.Application.Services.Connections;
 using Identity.Contracts.Responses.Friends;
 using Identity.SignalR.Commands.Friends;
 using Identity.SignalR.Hubs;
-using Identity.SignalR.Services;
 using Infrastructure.Logging;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
@@ -37,13 +37,17 @@ public class GetUserFriendsHandler : ICommandHandler<GetUserFriendsCommand, GetU
     {
         var authUser = command.AuthUser;
 
-        var userFriends = await _unitOfWork.AppUserLinksRepository.GetUserFriendsDtosAsync(
+        /*var userFriends = await _unitOfWork.AppUserLinksRepository.GetUserFriendsDtosAsync(
+            authUser.Id
+        );*/
+
+        var userFriends = await _unitOfWork.AppUserLinksRepository.GetUserFriendsAsWebUserDtoAsync(
             authUser.Id
         );
 
         GetUserFriendsResponse response = new() { Friends = userFriends };
 
-        response.DumpObjectJson();
+        // response.DumpObjectJson();
 
         await _hubContext.Clients.User(authUser.Id.ToString()).GetUserFriends(response);
 

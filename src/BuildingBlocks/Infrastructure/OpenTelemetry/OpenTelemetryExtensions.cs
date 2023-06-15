@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using Azure.Monitor.OpenTelemetry.Exporter;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -22,12 +24,26 @@ public static class OpenTelemetryExtensions
     /// </summary>
     public static IServiceCollection InitOpenTelemetry(
         this IServiceCollection services,
-        IConfiguration config
+        IConfiguration config,
+        IWebHostEnvironment environment
     )
     {
-        var serviceName = config["App:ServiceName"];
+        var serviceName = environment.IsDevelopment()
+            ? config["App:ServiceName"]
+            : GetEnvironmentVariable("APP_SERVICE_NAME");
         ArgumentNullException.ThrowIfNull(serviceName, nameof(serviceName));
         Console.WriteLine($"ServiceName: {serviceName}");
+
+        var applicationInsightsConnectionString = environment.IsDevelopment()
+            ? config["Azure:ApplicationInsights:ConnectionString"]
+            : GetEnvironmentVariable("AZURE_APPLICATION_INSIGHTS_CONNECTION_STRING");
+
+        if (applicationInsightsConnectionString is null)
+        {
+            Console.WriteLine("ApplicationInsights is not configured.");
+            return services;
+        }
+
         ActivitySource activitySource = new(serviceName);
         Meter meter = new(serviceName);
 
@@ -35,11 +51,19 @@ public static class OpenTelemetryExtensions
             .AddOpenTelemetry()
             .WithTracing(
                 tracerProviderBuilder =>
-                    tracerProviderBuilder.ConfigureTracerProviderBuilder(config, activitySource)
+                    tracerProviderBuilder.ConfigureTracerProviderBuilder(
+                        config,
+                        activitySource,
+                        applicationInsightsConnectionString
+                    )
             )
             .WithMetrics(
                 metricsProviderBuilder =>
-                    metricsProviderBuilder.ConfigureMeterProviderBuilder(config, meter)
+                    metricsProviderBuilder.ConfigureMeterProviderBuilder(
+                        config,
+                        meter,
+                        applicationInsightsConnectionString
+                    )
             );
         return services;
     }
@@ -47,7 +71,8 @@ public static class OpenTelemetryExtensions
     private static TracerProviderBuilder ConfigureTracerProviderBuilder(
         this TracerProviderBuilder builder,
         IConfiguration config,
-        ActivitySource activitySource
+        ActivitySource activitySource,
+        string applicationInsightsConnectionString
     )
     {
         return builder
@@ -55,9 +80,9 @@ public static class OpenTelemetryExtensions
             .ConfigureResource(resource => resource.AddService(DiagnosticsConfig.ServiceName))
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
-            .AddAzureMonitorTraceExporterIfEnabled(config)
-            .AddZipkinExporterIfEnabled(config)
-            .AddSource("Wolverine");
+            .AddAzureMonitorTraceExporterIfEnabled(config, applicationInsightsConnectionString)
+            .AddZipkinExporterIfEnabled(config);
+        // .AddSource("Wolverine");
         ;
 
         /*.AddOtlpExporter(
@@ -73,24 +98,29 @@ public static class OpenTelemetryExtensions
         var zipkinUrl = config["Zipkin:Url"];
         if (zipkinUrl is null)
             return builder;
-        return builder.AddZipkinExporter(o => { o.Endpoint = new Uri(zipkinUrl); });
+        return builder.AddZipkinExporter(o =>
+        {
+            o.Endpoint = new Uri(zipkinUrl);
+        });
     }
 
     private static TracerProviderBuilder AddAzureMonitorTraceExporterIfEnabled(
         this TracerProviderBuilder builder,
-        IConfiguration config
+        IConfiguration config,
+        string applicationInsightsConnectionString
     )
     {
-        var applicationInsightsKey = config["Azure:ApplicationInsights:ConnectionString"];
-        if (applicationInsightsKey is null)
-            return builder;
-        return builder.AddAzureMonitorTraceExporter(o => { o.ConnectionString = applicationInsightsKey; });
+        return builder.AddAzureMonitorTraceExporter(o =>
+        {
+            o.ConnectionString = applicationInsightsConnectionString;
+        });
     }
 
     private static MeterProviderBuilder ConfigureMeterProviderBuilder(
         this MeterProviderBuilder builder,
         IConfiguration config,
-        Meter meter
+        Meter meter,
+        string applicationInsightsConnectionString
     )
     {
         return builder
@@ -99,7 +129,7 @@ public static class OpenTelemetryExtensions
             .AddAspNetCoreInstrumentation()
             .AddMeter(meter.Name)
             // .AddMeter("MyApplicationMetrics")
-            .AddAzureMonitorMetricExporterIfEnabled(config);
+            .AddAzureMonitorMetricExporterIfEnabled(config, applicationInsightsConnectionString);
         /*.AddOtlpExporter(
             options => options.Endpoint = new Uri("http://localhost:4317")
         )*/
@@ -107,12 +137,13 @@ public static class OpenTelemetryExtensions
 
     private static MeterProviderBuilder AddAzureMonitorMetricExporterIfEnabled(
         this MeterProviderBuilder builder,
-        IConfiguration config
+        IConfiguration config,
+        string applicationInsightsConnectionString
     )
     {
-        var applicationInsightsKey = config["Azure:ApplicationInsights:ConnectionString"];
-        if (applicationInsightsKey is null)
-            return builder;
-        return builder.AddAzureMonitorMetricExporter(o => { o.ConnectionString = applicationInsightsKey; });
+        return builder.AddAzureMonitorMetricExporter(o =>
+        {
+            o.ConnectionString = applicationInsightsConnectionString;
+        });
     }
 }

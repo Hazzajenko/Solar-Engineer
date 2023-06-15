@@ -27,16 +27,20 @@ import {
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import { OverlayNotificationModalComponent } from '@overlays/notifications/feature'
-import { SideUiAuthViewComponent, SideUiNavBarComponent } from '@overlays/side-uis/feature'
+import {
+	SideUiAuthViewComponent,
+	SideUiMobileMenuComponent,
+	SideUiNavBarComponent,
+} from '@overlays/side-uis/feature'
 import {
 	MobileBottomToolbarComponent,
 	OverlayToolBarComponent,
 	SelectedStringToolBarComponent,
 } from '@overlays/toolbars/feature'
-import { AppStateStoreService, DivElementsService } from '@canvas/app/data-access'
-import { UiStoreService } from '@overlays/ui-store/data-access'
+import { DivElementsService, injectAppStateStore } from '@canvas/app/data-access'
+import { injectUiStore } from '@overlays/ui-store/data-access'
 import { ContextMenuRendererComponent } from '@overlays/context-menus/feature'
-import { ObjectPositioningStoreService } from '@canvas/object-positioning/data-access'
+import { injectObjectPositioningStore } from '@canvas/object-positioning/data-access'
 import { map } from 'rxjs'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import { selectSignalFromStore } from '@shared/utils'
@@ -45,6 +49,7 @@ import { DialogRendererComponent } from '@overlays/dialogs/feature'
 import { injectProjectsStore } from '@entities/data-access'
 import { injectAuthStore } from '@auth/data-access'
 import { LoadingProjectSpinnerComponent } from '../loading-project-spinner/loading-project-spinner.component'
+import { DeviceDetectorService } from 'ngx-device-detector'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -69,6 +74,7 @@ import { LoadingProjectSpinnerComponent } from '../loading-project-spinner/loadi
 		DialogRendererComponent,
 		SideUiAuthViewComponent,
 		LoadingProjectSpinnerComponent,
+		SideUiMobileMenuComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
@@ -76,35 +82,15 @@ import { LoadingProjectSpinnerComponent } from '../loading-project-spinner/loadi
 	templateUrl: './design-canvas-app.component.html',
 })
 export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
+	private _deviceService = inject(DeviceDetectorService)
 	private _projectsStore = injectProjectsStore()
 	private _authStore = injectAuthStore()
 	private _renderer = inject(Renderer2)
 	private _divElements = inject(DivElementsService)
-	private _appStore = inject(AppStateStoreService)
-	private _uiStore = inject(UiStoreService)
+	private _appStore = injectAppStateStore()
+	private _uiStore = injectUiStore()
 	private _graphicsStore = inject(GraphicsStoreService)
-	private _dialog = toSignal(this._uiStore.dialog$, { initialValue: this._uiStore.dialog })
-	private _contextMenu = toSignal(this._uiStore.contextMenu$, {
-		initialValue: this._uiStore.contextMenu,
-	})
-	private _objectPositioningStore = inject(ObjectPositioningStoreService)
-
-	private _objectPositioningState = toSignal(
-		this._objectPositioningStore.state$.pipe(
-			map((state) => ({
-				moveEntityState: state.moveEntityState,
-				toMoveSpotTaken: state.toMoveSpotTaken,
-				rotateEntityState: state.rotateEntityState,
-			})),
-		),
-		{
-			initialValue: {
-				moveEntityState: this._objectPositioningStore.state.moveEntityState,
-				toMoveSpotTaken: this._objectPositioningStore.state.toMoveSpotTaken,
-				rotateEntityState: this._objectPositioningStore.state.rotateEntityState,
-			},
-		},
-	)
+	private _objectPositioningStore = injectObjectPositioningStore()
 	user = this._authStore.select.user
 
 	userProjects = this._projectsStore.select.allProjects
@@ -121,7 +107,8 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	stringIsSelected = selectSignalFromStore(selectSelectedStringId)
 	@ViewChild('appStats', { static: true }) appStats!: ElementRef<HTMLDivElement>
 	cursorState = computed(() => {
-		const { moveEntityState, toMoveSpotTaken, rotateEntityState } = this._objectPositioningState()
+		const { moveEntityState, toMoveSpotTaken, rotateEntityState } =
+			this._objectPositioningStore.select.cursorState()
 		if (moveEntityState === 'MovingSingleEntity' || moveEntityState === 'MovingMultipleEntities') {
 			if (toMoveSpotTaken) {
 				return 'not-allowed'
@@ -136,7 +123,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 			return 'ns-resize'
 		}
 
-		const viewPositioningState = this._appStore.state.view
+		const viewPositioningState = this._appStore.select.view()
 
 		if (viewPositioningState === 'ViewDraggingInProgress') {
 			return 'move'
@@ -149,16 +136,10 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		this.waitForElements()
 	}
 
-	get dialog() {
-		return this._dialog()
-	}
-
-	get contextMenu() {
-		return this._contextMenu()
-	}
-
 	ngOnInit() {
 		console.log(this.constructor.name, 'ngOnInit')
+		const deviceInfo = this._deviceService.getDeviceInfo()
+		console.log(deviceInfo)
 	}
 
 	ngAfterViewInit() {
@@ -174,5 +155,9 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		this._renderer.listen(document, 'DOMContentLoaded', () => {
 			this._divElements.initElements()
 		})
+	}
+
+	toggleMobileSideMenu() {
+		this._uiStore.dispatch.toggleSideUiMobileMenu()
 	}
 }

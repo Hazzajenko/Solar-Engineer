@@ -1,4 +1,4 @@
-export type UpdateNotificationResponse = {
-	notificationId: string
-	event: string
-}
+// export type UpdateNotificationResponse = {
+// 	notificationId: string
+// 	event: string
+// }

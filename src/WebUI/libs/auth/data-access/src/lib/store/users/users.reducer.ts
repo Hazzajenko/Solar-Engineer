@@ -6,6 +6,7 @@ import { MinimalWebUser, WebUserModel } from '@auth/shared'
 export const USERS_FEATURE_KEY = 'users'
 
 export interface UsersState extends EntityState<WebUserModel> {
+	currentAppUserId: string | undefined
 	isSearching: boolean
 	userSearchResults: MinimalWebUser[]
 	// friendRequestEvents: FriendRequestResponse[]
@@ -25,6 +26,7 @@ export const usersAdapter: EntityAdapter<WebUserModel> = createEntityAdapter<Web
  */
 
 export const initialUsersState: UsersState = usersAdapter.getInitialState({
+	currentAppUserId: undefined,
 	loaded: false,
 	isSearching: false,
 	userSearchResults: [],
@@ -46,6 +48,13 @@ const reducer = createReducer(
 		userSearchResults: users,
 	})),
 	on(UsersActions.loadUsers, (state, { users }) => usersAdapter.setMany(users, state)),
+	on(UsersActions.addAppUser, (state, { user }) => {
+		return {
+			...state,
+			...usersAdapter.addOne(user, state),
+			currentAppUserId: user.id,
+		}
+	}),
 	on(UsersActions.addUser, (state, { user }) => usersAdapter.addOne(user, state)),
 	on(UsersActions.addManyUsers, (state, { users }) => usersAdapter.addMany(users, state)),
 	on(UsersActions.updateUser, (state, { update }) => usersAdapter.updateOne(update, state)),

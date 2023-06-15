@@ -2,7 +2,7 @@
 	class="overflow-y-auto w-52 py-4 px-3 h-full bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
 >-->
 <div
-	class="overflow-y-auto py-4 px-3 h-full w-52 bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+	class="overflow-y-auto py-4 px-3 h-full w-60 bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
 >
 	<div
 		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
@@ -14,8 +14,8 @@
 		class="text-center text-gray-500 dark:text-gray-400"
 	>
 		<img
-			[alt]="user.displayName"
 			[ngSrc]="user.photoUrl"
+			alt="{{ user.displayName }}'s avatar"
 			class="mx-auto mb-4 w-20 h-20 rounded-full"
 			height="80"
 			width="80"
@@ -23,7 +23,7 @@
 		<h3 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
 			<a href="#">{{ user.displayName }}</a>
 		</h3>
-		<p class="font-light text-gray-500 dark:text-gray-400">{{ user.email }}</p>
+		<p class="font-light text-gray-500 dark:text-gray-400">{{ user.userName }}</p>
 		<a
 			class="inline-flex items-center justify-center w-full py-2.5 px-5 my-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
 			href="#"

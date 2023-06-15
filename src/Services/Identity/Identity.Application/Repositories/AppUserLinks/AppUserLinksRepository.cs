@@ -82,6 +82,20 @@ public sealed class AppUserLinksRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<WebUserDto>> GetUserFriendsAsWebUserDtoAsync(Guid appUserId)
+    {
+        return await Queryable
+            .Where(
+                x =>
+                    (x.AppUserReceivedId == appUserId || x.AppUserRequestedId == appUserId)
+                    && x.Friends
+            )
+            .Include(x => x.AppUserReceived)
+            .Include(x => x.AppUserRequested)
+            .Select(x => x.ToWebUserDto(appUserId))
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<AppUserLinkDto>> GetUserFriendsAsAppUserLinkDtoAsync(
         Guid appUserId
     )

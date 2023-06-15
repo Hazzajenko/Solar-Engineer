@@ -194,6 +194,7 @@ export class SideUiNotificationsViewComponent implements OnInit, OnDestroy {
 			default:
 				throw new Error('Unknown notification type')
 		}
+		this._notificationsStore.dispatch.markNotificationsAsCompleted([notification.id])
 	}
 
 	declineNotification(notification: NotificationModel) {
@@ -212,6 +213,7 @@ export class SideUiNotificationsViewComponent implements OnInit, OnDestroy {
 			default:
 				throw new Error('Unknown notification type')
 		}
+		this._notificationsStore.dispatch.markNotificationsAsCompleted([notification.id])
 	}
 
 	dismissNotification(notification: NotificationModel) {

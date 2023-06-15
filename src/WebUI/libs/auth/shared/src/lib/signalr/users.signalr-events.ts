@@ -1,4 +1,5 @@
 export const USERS_SIGNALR_EVENT = {
+	APP_USER_IS_CONNECTED: 'AppUserIsConnected',
 	USER_IS_ONLINE: 'UserIsOnline',
 	USER_IS_OFFLINE: 'UserIsOffline',
 	GET_ONLINE_USERS: 'GetOnlineUsers',

@@ -1,6 +1,7 @@
-export type GetUserFriendsResponse = {
-	friends: FriendModel[]
-}
+// export type GetUserFriendsResponse = {
+// 	friends: WebUserModel[]
+// 	// friends: FriendModel[]
+// }
 
 export type FriendModel = {
 	id: string

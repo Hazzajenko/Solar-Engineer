@@ -1,4 +1,4 @@
-import { AppStateStoreService, CanvasElementService } from '@canvas/app/data-access'
+import { CanvasElementService, injectAppStateStore } from '@canvas/app/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { inject, Injectable } from '@angular/core'
 import { CURSOR_TYPE, TransformedPoint } from '@shared/data-access/models'
@@ -11,7 +11,7 @@ import { draggingScreenKeysDown } from '@canvas/utils'
 export class ViewPositioningService {
 	private _canvasElementsService = inject(CanvasElementService)
 	private _render = inject(RenderService)
-	private _appStore = inject(AppStateStoreService)
+	private _appStore = injectAppStateStore()
 
 	screenDragStartPoint?: TransformedPoint
 

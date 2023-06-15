@@ -12,5 +12,6 @@ public interface IAppUserLinksRepository : IEntityToEntityRepository<AppUserLink
     Task<IEnumerable<FriendDto>> GetUserFriendsDtosAsync(Guid appUserId);
     Task<AppUserLink?> GetByBothUsersAsync(AppUser appUser, AppUser recipient);
     Task<IEnumerable<AppUserLinkDto>> GetUserFriendsAsAppUserLinkDtoAsync(Guid appUserId);
+    Task<IEnumerable<WebUserDto>> GetUserFriendsAsWebUserDtoAsync(Guid appUserId);
     Task<IEnumerable<Guid>> GetUserFriendIdsAsync(Guid appUserId);
 }

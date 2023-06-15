@@ -11,6 +11,7 @@ export type UiState = {
 	dialogOpen: boolean
 	currentDialog: DialogInput | undefined
 	sideUiNavOpen: boolean
+	sideUiMobileMenuOpen: boolean
 }
 
 export const initialUiState: UiState = {
@@ -19,6 +20,7 @@ export const initialUiState: UiState = {
 	dialogOpen: false,
 	currentDialog: undefined,
 	sideUiNavOpen: true,
+	sideUiMobileMenuOpen: false,
 }
 
 const reducer = createReducer(
@@ -46,6 +48,10 @@ const reducer = createReducer(
 	on(UiActions.toggleSideUiNav, (state) => ({
 		...state,
 		sideUiNavOpen: !state.sideUiNavOpen,
+	})),
+	on(UiActions.toggleSideUiMobileMenu, (state) => ({
+		...state,
+		sideUiMobileMenuOpen: !state.sideUiMobileMenuOpen,
 	})),
 	on(UiActions.clearUiState, () => initialUiState),
 )

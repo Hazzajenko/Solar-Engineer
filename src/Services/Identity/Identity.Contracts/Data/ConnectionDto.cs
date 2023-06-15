@@ -2,5 +2,5 @@
 
 public class ConnectionDto
 {
-    public string UserId { get; set; } = default!;
+    public string AppUserId { get; set; } = default!;
 }

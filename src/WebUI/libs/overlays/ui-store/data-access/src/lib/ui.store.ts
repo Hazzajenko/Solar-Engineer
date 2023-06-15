@@ -108,6 +108,7 @@ function uiStoreFactory(store: Store) {
 		currentDialog: store.selectSignal(feature.selectCurrentDialog),
 		currentContextMenu: store.selectSignal(feature.selectCurrentContextMenu),
 		sideUiNavOpen: store.selectSignal(feature.selectSideUiNavOpen),
+		sideUiMobileMenuOpen: store.selectSignal(feature.selectSideUiMobileMenuOpen),
 	}
 
 	const dispatch = {
@@ -118,6 +119,7 @@ function uiStoreFactory(store: Store) {
 			store.dispatch(UiActions.openContextMenu({ contextMenu })),
 		closeContextMenu: () => store.dispatch(UiActions.closeContextMenu()),
 		toggleSideUiNav: () => store.dispatch(UiActions.toggleSideUiNav()),
+		toggleSideUiMobileMenu: () => store.dispatch(UiActions.toggleSideUiMobileMenu()),
 	}
 
 	return {

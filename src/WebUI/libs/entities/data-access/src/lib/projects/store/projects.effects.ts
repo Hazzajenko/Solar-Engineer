@@ -11,7 +11,7 @@ export const createProjectSignalr$ = createEffect(
 	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
 		return actions$.pipe(
 			ofType(ProjectsActions.createProjectSignalr),
-			tap((request) => projectsSignalr.createProject(request)),
+			tap(({ request }) => projectsSignalr.createProject(request)),
 		)
 	},
 	{ functional: true, dispatch: false },

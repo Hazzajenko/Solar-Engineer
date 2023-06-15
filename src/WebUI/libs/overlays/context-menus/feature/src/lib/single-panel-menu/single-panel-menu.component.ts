@@ -11,7 +11,6 @@ import {
 import { PanelLinkModel, PanelModel, StringModel } from '@entities/shared'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuDirective } from '../directives'
-import { AppStateStoreService } from '@canvas/app/data-access'
 import { injectSelectedStore } from '@canvas/selected/data-access'
 import { LetDirective } from '@ngrx/component'
 import { NgIconComponent, provideIcons } from '@ng-icons/core'
@@ -19,6 +18,7 @@ import { heroMinusCircle } from '@ng-icons/heroicons/outline'
 import { assertNotNull } from '@shared/utils'
 import { transitionContextMenu } from '../animations/context-menu.animation'
 import { injectEntityStore } from '@entities/data-access'
+import { injectAppStateStore } from '@canvas/app/data-access'
 
 @Component({
 	selector: 'app-single-panel-menu',
@@ -49,7 +49,7 @@ export class SinglePanelMenuComponent implements OnInit {
 	private _entityStore = injectEntityStore()
 	private _render = inject(RenderService)
 	private _uiStore = inject(UiStoreService)
-	private _appStore = inject(AppStateStoreService)
+	private _appStore = injectAppStateStore()
 	private _selectedStore = injectSelectedStore()
 
 	id = CONTEXT_MENU_COMPONENT.SINGLE_PANEL_MENU
@@ -82,7 +82,7 @@ export class SinglePanelMenuComponent implements OnInit {
 		this.panel = panel
 		this.string = this._entityStore.strings.select.getById(panel.stringId)
 
-		const linkMode = this._appStore.state.mode === 'LinkMode'
+		const linkMode = this._appStore.select.mode() === 'LinkMode'
 		const isInSelectedString = this._selectedStore.select.selectedStringId() === this.panel.stringId
 
 		if (linkMode && isInSelectedString) {

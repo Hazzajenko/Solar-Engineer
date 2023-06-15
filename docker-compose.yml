@@ -1,19 +1,9 @@
 services:
-#  api-gateway:
-#    image: solarengineer-api-gateway:1.0.2
-#    ports:
-#      - 9901:9901
-#      - 80:80
-#      - 443:443
-#    volumes:
-#      - ./https/solarengineer.net.crt:/etc/ssl/certs/solarengineer.net.crt
-#      - ./https/solarengineer.net.rsa:/etc/ssl/certs/solarengineer.net.rsa
-
   web-ui:
     hostname: "web-ui"
     labels:
       NAME: "web-ui"
-    image: solarengineer-web-ui:1.0.3
+    image: hazzajenko/solarengineer-web-ui:1.0.4
     ports:
       - 4200:80
 
@@ -21,7 +11,7 @@ services:
     hostname: "identity-api"
     labels:
       NAME: "identity-api"
-    image: solarengineer-identity-api:1.0.3
+    image: hazzajenko/solarengineer-identity-api:1.0.4
     ports:
       - ${IDENTITY_HTTPS_PORT}:443
       - ${IDENTITY_HTTP_PORT}:80
@@ -39,6 +29,8 @@ services:
       DATABASE_DATABASE: ${DATABASE_NAME_IDENTITY}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       ASPNETCORE_URLS: ${ASPNETCORE_URLS}
       ASPNETCORE_Kestrel__Certificates__Default__Password: ${ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PASSWORD}
       ASPNETCORE_Kestrel__Certificates__Default__Path: ${ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PATH}
@@ -55,7 +47,7 @@ services:
     hostname: "projects-api"
     labels:
       NAME: "projects-api"
-    image: solarengineer-projects-api:1.0.3
+    image: hazzajenko/solarengineer-projects-api:1.0.4
     ports:
       - ${PROJECTS_HTTPS_PORT}:443
       - ${PROJECTS_HTTP_PORT}:80

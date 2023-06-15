@@ -8,10 +8,7 @@ import {
 import { provideAppStateFeature } from '@canvas/app/data-access'
 import { provideState, provideStore } from '@ngrx/store'
 import { provideUiFeature } from '@overlays/ui-store/data-access'
-import {
-	OBJECT_POSITIONING_FEATURE_KEY,
-	objectPositioningReducer,
-} from '@canvas/object-positioning/data-access'
+import { projectObjectPositioningFeature } from '@canvas/object-positioning/data-access'
 import { GRAPHICS_FEATURE_KEY, graphicsReducer } from '@canvas/graphics/data-access'
 import { WINDOWS_FEATURE_KEY, windowsReducer } from '@overlays/windows/data-access'
 import { KEYS_FEATURE_KEY, keysReducer } from '@canvas/keys/data-access'
@@ -36,7 +33,7 @@ export function provideNgrx() {
 		provideEntityStores(),
 		provideAppStateFeature(),
 		provideUiFeature(),
-		provideState(OBJECT_POSITIONING_FEATURE_KEY, objectPositioningReducer),
+		projectObjectPositioningFeature(),
 		provideState(GRAPHICS_FEATURE_KEY, graphicsReducer),
 		provideState(WINDOWS_FEATURE_KEY, windowsReducer),
 		provideState(KEYS_FEATURE_KEY, keysReducer),

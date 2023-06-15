@@ -1,5 +1,5 @@
 ﻿using FastEndpoints;
-using Identity.SignalR.Services;
+using Identity.Application.Services.Connections;
 
 namespace Identity.API.Endpoints.Connections;
 

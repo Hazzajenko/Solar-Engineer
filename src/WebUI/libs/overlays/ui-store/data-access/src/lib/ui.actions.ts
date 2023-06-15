@@ -14,6 +14,7 @@ export const UiActions = createActionGroup({
 		}>(),
 		'Close Dialog': emptyProps(),
 		'Toggle Side Ui Nav': emptyProps(),
+		'Toggle Side Ui Mobile Menu': emptyProps(),
 		'Clear Ui State': emptyProps(),
 	},
 })

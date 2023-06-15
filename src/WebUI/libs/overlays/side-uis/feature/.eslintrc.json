@@ -17,7 +17,7 @@
 						"type": "attribute",
 						"prefix": [
 							"app",
-							"side-ui"
+							"sideUi"
 						],
 						"style": "camelCase"
 					}

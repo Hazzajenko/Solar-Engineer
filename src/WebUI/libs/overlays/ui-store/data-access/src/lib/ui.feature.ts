@@ -10,11 +10,13 @@ export const uiFeature = createFeature({
 		selectCurrentContextMenu,
 		selectCurrentDialog,
 		selectSideUiNavOpen,
+		selectSideUiMobileMenuOpen,
 	}) => ({
 		selectUiState,
 		selectCurrentContextMenu,
 		selectCurrentDialog,
 		selectSideUiNavOpen,
+		selectSideUiMobileMenuOpen,
 	}),
 })
 

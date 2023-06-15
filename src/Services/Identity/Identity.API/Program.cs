@@ -4,7 +4,9 @@ using Identity.API.Auth;
 using Identity.API.Extensions;
 using Identity.Application.Data;
 using Identity.Application.Extensions;
+using Identity.Application.HubFilters;
 using Identity.Domain;
+using Identity.SignalR.Hubs;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Health;
@@ -15,9 +17,8 @@ using Infrastructure.Swagger;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using NSwag;
-
-// AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
@@ -28,9 +29,8 @@ var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 
 var environment = builder.Environment;
-builder.Services.InitOpenTelemetry(config);
+builder.Services.InitOpenTelemetry(config, environment);
 
-builder.Services.AddHealthChecks();
 builder.Services.InitHealthChecks(config, environment);
 var jwtSettings = await config.GetJwtSettings(environment);
 builder.Services.AddApplicationServices(config, environment, jwtSettings);
@@ -40,7 +40,27 @@ builder.Services.InitAuthentication(config, environment, jwtSettings);
 builder.Services.InitAuthorization(config);
 builder.Services.AddScoped<ApiKeyAuthFilter>();
 
-builder.Services.ConfigureSignalRWithRedis(builder.Environment);
+/*builder.Services.ConfigureSignalRWithRedis(
+    builder.Environment,
+    options =>
+    {
+        options.AddFilter<UsersHubFilter>();
+    }
+);*/
+
+builder.Services
+    .AddSignalR(options =>
+    {
+        options.DisableImplicitFromServicesParameters = true;
+        if (environment.IsDevelopment())
+            options.EnableDetailedErrors = true;
+    })
+    .AddHubOptions<UsersHub>(options =>
+    {
+        options.AddFilter<UsersHubFilter>();
+    })
+    .InitStackExchangeRedis(builder.Services, environment);
+builder.Services.AddSingleton<UsersHubFilter>();
 
 builder.Services.InitDbContext<IdentityContext>(
     config,
@@ -51,15 +71,13 @@ builder.Services.InitCors("corsPolicy");
 
 builder.Services.AddFastEndpoints();
 
-/*builder.Services.AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-});*/
 builder.Services.AddHttpClient(
     "DockerHub",
     httpClient =>
     {
-        var baseUrl = config.GetValue<string>("DockerHub:ApiBaseUrl");
+        var baseUrl = environment.IsDevelopment()
+            ? config.GetValue<string>("DockerHub:ApiBaseUrl")
+            : GetEnvironmentVariable("DOCKER_HUB_API_BASE_URL");
         ArgumentNullException.ThrowIfNull(baseUrl);
         httpClient.BaseAddress = new Uri(baseUrl);
     }

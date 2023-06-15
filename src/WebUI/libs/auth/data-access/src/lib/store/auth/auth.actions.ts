@@ -1,5 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { AppUserModel } from '@shared/data-access/models'
+import { AppUserModel, DeviceInfoModel } from '@shared/data-access/models'
 
 export const AuthActions = createActionGroup({
 	source: 'Auth Store',
@@ -13,6 +13,10 @@ export const AuthActions = createActionGroup({
 		'Sign In Success': props<{
 			token: string
 			user: AppUserModel
+		}>(),
+		'Initialize App': props<{
+			token: string
+			deviceInfo: DeviceInfoModel
 		}>(),
 		'Sign In Fetch User Success': props<{
 			token: string

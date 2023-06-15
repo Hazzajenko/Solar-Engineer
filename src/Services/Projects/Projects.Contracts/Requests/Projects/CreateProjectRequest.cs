@@ -1,9 +1,17 @@
-﻿namespace Projects.Contracts.Requests.Projects;
+﻿using MessagePack;
 
+namespace Projects.Contracts.Requests.Projects;
+
+// [MessagePackObject(keyAsPropertyName: true)]
 public class CreateProjectRequest
 {
+    // [Key("name")]
     public string Name { get; set; } = default!;
+
+    // [Key("colour")]
     public string Colour { get; set; } = default!;
+
+    // [Key("memberIds")]
     public IEnumerable<string> MemberIds { get; set; } = default!;
 }
 

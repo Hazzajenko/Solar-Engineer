@@ -23,9 +23,8 @@ export const selectUsersByIdArray = (props: { ids: string[] }) =>
 		users.filter((user) => props.ids.includes(user.id)),
 	)
 
-export const selectUserSearchResults = createSelector(
-	selectUsersState,
-	(state: UsersState) => state.userSearchResults,
+export const selectUserSearchResults = createSelector(selectUsersState, (state: UsersState) =>
+	state.userSearchResults.filter((u) => u.id !== state.currentAppUserId),
 )
 
 export const selectUserSearchResultById = (props: { id: string }) =>

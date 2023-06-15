@@ -5,15 +5,15 @@ namespace Identity.SignalR.Mapping;
 
 public static class ConnectionsMapper
 {
-    public static ConnectionDto ToDto(this AppUserConnection request)
+    public static ConnectionDto ToDto(this AppUserConnectionDto request)
     {
         return new ConnectionDto
         {
-            UserId = request.AppUserId.ToString()
+            AppUserId = request.AppUserId.ToString()
         };
     }
 
-    public static List<ConnectionDto> ToDtoList(this AppUserConnection request)
+    public static List<ConnectionDto> ToDtoList(this AppUserConnectionDto request)
     {
         return new List<ConnectionDto>
         {

@@ -28,11 +28,7 @@ import { EntityUpdate } from '@shared/data-access/models'
 import { injectSignalrEventsStore } from '../../signalr-events'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { injectEntityStore } from '../../shared'
-import {
-	camelCaseToPascaleCaseNested,
-	pascalCaseToCamelCaseNested,
-	retryCheck,
-} from '@shared/utils'
+import { camelCaseToPascaleCaseNested, retryCheck } from '@shared/utils'
 import { injectAuthStore } from '@auth/data-access'
 
 const hubName = 'Projects'
@@ -124,6 +120,7 @@ export class ProjectsSignalrService {
 	}
 
 	createProject(request: CreateProjectRequest) {
+		console.log(PROJECTS_SIGNALR_METHOD.CREATE_PROJECT, request)
 		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.CREATE_PROJECT, request)
 	}
 
@@ -202,10 +199,11 @@ export class ProjectsSignalrService {
 		callback: (response: T) => void,
 	) {
 		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
-		this.hubConnection.on(event, (response: T) => {
-			const camelCase = pascalCaseToCamelCaseNested(response) as T
-			callback(camelCase)
-		})
+		this.hubConnection.on(event, callback)
+		/*		this.hubConnection.on(event, (response: T) => {
+		 const camelCase = pascalCaseToCamelCaseNested(response) as T
+		 callback(camelCase)
+		 })*/
 	}
 
 	private invokeHubConnection(invoke: string, params?: unknown) {
@@ -213,10 +211,9 @@ export class ProjectsSignalrService {
 		if (this.hubConnection.state !== 'Connected') throw new Error('Hub connection is not connected')
 
 		if (invoke && params) {
-			const pascalCaseRequest = camelCaseToPascaleCaseNested(params)
-			this.hubConnection
-				.invoke(invoke, params)
-				.catch((err) => console.error(err, invoke, pascalCaseRequest))
+			// const pascalCaseRequest = camelCaseToPascaleCaseNested(params)
+			// console.log(invoke, pascalCaseRequest)
+			this.hubConnection.invoke(invoke, params).catch((err) => console.error(err, invoke, params))
 		}
 		if (invoke && !params) {
 			this.hubConnection.invoke(invoke).catch((err) => console.error(err, invoke))

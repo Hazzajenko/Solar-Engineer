@@ -30,33 +30,28 @@ public static class SignalRExtensions
 
                 options.AddFilter<HubLoggerFilter>();
             })
-            .AddMessagePackProtocol()
-            .AddStackExchangeRedis(
-                redisConnectionString
-            /*options =>
-            {
-                options.Configuration.ChannelPrefix = "SolarEngineerApp";
-                options.ConnectionFactory = async writer =>
-                {
-                    var config = new ConfigurationOptions
-                    {
-                        AbortOnConnectFail = false
-                    };
-                    config.EndPoints.Add(IPAddress.Loopback, 0);
-                    // config.
-                    config.SetDefaultPorts();
-                    var connection = await ConnectionMultiplexer.ConnectAsync(config, writer);
-                    // var connection = await RedisExtensions.GetConnectionMultiplexerAsync(writer);
-                    connection.ConnectionFailed += (_, e) => { Console.WriteLine("Connection to Redis failed."); };
-
-                    if (!connection.IsConnected) Console.WriteLine("Did not connect to Redis.");
-
-                    return connection;
-                };
-            }*/
-            );
+            .AddStackExchangeRedis(redisConnectionString);
         return services;
     }
+
+    public static IServiceCollection InitStackExchangeRedis(
+        this ISignalRServerBuilder builder,
+        IServiceCollection services,
+        IWebHostEnvironment env
+    )
+    {
+        var redisConnectionString = env.IsDevelopment() ? "localhost" : "redis";
+        builder.AddStackExchangeRedis(redisConnectionString);
+        return services;
+    }
+
+    /*public static ISignalRServerBuilder AddHubFilter<THubFilter>(
+        this ISignalRServerBuilder builder
+    ) where THubFilter : class, IHubFilter
+    {
+        builder.Services.AddSingleton<IHubFilter, THubFilter>();
+        return builder;
+    }*/
 
     public static T ThrowNewHubExceptionIfNull<T>(
         [NotNull] this T? hubItem,

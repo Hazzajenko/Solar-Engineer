@@ -1,4 +1,3 @@
-import { AppStateStoreService } from '@canvas/app/data-access'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import {
@@ -24,6 +23,7 @@ import {
 	isEntityOverlappingWithBounds,
 } from '@canvas/utils'
 import { CANVAS_COLORS, ENTITY_TYPE, SizeByType } from '@entities/shared'
+import { injectAppStateStore } from '@canvas/app/data-access'
 
 @Injectable({
 	providedIn: 'root',
@@ -36,7 +36,7 @@ export class NearbyService {
 	// private _app = inject(AppStoreService)
 	// private _appStore = inject(AppNgrxStateStore)
 	private _graphicsStore = inject(GraphicsStoreService)
-	private _appStore = inject(AppStateStoreService)
+	private _appStore = injectAppStateStore()
 
 	// nearbyDrawMode: NearbyDrawMode = NEARBY_DRAW_MODE.CENTER_LINE_SCREEN_SIZE
 	// nearbyDrawMode: NearbyDrawMode = NEARBY_DRAW_MODE.CENTER_LINE_BETWEEN_TWO_ENTITIES
@@ -109,7 +109,7 @@ export class NearbyService {
 			: CANVAS_COLORS.PreviewPanelFillStyle
 
 		const altKey = event.altKey
-		const previewAxisState = this._appStore.state.previewAxis
+		const previewAxisState = this._appStore.select.previewAxis()
 
 		if (altKey && previewAxisState === 'None') {
 			this._appStore.dispatch.setPreviewAxisState('AxisCreatePreviewInProgress')

@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core'
-import { AppStateStoreService } from '@canvas/app/data-access'
 import { NearbyService } from '@canvas/object-positioning/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { injectSelectedStore } from '@canvas/selected/data-access'
@@ -8,19 +7,20 @@ import { getTopLeftPointFromTransformedPoint } from '@canvas/utils'
 import { ENTITY_TYPE, SizeByType } from '@entities/shared'
 import { TransformedPoint } from '@shared/data-access/models'
 import { injectEntityStore } from '../store'
+import { injectAppStateStore } from '@canvas/app/data-access'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class EntityFactoryService {
-	private _appStore = inject(AppStateStoreService)
+	private _appStore = injectAppStateStore()
 	private _selectedStore = injectSelectedStore()
 	private _nearby = inject(NearbyService)
 	private _render = inject(RenderService)
 	private _entities = injectEntityStore()
 
 	createEntity(event: PointerEvent, currentPoint: TransformedPoint) {
-		const previewAxisState = this._appStore.state.previewAxis
+		const previewAxisState = this._appStore.select.previewAxis()
 		if (previewAxisState === 'AxisCreatePreviewInProgress') {
 			if (!event.altKey || !this._nearby.axisPreviewRect) {
 				this._appStore.dispatch.setPreviewAxisState('None')
@@ -60,7 +60,7 @@ export class EntityFactoryService {
 	}
 
 	createEntityFromTouch(event: TouchEvent, currentPoint: TransformedPoint) {
-		const previewAxisState = this._appStore.state.previewAxis
+		const previewAxisState = this._appStore.select.previewAxis()
 		if (previewAxisState === 'AxisCreatePreviewInProgress') {
 			if (!event.altKey || !this._nearby.axisPreviewRect) {
 				this._appStore.dispatch.setPreviewAxisState('None')

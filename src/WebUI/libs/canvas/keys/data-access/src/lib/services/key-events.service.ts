@@ -1,4 +1,3 @@
-import { AppStateStoreService, MODE_STATE } from '@canvas/app/data-access'
 import { createString, createStringWithPanelsV2, genStringNameV2 } from '@entities/utils'
 import { MOVE_ENTITY_STATE, ObjectPositioningService, ObjectPositioningStoreService, ObjectRotatingService, ROTATE_ENTITY_STATE } from '@canvas/object-positioning/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
@@ -12,6 +11,7 @@ import { toSignal } from '@angular/core/rxjs-interop'
 import { updateObjectByIdForStoreV3 } from '@canvas/utils'
 import { ENTITY_TYPE, PanelModel } from '@entities/shared'
 import { injectEntityStore } from '@entities/data-access'
+import { injectAppStateStore, MODE_STATE } from '@canvas/app/data-access'
 
 // const DEFAULT_UNCHANGEABLE_KEYS = [KEYS.ESCAPE, KEYS.SHIFT, KEYS.ALT, KEYS.CTRL_OR_CMD] as const
 const isDefaultUnchangeableKey = (key: KeyboardEvent['key']) =>
@@ -29,7 +29,7 @@ export class KeyEventsService {
 	private _entities = injectEntityStore()
 	private _positioningStore = inject(ObjectPositioningStoreService)
 	private _objRotating = inject(ObjectRotatingService)
-	private _appStore = inject(AppStateStoreService)
+	private _appStore = injectAppStateStore()
 	private _render = inject(RenderService)
 	private _objPositioning = inject(ObjectPositioningService)
 	private _view = inject(ViewPositioningService)
@@ -112,7 +112,7 @@ export class KeyEventsService {
 					this._objRotating.clearMultipleToRotate()
 				}
 
-				if (this._appStore.state.view === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
+				if (this._appStore.select.view() === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
 					this._view.handleDragScreenMouseUp()
 				}
 				break
@@ -166,7 +166,7 @@ export class KeyEventsService {
 				}
 				break
 			case KEYS.C: {
-				const mode = this._appStore.state.mode
+				const mode = this._appStore.select.mode()
 				const newMode =
 					mode === MODE_STATE.CREATE_MODE ? MODE_STATE.SELECT_MODE : MODE_STATE.CREATE_MODE
 				this._appStore.dispatch.setModeState(newMode)
@@ -216,7 +216,7 @@ export class KeyEventsService {
 					this._objRotating.clearMultipleToRotate()
 				}
 
-				if (this._appStore.state.view === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
+				if (this._appStore.select.view() === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
 					this._view.handleDragScreenMouseUp()
 				}
 				break
@@ -248,14 +248,14 @@ export class KeyEventsService {
 	}
 
 	private toggleMode() {
-		const mode = this._appStore.state.mode
+		const mode = this._appStore.select.mode()
 		const newMode =
 			mode === MODE_STATE.CREATE_MODE ? MODE_STATE.SELECT_MODE : MODE_STATE.CREATE_MODE
 		this._appStore.dispatch.setModeState(newMode)
 	}
 
 	private startLinkMode() {
-		const mode = this._appStore.state.mode
+		const mode = this._appStore.select.mode()
 		const newMode = mode !== MODE_STATE.LINK_MODE ? MODE_STATE.LINK_MODE : MODE_STATE.SELECT_MODE
 		this._appStore.dispatch.setModeState(newMode)
 	}

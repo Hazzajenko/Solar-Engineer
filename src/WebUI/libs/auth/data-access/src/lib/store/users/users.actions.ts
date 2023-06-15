@@ -32,6 +32,9 @@ export const UsersActions = createActionGroup({
 		'Load Users': props<{
 			users: WebUserModel[]
 		}>(),
+		'Add App User': props<{
+			user: WebUserModel
+		}>(),
 		'Add User': props<{
 			user: WebUserModel
 		}>(),

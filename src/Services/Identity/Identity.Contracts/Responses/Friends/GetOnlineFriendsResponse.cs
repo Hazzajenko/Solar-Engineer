@@ -1,8 +1,9 @@
-﻿using Identity.Domain;
+﻿using Identity.Contracts.Data;
+using Identity.Domain;
 
 namespace Identity.Contracts.Responses.Friends;
 
 public class GetOnlineFriendsResponse
 {
-    public IEnumerable<AppUserConnection> OnlineFriends { get; set; } = new List<AppUserConnection>();
+    public IEnumerable<AppUserConnectionDto> OnlineFriends { get; set; } = new List<AppUserConnectionDto>();
 }

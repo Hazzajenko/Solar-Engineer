@@ -1,5 +1,5 @@
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common'
-import { Component, ElementRef, inject, Input, NgZone, Renderer2, ViewChild } from '@angular/core'
+import { Component, ElementRef, inject, Input, ViewChild } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialogModule } from '@angular/material/dialog'
 import { LetDirective } from '@ngrx/component'
@@ -7,7 +7,6 @@ import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dia
 import { injectEntityStore } from '@entities/data-access'
 import { injectSelectedStore } from '@canvas/selected/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
-import { AppStateStoreService } from '@canvas/app/data-access'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { createStringWithPanelsV2 } from '@entities/utils'
 
@@ -26,19 +25,13 @@ import { createStringWithPanelsV2 } from '@entities/utils'
 	],
 })
 export class MovePanelsToStringDialogComponent {
-	private _elementRef = inject(ElementRef<HTMLDivElement>)
 	private _entities = injectEntityStore()
-	private _renderer = inject(Renderer2)
-	private _ngZone = inject(NgZone)
 	private _selectedStore = injectSelectedStore()
 	private _render = inject(RenderService)
-	private _appStore = inject(AppStateStoreService)
 	private _uiStore = inject(UiStoreService)
 	@ViewChild('backdrop') backdrop!: ElementRef<HTMLDivElement>
 	@ViewChild('dialog') dialog!: ElementRef<HTMLDivElement>
 	strings = this._entities.strings.select.allStrings
-	// strings = toSignal(this._entities.strings.select.allStrings()WithPanels$)
-	// dialogId!: string
 	panelIds!: string[]
 
 	@Input({ required: true }) set data(data: { panelIds: string[] }) {

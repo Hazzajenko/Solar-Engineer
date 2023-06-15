@@ -2,8 +2,7 @@
 using Identity.Contracts.Responses.Friends;
 using Identity.Domain;
 using Identity.SignalR.Commands.AppUsers;
-using Identity.SignalR.Commands.Connections.OnConnected;
-using Identity.SignalR.Commands.Connections.OnDisconnected;
+using Identity.SignalR.Commands.Connections;
 using Identity.SignalR.Commands.Friends;
 using Identity.SignalR.Commands.Notifications;
 using Infrastructure.SignalR;
@@ -37,7 +36,7 @@ public class UsersHub : Hub<IUsersHub>
         await _mediator.Send(new GetUserFriendsCommand(authUser));
         await _mediator.Send(new GetOnlineFriendsQuery(authUser));
         await _mediator.Send(new GetUserNotificationsCommand(authUser));
-
+        await Clients.Caller.AppUserIsConnected();
         await base.OnConnectedAsync();
     }
 
@@ -47,6 +46,11 @@ public class UsersHub : Hub<IUsersHub>
         await _mediator.Send(new OnDisconnectedCommand(Context.ToAuthUser()));
 
         await base.OnDisconnectedAsync(exception);
+    }
+    
+    public async Task SendDeviceInfo(DeviceInfoDto deviceInfo)
+    {
+        await _mediator.Send(new SendDeviceInfoCommand(Context.ToAuthUser(), deviceInfo));
     }
 
     public async Task GetOnlineFriends()
@@ -112,5 +116,4 @@ public class UsersHub : Hub<IUsersHub>
             new ReadManyNotificationsCommand(Context.ToAuthUser(), notificationIds)
         );
     }
-
 }

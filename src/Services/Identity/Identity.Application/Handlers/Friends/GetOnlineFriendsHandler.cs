@@ -1,9 +1,10 @@
 ﻿using Identity.Application.Data.UnitOfWork;
+using Identity.Application.Services.Connections;
+using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Friends;
 using Identity.Domain;
 using Identity.SignalR.Commands.Friends;
 using Identity.SignalR.Hubs;
-using Identity.SignalR.Services;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -37,7 +38,7 @@ public class GetOnlineFriendsHandler : IQueryHandler<GetOnlineFriendsQuery, GetO
         {
             var noFriendsResponse = new GetOnlineFriendsResponse
             {
-                OnlineFriends = new List<AppUserConnection>()
+                OnlineFriends = new List<AppUserConnectionDto>()
             };
             await _hubContext.Clients.User(authUser.Id.ToString()).GetOnlineFriends(noFriendsResponse);
             return noFriendsResponse;
@@ -47,7 +48,7 @@ public class GetOnlineFriendsHandler : IQueryHandler<GetOnlineFriendsQuery, GetO
         var onlineFriendConnections = _connections.GetUserConnectionsByIds(userFriendIds);
         var response = new GetOnlineFriendsResponse
         {
-            OnlineFriends = new List<AppUserConnection>(onlineFriendConnections)
+            OnlineFriends = new List<AppUserConnectionDto>(onlineFriendConnections)
         };
 
         await _hubContext.Clients.User(authUser.Id.ToString()).GetOnlineFriends(response);

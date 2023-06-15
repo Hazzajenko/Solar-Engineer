@@ -20,7 +20,9 @@ export const ProjectsActions = createActionGroup({
 		'Project Entity Store Cleared': props<{
 			store: ProjectEntityStore
 		}>(),
-		'Create Project Signalr': props<CreateProjectRequest>(),
+		'Create Project Signalr': props<{
+			request: CreateProjectRequest
+		}>(),
 		'Select Project': props<{
 			projectId: ProjectId
 		}>(),

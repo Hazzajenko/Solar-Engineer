@@ -1,5 +1,3 @@
-import { AppUserConnectionModel } from '@auth/shared'
-
-export type GetOnlineFriendsResponse = {
-	friends: AppUserConnectionModel[]
-}
+// export type GetOnlineFriendsResponse = {
+// 	friends: AppUserConnectionModel[]
+// }
