@@ -23,7 +23,7 @@ import {
 	DIALOG_COMPONENT,
 	injectUiStore,
 } from '@overlays/ui-store/data-access'
-import { ShowSvgNoStylesComponent } from '@shared/ui'
+import { InputSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { TruncatePipe } from '@shared/pipes'
 import { ContextMenuModule } from 'primeng/contextmenu'
 import { createSelector } from '@ngrx/store'
@@ -34,6 +34,8 @@ import { AccordionModule } from 'primeng/accordion'
 import { LetDirective } from '@ngrx/component'
 import { heightInOutWithConfig } from '@shared/animations'
 import { AuthWebUserAvatarComponent } from '@auth/ui'
+import { SideUiBaseComponent } from '../side-ui-base/side-ui-base.component'
+import { DefaultHoverEffectsDirective } from '@shared/directives'
 
 export const selectAllWebProjects = createSelector(
 	selectAllProjects,
@@ -87,6 +89,9 @@ export const selectWebProjectByIdByClickMenu = (props: { projectId: string }) =>
 		LetDirective,
 		NgOptimizedImage,
 		AuthWebUserAvatarComponent,
+		SideUiBaseComponent,
+		InputSvgComponent,
+		DefaultHoverEffectsDirective,
 	],
 	templateUrl: './side-ui-projects-view.component.html',
 	styles: [],
@@ -104,7 +109,7 @@ export class SideUiProjectsViewComponent {
 
 	vm = computed(() => {
 		const projects = this.projects().sort(
-			(a, b) => new Date(a.lastModifiedTime).getTime() - new Date(b.lastModifiedTime).getTime(),
+			(a, b) => new Date(b.lastModifiedTime).getTime() - new Date(a.lastModifiedTime).getTime(),
 		)
 		return {
 			projects,

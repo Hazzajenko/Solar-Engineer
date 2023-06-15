@@ -23,6 +23,8 @@ import {
 	provideUsersFeature,
 } from '@auth/data-access'
 import { provideHubsFeature } from '@app/data-access/signalr'
+import { provideEffects } from '@ngrx/effects'
+import { onSignOut$ } from './signout.effect'
 
 export function provideNgrx() {
 	return makeEnvironmentProviders([
@@ -45,5 +47,8 @@ export function provideNgrx() {
 		provideNotificationsFeature(),
 		provideRenderingEffects(),
 		...storeDevtoolsModule,
+		provideEffects({
+			onSignOut$,
+		}),
 	])
 }

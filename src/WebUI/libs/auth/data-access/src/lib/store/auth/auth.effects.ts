@@ -92,15 +92,3 @@ export const backToPreviousPage$ = createEffect(
 	},
 	{ functional: true, dispatch: false },
 )
-
-export const signOut$ = createEffect(
-	(actions$ = inject(Actions)) => {
-		return actions$.pipe(
-			ofType(AuthActions.signOut),
-			tap(() => {
-				localStorage.removeItem('token')
-			}),
-		)
-	},
-	{ functional: true, dispatch: false },
-)

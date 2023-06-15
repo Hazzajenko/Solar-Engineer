@@ -36,6 +36,11 @@ public static class StringExtensions
         return Guid.Parse(id);
     }
 
+    public static bool TryParseGuid(this string id, out Guid guid)
+    {
+        return Guid.TryParse(id, out guid);
+    }
+
     public static bool TryToGuid(this string id)
     {
         return Guid.TryParse(id, out _);

@@ -37,6 +37,7 @@ import { assertNotNull, getTimeDifferenceFromNow, ToSafeHtmlPipe } from '@shared
 import { heightInOutWithConfig } from '@shared/animations'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { injectProjectsStore } from '@entities/data-access'
+import { SideUiBaseComponent } from '../side-ui-base/side-ui-base.component'
 
 @Component({
 	selector: 'side-ui-notifications-view',
@@ -58,6 +59,7 @@ import { injectProjectsStore } from '@entities/data-access'
 		DefaultHoverEffectsDirective,
 		TimeDifferenceFromNowPipe,
 		MatTooltipModule,
+		SideUiBaseComponent,
 	],
 	templateUrl: './side-ui-notifications-view.component.html',
 	styles: [],

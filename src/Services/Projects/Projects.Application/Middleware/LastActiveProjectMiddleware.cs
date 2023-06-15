@@ -1,26 +1,24 @@
-﻿using System.Security.Claims;
-using Identity.Application.Data.UnitOfWork;
+﻿/*
 using Infrastructure.Extensions;
-using JasperFx.CodeGeneration.Frames;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+using Projects.Application.Data.UnitOfWork;
 
-namespace Identity.Application.Middleware;
+namespace Projects.Application.Middleware;
 
-public class LastActiveMiddleware
+public class LastActiveProjectMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public LastActiveMiddleware(RequestDelegate next)
+    public LastActiveProjectMiddleware(RequestDelegate next)
     {
         _next = next;
     }
 
     public async Task InvokeAsync(
         HttpContext httpContext,
-        ILogger<LastActiveMiddleware> logger,
-        IIdentityUnitOfWork unitOfWork,
+        ILogger<LastActiveProjectMiddleware> logger,
+        IProjectsUnitOfWork unitOfWork,
         IHttpContextAccessor httpContextAccessor
     )
     {
@@ -39,6 +37,7 @@ public class LastActiveMiddleware
                 await _next(httpContext);
                 return;
             }
+            // httpContextAccessor.HttpContext.
 
             var user = await unitOfWork.AppUsersRepository.GetByIdAsync((Guid)userId);
             if (user != null)
@@ -56,6 +55,7 @@ public static class LastActiveMiddlewareExtensions
 {
     public static IApplicationBuilder UseLastActiveMiddleware(this IApplicationBuilder builder)
     {
-        return builder.UseMiddleware<LastActiveMiddleware>();
+        return builder.UseMiddleware<LastActiveProjectMiddleware>();
     }
 }
+*/

@@ -53,6 +53,8 @@ function appStoreFactory(store: Store) {
 	const setPreviewAxisState = (previewAxis: PreviewAxisState) =>
 		store.dispatch(AppStateActions.setPreviewAxisState({ previewAxis }))
 
+	const clearState = () => store.dispatch(AppStateActions.clearState())
+
 	const dispatch = {
 		setHoveringOverEntityState,
 		liftHoveringOverEntity,
@@ -61,6 +63,7 @@ function appStoreFactory(store: Store) {
 		setModeState,
 		setPreviewAxisState,
 		setStringColor,
+		clearState,
 	}
 
 	return {

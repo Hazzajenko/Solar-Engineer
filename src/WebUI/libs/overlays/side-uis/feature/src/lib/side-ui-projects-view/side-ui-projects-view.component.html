@@ -1,7 +1,8 @@
-<div
+<!--<div
 	*ngrxLet="vm() as vm"
 	class="overflow-y-auto py-4 px-3 h-full w-60 bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
->
+>-->
+<side-ui-base *ngrxLet="vm() as vm">
 	<div
 		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
 	>
@@ -12,6 +13,26 @@
 	<ng-template #loggedIn>
 		<ng-container *ngIf="vm.projects.length > 0; else noProjects">
 			<ul class="pl-2 space-y-4">
+				<li>
+					<a
+						(click)="createProject()"
+						class="flex items-center font-medium text-gray-700 text-sm rounded-lg transition duration-75 dark:text-gray-200 group"
+					>
+						<svg
+							class="w-4 h-4 rounded border border-gray-200 dark:border-gray-400"
+							fill="currentColor"
+							viewBox="0 0 20 20"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								clip-rule="evenodd"
+								d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+								fill-rule="evenodd"
+							></path>
+						</svg>
+						<span class="ml-3 dark:text-gray-400 hover:underline">Add new project</span>
+					</a>
+				</li>
 				<li *ngFor="let project of vm.projects">
 					<div
 						[ngClass]="{
@@ -26,7 +47,7 @@
 							'border-left-style': project.id === vm.selectedProject?.id ? 'solid' : 'none',
 							'margin-left': project.id === vm.selectedProject?.id ? '-4px' : '0px'
 						}"
-						class="flex items-center py-1 justify-between"
+						class="flex items-center py-1 justify-between relative"
 					>
 						<!--				<div class="min-w-0 flex">-->
 						<div class="flex justify-start">
@@ -38,7 +59,7 @@
 									'font-normal text-gray-500 dark:text-gray-400':
 										project.id !== vm.selectedProject?.id
 								}"
-								class="flex items-center text-base rounded-lg transition duration-75 hover:underline dark:text-white group"
+								class="flex items-center text-base rounded-lg transition duration-75 md:hover:underline dark:text-white group"
 							>
 								<span
 									[ngStyle]="{
@@ -70,11 +91,12 @@
 								</div>
 							</a>
 						</div>
-						<div class="flex justify-end pr-1">
+						<div class="flex justify-end absolute right-0">
 							<div class="flex-none">
 								<button
 									(click)="toggleProjectView(project)"
-									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 dark:hover:bg-gray-800"
+									enableDefaultHoverEffects
 									type="button"
 								>
 									<ng-container
@@ -87,12 +109,14 @@
 									(click)="openProjectContextMenu($event, project)"
 									aria-expanded="false"
 									aria-haspopup="true"
-									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 dark:hover:bg-gray-800"
+									enableDefaultHoverEffects
 									id="options-menu-0-button"
 									type="button"
 								>
 									<span class="sr-only">Open options</span>
-									<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="menus/ellipsis-vertical" />
+									<svg-input class="h-5 w-5" svgName="SvgEllipsisVertical" />
+									<!--									<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="menus/ellipsis-vertical" />-->
 								</button>
 							</div>
 						</div>
@@ -155,30 +179,10 @@
 						</ul>
 					</ul>
 				</li>
-				<li>
-					<a
-						(click)="createProject()"
-						class="flex items-center font-medium text-gray-700 text-sm rounded-lg transition duration-75 dark:text-gray-200 group"
-					>
-						<svg
-							class="w-4 h-4 rounded border border-gray-200 dark:border-gray-400"
-							fill="currentColor"
-							viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								clip-rule="evenodd"
-								d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-								fill-rule="evenodd"
-							></path>
-						</svg>
-						<span class="ml-3 dark:text-gray-400 hover:underline">Add new project</span>
-					</a>
-				</li>
 			</ul>
 		</ng-container>
 	</ng-template>
-</div>
+</side-ui-base>
 
 <ng-template #notLoggedIn>
 	<div class="text-center">
@@ -241,8 +245,10 @@
 </ng-template>
 
 <ng-template #contentClosed>
-	<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="arrows/chevron-down" />
+	<svg-input inputClass="h-5 w-5" svgName="SvgChevronDown" />
+	<!--	<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="arrows/chevron-down" />-->
 </ng-template>
 <ng-template #contentOpen>
-	<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="arrows/chevron-up" />
+	<svg-input inputClass="h-5 w-5" svgName="SvgChevronUp" />
+	<!--	<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="arrows/chevron-up" />-->
 </ng-template>

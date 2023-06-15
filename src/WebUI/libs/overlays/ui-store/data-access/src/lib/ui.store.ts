@@ -120,6 +120,7 @@ function uiStoreFactory(store: Store) {
 		closeContextMenu: () => store.dispatch(UiActions.closeContextMenu()),
 		toggleSideUiNav: () => store.dispatch(UiActions.toggleSideUiNav()),
 		toggleSideUiMobileMenu: () => store.dispatch(UiActions.toggleSideUiMobileMenu()),
+		clearUiState: () => store.dispatch(UiActions.clearUiState()),
 	}
 
 	return {

@@ -6,6 +6,8 @@ import { CONTEXT_MENU_COMPONENT, injectUiStore } from '@overlays/ui-store/data-a
 import { TruncatePipe } from '@shared/pipes'
 import { isWebUser, minimalToWebUser, WebUserModel } from '@auth/shared'
 import { notification } from '@tauri-apps/api'
+import { LetDirective } from '@ngrx/component'
+import { SideUiBaseComponent } from '../side-ui-base/side-ui-base.component'
 // import { injectUsersStore } from '@users/data-access'
 
 // import { injectUsersStore } from '@users/data-access'
@@ -22,6 +24,8 @@ import { notification } from '@tauri-apps/api'
 		TruncatePipe,
 		NgOptimizedImage,
 		NgTemplateOutlet,
+		LetDirective,
+		SideUiBaseComponent,
 	],
 	templateUrl: './side-ui-users-view.component.html',
 	styles: [],

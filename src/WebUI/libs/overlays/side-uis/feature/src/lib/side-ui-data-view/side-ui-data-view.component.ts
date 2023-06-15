@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core'
 import { NgClass, NgForOf, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
-// import { groupBy } from '@shared/utils'
 import { LetDirective } from '@ngrx/component'
 import { RadiansToDegreesPipe, TruncatePipe } from '@shared/pipes'
 import { IsTypeOfPanelPipe } from '@entities/utils'
@@ -9,10 +8,10 @@ import { DIALOG_COMPONENT, UiStoreService } from '@overlays/ui-store/data-access
 import { RenderService } from '@canvas/rendering/data-access'
 import { injectSelectedStore } from '@canvas/selected/data-access'
 import { PanelId, StringId, UNDEFINED_STRING_ID, UNDEFINED_STRING_NAME } from '@entities/shared'
-// import { groupBy } from 'lodash'
 import { injectEntityStore, injectProjectsStore } from '@entities/data-access'
 import { groupBy } from '@shared/utils'
 import { injectAuthStore } from '@auth/data-access'
+import { SideUiBaseComponent } from '../side-ui-base/side-ui-base.component'
 
 @Component({
 	selector: 'side-ui-data-view',
@@ -29,6 +28,7 @@ import { injectAuthStore } from '@auth/data-access'
 		IsTypeOfPanelPipe,
 		RadiansToDegreesPipe,
 		NgStyle,
+		SideUiBaseComponent,
 	],
 	templateUrl: './side-ui-data-view.component.html',
 	styles: [

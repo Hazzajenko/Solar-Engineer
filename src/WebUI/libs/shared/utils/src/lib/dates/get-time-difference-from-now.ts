@@ -14,7 +14,7 @@ export const getTimeDifferenceFromNow = (
 
 	const minutes = Math.floor(timeDifference / 1000 / 60)
 
-	console.log('Difference is: ', hours, 'hours and', minutes, 'minutes')
+	// console.log('Difference is: ', hours, 'hours and', minutes, 'minutes')
 
 	// let timeDifference = dateTimeDate - now
 	// const hours = Math.floor(timeDifference / 1000 / 60 / 60)
@@ -31,8 +31,8 @@ export const getTimeDifferenceFromNow = (
 	const hoursString = getHoursString(format, hours)
 	const minutesString = getMinutesString(format, minutes)
 
-	console.log('hours', hours)
-	console.log('minutes', minutes)
+	// console.log('hours', hours)
+	// console.log('minutes', minutes)
 	if (hours < 1) return `${minutes}${minutesString}`
 	return `${hours}${hoursString}`
 }

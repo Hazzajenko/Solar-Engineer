@@ -45,6 +45,19 @@ public static class ClaimsPrincipleExtensions
         return value.ToGuid();
     }
 
+    public static Guid? TryParseGuidUserId(this ClaimsPrincipal user)
+    {
+        var value = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (value is null)
+            return null;
+        Guid userId;
+        if (value.TryParseGuid(out userId))
+        {
+            return userId;
+        }
+        return null;
+    }
+
     /// <summary>
     ///     Try to get the user id as a Guid.
     ///     If the user id is not a Guid, then throw an exception.
