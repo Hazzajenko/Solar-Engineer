@@ -1,4 +1,5 @@
 ﻿using Identity.Application.Data.UnitOfWork;
+using Identity.Application.Services.Connections;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.SignalR;
 using Serilog;
@@ -27,9 +28,19 @@ public class UsersHubFilter : IHubFilter
             appUser.Id,
             appUser.UserName
         );
-        appUser.LastActiveTime = DateTime.Now;
+        appUser.LastActiveTime = DateTime.UtcNow;
         await unitOfWork.AppUsersRepository.UpdateAsync(appUser);
         await unitOfWork.SaveChangesAsync();
+
+        var connectionsService =
+            invocationContext.ServiceProvider.GetService<IConnectionsService>();
+        if (connectionsService is null)
+        {
+            Log.Logger.Error("ConnectionsService is null");
+            return await HandleNext(invocationContext, next);
+        }
+
+        connectionsService.UpdateLastActiveTime(appUser.Id);
 
         return await HandleNext(invocationContext, next);
     }

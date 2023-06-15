@@ -2,6 +2,7 @@ import { Store } from '@ngrx/store'
 import {
 	selectAllNotifications,
 	selectAmountOfUnreadNotifications,
+	selectLocalNotifications,
 	selectNotCompletedNotificationsSortedByCreatedTime,
 	selectNotificationsEntities,
 	selectNotificationsThatUserHasNotReceived,
@@ -9,7 +10,7 @@ import {
 import { createRootServiceInjector } from '@shared/utils'
 import { NotificationsActions } from './notifications.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { NotificationModel } from '@auth/shared'
+import { LocalNotificationModel, NotificationModel } from '@auth/shared'
 
 export function injectNotificationsStore(): NotificationsStore {
 	return notificationsStoreInjector()
@@ -35,6 +36,7 @@ function notificationsStoreFactory(store: Store) {
 		notCompletedNotifications: store.selectSignal(
 			selectNotCompletedNotificationsSortedByCreatedTime,
 		),
+		localNotifications: store.selectSignal(selectLocalNotifications),
 	}
 
 	const dispatch = {
@@ -44,6 +46,10 @@ function notificationsStoreFactory(store: Store) {
 			store.dispatch(NotificationsActions.markManyNotificationsAsRead({ notificationIds })),
 		loadNotifications: (notifications: NotificationModel[]) =>
 			store.dispatch(NotificationsActions.loadNotifications({ notifications })),
+		addLocalNotification: (localNotification: LocalNotificationModel) =>
+			store.dispatch(NotificationsActions.addLocalNotification({ localNotification })),
+		deleteLocalNotification: (localNotificationId: LocalNotificationModel['id']) =>
+			store.dispatch(NotificationsActions.deleteLocalNotification({ localNotificationId })),
 		addNotification: (notification: NotificationModel) =>
 			store.dispatch(NotificationsActions.addNotification({ notification })),
 		addManyNotifications: (notifications: NotificationModel[]) =>

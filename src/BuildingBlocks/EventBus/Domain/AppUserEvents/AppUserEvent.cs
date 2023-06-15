@@ -12,7 +12,7 @@ namespace EventBus.Domain.AppUserEvents;
         User = appUser;
         AppUserEventType = appUserEventType;
         Queues = new List<string> { "messages", "projects" };
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public AppUserEventType AppUserEventType { get; set; }
@@ -57,7 +57,7 @@ public class AppUserEventV2 : IAppUserEventV2
             new() { Name = ServiceConst.Messages },
             new() { Name = ServiceConst.Projects }
         };
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public List<QueueResponse> Queues { get; set; }

@@ -1,12 +1,13 @@
 import { NotificationsActions } from './notifications.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { NotificationModel } from '@auth/shared'
+import { LocalNotificationModel, NotificationModel } from '@auth/shared'
 
 export const NOTIFICATIONS_FEATURE_KEY = 'notifications'
 
 export interface NotificationsState extends EntityState<NotificationModel> {
 	loaded: boolean
+	localNotifications: LocalNotificationModel[]
 	error?: string | null
 }
 
@@ -21,6 +22,7 @@ export const notificationsAdapter: EntityAdapter<NotificationModel> =
 
 export const initialNotificationsState: NotificationsState = notificationsAdapter.getInitialState({
 	loaded: false,
+	localNotifications: [],
 })
 
 const reducer = createReducer(
@@ -51,6 +53,16 @@ const reducer = createReducer(
 	on(NotificationsActions.loadNotifications, (state, { notifications }) =>
 		notificationsAdapter.setMany(notifications, state),
 	),
+	on(NotificationsActions.addLocalNotification, (state, { localNotification }) => ({
+		...state,
+		localNotifications: [...state.localNotifications, localNotification],
+	})),
+	on(NotificationsActions.deleteLocalNotification, (state, { localNotificationId }) => ({
+		...state,
+		localNotifications: state.localNotifications.filter(
+			(localNotification) => localNotification.id !== localNotificationId,
+		),
+	})),
 	on(NotificationsActions.addNotification, (state, { notification }) =>
 		notificationsAdapter.addOne(notification, state),
 	),

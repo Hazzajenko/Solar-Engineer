@@ -55,6 +55,7 @@
 			"@auth/interceptors": ["libs/auth/interceptors/src/index.ts"],
 			"@auth/shared": ["libs/auth/shared/src/index.ts"],
 			"@auth/shared/models": ["libs/auth/shared/models/src/index.ts"],
+			"@auth/ui": ["libs/auth/ui/src/index.ts"],
 			"@auth/utils": ["libs/auth/utils/src/index.ts"],
 			"@canvas/app/data-access": ["libs/canvas/app/data-access/src/index.ts"],
 			"@canvas/app/feature": ["libs/canvas/app/feature/src/index.ts"],

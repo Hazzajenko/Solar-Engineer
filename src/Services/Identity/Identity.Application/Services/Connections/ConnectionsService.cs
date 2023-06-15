@@ -6,7 +6,7 @@ using Serilog;
 
 namespace Identity.Application.Services.Connections;
 
-public class ConnectionsService
+public class ConnectionsService : IConnectionsService
 {
     private readonly Dictionary<Guid, AppUserConnectionDto> _connections = new();
     private int _connectedUsersCount = 0;
@@ -53,11 +53,24 @@ public class ConnectionsService
         }
     }
 
-    public AppUserConnectionDto? TryGetAppUserConnection(Guid appUserId)
+    public AppUserConnectionDto? GetAppUserConnectionByAppUserId(Guid appUserId)
     {
         AppUserConnectionDto? userConnection;
         _connections.TryGetValue(appUserId, out userConnection);
         return userConnection;
+    }
+
+    public bool UpdateLastActiveTime(Guid appUserId)
+    {
+        var appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
+        if (appUserConnection is not null)
+        {
+            appUserConnection.LastActiveTime = DateTime.UtcNow;
+            return true;
+        }
+
+        Log.Logger.Error("UserConnection is null, AppUserId: {AppUserId}", appUserId);
+        return false;
     }
 
     public bool AddDeviceInfoToUserIdAndConnectionId(
@@ -66,7 +79,7 @@ public class ConnectionsService
         DeviceInfoDto deviceInfo
     )
     {
-        var appUserConnection = TryGetAppUserConnection(appUserId);
+        var appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
         if (appUserConnection is not null)
             return appUserConnection.AddDeviceInfoToConnectionId(connectionId, deviceInfo);
 
@@ -92,6 +105,11 @@ public class ConnectionsService
         return _connections
             .Where(x => keys.Contains(x.Key))
             .Select(x => new ConnectionDto { AppUserId = x.Key.ToString() });
+    }
+
+    public IEnumerable<AppUserConnectionDto> GetAllUserConnections()
+    {
+        return _connections.Values;
     }
 
     public IEnumerable<AppUserConnectionDto> GetUserConnectionsByIds(IEnumerable<Guid> keys)

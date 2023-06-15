@@ -10,23 +10,32 @@ import {
 	signal,
 	ViewChildren,
 } from '@angular/core'
-import { DatePipe, NgForOf, NgIf, NgOptimizedImage } from '@angular/common'
-import { ActionNotificationComponent } from '../action-notification'
+import { DatePipe, NgForOf, NgIf, NgOptimizedImage, NgTemplateOutlet } from '@angular/common'
 import { notificationAnimation } from '@shared/animations'
 import { LetDirective } from '@ngrx/component'
 import {
 	DEFAULT_NOTIFICATION_DURATION,
 	injectNotificationsStore,
 } from '@overlays/notifications/data-access'
-import { NOTIFICATION_TYPE, NotificationModel } from '@auth/shared'
-import { getContentMessageBasedOnType } from '@auth/utils'
+import {
+	LocalNotificationModel,
+	NOTIFICATION_MODEL_SCHEMA,
+	NOTIFICATION_TYPE,
+	NotificationModel,
+} from '@auth/shared'
+import {
+	getLocalNotificationContentMessageBasedOnType,
+	getNotificationContentMessageBasedOnType,
+	isProjectNotification,
+} from '@auth/utils'
 import { notification } from '@tauri-apps/api'
 import { injectUsersStore } from '@auth/data-access'
+import { injectProjectsStore } from '@entities/data-access'
 
 @Component({
 	selector: 'overlay-notification-modal',
 	standalone: true,
-	imports: [NgForOf, ActionNotificationComponent, NgIf, LetDirective, NgOptimizedImage, DatePipe],
+	imports: [NgForOf, NgIf, LetDirective, NgOptimizedImage, DatePipe, NgTemplateOutlet],
 	templateUrl: './overlay-notification-modal.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,19 +44,18 @@ import { injectUsersStore } from '@auth/data-access'
 export class OverlayNotificationModalComponent implements AfterViewInit {
 	private _usersStore = injectUsersStore()
 	private _renderer = inject(Renderer2)
+	private _projectsStore = injectProjectsStore()
 	private _notificationsStore = injectNotificationsStore()
 	private _notificationStartTimeMap = signal(new Map<string, number>())
-	/*	notifications = computed(() =>
-	 this._notificationsStore.select
-	 .allNotifications()
-	 .filter((notification) => !notification.receivedByAppUser),
-	 )*/
 	notifications = this._notificationsStore.select.notificationsThatUserHasNotReceived
+	localNotifications = this._notificationsStore.select.localNotifications
 	@ViewChildren('notificationEl') notificationEls!: QueryList<HTMLDivElement>
 	@ViewChildren('progressBar') progressBarEls!: QueryList<ElementRef<HTMLDivElement>>
-	protected readonly getContentMessageBasedOnType = getContentMessageBasedOnType
+	protected readonly getContentMessageBasedOnType = getNotificationContentMessageBasedOnType
 	protected readonly NOTIFICATION_TYPE = NOTIFICATION_TYPE
 	protected readonly notification = notification
+	protected readonly getLocalNotificationContentMessageBasedOnType =
+		getLocalNotificationContentMessageBasedOnType
 
 	constructor() {
 		effect(() => {
@@ -66,27 +74,29 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 				}, 100)
 			})
 		})
+		effect(() => {
+			this.localNotifications().forEach((notification) => {
+				if (!notification) {
+					return
+				}
+				setTimeout(() => {
+					const progressBarEl = this.progressBarEls.find(
+						(p) => p.nativeElement.id === `progressBar-${notification.id}`,
+					)
+					if (!progressBarEl) {
+						return
+					}
+					this.triggerLocalNotificationTimer(
+						notification,
+						progressBarEl.nativeElement as HTMLDivElement,
+					)
+				}, 100)
+			})
+		})
 	}
 
-	/*	getContentMessageBasedOnType(notification: NotificationModel) {
-	 switch (notification.notificationType) {
-	 case NOTIFICATION_TYPE.MESSAGE_RECEIVED:
-	 return `${notification.senderAppUserUserName} sent you a message`
-	 case NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED:
-	 return `${notification.senderAppUserUserName} sent you a friend request`
-	 case NOTIFICATION_TYPE.FRIEND_REQUEST_ACCEPTED:
-	 return `${notification.senderAppUserUserName} accepted your friend request`
-	 case NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED:
-	 return `${notification.senderAppUserUserName} invited you to a project`
-	 case NOTIFICATION_TYPE.PROJECT_INVITE_ACCEPTED:
-	 return `${notification.senderAppUserUserName} accepted your project invite`
-	 default:
-	 throw new Error('Unknown notification type')
-	 }
-	 }*/
-
-	get notificationStartTimeMap() {
-		return this._notificationStartTimeMap()
+	isNotification(notification: NotificationModel) {
+		return NOTIFICATION_MODEL_SCHEMA.parse(notification) as NotificationModel
 	}
 
 	ngAfterViewInit() {
@@ -108,8 +118,22 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 		}
 	}
 
+	triggerLocalNotificationTimer(notification: LocalNotificationModel, progressBar: HTMLDivElement) {
+		// this.notificationStartTimeMap.set(notification.id, Date.now())
+		const duration = DEFAULT_NOTIFICATION_DURATION
+		setTimeout(() => {
+			this._notificationsStore.dispatch.deleteLocalNotification(notification.id)
+		}, duration)
+		const frames = 100
+		for (let i = 1; i < frames; i++) {
+			setTimeout(() => {
+				this._renderer.setStyle(progressBar, 'width', `${(i * 100) / frames}%`)
+			}, (i * duration) / frames)
+		}
+	}
+
 	triggerNotificationTimer(notification: NotificationModel, progressBar: HTMLDivElement) {
-		this.notificationStartTimeMap.set(notification.id, Date.now())
+		// this.notificationStartTimeMap.set(notification.id, Date.now())
 		const duration = DEFAULT_NOTIFICATION_DURATION
 		setTimeout(() => {
 			this._notificationsStore.dispatch.updateNotification({
@@ -141,12 +165,21 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 			case NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED:
 				{
 					console.log('acceptNotification', notification)
+					if (!isProjectNotification(notification)) {
+						throw new Error('Notification is not a project notification')
+					}
+					this._projectsStore.dispatch.acceptProjectInvite({
+						notificationId: notification.id,
+						projectId: notification.projectId,
+					})
+					this.dismissNotification(notification)
 				}
 				break
 			case NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED:
 				{
 					console.log('acceptNotification', notification)
 					this._usersStore.dispatch.acceptFriendRequest(notification.senderAppUserId)
+					this.dismissNotification(notification)
 				}
 				break
 			default:
@@ -159,12 +192,21 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 			case NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED:
 				{
 					console.log('declineNotification', notification)
+					if (!isProjectNotification(notification)) {
+						throw new Error('Notification is not a project notification')
+					}
+					this._projectsStore.dispatch.rejectProjectInvite({
+						notificationId: notification.id,
+						projectId: notification.projectId,
+					})
+					this.dismissNotification(notification)
 				}
 				break
 			case NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED:
 				{
 					console.log('declineNotification', notification)
 					this._usersStore.dispatch.rejectFriendRequest(notification.senderAppUserId)
+					this.dismissNotification(notification)
 				}
 				break
 			default:
@@ -179,5 +221,9 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 
 	replyToMessage(notification: NotificationModel) {
 		console.log('replyToMessage', notification)
+	}
+
+	dismissLocalNotification(localNotification: LocalNotificationModel) {
+		this._notificationsStore.dispatch.deleteLocalNotification(localNotification.id)
 	}
 }

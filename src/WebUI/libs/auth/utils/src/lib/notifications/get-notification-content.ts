@@ -1,4 +1,9 @@
-import { NOTIFICATION_TYPE, NotificationModel } from '@auth/shared'
+import {
+	LOCAL_NOTIFICATION_TYPE,
+	LocalNotificationModel,
+	NOTIFICATION_TYPE,
+	NotificationModel,
+} from '@auth/shared'
 
 export const getContentMessageBasedOnTypeWithoutDisplayName = (notification: NotificationModel) => {
 	switch (notification.notificationType) {
@@ -16,7 +21,7 @@ export const getContentMessageBasedOnTypeWithoutDisplayName = (notification: Not
 			throw new Error('Unknown notification type')
 	}
 }
-export const getContentMessageBasedOnType = (notification: NotificationModel) => {
+export const getNotificationContentMessageBasedOnType = (notification: NotificationModel) => {
 	switch (notification.notificationType) {
 		case NOTIFICATION_TYPE.MESSAGE_RECEIVED:
 			return `${notification.senderAppUserDisplayName} sent you a message`
@@ -30,6 +35,19 @@ export const getContentMessageBasedOnType = (notification: NotificationModel) =>
 			return `${notification.senderAppUserDisplayName} accepted your project invite`
 		default:
 			throw new Error('Unknown notification type')
+	}
+}
+
+export const getLocalNotificationContentMessageBasedOnType = (
+	notification: LocalNotificationModel,
+) => {
+	switch (notification.notificationType) {
+		case LOCAL_NOTIFICATION_TYPE.USER_IS_ONLINE:
+			return `${notification.senderAppUserDisplayName} is online`
+		case LOCAL_NOTIFICATION_TYPE.USER_IS_OFFLINE:
+			return `${notification.senderAppUserDisplayName} is offline`
+		default:
+			throw new Error('Unknown local notification type')
 	}
 }
 

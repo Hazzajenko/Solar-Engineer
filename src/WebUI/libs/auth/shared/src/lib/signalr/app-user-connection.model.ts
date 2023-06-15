@@ -1,10 +1,13 @@
 export type AppUserConnectionModel = {
 	appUserId: string
 	initialConnectedTime: string
-	connections: SocketConnectionModel[]
+	lastActiveTime: string
+	// connections: SocketConnectionModel[]
 }
 
-export type SocketConnectionModel = {
-	connectedTime: string
-	connectionId: string
-}
+/*
+ export type SocketConnectionModel = {
+ connectedTime: string
+ connectionId: string
+ }
+ */

@@ -82,7 +82,7 @@ public class BlobsService
     private string GetRandomBlobName(string filename)
     {
         var ext = Path.GetExtension(filename);
-        return string.Format("{0:10}_{1}{2}", DateTime.Now.Ticks, Guid.NewGuid(), ext);
+        return string.Format("{0:10}_{1}{2}", DateTime.UtcNow.Ticks, Guid.NewGuid(), ext);
     }
 
     private static IImageEncoder GetEncoder(string extension)

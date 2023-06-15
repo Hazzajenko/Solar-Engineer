@@ -56,3 +56,8 @@ export const selectNotCompletedNotificationsSortedByCreatedTime = createSelector
 	(notifications: NotificationModel[]) =>
 		notifications.sort((a, b) => (new Date(b.createdTime) > new Date(a.createdTime) ? -1 : 1)),
 )
+
+export const selectLocalNotifications = createSelector(
+	selectNotificationsState,
+	(state: NotificationsState) => state.localNotifications,
+)

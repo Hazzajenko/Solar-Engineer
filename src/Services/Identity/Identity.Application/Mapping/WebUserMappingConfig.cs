@@ -42,7 +42,8 @@ public static class WebUserMapping
             BecameFriendsTime = becameFriendsTime,
             IsFriend = appUserLink.Friends,
             LastActiveTime = webUser.LastActiveTime,
-            RegisteredAtTime = webUser.CreatedTime
+            RegisteredAtTime = webUser.CreatedTime,
+            IsOnline = false
         };
     }
 

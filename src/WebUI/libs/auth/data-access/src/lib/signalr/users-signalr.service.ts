@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import { ConnectionModel, FriendModel, FriendRequestResponse, GetOnlineFriendsResponse, GetUserFriendsResponse, NotificationModel, ReceiveAppUserNotificationsResponse, SearchForUserResponse, UpdateNotificationResponse, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD, UsersSignalrEvent } from '@auth/shared'
-import { injectUsersStore } from '../store'
+import { FriendRequestResponse, GetOnlineFriendsResponse, GetOnlineUsersResponse, GetUserFriendsResponse, NotificationUpdatedResponse, ReceiveAppUserNotificationsResponse, ReceiveFriendResponse, ReceiveNotificationResponse, SearchForUserResponse, UpdateNotificationResponse, UserIsOfflineResponse, UserIsOnlineResponse, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD, UsersSignalrEvent } from '@auth/shared'
+import { injectConnectionsStore, injectUsersStore } from '../store'
 import { HubConnection } from '@microsoft/signalr'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
-import { friendToWebUser } from '@auth/utils'
 import { DeviceInfoModel } from '@shared/data-access/models'
 // import { NotificationModel } from '@users/shared'
 
@@ -17,6 +16,7 @@ const hubUrl = '/hubs/users'
 export class UsersSignalrService {
 	private _usersStore = injectUsersStore()
 	private _notificationsStore = injectNotificationsStore()
+	private _connectionsStore = injectConnectionsStore()
 	// private _signalrHubs = inject(SignalrHubsService)
 
 	hubConnection: HubConnection | undefined
@@ -37,34 +37,34 @@ export class UsersSignalrService {
 			this.invokeHub(USERS_SIGNALR_METHOD.SEND_DEVICE_INFO, deviceInfo)
 		})
 
-		this.onHub(USERS_SIGNALR_EVENT.USER_IS_ONLINE, (connection: ConnectionModel) => {
-			console.log(USERS_SIGNALR_EVENT.USER_IS_ONLINE, connection)
+		this.onHub(USERS_SIGNALR_EVENT.USER_IS_ONLINE, (response: UserIsOnlineResponse) => {
+			console.log(USERS_SIGNALR_EVENT.USER_IS_ONLINE, response)
+			this._connectionsStore.dispatch.addConnection(response.appUserConnection)
 		})
 
-		this.onHub(USERS_SIGNALR_EVENT.USER_IS_ONLINE, (connection: ConnectionModel) => {
-			console.log(USERS_SIGNALR_EVENT.USER_IS_ONLINE, connection)
+		this.onHub(USERS_SIGNALR_EVENT.USER_IS_OFFLINE, (response: UserIsOfflineResponse) => {
+			console.log(USERS_SIGNALR_EVENT.USER_IS_OFFLINE, response)
+			this._connectionsStore.dispatch.deleteConnection(response.appUserId)
 		})
 
-		this.onHub(USERS_SIGNALR_EVENT.USER_IS_OFFLINE, (connection: ConnectionModel) => {
-			console.log(USERS_SIGNALR_EVENT.USER_IS_OFFLINE, connection)
-		})
-
-		this.onHub(USERS_SIGNALR_EVENT.GET_ONLINE_USERS, (connections: ConnectionModel[]) => {
-			console.log(USERS_SIGNALR_EVENT.GET_ONLINE_USERS, connections)
+		this.onHub(USERS_SIGNALR_EVENT.GET_ONLINE_USERS, (response: GetOnlineUsersResponse) => {
+			console.log(USERS_SIGNALR_EVENT.GET_ONLINE_USERS, response)
+			this._connectionsStore.dispatch.addManyConnections(response.onlineUsers)
 		})
 
 		this.onHub(USERS_SIGNALR_EVENT.GET_ONLINE_FRIENDS, (response: GetOnlineFriendsResponse) => {
 			console.log(USERS_SIGNALR_EVENT.GET_ONLINE_FRIENDS, response)
+			this._connectionsStore.dispatch.addManyConnections(response.onlineFriends)
 		})
 
 		this.onHub(USERS_SIGNALR_EVENT.GET_USER_FRIENDS, (response: GetUserFriendsResponse) => {
 			this._usersStore.dispatch.addManyUsers(response.friends)
 		})
 
-		this.onHub(USERS_SIGNALR_EVENT.RECEIVE_FRIEND, (response: FriendModel) => {
+		this.onHub(USERS_SIGNALR_EVENT.RECEIVE_FRIEND, (response: ReceiveFriendResponse) => {
 			console.log(USERS_SIGNALR_EVENT.RECEIVE_FRIEND, response)
-			const webUser = friendToWebUser(response)
-			this._usersStore.dispatch.addUser(webUser)
+			// const webUser = friendToWebUser(response)
+			this._usersStore.dispatch.addUser(response.friend)
 		})
 
 		this.onHub(
@@ -90,23 +90,30 @@ export class UsersSignalrService {
 			},
 		)
 
-		this.onHub(USERS_SIGNALR_EVENT.RECEIVE_NOTIFICATION, (response: NotificationModel) => {
-			console.log(USERS_SIGNALR_EVENT.RECEIVE_NOTIFICATION, response)
-			this._notificationsStore.dispatch.addNotification(response)
-			this.receiveNotification(response.id)
-		})
+		this.onHub(
+			USERS_SIGNALR_EVENT.RECEIVE_NOTIFICATION,
+			(response: ReceiveNotificationResponse) => {
+				console.log(USERS_SIGNALR_EVENT.RECEIVE_NOTIFICATION, response)
+				this._notificationsStore.dispatch.addNotification(response.notification)
+				this.receiveNotification(response.notification.id)
+			},
+		)
 
-		this.onHub(USERS_SIGNALR_EVENT.UPDATE_NOTIFICATION, (response: NotificationModel) => {
+		this.onHub(USERS_SIGNALR_EVENT.UPDATE_NOTIFICATION, (response: UpdateNotificationResponse) => {
 			console.log(USERS_SIGNALR_EVENT.UPDATE_NOTIFICATION, response)
+			const notification = response.notification
 			this._notificationsStore.dispatch.updateNotification({
-				id: response.id,
-				changes: response,
+				id: notification.id,
+				changes: notification,
 			})
 		})
 
-		this.onHub(USERS_SIGNALR_EVENT.NOTIFICATION_UPDATED, (response: UpdateNotificationResponse) => {
-			console.log(USERS_SIGNALR_EVENT.NOTIFICATION_UPDATED, response)
-		})
+		this.onHub(
+			USERS_SIGNALR_EVENT.NOTIFICATION_UPDATED,
+			(response: NotificationUpdatedResponse) => {
+				console.log(USERS_SIGNALR_EVENT.NOTIFICATION_UPDATED, response)
+			},
+		)
 
 		return this.hubConnection
 	}
@@ -170,8 +177,6 @@ export class UsersSignalrService {
 		if (this.hubConnection.state !== 'Connected') throw new Error('Hub connection is not connected')
 
 		if (invoke && params) {
-			// const pascalCaseRequest = camelCaseToPascaleCaseNested(params)
-			// console.log('invokeHubConnection', invoke, pascalCaseRequest)
 			this.hubConnection.invoke(invoke, params).catch((err) => console.error(err, invoke, params))
 		}
 		if (invoke && !params) {

@@ -10,7 +10,7 @@ public class NotificationDto
     public string SenderAppUserDisplayName { get; set; } = default!;
     public string SenderAppUserPhotoUrl { get; set; } = default!;
     public string NotificationType { get; set; } = default!;
-    public DateTime CreatedTime { get; set; } = DateTime.Now;
+    public DateTime CreatedTime { get; set; } = default!;
     public bool ReceivedByAppUser { get; set; }
     public bool SeenByAppUser { get; set; }
     public bool DeletedByAppUser { get; set; }

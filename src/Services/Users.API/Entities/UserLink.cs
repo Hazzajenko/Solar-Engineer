@@ -14,7 +14,7 @@ public class UserLink : Entity
         AppUserReceived = recipient;
         AppUserReceivedId = recipient.Id;
         AppUserReceivedDisplayName = recipient.DisplayName;
-        CreatedTime = DateTime.Now;
+        CreatedTime = DateTime.UtcNow;
     }
 
     public UserLink()

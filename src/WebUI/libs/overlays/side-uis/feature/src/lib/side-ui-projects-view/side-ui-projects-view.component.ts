@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, Signal, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core'
 import {
 	NgClass,
 	NgForOf,
@@ -7,7 +7,11 @@ import {
 	NgStyle,
 	NgTemplateOutlet,
 } from '@angular/common'
-import { injectAuthStore, selectUsersEntities } from '@auth/data-access'
+import {
+	injectAuthStore,
+	selectAllUsersMappedWithConnections,
+	selectUsersEntities,
+} from '@auth/data-access'
 import {
 	injectProjectsStore,
 	selectAllProjects,
@@ -21,24 +25,23 @@ import {
 } from '@overlays/ui-store/data-access'
 import { ShowSvgNoStylesComponent } from '@shared/ui'
 import { TruncatePipe } from '@shared/pipes'
-import { MenuItem } from 'primeng/api'
 import { ContextMenuModule } from 'primeng/contextmenu'
-import { TAILWIND_COLOUR_500_VALUES } from '@shared/data-access/models'
 import { createSelector } from '@ngrx/store'
 import { Dictionary } from '@ngrx/entity'
 import { WebUserModel } from '@auth/shared'
-import { selectSignalFromStore } from '@shared/utils'
+import { getTimeDifferenceFromNow, pluralize, selectSignalFromStore } from '@shared/utils'
 import { AccordionModule } from 'primeng/accordion'
 import { LetDirective } from '@ngrx/component'
 import { heightInOutWithConfig } from '@shared/animations'
+import { AuthWebUserAvatarComponent } from '@auth/ui'
 
 export const selectAllWebProjects = createSelector(
 	selectAllProjects,
-	selectUsersEntities,
-	(projects: ProjectModel[], users: Dictionary<WebUserModel>) =>
+	selectAllUsersMappedWithConnections,
+	(projects: ProjectModel[], users: WebUserModel[]) =>
 		projects.map((project) => {
 			const projectWebUsers = project.members.map((member) => {
-				const webUser = users[member.id]
+				const webUser = users.find((user) => user.id === member.id)
 				if (!webUser) {
 					console.error(`Web user with id ${member.id} not found`)
 					throw new Error(`Web user with id ${member.id} not found`)
@@ -83,6 +86,7 @@ export const selectWebProjectByIdByClickMenu = (props: { projectId: string }) =>
 		AccordionModule,
 		LetDirective,
 		NgOptimizedImage,
+		AuthWebUserAvatarComponent,
 	],
 	templateUrl: './side-ui-projects-view.component.html',
 	styles: [],
@@ -95,106 +99,21 @@ export class SideUiProjectsViewComponent {
 	private _uiStore = injectUiStore()
 	user = this._auth.select.user
 	projects = selectSignalFromStore(selectAllWebProjects)
-	// projects = this._projects.select.allProjects
 	selectedProject = this._projects.select.selectedProject
 	openedProjects = signal<Map<ProjectId, boolean>>(new Map())
-	openedProjId = signal<string>(this.projects()[0].id)
-	openProj: Signal<ProjectWebModel | undefined> = selectSignalFromStore(
-		selectWebProjectByIdByClickMenu({ projectId: this.openedProjId() }),
-	)
 
-	getProjectWebMembers = (project: ProjectModel) => {
-		return this.projects().find((proj) => proj.id === project.id)?.members as ProjectWebUserModel[]
-	}
-
-	projectWebMembers = computed(() => {
-		const project = this.openProj()
-		if (!project) return [] as MenuItem[]
-		return project.members.map(
-			(member: ProjectWebUserModel) =>
-				({
-					label: member.displayName,
-					badge: member.photoUrl, //
-					// icon: 'pi pi-user',
-				} as MenuItem),
-		) as MenuItem[]
+	vm = computed(() => {
+		const projects = this.projects().sort(
+			(a, b) => new Date(a.lastModifiedTime).getTime() - new Date(b.lastModifiedTime).getTime(),
+		)
+		return {
+			projects,
+			selectedProject: this.selectedProject(),
+			openedProjects: this.openedProjects(),
+		}
 	})
-
-	items: MenuItem[] = [
-		{
-			label: 'Create Project',
-			icon: 'pi pi-plus',
-			command: () => this.createProject(),
-		},
-		{
-			label: 'Open Project',
-			icon: 'pi pi-folder-open',
-
-			// command: () => this._uiStore.dispatch.openDialog({ component: DIALOG_COMPONENT.OPEN_PROJECT }),
-			items: [
-				{
-					label: 'Project 1',
-					icon: 'pi pi-folder', // command: () => this.selectProject({ id: '1', name: 'Project 1' }),
-				},
-				{
-					label: 'Project 2',
-					icon: 'pi pi-folder',
-				},
-			],
-		},
-		{
-			label: 'Delete Project',
-			icon: 'pi pi-trash', // command: () => this._uiStore.dispatch.openDialog({ component: DIALOG_COMPONENT.DELETE_PROJECT }),
-		},
-		{
-			label: 'Sign In',
-			icon: 'pi pi-sign-in', // command: () => this.openSignInDialog(),
-		},
-	]
-
-	projectContextMenuItems: MenuItem[] = [
-		{
-			label: 'Open Project',
-			icon: 'pi pi-folder-open', // command: (event) => this.selectProject(event.item.data.project),
-		},
-		{
-			label: 'Edit Project Colour',
-			icon: 'pi pi-palette',
-			items: [
-				...TAILWIND_COLOUR_500_VALUES.map((colour) => ({
-					label: colour,
-					style: { color: colour, width: '100px' },
-					iconStyle: { color: colour },
-					icon: 'pi pi-circle-on',
-				})),
-			],
-		},
-		{
-			label: 'Project Members',
-			icon: 'pi pi-users',
-			items: [...this.projectWebMembers()],
-		},
-		{
-			label: 'Delete Project',
-			icon: 'pi pi-trash', // command: (event) => this.deleteProject(event.item.data.project),
-		},
-		{
-			label: 'Rename Project',
-			icon: 'pi pi-pencil', // command: (event) => this.renameProject(event.item.data.project),
-		},
-		{
-			label: 'Duplicate Project',
-			icon: 'pi pi-copy', // command: (event) => this.duplicateProject(event.item.data.project),
-		},
-		{
-			label: 'Export Project',
-			icon: 'pi pi-external-link', // command: (event) => this.exportProject(event.item.data.project),
-		},
-		{
-			label: 'Close Project',
-			icon: 'pi pi-times', // command: (event) => this.closeProject(event.item.data.project),
-		},
-	]
+	protected readonly pluralize = pluralize
+	protected readonly getTimeDifferenceFromNow = getTimeDifferenceFromNow
 
 	selectProject(project: ProjectModel) {
 		if (this.selectedProject()?.id === project.id) return

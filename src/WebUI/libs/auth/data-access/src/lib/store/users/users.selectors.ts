@@ -1,7 +1,8 @@
 import { USERS_FEATURE_KEY, usersAdapter, UsersState } from './users.reducer'
 import { Dictionary } from '@ngrx/entity'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import { MinimalWebUser, WebUserModel } from '@auth/shared'
+import { AppUserConnectionModel, MinimalWebUser, WebUserModel } from '@auth/shared'
+import { selectConnectionsEntities } from '../connections'
 
 export const selectUsersState = createFeatureSelector<UsersState>(USERS_FEATURE_KEY)
 
@@ -9,6 +10,24 @@ const { selectAll, selectEntities } = usersAdapter.getSelectors()
 
 export const selectAllUsers = createSelector(selectUsersState, (state: UsersState) =>
 	selectAll(state),
+)
+
+export const selectAllUsersMappedWithConnections = createSelector(
+	selectAllUsers,
+	selectConnectionsEntities,
+	(users: WebUserModel[], appUserConnections: Dictionary<AppUserConnectionModel>) => {
+		return users.map((user) => {
+			const connection = appUserConnections[user.id]
+			if (!connection) {
+				return user
+			}
+			return {
+				...user,
+				isOnline: !!connection,
+				lastActiveTime: connection.lastActiveTime,
+			}
+		})
+	},
 )
 
 export const selectUsersEntities = createSelector(selectUsersState, (state: UsersState) =>
@@ -32,9 +51,15 @@ export const selectUserSearchResultById = (props: { id: string }) =>
 		users.find((u) => u.id === props.id),
 	)
 
-export const selectAllFriends = createSelector(selectAllUsers, (users: WebUserModel[]) =>
-	users.filter((user) => user.isFriend),
+export const selectAllFriends = createSelector(
+	selectAllUsersMappedWithConnections,
+	(users: WebUserModel[]) => users.filter((user) => user.isFriend),
 )
+
+/*export const selectAllFriends = createSelector(
+ selectAllUsers, (users: WebUserModel[]) =>
+ users.filter((user) => user.isFriend),
+ )*/
 
 export const selectFourMostRecentFriends = createSelector(
 	selectAllFriends,

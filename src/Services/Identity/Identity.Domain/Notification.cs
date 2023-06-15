@@ -36,8 +36,8 @@ public class Notification : IEntity
     public AppUser SenderAppUser { get; set; } = default!;
     public NotificationType NotificationType { get; set; } = default!;
 
-    public DateTime CreatedTime { get; set; } = DateTime.Now;
-    public DateTime LastModifiedTime { get; set; } = DateTime.Now;
+    public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+    public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;
 
     public ProjectInvite? ProjectInvite { get; set; }
     public Guid? ProjectId { get; set; }
@@ -58,13 +58,13 @@ public class Notification : IEntity
     public void SetSeenByAppUser()
     {
         SeenByAppUser = true;
-        SeenByAppUserTime = DateTime.Now;
+        SeenByAppUserTime = DateTime.UtcNow;
     }
 
     public void SetNotificationCompleted()
     {
         Completed = true;
-        CompletedTime = DateTime.Now;
+        CompletedTime = DateTime.UtcNow;
         SetSeenByAppUser();
     }
 }

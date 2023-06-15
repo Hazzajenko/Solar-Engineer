@@ -20,7 +20,7 @@ public interface IUsersHub
     Task ReceiveSearchForAppUserByUserNameResponse(SearchForAppUserByUserNameResponse response);
     Task ReceiveFriendRequestEvent(FriendRequestResponse response);
     Task ReceiveAppUserNotifications(ReceiveAppUserNotificationsResponse response);
-    Task NotificationUpdated(UpdateNotificationResponse response);
-    Task ReceiveNotification(NotificationDto response);
-    Task UpdateNotification(NotificationDto response);
+    Task NotificationUpdated(NotificationUpdatedResponse response);
+    Task ReceiveNotification(ReceiveNotificationResponse response);
+    Task UpdateNotification(UpdateNotificationResponse response);
 }

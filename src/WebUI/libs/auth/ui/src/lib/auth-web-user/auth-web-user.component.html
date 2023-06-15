@@ -1,0 +1,22 @@
+<ng-container *ngIf="user">
+	<div class="flex items-center justify-start ml-4">
+		<div class="flex relative items-center justify-end">
+			<img
+				[alt]="user.userName + ' profile picture'"
+				[height]="avatarSize"
+				[ngSrc]="user.photoUrl"
+				[width]="avatarSize"
+				class="flex-none rounded-full bg-gray-800"
+			/>
+			<span
+				*ngIf="user.isOnline"
+				class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-green-400 ring-2 ring-white"
+			></span>
+		</div>
+		<a class="flex items-center text-base rounded-lg transition duration-75 dark:text-white group">
+			<div class="ml-3">
+				<span class="capitalize text-sm text-gray-900">{{ user.displayName | truncate : 20 }}</span>
+			</div>
+		</a>
+	</div>
+</ng-container>

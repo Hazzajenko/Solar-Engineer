@@ -32,7 +32,7 @@ public static class AppUserGroupChatsMapping
                 Name = request.GroupChatName,
                 CreatedById = appUserId
                 // PhotoUrl = appUser.PhotoUrl,
-                // Created = DateTime.Now
+                // Created = DateTime.UtcNow
             }
         };
     }
@@ -168,7 +168,7 @@ public static class AppUserGroupChatsMapping
                 Role = "Admin",
                 UserName = user.UserName!,
                 LastName = user.LastName,
-                JoinedConversationAt = DateTime.Now
+                JoinedConversationAt = DateTime.UtcNow
             }
         }
     }

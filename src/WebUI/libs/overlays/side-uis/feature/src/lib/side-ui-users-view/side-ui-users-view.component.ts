@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed, Signal, signal } from '@angular/core'
 import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle, NgTemplateOutlet } from '@angular/common'
 import { ShowSvgNoStylesComponent } from '@shared/ui'
 import { injectAuthStore, injectUsersStore } from '@auth/data-access'
@@ -45,7 +45,7 @@ export class SideUiUsersViewComponent {
 	})
 	// userSearchResults = this._usersStore.select.userSearchResults
 
-	friends = this._usersStore.select.allFriends
+	friends = this._usersStore.select.allFriends as Signal<WebUserModel[]>
 	openedUsers = signal<Map<string, boolean>>(new Map())
 	selectedUserId = signal<string | undefined>(undefined)
 	protected readonly isWebUser = isWebUser

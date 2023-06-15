@@ -21,13 +21,13 @@ public class AppUser : IdentityUser<Guid>, IUser, IEntity
     public string LastName { get; init; } = default!;
     public string DisplayName { get; init; }
     public string PhotoUrl { get; set; } = default!;
-    public DateTime LastActiveTime { get; set; } = DateTime.Now;
-    public DateTime CreatedTime { get; set; } = DateTime.Now;
-    public DateTime LastModifiedTime { get; set; } = DateTime.Now;
+    public DateTime LastActiveTime { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+    public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;
 
     public void UpdateModifiedProperties()
     {
-        LastModifiedTime = DateTime.Now;
-        LastActiveTime = DateTime.Now;
+        LastModifiedTime = DateTime.UtcNow;
+        LastActiveTime = DateTime.UtcNow;
     }
 }

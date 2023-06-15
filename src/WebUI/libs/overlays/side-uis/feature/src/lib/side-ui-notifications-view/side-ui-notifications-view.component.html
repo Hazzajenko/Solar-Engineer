@@ -45,7 +45,7 @@
 
 		<ng-container *ngIf="vm.notifications.length > 0; else noNotifications">
 			<ul class="space-y-1" role="list">
-				<ng-container *ngFor="let notification of notifications()">
+				<ng-container *ngFor="let notification of vm.notifications; trackBy: trackByFn">
 					<div>
 						<ng-container
 							*ngTemplateOutlet="

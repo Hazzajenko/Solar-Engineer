@@ -11,7 +11,7 @@ public static class AppUserEventsMapper
         {
             Id = request.User.Id,
             CreatedTime = request.User.CreatedTime,
-            LastModifiedTime = DateTime.Now,
+            LastModifiedTime = DateTime.UtcNow,
             FirstName = request.User.FirstName,
             LastName = request.User.LastName,
             DisplayName = request.User.DisplayName,

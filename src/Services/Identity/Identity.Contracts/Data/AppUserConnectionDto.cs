@@ -11,8 +11,8 @@ public class AppUserConnectionDto
     }
 
     public Guid AppUserId { get; set; }
-    public DateTime InitialConnectedTime { get; set; } = DateTime.Now;
-    public DateTime LastActiveTime { get; set; } = DateTime.Now;
+    public DateTime InitialConnectedTime { get; set; } = DateTime.UtcNow;
+    public DateTime LastActiveTime { get; set; } = DateTime.UtcNow;
     public DeviceInfoDto LatestDeviceInfo { get; set; } = new();
 
     [JsonIgnore]
@@ -52,7 +52,7 @@ public class SocketConnection
         ConnectionId = connectionId;
     }
 
-    public DateTime ConnectedTime { get; set; } = DateTime.Now;
+    public DateTime ConnectedTime { get; set; } = DateTime.UtcNow;
     public DeviceInfoDto DeviceInfo { get; set; } = new();
     public string ConnectionId { get; set; }
 }

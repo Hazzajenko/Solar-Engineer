@@ -1,0 +1,15 @@
+<ng-container *ngIf="user">
+	<div class="flex relative items-center justify-end">
+		<img
+			[alt]="user.userName + ' profile picture'"
+			[height]="avatarSize"
+			[ngSrc]="user.photoUrl"
+			[width]="avatarSize"
+			class="flex-none rounded-full bg-gray-800"
+		/>
+		<span
+			*ngIf="user.isOnline"
+			class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-green-400 ring-2 ring-white"
+		></span>
+	</div>
+</ng-container>

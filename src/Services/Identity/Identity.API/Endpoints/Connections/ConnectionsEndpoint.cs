@@ -11,9 +11,9 @@ public class AllConnectedUsersResponse
 
 public class ConnectionsEndpoint : EndpointWithoutRequest<AllConnectedUsersResponse>
 {
-    private readonly ConnectionsService _connections;
+    private readonly IConnectionsService _connections;
 
-    public ConnectionsEndpoint(ConnectionsService connections)
+    public ConnectionsEndpoint(IConnectionsService connections)
     {
         _connections = connections;
     }

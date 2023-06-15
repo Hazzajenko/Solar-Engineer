@@ -2,6 +2,8 @@ import { Directive, ElementRef, inject, Input, Renderer2 } from '@angular/core'
 import { MouseOverRenderDirective } from '@canvas/rendering/data-access'
 import { ContextMenuInput } from '@overlays/ui-store/data-access'
 
+export const CONTEXT_MENU_WIDTH = 224
+
 @Directive({
 	selector: '[appContextMenu]',
 	standalone: true,
@@ -10,12 +12,31 @@ import { ContextMenuInput } from '@overlays/ui-store/data-access'
 export class ContextMenuDirective {
 	private _element = inject(ElementRef).nativeElement
 	private _renderer = inject(Renderer2)
+
 	@Input({ required: true }) set contextMenuInput(contextMenuInput: ContextMenuInput) {
 		if (!contextMenuInput) {
 			console.error('no contextMenuInput')
 			return
 		}
 		const { x, y } = contextMenuInput.location
+		const { innerWidth, innerHeight } = window
+		if (contextMenuInput.location.x + CONTEXT_MENU_WIDTH > innerWidth) {
+			this._renderer.setStyle(this._element, 'left', `${innerWidth - CONTEXT_MENU_WIDTH - 50}px`)
+			this._renderer.setStyle(this._element, 'top', `${y}px`)
+			this._renderer.setProperty(this._element, 'id', contextMenuInput.component)
+			return
+		}
+		// const menuRect = this._element.getBoundingClientRect()
+		// const menuWidth = menuRect.width
+		// const menuHeight = menuRect.height
+		// const menuLeft = menuRect.left
+		// const menuTop = menuRect.top
+		// const menuRight = menuRect.right
+
+		// console.log('menuRect', menuRect)
+
+		// window.
+
 		this._renderer.setStyle(this._element, 'top', `${y}px`)
 		this._renderer.setStyle(this._element, 'left', `${x}px`)
 

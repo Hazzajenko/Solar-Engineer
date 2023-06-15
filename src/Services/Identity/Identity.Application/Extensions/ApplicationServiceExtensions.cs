@@ -23,7 +23,7 @@ public static class ServiceExtensions
         JwtSettings jwtSettings
     )
     {
-        services.AddSingleton<ConnectionsService>();
+        services.AddSingleton<IConnectionsService, ConnectionsService>();
         services.AddScoped<IIdentityUnitOfWork, IdentityUnitOfWork>();
         services.AddScoped<IAppUsersRepository, AppUsersRepository>();
         services.AddScoped<INotificationsRepository, NotificationsRepository>();

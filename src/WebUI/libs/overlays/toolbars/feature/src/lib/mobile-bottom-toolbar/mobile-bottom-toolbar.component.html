@@ -131,6 +131,17 @@ height: mobileToolbarHeight()
 		<div class="flex items-end justify-between p-2 flex-row space-y-0 space-x-4" id="button-group">
 			<div class="flex items-center space-x-1">
 				<button
+					(touchstart)="toggleMobileSideUi()"
+					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+					menu-button-for="main-context-menu"
+					type="button"
+				>
+					<svg-input class="w-5 h-5" svgName="SvgBars3" />
+					<span class="sr-only">Open Side Menu</span>
+				</button>
+			</div>
+			<div class="flex items-center space-x-1">
+				<button
 					#menuButton
 					(touchstart)="toggleContextMenu($event, 'main-context-menu')"
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
@@ -146,7 +157,8 @@ height: mobileToolbarHeight()
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 					type="button"
 				>
-					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/arrow-uturn-left" />
+					<svg-input class="w-5 h-5" svgName="SvgArrowUturnLeft" />
+					<!--					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/arrow-uturn-left" />-->
 					<span class="sr-only">Undo</span>
 				</button>
 			</div>
@@ -155,7 +167,8 @@ height: mobileToolbarHeight()
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 					type="button"
 				>
-					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/arrow-uturn-right" />
+					<svg-input class="w-5 h-5" svgName="SvgArrowUturnRight" />
+					<!--					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/arrow-uturn-right" />-->
 					<span class="sr-only">Redo</span>
 				</button>
 			</div>
@@ -165,7 +178,8 @@ height: mobileToolbarHeight()
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 					type="button"
 				>
-					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/paint-brush" />
+					<svg-input class="w-5 h-5" svgName="SvgPaintBrush" />
+					<!--					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/paint-brush" />-->
 					<span class="sr-only">Change Colour</span>
 				</button>
 			</div>
@@ -176,7 +190,8 @@ height: mobileToolbarHeight()
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 					type="button"
 				>
-					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/wrench" />
+					<svg-input class="w-5 h-5" svgName="SvgWrench" />
+					<!--					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/wrench" />-->
 					<span class="sr-only">Change Mode</span>
 				</button>
 			</div>
@@ -186,7 +201,8 @@ height: mobileToolbarHeight()
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 					type="button"
 				>
-					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="toolbar/settings" />
+					<svg-input class="w-5 h-5" svgName="SvgCog8Tooth" />
+					<!--					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="toolbar/settings" />-->
 					<span class="sr-only">Settings</span>
 				</button>
 			</div>

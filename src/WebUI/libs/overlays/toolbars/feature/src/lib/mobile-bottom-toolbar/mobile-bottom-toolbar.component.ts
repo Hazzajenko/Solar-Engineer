@@ -9,7 +9,7 @@ import {
 	ViewChild,
 	ViewChildren,
 } from '@angular/core'
-import { ShowSvgNoStylesComponent } from '@shared/ui'
+import { InputSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { goTop, increaseTop } from '@shared/animations'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import {
@@ -32,7 +32,7 @@ import {
 import { injectAppStateStore, ModeState } from '@canvas/app/data-access'
 import { MobileBottomToolbarDirective } from './mobile-bottom-toolbar.directive'
 import { StringColor, stringColors } from '@entities/shared'
-import { DIALOG_COMPONENT, UiStoreService } from '@overlays/ui-store/data-access'
+import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 
 @Component({
 	selector: 'overlay-mobile-bottom-toolbar',
@@ -53,6 +53,7 @@ import { DIALOG_COMPONENT, UiStoreService } from '@overlays/ui-store/data-access
 		ExpandDivWithElementsDirective,
 		MobileBottomToolbarDirective,
 		NgForOf,
+		InputSvgComponent,
 	],
 	templateUrl: './mobile-bottom-toolbar.component.html',
 	styles: [],
@@ -60,7 +61,7 @@ import { DIALOG_COMPONENT, UiStoreService } from '@overlays/ui-store/data-access
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileBottomToolbarComponent {
-	private _uiStore = inject(UiStoreService)
+	private _uiStore = injectUiStore()
 	private _appStore = injectAppStateStore()
 	@ViewChild(MatMenuTrigger) trigger!: MatMenuTrigger
 	@ViewChildren('contextMenu') contextMenus!: QueryList<ElementRef<HTMLDivElement>>
@@ -92,6 +93,10 @@ export class MobileBottomToolbarComponent {
 	 }*/
 
 	// protected readonly setMode = setMode
+
+	toggleMobileSideUi() {
+		this._uiStore.dispatch.toggleSideUiMobileMenu()
+	}
 
 	setStringColor(color: StringColor) {
 		// this.selectedStringColor.set(color)

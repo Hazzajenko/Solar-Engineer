@@ -109,7 +109,7 @@ export const fetchWebUsersForProjectMembers$ = createEffect(
 				return http
 					.get<{
 						appUsers: WebUserModel[]
-					}>('/auth/users', { params: { projectMemberIds } })
+					}>('/auth/users', { params: { appUserIds: projectMemberIds } })
 					.pipe(
 						map(({ appUsers }) => {
 							return UsersActions.addManyUsers({ users: appUsers })

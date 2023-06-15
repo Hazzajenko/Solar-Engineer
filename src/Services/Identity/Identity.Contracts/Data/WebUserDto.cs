@@ -7,6 +7,7 @@ public class WebUserDto
     public string PhotoUrl { get; set; } = default!;
     public string UserName { get; set; } = default!;
     public bool IsFriend { get; set; }
+    public bool IsOnline { get; set; }
     public DateTime? BecameFriendsTime { get; set; }
     public DateTime RegisteredAtTime { get; set; }
     public DateTime LastActiveTime { get; set; }

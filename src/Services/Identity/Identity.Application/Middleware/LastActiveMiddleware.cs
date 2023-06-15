@@ -43,7 +43,7 @@ public class LastActiveMiddleware
             var user = await unitOfWork.AppUsersRepository.GetByIdAsync((Guid)userId);
             if (user != null)
             {
-                user.LastActiveTime = DateTime.Now;
+                user.LastActiveTime = DateTime.UtcNow;
                 await unitOfWork.SaveChangesAsync();
             }
         }

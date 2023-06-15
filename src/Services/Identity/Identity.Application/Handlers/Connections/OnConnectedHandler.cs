@@ -1,6 +1,7 @@
 ﻿using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
+using Identity.Contracts.Responses.Connections;
 using Identity.SignalR.Commands.Connections;
 using Identity.SignalR.Hubs;
 using Infrastructure.SignalR;
@@ -12,7 +13,7 @@ namespace Identity.Application.Handlers.Connections;
 
 public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
 {
-    private readonly ConnectionsService _connections;
+    private readonly IConnectionsService _connections;
     private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
     private readonly ILogger<OnConnectedHandler> _logger;
     private readonly IIdentityUnitOfWork _unitOfWork;
@@ -20,7 +21,7 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
     public OnConnectedHandler(
         ILogger<OnConnectedHandler> logger,
         IHubContext<UsersHub, IUsersHub> hubContext,
-        ConnectionsService connections,
+        IConnectionsService connections,
         IIdentityUnitOfWork unitOfWork
     )
     {
@@ -59,23 +60,31 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
             command.AuthUser.ConnectionId
         );
 
-        var newConnection = new ConnectionDto { AppUserId = userId.ToString() };
+        /*
+        var appUserConnection = _connections.GetAppUserConnectionByAppUserId(userId);
+        appUserConnection.ThrowHubExceptionIfNull();
 
-        await _hubContext.Clients.AllExcept(userId.ToString()).UserIsOnline(newConnection);
+        var userIsOnlineResponse = new UserIsOnlineResponse
+        {
+            AppUserConnection = appUserConnection
+        };
 
-        var allConnections = _connections.GetAllConnectedUserIds();
+        await _hubContext.Clients.AllExcept(userId.ToString()).UserIsOnline(userIsOnlineResponse);*/
 
-        var allConnectionsDtoList = allConnections
-            .Select(x => new ConnectionDto { AppUserId = x.ToString() })
-            .ToList();
+        var allAppUserConnections = _connections.GetAllUserConnections();
 
-        await _hubContext.Clients.User(userId.ToString()).GetOnlineUsers(allConnectionsDtoList);
+        var getOnlineUsersResponse = new GetOnlineUsersResponse
+        {
+            OnlineUsers = allAppUserConnections
+        };
+
+        await _hubContext.Clients.User(userId.ToString()).GetOnlineUsers(getOnlineUsersResponse);
 
         _logger.LogInformation("User {U} connected", userId);
 
         var appUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(userId);
         appUser.ThrowHubExceptionIfNull();
-        appUser.LastActiveTime = DateTime.Now;
+        appUser.LastActiveTime = DateTime.UtcNow;
         await _unitOfWork.AppUsersRepository.UpdateAsync(appUser);
         await _unitOfWork.SaveChangesAsync();
 

@@ -1,6 +1,7 @@
 ﻿using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
+using Identity.Contracts.Responses.Connections;
 using Identity.SignalR.Commands.Connections;
 using Identity.SignalR.Hubs;
 using Infrastructure.SignalR;
@@ -12,7 +13,7 @@ namespace Identity.Application.Handlers.Connections;
 
 public class OnDisconnectedHandler : ICommandHandler<OnDisconnectedCommand, bool>
 {
-    private readonly ConnectionsService _connections;
+    private readonly IConnectionsService _connections;
     private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
     private readonly ILogger<OnDisconnectedHandler> _logger;
     private readonly IIdentityUnitOfWork _unitOfWork;
@@ -20,7 +21,7 @@ public class OnDisconnectedHandler : ICommandHandler<OnDisconnectedCommand, bool
     public OnDisconnectedHandler(
         ILogger<OnDisconnectedHandler> logger,
         IHubContext<UsersHub, IUsersHub> hubContext,
-        ConnectionsService connections,
+        IConnectionsService connections,
         IIdentityUnitOfWork unitOfWork
     )
     {
@@ -44,15 +45,15 @@ public class OnDisconnectedHandler : ICommandHandler<OnDisconnectedCommand, bool
         if (existingConnections.Any())
             return true;
 
-        var userConnection = new ConnectionDto { AppUserId = userId.ToString() };
+        var userIsOfflineResponse = new UserIsOfflineResponse { AppUserId = userId.ToString() };
 
-        await _hubContext.Clients.AllExcept(userId.ToString()).UserIsOffline(userConnection);
+        await _hubContext.Clients.AllExcept(userId.ToString()).UserIsOffline(userIsOfflineResponse);
 
         _logger.LogInformation("User {U} disconnected", userId);
 
         var appUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(userId);
         appUser.ThrowHubExceptionIfNull();
-        appUser.LastActiveTime = DateTime.Now;
+        appUser.LastActiveTime = DateTime.UtcNow;
         await _unitOfWork.AppUsersRepository.UpdateAsync(appUser);
         await _unitOfWork.SaveChangesAsync();
 

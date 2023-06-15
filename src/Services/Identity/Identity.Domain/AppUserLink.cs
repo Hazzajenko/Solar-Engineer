@@ -12,7 +12,7 @@ public class AppUserLink : IEntityToEntity
     {
         AppUserRequestedId = appUser.Id;
         AppUserReceivedId = recipient.Id;
-        CreatedTime = DateTime.Now;
+        CreatedTime = DateTime.UtcNow;
     }
 
     public AppUserLink() { }
@@ -29,8 +29,8 @@ public class AppUserLink : IEntityToEntity
         FriendRequestStatus.Null;
 
     public DateTime LastFriendRequestStatusChangeTime { get; set; }
-    public DateTime CreatedTime { get; set; } = DateTime.Now;
-    public DateTime LastModifiedTime { get; set; } = DateTime.Now;
+    public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+    public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;
 
     public static AppUserLink Create(AppUser appUser, AppUser recipient)
     {
@@ -54,7 +54,7 @@ public class AppUserLink : IEntityToEntity
         TransitionReceivedTo(FriendRequestStatus.Accepted);
 
         Friends = true;
-        BecameFriendsTime = DateTime.Now;
+        BecameFriendsTime = DateTime.UtcNow;
     }
 
     public void SendFriendRequest(AppUser appUserDispatching)
@@ -95,7 +95,7 @@ public class AppUserLink : IEntityToEntity
         TransitionRequestedTo(FriendRequestStatus.ReceivedRemoval);
         TransitionReceivedTo(FriendRequestStatus.SentRemoval);
         Friends = false;
-        // BecameFriendsTime = DateTime.Now;
+        // BecameFriendsTime = DateTime.UtcNow;
     }
 
     private void TransitionRequestedTo(FriendRequestStatus status)

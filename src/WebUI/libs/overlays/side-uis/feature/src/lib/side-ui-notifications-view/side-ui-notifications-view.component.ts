@@ -25,9 +25,9 @@ import { NOTIFICATION_TYPE, NotificationModel } from '@auth/shared'
 import { TimeDifferenceFromNowPipe, TruncatePipe } from '@shared/pipes'
 import { LetDirective } from '@ngrx/component'
 import {
-	getContentMessageBasedOnType,
 	getContentMessageBasedOnTypeWithoutDisplayName,
 	getContentMessageHtmlBasedOnType,
+	getNotificationContentMessageBasedOnType,
 	getNotificationTypeToText,
 	isProjectNotification,
 } from '@auth/utils'
@@ -75,6 +75,16 @@ export class SideUiNotificationsViewComponent implements OnInit, OnDestroy {
 
 	user = this._authStore.select.user
 	notifications = this._notificationsStore.select.notCompletedNotifications
+
+	sortedNotifications = computed(() => {
+		const notifications = this.notifications()
+		return notifications.sort((a, b) => {
+			const aDate = new Date(a.createdTime)
+			const bDate = new Date(b.createdTime)
+			return bDate.getTime() - aDate.getTime()
+		})
+	})
+
 	selectedNotificationId = signal<string | undefined>(undefined)
 	openedNotifications = signal<Map<string, boolean>>(new Map())
 
@@ -87,7 +97,11 @@ export class SideUiNotificationsViewComponent implements OnInit, OnDestroy {
 
 	vm = computed(() => {
 		const user = this._authStore.select.user()
-		const notifications = this.notifications()
+		const notifications = this.notifications().sort((a, b) => {
+			const aDate = new Date(a.createdTime)
+			const bDate = new Date(b.createdTime)
+			return bDate.getTime() - aDate.getTime()
+		})
 		const openedNotifications = this.openedNotifications()
 		const selectedNotificationId = this.selectedNotificationId()
 		const multiSelectedNotificationIds = this.multiSelectedNotificationIds()
@@ -101,12 +115,12 @@ export class SideUiNotificationsViewComponent implements OnInit, OnDestroy {
 			allNotificationsSelected,
 		}
 	})
-
+	trackByFn = (index: number, notification: NotificationModel) => notification.id
 	protected readonly getNotificationTypeToText = getNotificationTypeToText
 	protected readonly notification = notification
 	protected readonly getContentMessageHtmlBasedOnType = getContentMessageHtmlBasedOnType
 	protected readonly NOTIFICATION_TYPE = NOTIFICATION_TYPE
-	protected readonly getContentMessageBasedOnType = getContentMessageBasedOnType
+	protected readonly getContentMessageBasedOnType = getNotificationContentMessageBasedOnType
 	protected readonly getContentMessageBasedOnTypeWithoutDisplayName =
 		getContentMessageBasedOnTypeWithoutDisplayName
 	protected readonly getTimeDifferenceFromNow = getTimeDifferenceFromNow

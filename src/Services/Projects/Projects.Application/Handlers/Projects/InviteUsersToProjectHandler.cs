@@ -76,38 +76,6 @@ public class InviteUsersToProjectHandler
             throw new ValidationException(message, errors);
         }
 
-        /*foreach (var requestInvite in command.Request.Invites)
-        {
-            var invitedUserGuidId = requestInvite.UserId.ToGuid();
-            var existingAppUserProject =
-                await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
-                    invitedUserGuidId,
-                    projectIdGuid
-                );
-
-            if (existingAppUserProject is not null)
-            {
-                _logger.LogError(
-                    "User {User} tried to invite user {Invitee} to project {Project} but they are already apart of the project",
-                    appUserId,
-                    requestInvite.UserId,
-                    projectIdGuid
-                );
-                var message =
-                    $"User {requestInvite.UserId} is already apart of project {projectIdGuid}";
-                var errors = new ValidationFailure(nameof(AppUserProject), message).ToArray();
-                throw new ValidationException(message, errors);
-            }
-
-            var requestAppUserProject = AppUserProject.Create(
-                projectIdGuid,
-                invitedUserGuidId,
-                requestInvite.Role
-            );
-
-            await _unitOfWork.AppUserProjectsRepository.AddAsync(requestAppUserProject);
-        }*/
-
         var userIds = command.Request.Invites.Select(x => x.UserId).ToList();
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(projectId);
@@ -121,11 +89,11 @@ public class InviteUsersToProjectHandler
             InvitedUserIds = userIds
         };
 
-        var projectDto = appUserProject.Project.ToDto();
+        /*var projectDto = appUserProject.Project.ToDto();
 
         var invitedToProjectResponse = new InvitedToProjectResponse { Project = projectDto };
 
-        await _hubContext.Clients.Users(userIds).InvitedToProject(invitedToProjectResponse);
+        await _hubContext.Clients.Users(userIds).InvitedToProject(invitedToProjectResponse);*/
         await _hubContext.Clients.Users(projectMembers).UsersSentInviteToProject(newProjectMembers);
 
         _logger.LogInformation(

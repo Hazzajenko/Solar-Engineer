@@ -13,7 +13,7 @@ namespace Identity.Application.Handlers.Friends;
 
 public class GetOnlineFriendsHandler : IQueryHandler<GetOnlineFriendsQuery, GetOnlineFriendsResponse>
 {
-    private readonly ConnectionsService _connections;
+    private readonly IConnectionsService _connections;
     private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
     private readonly ILogger<GetOnlineFriendsHandler> _logger;
     private readonly IIdentityUnitOfWork _unitOfWork;
@@ -21,7 +21,7 @@ public class GetOnlineFriendsHandler : IQueryHandler<GetOnlineFriendsQuery, GetO
     public GetOnlineFriendsHandler(
         ILogger<GetOnlineFriendsHandler> logger,
         IIdentityUnitOfWork unitOfWork,
-        IHubContext<UsersHub, IUsersHub> hubContext, ConnectionsService connections)
+        IHubContext<UsersHub, IUsersHub> hubContext, IConnectionsService connections)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;

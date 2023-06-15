@@ -24,7 +24,7 @@ export const WEB_USER_MODEL = z.object({
 	registeredAtTime: z.string(),
 })
 
-export const isWebUser = (user: WebUserModel): WebUserModel => {
+export const isWebUser = (user: unknown): WebUserModel => {
 	return WEB_USER_MODEL.parse(user)
 }
 

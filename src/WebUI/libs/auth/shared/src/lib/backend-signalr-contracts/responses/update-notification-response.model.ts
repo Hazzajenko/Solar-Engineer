@@ -1,4 +1,5 @@
+import { NotificationModel } from '../../users'
+
 export interface UpdateNotificationResponse {
-    notificationId: string;
-    event: string;
+	notification: NotificationModel
 }

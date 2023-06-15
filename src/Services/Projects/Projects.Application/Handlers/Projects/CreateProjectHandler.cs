@@ -23,7 +23,9 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
     public CreateProjectHandler(
         ILogger<CreateProjectHandler> logger,
         IProjectsUnitOfWork unitOfWork,
-        IHubContext<ProjectsHub, IProjectsHub> hubContext, IBus bus)
+        IHubContext<ProjectsHub, IProjectsHub> hubContext,
+        IBus bus
+    )
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
@@ -43,13 +45,10 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
         var project = appUserProject.Project;
         var projectDto = appUserProject.Project.ToDto();
 
-        var projectCreatedResponse = new ProjectCreatedResponse
-        {
-            Project = projectDto
-        };
+        var projectCreatedResponse = new ProjectCreatedResponse { Project = projectDto };
 
         await _hubContext.Clients.User(appUserId.ToString()).ProjectCreated(projectCreatedResponse);
-        
+
         _logger.LogInformation(
             "User {User} created project {Project}",
             appUserId,
@@ -75,13 +74,15 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
 
         // var projectDto = appUserProject.Project.ToDto();
 
-        var invitedToProjectResponse = new InvitedToProjectResponse
-        {
-            Project = projectDto
-        };
-        
-        await _hubContext.Clients.Users(userIds).InvitedToProject(invitedToProjectResponse);
-        await _hubContext.Clients.Users(projectMemberIds).UsersSentInviteToProject(newProjectMembers);
+        // var invitedToProjectResponse = new InvitedToProjectResponse
+        // {
+        //     Project = projectDto
+        // };
+
+        // await _hubContext.Clients.Users(userIds).InvitedToProject(invitedToProjectResponse);
+        await _hubContext.Clients
+            .Users(projectMemberIds)
+            .UsersSentInviteToProject(newProjectMembers);
 
         _logger.LogInformation(
             "User {User} invited users {Users} to project {Project}",
@@ -103,7 +104,6 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
             userIds
         );
         await _bus.Publish(invitedUsersToProjectMessage, cT);
-
 
         return appUserProject.Project.Id;
     }

@@ -1,5 +1,6 @@
 ﻿using Identity.Application.Data.UnitOfWork;
 using Identity.Contracts.Data;
+using Identity.Contracts.Responses.Notifications;
 using Identity.Domain;
 using Identity.SignalR.Commands.Notifications;
 using Identity.SignalR.Hubs;
@@ -19,7 +20,8 @@ public record DispatchNotificationCommand(
     ProjectInvite? ProjectInvite = null
 ) : ICommand<Notification>;
 
-public class DispatchNotificationHandler : ICommandHandler<DispatchNotificationCommand, Notification>
+public class DispatchNotificationHandler
+    : ICommandHandler<DispatchNotificationCommand, Notification>
 {
     private readonly ILogger<DispatchNotificationHandler> _logger;
     private readonly IIdentityUnitOfWork _unitOfWork;
@@ -36,7 +38,10 @@ public class DispatchNotificationHandler : ICommandHandler<DispatchNotificationC
         _hubContext = hubContext;
     }
 
-    public async ValueTask<Notification> Handle(DispatchNotificationCommand command, CancellationToken cT)
+    public async ValueTask<Notification> Handle(
+        DispatchNotificationCommand command,
+        CancellationToken cT
+    )
     {
         var recipientUser = command.RecipientUser;
         var appUser = command.AppUser;
@@ -47,15 +52,18 @@ public class DispatchNotificationHandler : ICommandHandler<DispatchNotificationC
 
         await _unitOfWork.NotificationsRepository.AddAsync(notification);
         await _unitOfWork.SaveChangesAsync();
-        
-        notification = await _unitOfWork.NotificationsRepository.GetByIdAsync(
-            notification.Id
-        );
+
+        notification = await _unitOfWork.NotificationsRepository.GetByIdAsync(notification.Id);
         notification.ThrowHubExceptionIfNull();
+
+        var receiveNotificationResponse = new ReceiveNotificationResponse
+        {
+            Notification = notification.Adapt<NotificationDto>()
+        };
 
         await _hubContext.Clients
             .User(recipientUser.Id.ToString())
-            .ReceiveNotification(notification.Adapt<NotificationDto>());
+            .ReceiveNotification(receiveNotificationResponse);
 
         return notification;
     }

@@ -72,9 +72,19 @@
 							<div
 								class="items-center justify-between w-full py-2.5 px-4 text-sm font-medium text-gray-900 dark:text-white"
 							>
-								<span class="text-xs font-normal text-gray-500 dark:text-gray-400">
-									{{ friends().length }} friends
-								</span>
+								<label
+									class="flex items-center justify-between w-full py-2.5 px-4 text-sm font-medium text-gray-900 dark:text-white"
+									for="invites"
+								>
+									<span class="text-sm font-medium text-gray-900 dark:text-white"
+										>Invite Friends</span
+									>
+									<span class="text-xs font-normal text-gray-500 dark:text-gray-400">
+										{{ multiSelectedFriendIds().length }} selected
+										<!--										{{ friends().length }} friends-->
+									</span>
+								</label>
+
 								<ul
 									class="border rounded-md max-h-[300px] min-h-[50px] items-center justify-center w-full py-2.5 px-4 text-sm font-medium text-gray-900 dark:text-white"
 								>
@@ -89,9 +99,10 @@
 										</li>
 										<li *ngFor="let friend of startingLetter.users">
 											<div
+												(click)="multiSelectFriend(friend)"
 												class="bg-white dark:bg-gray-900 rounded-t-lg rounded-b-lg flex border border-gray-200 dark:border-gray-700 items-center group hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer pr-4 py-1 transition duration-75"
 											>
-												<div (click)="multiSelectFriend(friend)" class="flex justify-start pl-2">
+												<div class="flex justify-start pl-2">
 													<input
 														[checked]="multiSelectedFriendIds().includes(friend.id)"
 														aria-describedby="comments-description"
@@ -109,26 +120,31 @@
 													attr.data-type="notification-preview"
 													class="flex justify-between items-center"
 												>
-													<div class="flex items-center justify-start ml-4">
-														<div class="flex items-center justify-end">
-															<img
-																[alt]="friend.userName + ' profile picture'"
-																[ngSrc]="friend.photoUrl"
-																class="h-6 w-6 flex-none rounded-full bg-gray-800"
-																height="24"
-																width="24"
-															/>
-														</div>
-														<a
-															class="flex items-center text-base rounded-lg transition duration-75 dark:text-white group"
-														>
-															<div class="ml-3">
-																<span class="capitalize text-sm text-gray-900">{{
-																	friend.displayName | truncate : 20
-																}}</span>
-															</div>
-														</a>
-													</div>
+													<auth-web-user [avatarSize]="20" [user]="friend" />
+													<!--					<div class="flex items-center justify-start ml-4">
+																			<div class="flex relative items-center justify-end">
+																				<img
+																					[alt]="friend.userName + ' profile picture'"
+																					[ngSrc]="friend.photoUrl"
+																					class="h-6 w-6 flex-none rounded-full bg-gray-800"
+																					height="24"
+																					width="24"
+																				/>
+																				<span
+																					*ngIf="friend.isOnline"
+																					class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-green-400 ring-2 ring-white"
+																				></span>
+																			</div>
+																			<a
+																				class="flex items-center text-base rounded-lg transition duration-75 dark:text-white group"
+																			>
+																				<div class="ml-3">
+																					<span class="capitalize text-sm text-gray-900">{{
+																						friend.displayName | truncate : 20
+																					}}</span>
+																				</div>
+																			</a>
+																		</div>-->
 
 													<!--<div class="flex justify-end pr-1 absolute right-4">
 														<div class="justify-end">

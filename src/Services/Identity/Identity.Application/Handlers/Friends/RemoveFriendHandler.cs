@@ -66,10 +66,10 @@ public class RemoveFriendHandler : ICommandHandler<RemoveFriendCommand, bool>
 
         await _hubContext.Clients
             .User(appUser.Id.ToString())
-            .FriendRemoved(recipientUser.Id.ToString());
+            .FriendRemoved(new FriendRemovedResponse { AppUserId = recipientUser.Id.ToString() });
         await _hubContext.Clients
             .User(recipientUser.Id.ToString())
-            .FriendRemoved(appUser.Id.ToString());
+            .FriendRemoved(new FriendRemovedResponse { AppUserId = appUser.Id.ToString() });
 
         _logger.LogInformation(
             "AppUser: {AppUserRequestedId} - {AppUserRequestedUserName} Removed Friend {AppUserReceived} - {AppUserReceivedUserName}",

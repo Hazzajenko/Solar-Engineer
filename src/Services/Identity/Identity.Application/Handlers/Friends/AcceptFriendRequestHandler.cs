@@ -2,6 +2,7 @@
 using Identity.Application.Handlers.Notifications;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Friends;
+using Identity.Contracts.Responses.Notifications;
 using Identity.Domain;
 using Identity.SignalR.Commands.Friends;
 using Identity.SignalR.Hubs;
@@ -70,11 +71,13 @@ public class AcceptFriendRequestHandler : ICommandHandler<AcceptFriendRequestCom
 
         await _hubContext.Clients
             .User(appUser.Id.ToString())
-            .ReceiveFriend(recipientUser.Adapt<FriendDto>());
+            .ReceiveFriend(
+                new ReceiveFriendResponse { Friend = recipientUser.Adapt<WebUserDto>() }
+            );
 
         await _hubContext.Clients
             .User(recipientUser.Id.ToString())
-            .ReceiveFriend(appUser.Adapt<FriendDto>());
+            .ReceiveFriend(new ReceiveFriendResponse { Friend = appUser.Adapt<WebUserDto>() });
 
         var notificationCommand = new DispatchNotificationCommand(
             appUser,
@@ -98,7 +101,14 @@ public class AcceptFriendRequestHandler : ICommandHandler<AcceptFriendRequestCom
 
         var notificationDto = friendRequestNotification.Adapt<NotificationDto>();
 
-        await _hubContext.Clients.User(appUser.Id.ToString()).UpdateNotification(notificationDto);
+        var updateNotificationResponse = new UpdateNotificationResponse
+        {
+            Notification = notificationDto
+        };
+
+        await _hubContext.Clients
+            .User(appUser.Id.ToString())
+            .UpdateNotification(updateNotificationResponse);
 
         _logger.LogInformation(
             "Friend request accepted from AppUserRequested: {AppUserRequestedId} - {AppUserRequestedUserName}, AppUserReceived: {AppUserReceived} - {AppUserReceivedUserName}",

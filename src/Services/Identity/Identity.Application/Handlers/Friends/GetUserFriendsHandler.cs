@@ -12,7 +12,7 @@ namespace Identity.Application.Handlers.Friends;
 
 public class GetUserFriendsHandler : ICommandHandler<GetUserFriendsCommand, GetUserFriendsResponse>
 {
-    private readonly ConnectionsService _connections;
+    private readonly IConnectionsService _connections;
     private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
     private readonly ILogger<GetUserFriendsHandler> _logger;
     private readonly IIdentityUnitOfWork _unitOfWork;
@@ -21,7 +21,7 @@ public class GetUserFriendsHandler : ICommandHandler<GetUserFriendsCommand, GetU
         ILogger<GetUserFriendsHandler> logger,
         IIdentityUnitOfWork unitOfWork,
         IHubContext<UsersHub, IUsersHub> hubContext,
-        ConnectionsService connections
+        IConnectionsService connections
     )
     {
         _logger = logger;

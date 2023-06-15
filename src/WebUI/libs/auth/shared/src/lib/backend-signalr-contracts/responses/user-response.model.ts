@@ -1,4 +1,4 @@
-import { WebUserModel } from '@auth/shared'
+import { WebUserModel } from '../../users'
 
 export interface UserResponse {
 	user: WebUserModel

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, Signal, signal } from '@angular/core'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
 import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle } from '@angular/common'
 import { increaseScaleAndOpacity } from '@shared/animations'
@@ -17,6 +17,7 @@ import { MultiSelectModule } from 'primeng/multiselect'
 import { WebUserModel } from '@auth/shared'
 import { CenterThisElementDirective } from '@shared/directives'
 import { TruncatePipe } from '@shared/pipes'
+import { AuthWebUserComponent } from '@auth/ui'
 
 @Component({
 	selector: 'dialog-create-project',
@@ -35,6 +36,7 @@ import { TruncatePipe } from '@shared/pipes'
 		FormsModule,
 		CenterThisElementDirective,
 		TruncatePipe,
+		AuthWebUserComponent,
 	],
 	templateUrl: './dialog-create-project.component.html',
 	styles: [],
@@ -47,7 +49,7 @@ export class DialogCreateProjectComponent {
 	private _uiStore = injectUiStore()
 	private _usersStore = injectUsersStore()
 
-	friends = this._usersStore.select.allFriends
+	friends = this._usersStore.select.allFriends as Signal<WebUserModel[]>
 	recentFriends = this._usersStore.select.fourMostRecentFriends
 
 	allFriendsGroupedByFirstLetter = this._usersStore.select.allFriendsGroupedByFirstLetter

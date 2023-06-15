@@ -146,7 +146,7 @@ public static class GroupChatsMapping
                 Role = "Admin",
                 UserName = user.UserName!,
                 LastName = user.LastName,
-                JoinedConversationAt = DateTime.Now
+                JoinedConversationAt = DateTime.UtcNow
             }
         }
     }

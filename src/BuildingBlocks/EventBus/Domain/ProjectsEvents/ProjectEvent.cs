@@ -11,7 +11,7 @@ public class ProjectEvent : IEventBase, IProjectEvent
         ProjectId = projectId;
         ProjectEventType = projectEventType;
         Queues = new List<string> { "identity" };
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public ProjectEvent(Guid projectId, ProjectEventType projectEventType, object data)
@@ -19,7 +19,7 @@ public class ProjectEvent : IEventBase, IProjectEvent
         ProjectId = projectId;
         ProjectEventType = projectEventType;
         Queues = new List<string> { "identity" };
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
         Data = JsonSerializer.Serialize(data);
         DataType = data.GetType().ToString();
     }
@@ -29,7 +29,7 @@ public class ProjectEvent : IEventBase, IProjectEvent
         ProjectId = projectId;
         ProjectEventType = projectEventType;
         Queues = new List<string> { "identity" };
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
         if (data is null) throw new ArgumentNullException(nameof(data));
         Data = JsonSerializer.Serialize(data);
         DataType = data.GetType().ToString();
