@@ -7,6 +7,9 @@ supabase.ts
 supabase.js
 supabase.d.ts
 
+sentry.ts
+sentry.js
+sentry.d.ts
 
 # Compiled output
 /dist

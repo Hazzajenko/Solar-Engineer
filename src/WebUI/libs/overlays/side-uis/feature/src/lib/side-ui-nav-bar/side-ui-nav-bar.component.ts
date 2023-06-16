@@ -25,6 +25,7 @@ import { LetDirective } from '@ngrx/component'
 export type SideUiNavBarView = 'auth' | 'projects' | 'data' | 'users' | 'notifications' | 'none'
 export type SideUiNavBarViewComponent =
 	| typeof SideUiAuthViewComponent
+	// | typeof SideUiProjectsViewMobileComponent
 	| typeof SideUiProjectsViewComponent
 	| typeof SideUiDataViewComponent
 	| typeof SideUiUsersViewComponent
@@ -95,6 +96,7 @@ export class SideUiNavBarComponent {
 				this.currentViewComponent.set(SideUiAuthViewComponent)
 				break
 			case 'projects':
+				// this.currentViewComponent.set(SideUiProjectsViewMobileComponent)
 				this.currentViewComponent.set(SideUiProjectsViewComponent)
 				break
 			case 'data':
