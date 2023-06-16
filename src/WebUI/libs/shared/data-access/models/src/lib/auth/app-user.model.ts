@@ -5,6 +5,7 @@ export type AppUserModel = {
 	firstName: string
 	lastName: string
 	photoUrl: string
+	createdTime: string
 	email?: string
 }
 

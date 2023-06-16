@@ -84,7 +84,11 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             appUserId
         );
 
-        panel = await _unitOfWork.PanelsRepository.AddAndSaveChangesAsync(panel);
+        await _unitOfWork.PanelsRepository.AddAsync(panel);
+        await _unitOfWork.SaveChangesAsync();
+        
+        panel = await _unitOfWork.PanelsRepository.GetByIdAsync(panel.Id);
+        panel.ThrowExceptionIfNull(new HubException("Panel does not exist"));
 
         var response = panel.ToProjectEventResponseFromEntity(command, ActionType.Create);
 

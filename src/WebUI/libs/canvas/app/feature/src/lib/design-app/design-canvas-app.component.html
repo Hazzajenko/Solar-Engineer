@@ -2,9 +2,9 @@
 <!--data-drawer-toggle="sidebar-user"-->
 <!--(touchstart)="mobileMenu.classList.add('translate-x-0')"-->
 <button
-	(touchstart)="toggleMobileSideMenu()"
+	(touchstart)="toggleSideUiNav()"
 	aria-controls="sidebar-user"
-	class="absolute top-5 left-5 z-50 inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+	class="absolute top-5 left-5 z-30 inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
 	type="button"
 >
 	<span class="sr-only">Open sidebar</span>
@@ -23,7 +23,7 @@
 	</svg>
 </button>
 
-<side-ui-mobile-menu class="md:hidden" />
+<!--<side-ui-mobile-menu *ngIf="sideUiMobileMenuOpen()" class="md:hidden" />-->
 
 <canvas
 	[ngStyle]="{

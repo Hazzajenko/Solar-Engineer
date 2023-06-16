@@ -2,6 +2,7 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	computed,
+	effect,
 	inject,
 	Injector,
 	signal,
@@ -48,6 +49,7 @@ export class SideUiMobileMenuComponent {
 	private _uiStore = injectUiStore()
 	private _notificationsStore = injectNotificationsStore()
 	private _injector = inject(Injector)
+	loaded = false
 
 	user = this._authStore.select.user
 	sideUiMobileMenuOpen = this._uiStore.select.sideUiMobileMenuOpen as Signal<boolean>
@@ -56,7 +58,7 @@ export class SideUiMobileMenuComponent {
 		if (!this._authStore.select.user()) return undefined
 		return this._notificationsStore.select.amountOfUnreadNotifications()
 	})
-	currentView = signal<SideUiNavBarView>('auth')
+	currentView = signal<SideUiNavBarView>('none')
 	currentViewComponent = signal<SideUiNavBarViewComponent>(SideUiAuthViewComponent)
 
 	sideUiInjector: Injector = Injector.create({
@@ -68,6 +70,15 @@ export class SideUiMobileMenuComponent {
 		],
 		parent: this._injector,
 	})
+
+	constructor() {
+		effect(() => {
+			if (this.sideUiMobileMenuOpen() && !this.loaded) {
+				this.loaded = true
+				this.changeView('auth')
+			}
+		})
+	}
 
 	changeView(view: SideUiNavBarView) {
 		if (this.currentView() === view) {

@@ -10,7 +10,7 @@ import {
 } from '@angular/common'
 import { goRightWithConfig } from '@shared/animations'
 import { LogoComponent } from '@shared/ui/logo'
-import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
+import { InputSvgComponent, ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { MouseOverRenderDirective } from '@canvas/rendering/data-access'
 import { SideUiDataViewComponent } from '../side-ui-data-view/side-ui-data-view.component'
 import { injectUiStore } from '@overlays/ui-store/data-access'
@@ -31,7 +31,7 @@ export type SideUiNavBarViewComponent =
 	| typeof SideUiNotificationsViewComponent
 	| null
 
-export const sideUiInjectionToken = new InjectionToken<unknown>('')
+export const sideUiInjectionToken = new InjectionToken<SideUiNavBarView>('CurrentView')
 
 @Component({
 	selector: 'side-ui-nav-bar',
@@ -52,6 +52,7 @@ export const sideUiInjectionToken = new InjectionToken<unknown>('')
 		NgClass,
 		NgComponentOutlet,
 		LetDirective,
+		InputSvgComponent,
 	],
 	hostDirectives: [MouseOverRenderDirective],
 })
@@ -61,6 +62,7 @@ export class SideUiNavBarComponent {
 	private _notificationsStore = injectNotificationsStore()
 	private _injector = inject(Injector)
 
+	user = this._authStore.select.user
 	sideUiNavBarOpen = this._uiStore.select.sideUiNavOpen
 
 	amountOfUnreadNotifications = computed(() => {
@@ -74,7 +76,7 @@ export class SideUiNavBarComponent {
 		providers: [
 			{
 				provide: sideUiInjectionToken,
-				useValue: this.currentViewComponent(),
+				useValue: this.currentView(),
 			},
 		],
 		parent: this._injector,
@@ -112,7 +114,7 @@ export class SideUiNavBarComponent {
 			providers: [
 				{
 					provide: sideUiInjectionToken,
-					useValue: this.currentViewComponent(),
+					useValue: this.currentView(),
 				},
 			],
 			parent: this._injector,

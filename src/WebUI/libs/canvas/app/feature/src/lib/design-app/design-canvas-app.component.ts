@@ -12,6 +12,7 @@ import {
 	inject,
 	OnInit,
 	Renderer2,
+	Signal,
 	signal,
 	ViewChild,
 } from '@angular/core'
@@ -92,7 +93,8 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _graphicsStore = inject(GraphicsStoreService)
 	private _objectPositioningStore = injectObjectPositioningStore()
 	user = this._authStore.select.user
-
+	sideUiMobileMenuOpen = this._uiStore.select.sideUiMobileMenuOpen as Signal<boolean>
+	sideUiNavBarOpen = this._uiStore.select.sideUiNavOpen as Signal<boolean>
 	userProjects = this._projectsStore.select.allProjects
 	isProjectReadyToRender = this._projectsStore.select.projectReadyToRender
 
@@ -157,7 +159,11 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		})
 	}
 
-	toggleMobileSideMenu() {
-		this._uiStore.dispatch.toggleSideUiMobileMenu()
+	toggleSideUiNav() {
+		this._uiStore.dispatch.toggleSideUiNav()
 	}
+
+	/*	toggleMobileSideMenu() {
+	 this._uiStore.dispatch.toggleSideUiMobileMenu()
+	 }*/
 }

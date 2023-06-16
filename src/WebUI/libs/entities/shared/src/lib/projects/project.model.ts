@@ -29,15 +29,9 @@ export type ProjectUserModel = {
 	joinedAtTime: string
 }
 
-export type ProjectWebModel = ProjectModel & {
+export type ProjectWebModel = Omit<ProjectModel, 'members'> & {
 	members: ProjectWebUserModel[]
 }
-
-/*const asdas: ProjectWebModel = {
- members: [{
-
- }],
- }*/
 
 export type ProjectWebUserModel = ProjectUserModel & WebUserModel
 

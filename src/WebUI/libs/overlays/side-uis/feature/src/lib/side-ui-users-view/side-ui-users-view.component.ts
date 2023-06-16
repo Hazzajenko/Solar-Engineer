@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, Signal, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed, inject, Injector, Signal, signal } from '@angular/core'
 import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle, NgTemplateOutlet } from '@angular/common'
 import { ShowSvgNoStylesComponent } from '@shared/ui'
 import { injectAuthStore, injectUsersStore } from '@auth/data-access'
@@ -8,6 +8,7 @@ import { isWebUser, minimalToWebUser, WebUserModel } from '@auth/shared'
 import { notification } from '@tauri-apps/api'
 import { LetDirective } from '@ngrx/component'
 import { SideUiBaseComponent } from '../side-ui-base/side-ui-base.component'
+import { sideUiInjectionToken, SideUiNavBarView } from '../side-ui-nav-bar/side-ui-nav-bar.component'
 // import { injectUsersStore } from '@users/data-access'
 
 // import { injectUsersStore } from '@users/data-access'
@@ -36,6 +37,8 @@ export class SideUiUsersViewComponent {
 	private _uiStore = injectUiStore()
 	// private _usersSignalr = inject(UsersSignalrService)
 	private _usersStore = injectUsersStore()
+
+	sideUiView = inject(Injector).get(sideUiInjectionToken) as SideUiNavBarView
 
 	searchBoxTimer: ReturnType<typeof setTimeout> | undefined
 	lastKeyUpTime = 0

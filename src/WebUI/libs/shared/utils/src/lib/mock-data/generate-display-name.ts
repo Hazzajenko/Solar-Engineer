@@ -19,14 +19,15 @@ export function generateUserModel(): AppUserModel {
 	const photoUrl = generateProfilePicture(`${firstNameInitial}${lastNameInitial}`, 30)
 	const displayName = `${firstName} ${lastNameInitial}`
 
-	return {
-		id: faker.datatype.uuid() as AppUserModel['id'],
-		userName: userName,
-		displayName: displayName,
-		firstName: firstName,
-		lastName: lastName,
-		photoUrl: photoUrl, // email: faker.internet.email(firstName, lastName),
-	}
+	/*	return {
+	 id: faker.datatype.uuid() as AppUserModel['id'],
+	 userName: userName,
+	 displayName: displayName,
+	 firstName: firstName,
+	 lastName: lastName,
+	 photoUrl: photoUrl, // email: faker.internet.email(firstName, lastName),
+	 }*/
+	return {} as AppUserModel
 }
 
 export function generateManyUserModels(amount: number): AppUserModel[] {

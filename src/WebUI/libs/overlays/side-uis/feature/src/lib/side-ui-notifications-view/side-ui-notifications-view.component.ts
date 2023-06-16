@@ -4,6 +4,7 @@ import {
 	computed,
 	ElementRef,
 	inject,
+	Injector,
 	OnDestroy,
 	OnInit,
 	Renderer2,
@@ -38,6 +39,10 @@ import { heightInOutWithConfig } from '@shared/animations'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { injectProjectsStore } from '@entities/data-access'
 import { SideUiBaseComponent } from '../side-ui-base/side-ui-base.component'
+import {
+	sideUiInjectionToken,
+	SideUiNavBarView,
+} from '../side-ui-nav-bar/side-ui-nav-bar.component'
 
 @Component({
 	selector: 'side-ui-notifications-view',
@@ -74,6 +79,8 @@ export class SideUiNotificationsViewComponent implements OnInit, OnDestroy {
 	private _elementRef = inject(ElementRef)
 	private _renderer = inject(Renderer2)
 	private _disposeClickListener!: ReturnType<typeof Renderer2.prototype.listen>
+
+	sideUiView = inject(Injector).get(sideUiInjectionToken) as SideUiNavBarView
 
 	user = this._authStore.select.user
 	notifications = this._notificationsStore.select.notCompletedNotifications

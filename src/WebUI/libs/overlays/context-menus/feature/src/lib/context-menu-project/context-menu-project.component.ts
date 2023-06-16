@@ -12,7 +12,7 @@ import { createSelector } from '@ngrx/store'
 import { Dictionary } from '@ngrx/entity'
 import { assertNotNull, selectSignalFromStore } from '@shared/utils'
 import { TAILWIND_COLOUR_500_VALUES, TailwindColor500 } from '@shared/data-access/models'
-import { injectGetCurrentUserFactory, selectAllFriends, selectUsersEntities } from '@auth/data-access'
+import { injectAppUser, selectAllFriends, selectUsersEntities } from '@auth/data-access'
 import { WebUserModel } from '@auth/shared'
 import { notification } from '@tauri-apps/api'
 import { ContextMenuBaseComponent, ContextMenuExpandComponent, ContextMenuHeadingComponent, ContextMenuItemComponent, ContextMenuSubHeadingComponent } from '../context-menu-builder'
@@ -58,7 +58,7 @@ export class ContextMenuProjectComponent {
 	private _projectsStore = injectProjectsStore()
 	private _uiStore = injectUiStore()
 	contextMenu = inject(Injector).get(contextMenuInputInjectionToken) as ContextMenuProjectMenu
-	user = injectGetCurrentUserFactory()
+	user = injectAppUser()
 	project = selectSignalFromStore(selectWebProjectByIdByContextMenuData)
 	friendsArentInProject = selectSignalFromStore(
 		selectUserFriendsThatArentInProject({ memberIds: this.project()?.memberIds ?? [] }),

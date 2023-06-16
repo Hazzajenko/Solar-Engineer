@@ -3,6 +3,7 @@ using Identity.Contracts.Data;
 using Identity.Domain;
 using Infrastructure.Authentication;
 using JasperFx.Core;
+using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualBasic;
 
@@ -73,5 +74,22 @@ public static class AppUserMapper
             PhotoUrl = request.PhotoUrl,
             Email = request.Email!
         };
+    }
+}
+
+public class AppUserMappingConfig : IRegister
+{
+    public void Register(TypeAdapterConfig config)
+    {
+        config
+            .NewConfig<AppUser, AppUserDto>()
+            .Map(dest => dest.Id, src => src.Id.ToString())
+            .Map(dest => dest.DisplayName, src => src.DisplayName)
+            .Map(dest => dest.UserName, src => src.UserName)
+            .Map(dest => dest.FirstName, src => src.FirstName)
+            .Map(dest => dest.LastName, src => src.LastName)
+            .Map(dest => dest.PhotoUrl, src => src.PhotoUrl)
+            .Map(dest => dest.CreatedTime, src => src.CreatedTime)
+            .Map(dest => dest.LastModifiedTime, src => src.LastModifiedTime);
     }
 }

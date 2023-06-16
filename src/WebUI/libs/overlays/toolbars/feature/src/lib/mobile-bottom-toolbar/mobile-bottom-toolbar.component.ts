@@ -94,8 +94,9 @@ export class MobileBottomToolbarComponent {
 
 	// protected readonly setMode = setMode
 
-	toggleMobileSideUi() {
-		this._uiStore.dispatch.toggleSideUiMobileMenu()
+	toggleSideUiNav() {
+		// this._uiStore.dispatch.toggleSideUiMobileMenu()
+		this._uiStore.dispatch.toggleSideUiNav()
 	}
 
 	setStringColor(color: StringColor) {

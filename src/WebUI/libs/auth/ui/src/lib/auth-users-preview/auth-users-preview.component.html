@@ -1,0 +1,10 @@
+<div class="flex -space-x-4 sm:mb-0">
+	<auth-web-user-avatar *ngFor="let user of recentUsers" [avatarSize]="32" [user]="user" />
+	<button
+		*ngIf="recentUsers.length > 4"
+		class="flex justify-center z-10 items-center w-8 h-8 text-xs font-medium text-white bg-gray-700 rounded-full hover:bg-gray-600 dark:border-gray-800"
+		type="button"
+	>
+		+{{ recentUsers.length - 4 }}
+	</button>
+</div>

@@ -6,9 +6,10 @@
 ></div>
 
 <aside
+	*ngIf="sideUiMobileMenuOpen()"
 	[sideUiMobileMenu]="sideUiMobileMenuOpen()"
 	aria-label="Sidebar"
-	class="flex z-50 fixed top-0 left-0 h-full transition-transform -translate-x-full sm:translate-x-0"
+	class="flex z-50 fixed top-0 left-0 w-16 h-full transition-transform -translate-x-full sm:translate-x-0"
 	id="sidebar-double"
 >
 	<ng-container *ngIf="user(); then userContent; else noUserContent" />
@@ -112,7 +113,7 @@
 			</ul>
 		</div>
 
-		<ng-container *ngIf="currentViewComponent() && sideUiInjector">
+		<ng-container *ngIf="sideUiMobileMenuOpen() && currentViewComponent() && sideUiInjector">
 			<ng-container *ngComponentOutlet="currentViewComponent(); injector: sideUiInjector" />
 		</ng-container>
 	</ng-template>

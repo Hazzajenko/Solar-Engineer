@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store'
 import { AppUserModel } from '@shared/data-access/models'
 import { createRootServiceInjector } from '@shared/utils'
 
-export function injectGetCurrentUserFactory(): Signal<AppUserModel | undefined> {
+export function injectAppUser(): Signal<AppUserModel | undefined> {
 	return getCurrentUserFactoryInjector()
 }
 

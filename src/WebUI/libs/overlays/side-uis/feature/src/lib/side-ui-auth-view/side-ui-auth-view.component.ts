@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, inject, Injector } from '@angular/core'
 import { NgIf, NgOptimizedImage } from '@angular/common'
 import { goRightWithConfig } from '@shared/animations'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
@@ -7,6 +7,12 @@ import { injectAuthStore } from '@auth/data-access'
 import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 import { SideUiBaseComponent } from '../side-ui-base/side-ui-base.component'
 import { AuthSignOutButtonComponent } from '@auth/ui'
+import { StandaloneDatePipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
+import { getTimeDifferenceFromNow } from '@shared/utils'
+import {
+	sideUiInjectionToken,
+	SideUiNavBarView,
+} from '../side-ui-nav-bar/side-ui-nav-bar.component'
 
 @Component({
 	selector: 'side-ui-auth-view',
@@ -20,6 +26,8 @@ import { AuthSignOutButtonComponent } from '@auth/ui'
 		NgOptimizedImage,
 		SideUiBaseComponent,
 		AuthSignOutButtonComponent,
+		StandaloneDatePipe,
+		TimeDifferenceFromNowPipe,
 	],
 	hostDirectives: [MouseOverRenderDirective],
 	styles: [],
@@ -29,7 +37,9 @@ export class SideUiAuthViewComponent {
 	private _uiStore = injectUiStore()
 	user = this._auth.select.user
 
-	// @Input() width = 60
+	sideUiView = inject(Injector).get(sideUiInjectionToken) as SideUiNavBarView
+
+	protected readonly getTimeDifferenceFromNow = getTimeDifferenceFromNow
 
 	openSignInDialog() {
 		this._uiStore.dispatch.openDialog({

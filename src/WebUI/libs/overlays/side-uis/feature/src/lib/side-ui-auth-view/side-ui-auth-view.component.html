@@ -1,10 +1,4 @@
-<!--<div
-	class="overflow-y-auto w-52 py-4 px-3 h-full bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
->-->
-<!--<div
-	class="overflow-y-auto py-4 px-3 h-full w-60 bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
->-->
-<side-ui-base>
+<side-ui-base [view]="sideUiView">
 	<div
 		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
 	>
@@ -25,100 +19,26 @@
 			<a href="#">{{ user.displayName }}</a>
 		</h3>
 		<p class="font-light text-gray-500 dark:text-gray-400">{{ user.userName }}</p>
+		<div class="justify-start text-left">
+			<p
+				class="inline-flex text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-xs"
+			>
+				Member for {{ user.createdTime | timeDifferenceFromNow : "medium" }}
+			</p>
+			<p
+				class="inline-flex text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-xs"
+			>
+				Registered at {{ user.createdTime | standaloneDate : "medium" }}
+			</p>
+		</div>
+
 		<auth-sign-out-button />
-		<!--		<a
-					class="inline-flex items-center justify-center w-full py-2.5 px-5 my-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-					href="#"
-				>
-					<svg
-						aria-hidden="true"
-						class="mr-1 w-5 h-5"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-						></path>
-					</svg>
-					Logout
-				</a>-->
-		<ul class="flex justify-center mb-4 space-x-1">
-			<li>
-				<a
-					class="inline-flex text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
-					href="#"
-				>
-					<svg
-						aria-hidden="true"
-						class="w-6 h-6"
-						fill="currentColor"
-						viewBox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-						></path>
-					</svg>
-				</a>
-			</li>
-			<li>
-				<a
-					class="inline-flex text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
-					href="#"
-				>
-					<svg
-						aria-hidden="true"
-						class="w-6 h-6"
-						fill="currentColor"
-						viewBox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
-						></path>
-					</svg>
-				</a>
-			</li>
-			<li>
-				<a
-					class="inline-flex text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
-					href="#"
-				>
-					<svg
-						aria-hidden="true"
-						class="w-6 h-6"
-						fill="currentColor"
-						viewBox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							clip-rule="evenodd"
-							d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-							fill-rule="evenodd"
-						></path>
-					</svg>
-				</a>
-			</li>
-		</ul>
 	</div>
 	<ng-template #notLoggedIn>
 		<div class="text-center text-gray-500 dark:text-gray-400">
-			<!--			<img
-							alt="demo-account-image"
-							class="mx-auto mb-4 w-20 h-20 rounded-full"
-							height="80"
-							ngSrc="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.hiclipart.com%2Ffree-transparent-background-png-clipart-dpjax&psig=AOvVaw115ZrkINnhmJgBM0sdptWa&ust=1686053002804000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCNDxvoSLrP8CFQAAAAAdAAAAABAF"
-							width="80"
-						/>-->
 			<h3 class="font-medium tracking-tight text-gray-900 dark:text-white">
 				<a href="#">Demo Account</a>
 			</h3>
-			<!--			<p class="font-light text-gray-500 dark:text-gray-400">Demo Account</p>-->
 			<p class="mt-1 text-sm text-gray-500">
 				To create and save projects get started by signing in.
 			</p>
@@ -131,27 +51,6 @@
 					Sign in
 				</button>
 			</div>
-			<!--			<a
-							class="inline-flex items-center justify-center w-full py-2.5 px-5 my-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-							href="#"
-						>
-							<svg
-								aria-hidden="true"
-								class="mr-1 w-5 h-5"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path
-									d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-								></path>
-							</svg>
-							Sign up or Sign In
-						</a>-->
 		</div>
 	</ng-template>
 	<!--</div>-->

@@ -11,7 +11,7 @@ height: mobileToolbarHeight()
 	@goTop
 	[currentContextMenuDiv]="currentContextMenuDiv()"
 	appMobileBottomToolbar
-	class="flex overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 rounded-lg z-40 absolute bottom-8 left-1/2 -translate-x-1/2"
+	class="flex overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 rounded-lg z-30 absolute bottom-8 left-1/2 -translate-x-1/2"
 	id="mobile-toolbar"
 >
 	<ul
@@ -131,7 +131,7 @@ height: mobileToolbarHeight()
 		<div class="flex items-end justify-between p-2 flex-row space-y-0 space-x-4" id="button-group">
 			<div class="flex items-center space-x-1">
 				<button
-					(touchstart)="toggleMobileSideUi()"
+					(touchstart)="toggleSideUiNav()"
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 					menu-button-for="main-context-menu"
 					type="button"

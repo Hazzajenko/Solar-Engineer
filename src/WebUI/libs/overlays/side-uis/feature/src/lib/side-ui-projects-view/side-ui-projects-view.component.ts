@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core'
+import {
+	ChangeDetectionStrategy,
+	Component,
+	computed,
+	inject,
+	Injector,
+	signal,
+} from '@angular/core'
 import {
 	NgClass,
 	NgForOf,
@@ -29,13 +36,24 @@ import { ContextMenuModule } from 'primeng/contextmenu'
 import { createSelector } from '@ngrx/store'
 import { Dictionary } from '@ngrx/entity'
 import { WebUserModel } from '@auth/shared'
-import { getTimeDifferenceFromNow, pluralize, selectSignalFromStore } from '@shared/utils'
+import {
+	getTimeDifferenceFromNow,
+	pluralize,
+	PluralizePipe,
+	selectSignalFromStore,
+} from '@shared/utils'
 import { AccordionModule } from 'primeng/accordion'
 import { LetDirective } from '@ngrx/component'
 import { heightInOutWithConfig } from '@shared/animations'
-import { AuthWebUserAvatarComponent } from '@auth/ui'
+import { AuthUsersPreviewComponent, AuthWebUserAvatarComponent } from '@auth/ui'
 import { SideUiBaseComponent } from '../side-ui-base/side-ui-base.component'
 import { DefaultHoverEffectsDirective } from '@shared/directives'
+import { TAILWIND_COLOUR_500_VALUES } from '@shared/data-access/models'
+import {
+	sideUiInjectionToken,
+	SideUiNavBarView,
+} from '../side-ui-nav-bar/side-ui-nav-bar.component'
+import { FilterProjectMembersByOnlinePipe, GetProjectByIdPipe } from '@entities/utils'
 
 export const selectAllWebProjects = createSelector(
 	selectAllProjects,
@@ -92,6 +110,10 @@ export const selectWebProjectByIdByClickMenu = (props: { projectId: string }) =>
 		SideUiBaseComponent,
 		InputSvgComponent,
 		DefaultHoverEffectsDirective,
+		GetProjectByIdPipe,
+		AuthUsersPreviewComponent,
+		PluralizePipe,
+		FilterProjectMembersByOnlinePipe,
 	],
 	templateUrl: './side-ui-projects-view.component.html',
 	styles: [],
@@ -107,6 +129,8 @@ export class SideUiProjectsViewComponent {
 	selectedProject = this._projects.select.selectedProject
 	openedProjects = signal<Map<ProjectId, boolean>>(new Map())
 
+	sideUiView = inject(Injector).get(sideUiInjectionToken) as SideUiNavBarView
+
 	vm = computed(() => {
 		const projects = this.projects().sort(
 			(a, b) => new Date(b.lastModifiedTime).getTime() - new Date(a.lastModifiedTime).getTime(),
@@ -119,6 +143,7 @@ export class SideUiProjectsViewComponent {
 	})
 	protected readonly pluralize = pluralize
 	protected readonly getTimeDifferenceFromNow = getTimeDifferenceFromNow
+	protected readonly TAILWIND_COLOUR_500_VALUES = TAILWIND_COLOUR_500_VALUES
 
 	selectProject(project: ProjectModel) {
 		if (this.selectedProject()?.id === project.id) return

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core'
+import {
+	ChangeDetectionStrategy,
+	Component,
+	computed,
+	effect,
+	inject,
+	Injector,
+	signal,
+} from '@angular/core'
 import { NgClass, NgForOf, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { LetDirective } from '@ngrx/component'
@@ -12,6 +20,10 @@ import { injectEntityStore, injectProjectsStore } from '@entities/data-access'
 import { groupBy } from '@shared/utils'
 import { injectAuthStore } from '@auth/data-access'
 import { SideUiBaseComponent } from '../side-ui-base/side-ui-base.component'
+import {
+	sideUiInjectionToken,
+	SideUiNavBarView,
+} from '../side-ui-nav-bar/side-ui-nav-bar.component'
 
 @Component({
 	selector: 'side-ui-data-view',
@@ -80,6 +92,7 @@ export class SideUiDataViewComponent {
 		})
 	})
 	private _openedStrings = signal<Map<StringId, boolean>>(new Map().set(UNDEFINED_STRING_ID, true))
+	sideUiView = inject(Injector).get(sideUiInjectionToken) as SideUiNavBarView
 	vm = computed(() => {
 		const user = this._authStore.select.user()
 		const project = this._projectsStore.select.selectedProject()

@@ -2,7 +2,7 @@
 	*ngrxLet="vm() as vm"
 	class="overflow-y-auto py-4 px-3 h-full w-60 bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
 >-->
-<side-ui-base *ngrxLet="vm() as vm">
+<side-ui-base *ngrxLet="vm() as vm" [view]="sideUiView">
 	<div
 		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
 	>
@@ -91,7 +91,7 @@
 								</div>
 							</a>
 						</div>
-						<div class="flex justify-end absolute right-0">
+						<div class="justify-end absolute right-0 hidden md:flex">
 							<div class="flex-none">
 								<button
 									(click)="toggleProjectView(project)"
@@ -120,64 +120,64 @@
 								</button>
 							</div>
 						</div>
+						<div class="justify-end absolute right-0 flex md:hidden">
+							<div class="flex-none">
+								<button
+									(click)="toggleProjectView(project)"
+									class="flex items-center pr-2 justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 dark:hover:bg-gray-800"
+									enableDefaultHoverEffects
+									type="button"
+								>
+									<ng-container
+										*ngIf="
+											openedProjects().get(project.id);
+											then contentDoubleOpen;
+											else contentDoubleClosed
+										"
+									/>
+								</button>
+							</div>
+						</div>
 					</div>
-					<ul
-						*ngIf="openedProjects().get(project.id)"
-						@heightInOut
-						class="divide-y divide-gray-300 overflow-y-auto"
-						role="list"
-					>
-						<!--		<div
-									*ngIf="project.members.length > 0"
-									class="py-1 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-								>
-									&lt;!&ndash;							<span&ndash;&gt;
-									&lt;!&ndash;								*ngFor="let member of project.members"&ndash;&gt;
-									&lt;!&ndash;								class="group hover:bg-gray-100 flex items-center justify-between"&ndash;&gt;
-									&lt;!&ndash;							>&ndash;&gt;
-									&lt;!&ndash;							</span>&ndash;&gt;
-									<label
-										class="flex items-center justify-between w-full py-2.5 px-4 text-sm font-medium text-gray-900 dark:text-white"
+					<ng-container *ngIf="openedProjects().get(project.id)">
+						<div class="relative p-1 dark:bg-gray-800 sm:p-5">
+							<!-- Modal header -->
+							<div class="flex justify-between items-center mb-4 sm:mb-5 dark:border-gray-600">
+								<div class="flex flex-col justify-start">
+									<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+										{{ project.name }}
+									</h3>
+									<ng-container *ngrxLet="project | filterProjectMembersByOnline as onlineMembers"
+										><p
+											*ngIf="onlineMembers.length > 0"
+											class="text-sm text-gray-500 dark:text-gray-400"
+										>
+											{{ onlineMembers.length }}
+											{{ "member" | pluralize : project.members.length }} online
+										</p>
+										<p
+											*ngIf="onlineMembers.length === 0"
+											class="text-sm text-gray-500 dark:text-gray-400"
+										>
+											No members online
+										</p></ng-container
 									>
-										<span class="text-sm font-medium text-gray-900 dark:text-white"
-											>Project Members</span
-										>
-										<span class="text-xs font-normal text-gray-500 dark:text-gray-400">
-											{{ project.members.length }} {{ pluralize("member", project.members.length) }}
-											&lt;!&ndash;										{{ friends().length }} friends&ndash;&gt;
-										</span>
-									</label>
-								</div>-->
-						<ul
-							class="py-1 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-						>
-							<li
-								*ngFor="let member of project.members"
-								class="group hover:bg-gray-100 flex items-center justify-between"
-							>
-								<div
-									*ngrxLet="user()?.id === member.id as memberIsUser"
-									class="group flex items-center justify-center"
-								>
-									<div class="flex items-center justify-end ml-4">
-										<auth-web-user-avatar [avatarSize]="24" [user]="member" />
-									</div>
-									<div class="flex flex-col items-center justify-center">
-										<a
-											class="flex items-center px-4 py-2 text-sm text-gray-700 group-hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white"
-											role="menuitem"
-											tabindex="-1"
-										>
-											<span *ngIf="memberIsUser" class="text-xs font-semibold mr-1"> (You) </span>
-											<span class="text-xs font-semibold">
-												{{ member.displayName | truncate : 10 }}
-											</span>
-										</a>
-									</div>
 								</div>
-							</li>
-						</ul>
-					</ul>
+								<button
+									class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+									data-modal-toggle="updateEventModal"
+									type="button"
+								>
+									<svg-input inputClass="h-5 w-5" svgName="SvgCog6Tooth" />
+									<span class="sr-only">Edit Project</span>
+								</button>
+							</div>
+
+							<ng-container
+								*ngTemplateOutlet="updateProjectForm; context: { projectId: project.id }"
+							/>
+						</div>
+					</ng-container>
 				</li>
 			</ul>
 		</ng-container>
@@ -251,4 +251,88 @@
 <ng-template #contentOpen>
 	<svg-input inputClass="h-5 w-5" svgName="SvgChevronUp" />
 	<!--	<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="arrows/chevron-up" />-->
+</ng-template>
+
+<ng-template #contentDoubleClosed>
+	<svg-input inputClass="h-5 w-5" svgName="SvgChevronDoubleDown" />
+</ng-template>
+<ng-template #contentDoubleOpen>
+	<svg-input inputClass="h-5 w-5" svgName="SvgChevronDoubleUp" />
+</ng-template>
+
+<ng-template #updateProjectForm let-projectId="projectId">
+	<ng-container *ngIf="projects() | getProjectById : projectId as project">
+		<form action="#">
+			<div class="mb-4 sm:mb-6">
+				<div class="space-y-4">
+					<div>
+						<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="title"
+							>Project Name</label
+						>
+						<input
+							[value]="project.name"
+							class="bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+							id="title"
+							name="title"
+							required
+							type="text"
+						/>
+					</div>
+
+					<div>
+						<div class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+							Colour
+						</div>
+						<div class="grid grid-cols-5 gap-4 items-center">
+							<button
+								*ngFor="let colour of TAILWIND_COLOUR_500_VALUES"
+								[ngStyle]="{
+									'background-color': colour,
+									'border-color': colour
+								}"
+								class="w-6 h-6 rounded-sm"
+								type="button"
+							></button>
+						</div>
+					</div>
+					<div>
+						<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+							>Members</label
+						>
+						<ul @heightInOut class="divide-y divide-gray-300 overflow-y-auto" role="list">
+							<ul
+								class="py-1 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+							>
+								<li
+									*ngFor="let member of project.members"
+									class="group hover:bg-gray-100 flex items-center justify-between"
+								>
+									<div
+										*ngrxLet="user()?.id === member.id as memberIsUser"
+										class="group flex items-center justify-center"
+									>
+										<div class="flex items-center justify-end ml-4">
+											<auth-web-user-avatar [avatarSize]="24" [user]="member" />
+										</div>
+										<div class="flex flex-col items-center justify-center">
+											<a
+												class="flex items-center px-4 py-2 text-sm text-gray-700 group-hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white"
+												role="menuitem"
+												tabindex="-1"
+											>
+												<span *ngIf="memberIsUser" class="text-xs font-semibold mr-1"> (You) </span>
+												<span class="text-xs font-semibold">
+													{{ member.displayName | truncate : 10 }}
+												</span>
+											</a>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</form>
+	</ng-container>
 </ng-template>

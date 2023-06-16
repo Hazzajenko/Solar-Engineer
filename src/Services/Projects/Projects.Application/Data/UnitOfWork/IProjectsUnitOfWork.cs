@@ -17,6 +17,7 @@ public interface IProjectsUnitOfWork : IUnitOfWorkFactory
     IPanelLinksRepository PanelLinksRepository { get; }
     IPanelConfigsRepository PanelConfigsRepository { get; }
     IStringsRepository StringsRepository { get; }
+    // new Task<bool> SaveChangesAsync();
 
     /*IAppUserProjectsRepository AppUserProjectsRepository { get; }
     IAppUserProjectsRepository AppUserProjectsRepository { get; }
