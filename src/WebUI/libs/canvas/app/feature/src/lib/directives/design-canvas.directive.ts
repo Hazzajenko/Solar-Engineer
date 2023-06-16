@@ -42,7 +42,7 @@ import { injectSelectedStore, SelectedService } from '@canvas/selected/data-acce
 import { EntityFactoryService, injectEntityStore, PanelLinksService } from '@entities/data-access'
 import { ViewPositioningService } from '@canvas/view-positioning/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
-import { CONTEXT_MENU_COMPONENT, UiStoreService } from '@overlays/ui-store/data-access'
+import { CONTEXT_MENU_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 import { KeyEventsService } from '@canvas/keys/data-access'
 import {
 	changeCanvasCursor,
@@ -99,7 +99,7 @@ export class DesignCanvasDirective implements OnInit {
 	private _view = inject(ViewPositioningService)
 	private _render = inject(RenderService)
 	private _entities = injectEntityStore()
-	private _uiStore = inject(UiStoreService)
+	private _uiStore = injectUiStore()
 	// private _entities = injectEntityStore()
 	private _selected = inject(SelectedService)
 	private _nearby = inject(NearbyService)
@@ -503,7 +503,7 @@ export class DesignCanvasDirective implements OnInit {
 
 	mouseClickHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (isWheelButton(event)) return
-		if (this._uiStore.contextMenu.contextMenuOpen) {
+		if (this._uiStore.select.currentContextMenu()) {
 			// this._uiStore.dispatch.closeContextMenu()
 			return
 		}
@@ -698,7 +698,7 @@ export class DesignCanvasDirective implements OnInit {
 	 */
 
 	wheelScrollHandler(event: WheelEvent) {
-		if (this._uiStore.contextMenu.contextMenuOpen) {
+		if (this._uiStore.select.currentContextMenu()) {
 			this._uiStore.dispatch.closeContextMenu()
 			return
 		}
@@ -1061,6 +1061,10 @@ export class DesignCanvasDirective implements OnInit {
 					this.ctx.canvas.height = window.innerHeight
 					this._renderer.setStyle(this.canvas, 'width', '100%')
 					this._renderer.setStyle(this.canvas, 'height', '100%')
+					this._uiStore.dispatch.setScreenSize({
+						width: window.innerWidth,
+						height: window.innerHeight,
+					})
 					this._render.renderCanvasApp()
 				})
 				this._renderer.listen(window, EVENT_TYPE.KEY_UP, (event: KeyboardEvent) => {

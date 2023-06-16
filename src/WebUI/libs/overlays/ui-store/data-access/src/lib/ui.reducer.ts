@@ -2,6 +2,7 @@ import { Action, createReducer, on } from '@ngrx/store'
 import { UiActions } from './ui.actions'
 import { ContextMenuInput } from './context-menu'
 import { DialogInput } from './dialog-inputs'
+import { Size } from '@shared/data-access/models'
 
 export const UI_FEATURE_KEY = 'ui'
 
@@ -12,6 +13,7 @@ export type UiState = {
 	currentDialog: DialogInput | undefined
 	sideUiNavOpen: boolean
 	sideUiMobileMenuOpen: boolean
+	screenSize: Size
 }
 
 export const initialUiState: UiState = {
@@ -21,6 +23,10 @@ export const initialUiState: UiState = {
 	currentDialog: undefined,
 	sideUiNavOpen: true,
 	sideUiMobileMenuOpen: false,
+	screenSize: {
+		width: 0,
+		height: 0,
+	},
 }
 
 const reducer = createReducer(
@@ -52,6 +58,10 @@ const reducer = createReducer(
 	on(UiActions.toggleSideUiMobileMenu, (state) => ({
 		...state,
 		sideUiMobileMenuOpen: !state.sideUiMobileMenuOpen,
+	})),
+	on(UiActions.setScreenSize, (state, { screenSize }) => ({
+		...state,
+		screenSize,
 	})),
 	on(UiActions.clearUiState, () => initialUiState),
 )

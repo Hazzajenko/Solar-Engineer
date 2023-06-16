@@ -1,4 +1,4 @@
-import { createFeature, provideState } from '@ngrx/store'
+import { createFeature, createSelector, provideState } from '@ngrx/store'
 import { makeEnvironmentProviders } from '@angular/core'
 import { UI_FEATURE_KEY, uiReducer } from './ui.reducer'
 
@@ -11,12 +11,15 @@ export const uiFeature = createFeature({
 		selectCurrentDialog,
 		selectSideUiNavOpen,
 		selectSideUiMobileMenuOpen,
+		selectScreenSize,
 	}) => ({
 		selectUiState,
 		selectCurrentContextMenu,
 		selectCurrentDialog,
 		selectSideUiNavOpen,
 		selectSideUiMobileMenuOpen,
+		selectScreenSize,
+		selectIsMobile: createSelector(selectScreenSize, (screenSize) => screenSize?.width < 768),
 	}),
 })
 

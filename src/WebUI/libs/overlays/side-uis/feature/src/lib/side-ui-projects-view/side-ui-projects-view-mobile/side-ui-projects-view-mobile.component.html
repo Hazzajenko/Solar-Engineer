@@ -1,0 +1,139 @@
+<ng-container *ngIf="projects">
+	<div
+		(@fadeInFadeOut.done)="onHideProjectsListAnimationDone($event)"
+		*ngIf="!openedProject() && !routingToProjectView()"
+		@fadeInFadeOut
+	>
+		<ul class="pl-2 space-y-4">
+			<li>
+				<a
+					(click)="createProject()"
+					class="flex items-center font-medium text-gray-700 text-sm rounded-lg dark:text-gray-200 group"
+				>
+					<svg
+						class="w-4 h-4 rounded border border-gray-200 dark:border-gray-400"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							clip-rule="evenodd"
+							d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+							fill-rule="evenodd"
+						></path>
+					</svg>
+					<span class="ml-3 dark:text-gray-400 hover:underline">Add new project</span>
+				</a>
+			</li>
+
+			<div *ngIf="user() && selectedProject()" class="mb-3">
+				<p class="mt-1 mb-2 text-sm text-gray-500">Selected Project:</p>
+				<div
+					*ngIf="selectedProject() as selectedProject"
+					[ngStyle]="{
+						'border-left-color': selectedProject.colour
+					}"
+					class="flex items-center py-1 justify-between bg-primary-50 text-primary-700 dark:bg-primary-700 dark:text-primary-100"
+					style="border-left-width: 4px; border-left-style: solid; margin-left: -4px"
+				>
+					<div class="flex justify-start">
+						<a
+							class="flex items-center text-base rounded-lg transition duration-75 group font-medium text-gray-900 dark:text-gray-200"
+						>
+							<span
+								[ngStyle]="{
+									'background-color': selectedProject.colour,
+									'border-color': selectedProject.colour
+								}"
+								class="w-4 h-4 rounded ml-2"
+							></span>
+							<span class="ml-3 capitalize text-sm text-gray-900">{{ selectedProject.name }}</span>
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div>
+				<li *ngFor="let project of projects">
+					<div
+						*ngrxLet="selectedProject()?.id === project.id as isSelected"
+						[ngClass]="{
+							'bg-primary-50 text-primary-700 dark:bg-primary-700 dark:text-primary-100':
+								isSelected,
+							'text-gray-900 dark:text-gray-200': !isSelected
+						}"
+						[ngStyle]="{
+							'border-left-color': isSelected ? project.colour : 'transparent',
+							'border-left-width': isSelected ? '4px' : '0px',
+							'border-left-style': isSelected ? 'solid' : 'none',
+							'margin-left': isSelected ? '-4px' : '0px'
+						}"
+						class="flex items-center py-1 justify-between relative"
+					>
+						<div class="flex justify-start">
+							<app-project-list-item
+								(touchstart)="selectProject(project)"
+								[isSelected]="isSelected"
+								[project]="project"
+							/>
+						</div>
+						<div class="justify-end absolute right-0 flex">
+							<div class="flex-none">
+								<button
+									(click)="toggleProjectView(project)"
+									class="flex items-center pr-2 justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 dark:hover:bg-gray-800"
+									enableDefaultHoverEffects
+									type="button"
+								>
+									<svg-input inputClass="h-5 w-5" svgName="SvgChevronDoubleRight" />
+								</button>
+							</div>
+						</div>
+					</div>
+				</li>
+			</div>
+		</ul>
+	</div>
+</ng-container>
+<ng-container *ngIf="openedProject() && routingToProjectView()">
+	<div
+		(@inRightLeaveRight.done)="startRouteToProjectsList($event)"
+		*ngIf="openedProject() as project"
+		@inRightLeaveRight
+		class="p-1 dark:bg-gray-800 sm:p-5 md:hidden overflow-hidden"
+	>
+		<button
+			(click)="goBack()"
+			class="inline-flex items-center gap-x-1.5 rounded-md mb-2 px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+			type="button"
+		>
+			<svg-input inputClass="h-5 w-5" svgName="SvgChevronDoubleLeft" />
+			Go back
+		</button>
+		<div class="flex justify-between items-center mb-4 sm:mb-5 dark:border-gray-600">
+			<div class="flex flex-col justify-start">
+				<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+					{{ project.name }}
+				</h3>
+				<ng-container *ngrxLet="project | filterProjectMembersByOnline as onlineMembers"
+					><p *ngIf="onlineMembers.length > 0" class="text-sm text-gray-500 dark:text-gray-400">
+						{{ onlineMembers.length }}
+						{{ "member" | pluralize : onlineMembers.length }} online
+					</p>
+					<p *ngIf="onlineMembers.length === 0" class="text-sm text-gray-500 dark:text-gray-400">
+						No members online
+					</p></ng-container
+				>
+			</div>
+			<button
+				class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+				data-modal-toggle="updateEventModal"
+				type="button"
+			>
+				<svg-input inputClass="h-5 w-5" svgName="SvgCog6Tooth" />
+				<span class="sr-only">Edit Project</span>
+			</button>
+		</div>
+		<app-project-details-view [project]="project" />
+	</div>
+</ng-container>

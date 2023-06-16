@@ -1,4 +1,4 @@
-import { PanelId } from '../panels'
+import { PanelId, PanelModel } from '../panels'
 import { BackendDataModel } from '../backend-data/backend-data.model'
 import { ENTITY_TYPE } from '../common'
 
@@ -17,10 +17,13 @@ export type StringId = string & {
 	readonly _type: 'stringId'
 }
 
+export type StringWithPanels = {
+	string: StringModel
+	panels: PanelModel[]
+}
+
 export const UNDEFINED_STRING_ID = 'UNDEFINED_STRING_ID' as StringId
 export const UNDEFINED_STRING_NAME = 'UNDEFINED_STRING' as StringModel['name']
-// export
-// export const UNDEFINED_STRING_ID = 'undefinedStringId' as StringId
 
 // export const isStringId = (id: string): id is StringId => {
 // 	return id === UndefinedStringId || id.startsWith('stringId')

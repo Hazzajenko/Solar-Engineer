@@ -183,15 +183,38 @@
 									</div>
 								</div>
 							</li>
-							<ul
+							<div
 								*ngIf="vm.openedStrings.get(UndefinedStringId)"
 								class="divide-y divide-gray-300 overflow-y-auto max-h-80"
-								role="list"
 							>
-								<ng-container *ngFor="let panel of stringIdGroup.panels">
-									<ng-container *ngTemplateOutlet="panelItem; context: { panel }"></ng-container>
-								</ng-container>
-							</ul>
+								<!--								<cdk-virtual-scroll-viewport [itemSize]="stringIdGroup.panels.length">
+																	<li
+																		(click)="selectPanel(panel.id)"
+																		(contextmenu)="openPanelContextMenu($event, panel.id)"
+																		*cdkVirtualFor="let panel of stringIdGroup.panels"
+																		[ngClass]="{
+																			'bg-gray-100 hover:bg-gray-300':
+																				panel.id !== vm.singleSelectedPanelId ||
+																				!vm.multipleSelectedPanelIds.includes(panel.id),
+																			'bg-indigo-100 hover:bg-indigo-300':
+																				panel.id === vm.singleSelectedPanelId ||
+																				vm.multipleSelectedPanelIds.includes(panel.id)
+																		}"
+																		class="min-w-0 pl-1"
+																	>
+																		<p class="text-sm text-gray-700 truncate">ID: {{ panel.id | truncate : 20 }}</p>
+																		<p class="mt-1 truncate text-xs text-gray-500">
+																			X: {{ panel.location.x }} Y: {{ panel.location.y }}
+																		</p>
+																		<p class="truncate text-xs text-gray-500">
+																			Angle {{ panel.angle | radiansToDegrees }}
+																		</p>
+																	</li>
+																</cdk-virtual-scroll-viewport>-->
+								<!--						<ng-container *ngFor="let panel of stringIdGroup.panels">
+															<ng-container *ngTemplateOutlet="panelItem; context: { panel }"></ng-container>
+														</ng-container>-->
+							</div>
 						</ng-template>
 					</ng-container>
 				</ng-template>

@@ -1,6 +1,7 @@
 import { MemoizedSelector, Store } from '@ngrx/store'
 import { ContextMenuInput, UiActions, uiFeature } from '@overlays/ui-store/data-access'
 import { createRootServiceInjector, GetActionParametersByActionKeyDeep } from '@shared/utils'
+import { Size } from '@shared/data-access/models'
 
 export type UiStoreSelectors = Omit<typeof uiFeature, 'name' | 'reducer'>
 
@@ -109,6 +110,8 @@ function uiStoreFactory(store: Store) {
 		currentContextMenu: store.selectSignal(feature.selectCurrentContextMenu),
 		sideUiNavOpen: store.selectSignal(feature.selectSideUiNavOpen),
 		sideUiMobileMenuOpen: store.selectSignal(feature.selectSideUiMobileMenuOpen),
+		screenSize: store.selectSignal(feature.selectScreenSize),
+		isMobile: store.selectSignal(feature.selectIsMobile),
 	}
 
 	const dispatch = {
@@ -120,6 +123,7 @@ function uiStoreFactory(store: Store) {
 		closeContextMenu: () => store.dispatch(UiActions.closeContextMenu()),
 		toggleSideUiNav: () => store.dispatch(UiActions.toggleSideUiNav()),
 		toggleSideUiMobileMenu: () => store.dispatch(UiActions.toggleSideUiMobileMenu()),
+		setScreenSize: (screenSize: Size) => store.dispatch(UiActions.setScreenSize({ screenSize })),
 		clearUiState: () => store.dispatch(UiActions.clearUiState()),
 	}
 

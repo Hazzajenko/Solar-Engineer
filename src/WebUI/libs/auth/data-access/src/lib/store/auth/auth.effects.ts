@@ -6,6 +6,7 @@ import { catchError, map, of, switchMap, tap } from 'rxjs'
 import { Location } from '@angular/common'
 import { UsersSignalrService } from '../../signalr'
 import { DeviceDetectorService } from 'ngx-device-detector'
+import { UiActions } from '@overlays/ui-store/data-access'
 
 export const getRedirectForGoogleSignIn$ = createEffect(
 	(actions$ = inject(Actions)) => {
@@ -69,9 +70,17 @@ export const signInSuccess$ = createEffect(
 				const deviceInfo = { device, deviceType, os }
 				usersSignalr.init(token, deviceInfo)
 			}),
+			map(() => {
+				return UiActions.setScreenSize({
+					screenSize: {
+						width: window.innerWidth,
+						height: window.innerHeight,
+					},
+				})
+			}),
 		)
 	},
-	{ functional: true, dispatch: false },
+	{ functional: true },
 )
 
 export const backToPreviousPage$ = createEffect(

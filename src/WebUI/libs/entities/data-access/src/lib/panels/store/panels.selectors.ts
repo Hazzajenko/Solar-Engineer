@@ -2,6 +2,7 @@ import { PANELS_FEATURE_KEY, panelsAdapter, PanelsState } from './panels.reducer
 import { PanelModel } from '@entities/shared'
 import { Dictionary } from '@ngrx/entity'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
+import { groupBy } from '@shared/utils'
 
 export const selectPanelsState = createFeatureSelector<PanelsState>(PANELS_FEATURE_KEY)
 
@@ -27,3 +28,8 @@ export const selectPanelsByIdArray = (props: { ids: string[] }) =>
 	createSelector(selectAllPanels, (panels: PanelModel[]) =>
 		panels.filter((panel) => props.ids.includes(panel.id)),
 	)
+
+export const selectAllPanelsGroupedByStringId = createSelector(
+	selectAllPanels,
+	(panels: PanelModel[]) => groupBy(panels, 'stringId'),
+)

@@ -1,7 +1,3 @@
-<!--<div
-	*ngrxLet="vm() as vm"
-	class="overflow-y-auto py-4 px-3 h-full w-60 bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
->-->
 <side-ui-base *ngrxLet="vm() as vm" [view]="sideUiView">
 	<div
 		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
@@ -11,182 +7,20 @@
 
 	<ng-container *ngIf="user() as user; then loggedIn; else notLoggedIn" />
 	<ng-template #loggedIn>
-		<ng-container *ngIf="vm.projects.length > 0; else noProjects">
-			<ul class="pl-2 space-y-4">
-				<li>
-					<a
-						(click)="createProject()"
-						class="flex items-center font-medium text-gray-700 text-sm rounded-lg transition duration-75 dark:text-gray-200 group"
-					>
-						<svg
-							class="w-4 h-4 rounded border border-gray-200 dark:border-gray-400"
-							fill="currentColor"
-							viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								clip-rule="evenodd"
-								d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-								fill-rule="evenodd"
-							></path>
-						</svg>
-						<span class="ml-3 dark:text-gray-400 hover:underline">Add new project</span>
-					</a>
-				</li>
-				<li *ngFor="let project of vm.projects">
-					<div
-						[ngClass]="{
-							'bg-primary-50 text-primary-700 dark:bg-primary-700 dark:text-primary-100':
-								project.id === vm.selectedProject?.id,
-							'text-gray-900 dark:text-gray-200': project.id !== vm.selectedProject?.id
-						}"
-						[ngStyle]="{
-							'border-left-color':
-								project.id === vm.selectedProject?.id ? project.colour : 'transparent',
-							'border-left-width': project.id === vm.selectedProject?.id ? '4px' : '0px',
-							'border-left-style': project.id === vm.selectedProject?.id ? 'solid' : 'none',
-							'margin-left': project.id === vm.selectedProject?.id ? '-4px' : '0px'
-						}"
-						class="flex items-center py-1 justify-between relative"
-					>
-						<!--				<div class="min-w-0 flex">-->
-						<div class="flex justify-start">
-							<a
-								(click)="selectProject(project)"
-								[ngClass]="{
-									'font-medium text-gray-900 dark:text-gray-200':
-										project.id === vm.selectedProject?.id,
-									'font-normal text-gray-500 dark:text-gray-400':
-										project.id !== vm.selectedProject?.id
-								}"
-								class="flex items-center text-base rounded-lg transition duration-75 md:hover:underline dark:text-white group"
-							>
-								<span
-									[ngStyle]="{
-										'background-color': project.colour,
-										'border-color':
-											project.id === vm.selectedProject?.id ? project.colour : 'transparent'
-									}"
-									class="w-4 h-4 rounded ml-2"
-								></span>
-								<div class="flex flex-col justify-center truncate ml-3">
-									<span class="ml-3 capitalize text-sm text-gray-900">{{
-										project.name | truncate : 10
-									}}</span>
-									<span
-										*ngIf="project.members.length > 0"
-										class="ml-3 text-xs text-gray-500 dark:text-gray-400"
-									>
-										{{ project.members.length }} {{ pluralize("member", project.members.length) }}
-									</span>
-									<span
-										*ngIf="project.members.length === 0"
-										class="ml-3 text-xs text-gray-500 dark:text-gray-400"
-									>
-										No members
-									</span>
-									<span class="ml-3 text-xs text-gray-500 dark:text-gray-400">
-										Last update {{ getTimeDifferenceFromNow(project.lastModifiedTime) }} ago
-									</span>
-								</div>
-							</a>
-						</div>
-						<div class="justify-end absolute right-0 hidden md:flex">
-							<div class="flex-none">
-								<button
-									(click)="toggleProjectView(project)"
-									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 dark:hover:bg-gray-800"
-									enableDefaultHoverEffects
-									type="button"
-								>
-									<ng-container
-										*ngIf="openedProjects().get(project.id); then contentOpen; else contentClosed"
-									/>
-								</button>
-							</div>
-							<div class="flex-none">
-								<button
-									(click)="openProjectContextMenu($event, project)"
-									aria-expanded="false"
-									aria-haspopup="true"
-									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 dark:hover:bg-gray-800"
-									enableDefaultHoverEffects
-									id="options-menu-0-button"
-									type="button"
-								>
-									<span class="sr-only">Open options</span>
-									<svg-input class="h-5 w-5" svgName="SvgEllipsisVertical" />
-									<!--									<app-show-svg-no-styles inputClass="h-5 w-5" svgPath="menus/ellipsis-vertical" />-->
-								</button>
-							</div>
-						</div>
-						<div class="justify-end absolute right-0 flex md:hidden">
-							<div class="flex-none">
-								<button
-									(click)="toggleProjectView(project)"
-									class="flex items-center pr-2 justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 dark:hover:bg-gray-800"
-									enableDefaultHoverEffects
-									type="button"
-								>
-									<ng-container
-										*ngIf="
-											openedProjects().get(project.id);
-											then contentDoubleOpen;
-											else contentDoubleClosed
-										"
-									/>
-								</button>
-							</div>
-						</div>
-					</div>
-					<ng-container *ngIf="openedProjects().get(project.id)">
-						<div class="relative p-1 dark:bg-gray-800 sm:p-5">
-							<!-- Modal header -->
-							<div class="flex justify-between items-center mb-4 sm:mb-5 dark:border-gray-600">
-								<div class="flex flex-col justify-start">
-									<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-										{{ project.name }}
-									</h3>
-									<ng-container *ngrxLet="project | filterProjectMembersByOnline as onlineMembers"
-										><p
-											*ngIf="onlineMembers.length > 0"
-											class="text-sm text-gray-500 dark:text-gray-400"
-										>
-											{{ onlineMembers.length }}
-											{{ "member" | pluralize : project.members.length }} online
-										</p>
-										<p
-											*ngIf="onlineMembers.length === 0"
-											class="text-sm text-gray-500 dark:text-gray-400"
-										>
-											No members online
-										</p></ng-container
-									>
-								</div>
-								<button
-									class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-									data-modal-toggle="updateEventModal"
-									type="button"
-								>
-									<svg-input inputClass="h-5 w-5" svgName="SvgCog6Tooth" />
-									<span class="sr-only">Edit Project</span>
-								</button>
-							</div>
-
-							<ng-container
-								*ngTemplateOutlet="updateProjectForm; context: { projectId: project.id }"
-							/>
-						</div>
-					</ng-container>
-				</li>
-			</ul>
-		</ng-container>
+		<ng-container *ngIf="projects().length > 0; then hasProjects; else noProjects" />
+		<ng-template #hasProjects>
+			<side-ui-projects-view-desktop
+				*ngIf="!isMobile()"
+				[projects]="projects()"
+				class="hidden md:block"
+			/>
+			<side-ui-projects-view-mobile *ngIf="isMobile()" [projects]="projects()" class="md:hidden" />
+		</ng-template>
 	</ng-template>
 </side-ui-base>
 
 <ng-template #notLoggedIn>
 	<div class="text-center">
-		<!--		<h3 class="mt-2 font-medium text-gray-900">Not Logged In</h3>-->
 		<h3 class="font-medium tracking-tight text-gray-900 dark:text-white">
 			<a href="#">Demo Account</a>
 		</h3>
@@ -258,6 +92,13 @@
 </ng-template>
 <ng-template #contentDoubleOpen>
 	<svg-input inputClass="h-5 w-5" svgName="SvgChevronDoubleUp" />
+</ng-template>
+
+<ng-template #contentDoubleClosedX>
+	<svg-input inputClass="h-5 w-5" svgName="SvgChevronDoubleRight" />
+</ng-template>
+<ng-template #contentDoubleOpenX>
+	<svg-input inputClass="h-5 w-5" svgName="SvgChevronDoubleLeft" />
 </ng-template>
 
 <ng-template #updateProjectForm let-projectId="projectId">

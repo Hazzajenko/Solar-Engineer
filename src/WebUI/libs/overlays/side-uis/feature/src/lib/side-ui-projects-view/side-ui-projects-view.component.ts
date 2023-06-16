@@ -36,12 +36,7 @@ import { ContextMenuModule } from 'primeng/contextmenu'
 import { createSelector } from '@ngrx/store'
 import { Dictionary } from '@ngrx/entity'
 import { WebUserModel } from '@auth/shared'
-import {
-	getTimeDifferenceFromNow,
-	pluralize,
-	PluralizePipe,
-	selectSignalFromStore,
-} from '@shared/utils'
+import { PluralizePipe, selectSignalFromStore } from '@shared/utils'
 import { AccordionModule } from 'primeng/accordion'
 import { LetDirective } from '@ngrx/component'
 import { heightInOutWithConfig } from '@shared/animations'
@@ -53,7 +48,14 @@ import {
 	sideUiInjectionToken,
 	SideUiNavBarView,
 } from '../side-ui-nav-bar/side-ui-nav-bar.component'
-import { FilterProjectMembersByOnlinePipe, GetProjectByIdPipe } from '@entities/utils'
+import {
+	AssertIsProjectPipe,
+	FilterProjectMembersByOnlinePipe,
+	GetProjectByIdPipe,
+} from '@entities/utils'
+import { ProjectDetailsViewComponent } from './shared/project-details-view/project-details-view.component'
+import { SideUiProjectsViewDesktopComponent } from './side-ui-projects-view-desktop/side-ui-projects-view-desktop.component'
+import { SideUiProjectsViewMobileComponent } from './side-ui-projects-view-mobile/side-ui-projects-view-mobile.component'
 
 export const selectAllWebProjects = createSelector(
 	selectAllProjects,
@@ -114,9 +116,35 @@ export const selectWebProjectByIdByClickMenu = (props: { projectId: string }) =>
 		AuthUsersPreviewComponent,
 		PluralizePipe,
 		FilterProjectMembersByOnlinePipe,
+		ProjectDetailsViewComponent,
+		AssertIsProjectPipe,
+		SideUiProjectsViewDesktopComponent,
+		SideUiProjectsViewMobileComponent,
 	],
 	templateUrl: './side-ui-projects-view.component.html',
-	styles: [],
+	styles: [
+		`
+			/* width */
+			::-webkit-scrollbar {
+				width: 5px;
+			}
+
+			/* Track */
+			::-webkit-scrollbar-track {
+				background: #f1f1f1;
+			}
+
+			/* Handle */
+			::-webkit-scrollbar-thumb {
+				background: #888;
+			}
+
+			/* Handle on hover */
+			::-webkit-scrollbar-thumb:hover {
+				background: #555;
+			}
+		`,
+	],
 	animations: [heightInOutWithConfig(0.1)],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -125,9 +153,12 @@ export class SideUiProjectsViewComponent {
 	private _projects = injectProjectsStore()
 	private _uiStore = injectUiStore()
 	user = this._auth.select.user
+	isMobile = this._uiStore.select.isMobile
+
 	projects = selectSignalFromStore(selectAllWebProjects)
 	selectedProject = this._projects.select.selectedProject
 	openedProjects = signal<Map<ProjectId, boolean>>(new Map())
+	// private _uiStore =
 
 	sideUiView = inject(Injector).get(sideUiInjectionToken) as SideUiNavBarView
 
@@ -141,8 +172,7 @@ export class SideUiProjectsViewComponent {
 			openedProjects: this.openedProjects(),
 		}
 	})
-	protected readonly pluralize = pluralize
-	protected readonly getTimeDifferenceFromNow = getTimeDifferenceFromNow
+
 	protected readonly TAILWIND_COLOUR_500_VALUES = TAILWIND_COLOUR_500_VALUES
 
 	selectProject(project: ProjectModel) {

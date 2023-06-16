@@ -1,0 +1,32 @@
+<a
+	[ngClass]="{
+		'text-gray-900 dark:text-gray-200': isSelected,
+		'text-gray-500 dark:text-gray-400': isSelected
+	}"
+	class="flex items-center text-base rounded-lg transition duration-75 md:hover:underline dark:text-white group"
+>
+	<span
+		[ngStyle]="{
+			'border-color': isSelected ? project.colour : 'transparent'
+		}"
+		[style.background-color]="project.colour"
+		class="w-4 h-4 rounded ml-2"
+	></span>
+	<div class="flex flex-col justify-center truncate ml-3">
+		<span [class.font-medium]="isSelected" class="ml-3 capitalize text-sm text-gray-900">{{
+			project.name | truncate : 10
+		}}</span>
+		<span *ngIf="project.members.length > 0" class="ml-3 text-xs text-gray-500 dark:text-gray-400">
+			{{ project.members.length }} {{ "member" | pluralize : project.members.length }}
+		</span>
+		<span
+			*ngIf="project.members.length === 0"
+			class="ml-3 text-xs text-gray-500 dark:text-gray-400"
+		>
+			No members
+		</span>
+		<span class="ml-3 text-xs text-gray-500 dark:text-gray-400">
+			Last update {{ project.lastModifiedTime | timeDifferenceFromNow }} ago
+		</span>
+	</div>
+</a>

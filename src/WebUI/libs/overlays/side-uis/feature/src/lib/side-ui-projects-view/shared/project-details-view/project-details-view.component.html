@@ -17,9 +17,16 @@
 
 			<div>
 				<div class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Colour</div>
-				<div class="grid grid-cols-5 gap-4 items-center">
+				<div
+					*ngrxLet="updateProjectForm.get('colour') as selectedColour"
+					class="grid grid-cols-5 gap-4 items-center"
+				>
 					<button
+						(click)="setColour(colour)"
 						*ngFor="let colour of TAILWIND_COLOUR_500_VALUES"
+						[ngClass]="{
+							'ring-2 ring-black': selectedColour?.value === colour
+						}"
 						[ngStyle]="{
 							'background-color': colour,
 							'border-color': colour
@@ -31,7 +38,7 @@
 			</div>
 			<div>
 				<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Members</label>
-				<ul @heightInOut class="divide-y divide-gray-300 overflow-y-auto" role="list">
+				<ul class="divide-y divide-gray-300 overflow-y-auto" role="list">
 					<ul
 						class="py-1 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
 					>

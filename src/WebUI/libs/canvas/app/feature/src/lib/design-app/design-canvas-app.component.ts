@@ -141,6 +141,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	ngOnInit() {
 		console.log(this.constructor.name, 'ngOnInit')
 		const deviceInfo = this._deviceService.getDeviceInfo()
+
 		console.log(deviceInfo)
 	}
 
