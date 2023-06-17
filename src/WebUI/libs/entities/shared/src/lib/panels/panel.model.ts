@@ -1,7 +1,7 @@
 import { ENTITY_TYPE, EntityBase } from '../common'
 import { Polarity } from '../panel-links'
 import { StringId } from '../strings'
-import { PanelConfigId } from '../panel-configs'
+import { PanelConfigId, PanelConfigModel } from '../panel-configs'
 import { BackendDataModel } from '../backend-data/backend-data.model'
 import { z } from 'zod'
 
@@ -29,6 +29,9 @@ export const PANEL_MODEL = z.object({
 export type PanelId = string & {
 	readonly _type: 'panelId'
 }
+
+export type PanelWithConfig = Pick<PanelModel, 'id'> &
+	Omit<PanelConfigModel, 'fullName' | 'id' | 'brand' | 'model'>
 
 export type PanelSymbol = {
 	panelId: PanelId

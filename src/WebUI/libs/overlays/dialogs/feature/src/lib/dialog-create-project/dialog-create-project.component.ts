@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, Signal, signal } from '@angular/core'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
 import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle } from '@angular/common'
-import { increaseScaleAndOpacity } from '@shared/animations'
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import {
 	TAILWIND_COLOUR_500,
@@ -40,7 +39,6 @@ import { AuthWebUserComponent } from '@auth/ui'
 	],
 	templateUrl: './dialog-create-project.component.html',
 	styles: [],
-	animations: [increaseScaleAndOpacity],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogCreateProjectComponent {

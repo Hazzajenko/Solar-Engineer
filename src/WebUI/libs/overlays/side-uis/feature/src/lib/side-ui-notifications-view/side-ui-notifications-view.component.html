@@ -150,7 +150,7 @@
 							class="text-xs font-medium group-hover:text-gray-700"
 						>
 							<span class="pt-2 text-xs text-gray-500 truncate capitalize">
-								{{ getContentMessageBasedOnTypeWithoutDisplayName(notification) | truncate : 10 }}
+								{{ notification | getContentMessageBasedOnTypeWithoutDisplayName | truncate : 10 }}
 							</span>
 						</p>
 					</div>
@@ -167,7 +167,7 @@
 						class="flex-none text-xs"
 						datetime="2023-01-23T11:00"
 					>
-						{{ getTimeDifferenceFromNow(notification.createdTime) }}
+						{{ notification.createdTime | timeDifferenceFromNow }}
 					</time>
 				</div>
 			</div>
@@ -176,7 +176,6 @@
 </ng-template>
 
 <ng-template #openedNotification let-notificationId="notificationId">
-	<!--	selected ? { value: 'visible', params: { transitionParams: transitionOptions } } : { value: 'hidden', params: { transitionParams: transitionOptions } }"-->
 	<div
 		*ngIf="notificationById(notificationId) as notification"
 		@heightInOut

@@ -19,7 +19,8 @@
             "type": "element",
             "prefix": [
 							"app",
-							"svg"
+							"svg",
+							"btn"
 						],
             "style": "kebab-case"
           }

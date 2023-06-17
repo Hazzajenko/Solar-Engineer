@@ -1,7 +1,11 @@
 import { Store } from '@ngrx/store'
 import { createRootServiceInjector, isNotNull } from '@shared/utils'
 import { PanelModel, StringId, StringModel } from '@entities/shared'
-import { selectAllStringsExceptUndefinedString, selectStringsEntities } from './strings.selectors'
+import {
+	selectAllStringsExceptUndefinedString,
+	selectStringById,
+	selectStringsEntities,
+} from './strings.selectors'
 import { StringsActions } from './strings.actions'
 import { EntityUpdate } from '@shared/data-access/models'
 
@@ -21,6 +25,7 @@ function stringsStoreFactory(store: Store) {
 	const select = {
 		allStrings: store.selectSignal(selectAllStringsExceptUndefinedString), // selectedString: store.selectSignal(selectSelectedString),
 		getById: (id: StringId) => entities()[id],
+		selectById: (id: StringId) => store.selectSignal(selectStringById({ id })),
 		getByIds: (ids: StringId[]) => ids.map((id) => entities()[id]).filter(isNotNull),
 	}
 

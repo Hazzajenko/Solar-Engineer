@@ -133,7 +133,7 @@
 </ng-template>
 
 <ng-template #userView let-user="user">
-	<div *ngIf="isWebUser(user) as user" class="flex justify-evenly">
+	<div *ngIf="isWebUser(user) as user" class="flex justify-between px-2">
 		<div class="flex justify-start">
 			<a
 				(click)="selectUser(user.id)"

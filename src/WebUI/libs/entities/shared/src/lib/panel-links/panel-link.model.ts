@@ -16,6 +16,8 @@ export type PanelLinkModel = {
 	linePoints: Point[]
 }
 
+// export type PanelLinkStringIdDictionary = Dictionary<PanelLinkModel[]>
+
 export type PanelLinkModelWithIndex = PanelLinkModel & {
 	index: number
 }

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, Injector } from '@angular/core'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
-import { increaseScaleAndOpacity } from '@shared/animations'
 import { DialogInputDeleteProjectWarning, injectUiStore } from '@overlays/ui-store/data-access'
 import { dialogInputInjectionToken } from '../dialog-renderer'
 import { injectProjectsStore } from '@entities/data-access'
@@ -13,7 +12,6 @@ import { ProjectModel } from '@entities/shared'
 	imports: [DialogBackdropTemplateComponent, NgIf],
 	templateUrl: './dialog-delete-project-warning.component.html',
 	styles: [],
-	animations: [increaseScaleAndOpacity],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogDeleteProjectWarningComponent {

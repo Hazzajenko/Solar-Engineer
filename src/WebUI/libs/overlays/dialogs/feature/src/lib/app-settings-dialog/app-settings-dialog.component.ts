@@ -39,6 +39,7 @@ import { IsTypeOfPanelPipe } from '@entities/utils'
 		DisplaySettingsComponent,
 	],
 	animations: [heightInOut],
+	styles: [],
 })
 export class AppSettingsDialogComponent implements AfterViewInit {
 	private _uiStore = inject(UiStoreService)

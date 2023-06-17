@@ -17,6 +17,7 @@ import { DialogCreateProjectComponent } from '../dialog-create-project'
 import { handleAllSwitchCases } from '@shared/utils'
 import { DialogDeleteProjectWarningComponent } from '../dialog-delete-project-warning'
 import { DialogInviteToProjectConfirmComponent } from '../dialog-invite-to-project-confirm/dialog-invite-to-project-confirm.component'
+import { DialogChangeStringColourComponent } from '../dialog-change-string-colour/dialog-change-string-colour.component'
 
 export const dialogInputInjectionToken = new InjectionToken<DialogInput>('')
 
@@ -87,6 +88,8 @@ export class DialogRendererComponent implements OnDestroy {
 				return DialogDeleteProjectWarningComponent
 			case DIALOG_COMPONENT.INVITE_TO_PROJECT_CONFIRM:
 				return DialogInviteToProjectConfirmComponent
+			case DIALOG_COMPONENT.CHANGE_STRING_COLOUR:
+				return DialogChangeStringColourComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

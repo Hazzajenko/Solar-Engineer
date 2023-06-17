@@ -1,6 +1,7 @@
 import { PanelId, PanelModel } from '../panels'
 import { BackendDataModel } from '../backend-data/backend-data.model'
 import { ENTITY_TYPE } from '../common'
+import { StringStatStringsWithPanelLinkStats } from '@entities/data-access'
 
 export type StringBackendModel = StringModel & BackendDataModel
 
@@ -20,6 +21,12 @@ export type StringId = string & {
 export type StringWithPanels = {
 	string: StringModel
 	panels: PanelModel[]
+}
+
+export type StringWithPanelsAndStats = {
+	string: StringModel
+	panels: PanelModel[]
+	stats: StringStatStringsWithPanelLinkStats
 }
 
 export const UNDEFINED_STRING_ID = 'UNDEFINED_STRING_ID' as StringId

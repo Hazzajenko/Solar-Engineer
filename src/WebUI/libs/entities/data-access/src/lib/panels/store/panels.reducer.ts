@@ -1,11 +1,12 @@
 import { PanelsActions } from './panels.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { PanelModel } from '@entities/shared'
+import { PanelModel, StringId, UNDEFINED_STRING_ID } from '@entities/shared'
 
 export const PANELS_FEATURE_KEY = 'panels'
 
 export interface PanelsState extends EntityState<PanelModel> {
+	undefinedStringId: StringId | undefined
 	loaded: boolean
 	error?: string | null
 }
@@ -15,13 +16,24 @@ export const panelsAdapter: EntityAdapter<PanelModel> = createEntityAdapter<Pane
 })
 
 export const initialPanelsState: PanelsState = panelsAdapter.getInitialState({
+	undefinedStringId: undefined,
 	loaded: false,
 })
 
 const reducer = createReducer(
 	initialPanelsState,
+	on(PanelsActions.setUndefinedStringId, (state, { undefinedStringId }) => ({
+		...state,
+		undefinedStringId,
+	})),
 	on(PanelsActions.loadPanels, (state, { panels }) => panelsAdapter.setMany(panels, state)),
-	on(PanelsActions.addPanel, (state, { panel }) => panelsAdapter.addOne(panel, state)),
+	on(PanelsActions.addPanel, (state, { panel }) => {
+		if (panel.stringId === UNDEFINED_STRING_ID && state.undefinedStringId) {
+			const updatedPanel = { ...panel, stringId: state.undefinedStringId }
+			return panelsAdapter.addOne(updatedPanel, state)
+		}
+		return panelsAdapter.addOne(panel, state)
+	}),
 	on(PanelsActions.addManyPanels, (state, { panels }) => panelsAdapter.addMany(panels, state)),
 	on(PanelsActions.updatePanel, (state, { update }) => panelsAdapter.updateOne(update, state)),
 	on(PanelsActions.updateManyPanels, (state, { updates }) =>

@@ -7,7 +7,7 @@ import { ChildContextMenuDirective, ContextMenuDirective } from '../directives'
 import { LetDirective } from '@ngrx/component'
 import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle } from '@angular/common'
 import { InputSvgComponent, ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
-import { increaseScaleAndOpacity } from '@shared/animations'
+import { scaleAndOpacityAnimation } from '@shared/animations'
 import { createSelector } from '@ngrx/store'
 import { Dictionary } from '@ngrx/entity'
 import { assertNotNull, selectSignalFromStore } from '@shared/utils'
@@ -51,7 +51,7 @@ import { ContextMenuBaseComponent, ContextMenuExpandComponent, ContextMenuHeadin
 	],
 	templateUrl: './context-menu-project.component.html',
 	styles: [],
-	animations: [increaseScaleAndOpacity],
+	animations: [scaleAndOpacityAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContextMenuProjectComponent {

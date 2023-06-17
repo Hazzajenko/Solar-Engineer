@@ -1,11 +1,12 @@
 import { inject, Injectable } from '@angular/core'
 import { injectSelectedStore } from '@canvas/selected/data-access'
 import { injectStringsStore } from '../store'
-import { assertNotNull } from '@shared/utils'
+import { assertNotNull, getSmallerNumberOutOfTwoNumbers } from '@shared/utils'
 import { injectPanelConfigsStore } from '../../panel-configs'
-import { PanelConfigModel, PanelModel, StringId } from '@entities/shared'
+import { PanelModel, PanelWithConfig, StringId } from '@entities/shared'
 import { injectPanelsStore } from '../../panels'
 import { injectPanelLinksStore, PanelLinksService } from '../../panel-links'
+import { mapPanelToPanelWithConfig } from '@entities/utils'
 
 @Injectable({
 	providedIn: 'root',
@@ -95,15 +96,18 @@ export class StringsStatsService {
 	}
 }
 
-export type PanelWithConfig = Pick<PanelModel, 'id'> &
-	Omit<PanelConfigModel, 'fullName' | 'id' | 'brand' | 'model'>
-
 export type StringStats = {
 	totalVoc: number
 	totalVmp: number
 	totalIsc: number
 	totalImp: number
 	totalPmax: number
+}
+
+export type StringStatsWithPanelLinkStats = StringStats & {
+	amountOfChains: number
+	amountOfLinks: number
+	panelsWithoutLinks: number
 }
 
 export type StringStatStrings = {
@@ -114,37 +118,8 @@ export type StringStatStrings = {
 	totalPmax: string
 }
 
-function mapPanelToPanelWithConfig(
-	panel: PanelModel,
-	panelConfig: PanelConfigModel,
-): PanelWithConfig {
-	const {
-		maximumPowerTemp,
-		openCircuitVoltage,
-		openCircuitVoltageTemp,
-		shortCircuitCurrentTemp,
-		voltageAtMaximumPower,
-		shortCircuitCurrent,
-		currentAtMaximumPower,
-		maximumPower,
-		weight,
-		width,
-		length,
-	} = panelConfig
-	return {
-		id: panel.id,
-		maximumPowerTemp,
-		openCircuitVoltage,
-		openCircuitVoltageTemp,
-		shortCircuitCurrentTemp,
-		voltageAtMaximumPower,
-		shortCircuitCurrent,
-		currentAtMaximumPower,
-		maximumPower,
-		weight,
-		width,
-		length,
-	} as PanelWithConfig
+export type StringStatStringsWithPanelLinkStats = StringStatStrings & {
+	amountOfChains: string
+	amountOfLinks: string
+	panelsWithoutLinks: string
 }
-
-const getSmallerNumberOutOfTwoNumbers = (a: number, b: number) => (a < b ? a : b)

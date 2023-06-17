@@ -17,7 +17,10 @@ import { assertNotNull, newGuid, selectSignalFromStore } from '@shared/utils'
 import { injectSelectedStore, selectSelectedStringId } from '@canvas/selected/data-access'
 import { TransformedPoint } from '@shared/data-access/models'
 import { changeCanvasCursor, setCanvasCursorToAuto } from '@canvas/utils'
-import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
+import {
+	calculateLinkLinesBetweenTwoPanelCenters,
+	getPanelLinkOrderSeparateChains,
+} from '@entities/utils'
 import { isPointOverCurvedLineNoCtx } from './utils'
 import { CurvedNumberLine } from '@canvas/shared'
 import { CanvasRenderOptions } from '@canvas/rendering/data-access'
@@ -326,29 +329,4 @@ export class PanelLinksService {
 
 		return
 	}
-}
-
-const getPanelLinkOrderSeparateChains = (panelLinks: PanelLinkModel[]) => {
-	const positivePanelIds = new Set(panelLinks.map((pl) => pl.positivePanelId))
-	const startOfChains = panelLinks.filter(
-		(panelLink) => !positivePanelIds.has(panelLink.negativePanelId),
-	)
-
-	return startOfChains.map((panelLink) => {
-		const panelLinkChain = [panelLink]
-		let currentPanelLink = panelLink
-		let panelLinkChainOrderInProcess = true
-		while (panelLinkChainOrderInProcess) {
-			const nextPanelLink = panelLinks.find(
-				(pl) => pl.negativePanelId === currentPanelLink.positivePanelId,
-			)
-			if (!nextPanelLink) {
-				panelLinkChainOrderInProcess = false
-				return panelLinkChain
-			}
-			panelLinkChain.push(nextPanelLink)
-			currentPanelLink = nextPanelLink
-		}
-		return panelLinkChain
-	})
 }

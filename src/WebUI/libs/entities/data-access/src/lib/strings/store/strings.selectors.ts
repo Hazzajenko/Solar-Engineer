@@ -31,27 +31,6 @@ export const selectStringsEntities = createSelector(selectStringsState, (state: 
 export const selectStringById = (props: { id: string }) =>
 	createSelector(selectStringsEntities, (strings: Dictionary<StringModel>) => strings[props.id])
 
-/*export const selectSelectedString = createSelector(
- selectSelectedState,
- selectStringsEntities,
- (state: SelectedState, strings: Dictionary<CanvasString>) => {
- return state.selectedStringId ? strings[state.selectedStringId] : undefined
- },
- )*/
-/*export const selectSelectedString = createSelector(
- selectedFeature.selectSelectedStringId,
- selectStringsEntities,
- (selectedStringId: string | undefined, strings: Dictionary<CanvasString>) => {
- return selectedStringId ? strings[selectedStringId] : undefined
- },
- )*/
-// selectSelectedState
-/*export const selectSelectedString = createSelector(
- selectStringsEntities,
- selectSelectedStringId,
- (strings: Dictionary<CanvasString>, selectedStringId: string | undefined) =>
- selectedStringId ? strings[selectedStringId] : undefined,
- )*/
 export const selectAllStringsWithPanels = createSelector(
 	selectAllStrings,
 	selectAllPanels,

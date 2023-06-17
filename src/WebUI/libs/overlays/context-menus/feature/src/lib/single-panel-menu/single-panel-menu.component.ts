@@ -16,9 +16,9 @@ import { LetDirective } from '@ngrx/component'
 import { NgIconComponent, provideIcons } from '@ng-icons/core'
 import { heroMinusCircle } from '@ng-icons/heroicons/outline'
 import { assertNotNull } from '@shared/utils'
-import { transitionContextMenu } from '../animations/context-menu.animation'
 import { injectEntityStore } from '@entities/data-access'
 import { injectAppStateStore } from '@canvas/app/data-access'
+import { scaleAndOpacityAnimation } from '@shared/animations'
 
 @Component({
 	selector: 'app-single-panel-menu',
@@ -42,7 +42,7 @@ import { injectAppStateStore } from '@canvas/app/data-access'
 			}
 		`,
 	],
-	animations: [transitionContextMenu],
+	animations: [scaleAndOpacityAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SinglePanelMenuComponent implements OnInit {

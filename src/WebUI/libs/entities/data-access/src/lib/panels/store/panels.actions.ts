@@ -1,11 +1,14 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { PanelId, PanelModel } from '@entities/shared'
+import { PanelId, PanelModel, StringId } from '@entities/shared'
 import { EntityUpdate } from '@shared/data-access/models'
 
 export const PanelsActions = createActionGroup({
 	source: 'Panels Store',
 	events: {
+		'Set Undefined StringId': props<{
+			undefinedStringId: StringId
+		}>(),
 		'Load Panels': props<{
 			panels: PanelModel[]
 		}>(),

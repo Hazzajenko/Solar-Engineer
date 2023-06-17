@@ -29,7 +29,7 @@ export const initBackdropEventWithRenderer = (
 		}
 	}
 
-	const killClickListener = renderer.listen(document, 'click', clickListener)
+	const killClickListener = renderer.listen(window, 'click', clickListener)
 
 	return killClickListener
 }

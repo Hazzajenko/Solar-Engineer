@@ -2,6 +2,7 @@ import { PANEL_LINKS_FEATURE_KEY, panelLinksAdapter, PanelLinksState } from './p
 import { PanelLinkModel, Polarity } from '@entities/shared'
 import { Dictionary } from '@ngrx/entity'
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store'
+import { groupBy } from '@shared/utils'
 
 export const selectPanelLinksState = createFeatureSelector<PanelLinksState>(PANEL_LINKS_FEATURE_KEY)
 
@@ -98,6 +99,16 @@ export const selectMouseDownOnPanelPolaritySymbol = createSelector(
 	selectPanelLinksState,
 	(state: PanelLinksState) => state.mouseDownOnPanelPolaritySymbol,
 )
+
+export const selectAllPanelLinksGroupedByStringId = createSelector(
+	selectAllPanelLinks,
+	(panelLinks: PanelLinkModel[]) => groupBy(panelLinks, 'stringId'),
+)
+
+// export const selectAllPanelsGroupedByStringId = createSelector(
+// 	selectAllPanels,
+// 	(panels: PanelModel[]) => groupBy(panels, 'stringId'),
+// )
 
 // type Projector<T> = (s1: PanelLinksState) => T
 /*const panelLinksSelector = <T>(projector: Projector<T>) =>

@@ -7,12 +7,12 @@ import { StringColor, stringColors, StringId, StringModel } from '@entities/shar
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuDirective } from '../directives'
 import { injectAppStateStore } from '@canvas/app/data-access'
-import { transitionContextMenu } from '../animations/context-menu.animation'
 import { injectStringsStore, selectStringsEntities } from '@entities/data-access'
 import { getSelectedSelectors } from '@canvas/selected/data-access'
 import { createSelector } from '@ngrx/store'
 import { Dictionary } from '@ngrx/entity'
 import { selectSignalFromStore } from '@shared/utils'
+import { scaleAndOpacityAnimation } from '@shared/animations'
 // import { selectSelectedString } from '@entities/utils'
 
 const { selectSelectedStringId } = getSelectedSelectors()
@@ -46,7 +46,7 @@ const selectSelectedString = createSelector(
 			}
 		`,
 	],
-	animations: [transitionContextMenu],
+	animations: [scaleAndOpacityAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ColourPickerMenuComponent {

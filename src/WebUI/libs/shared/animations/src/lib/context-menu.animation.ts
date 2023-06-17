@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 
-export const increaseScaleAndOpacity = trigger('increaseScaleAndOpacity', [
+export const scaleAndOpacityAnimation = trigger('scaleAndOpacity', [
 	transition(':enter', [
 		style({
 			opacity: 0,
@@ -11,6 +11,19 @@ export const increaseScaleAndOpacity = trigger('increaseScaleAndOpacity', [
 			style({
 				opacity: 1,
 				transform: 'scale(1)',
+			}),
+		),
+	]),
+	transition(':leave', [
+		style({
+			opacity: 1,
+			transform: 'scale(1)',
+		}),
+		animate(
+			'0.1s ease-in',
+			style({
+				opacity: 0,
+				transform: 'scale(0.95)',
 			}),
 		),
 	]),

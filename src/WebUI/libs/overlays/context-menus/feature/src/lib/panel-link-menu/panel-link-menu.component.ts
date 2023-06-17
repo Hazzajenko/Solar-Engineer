@@ -11,13 +11,14 @@ import { PanelId, PanelLinkModel } from '@entities/shared'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { NgIf } from '@angular/common'
 import { injectEntityStore } from '@entities/data-access'
+import { scaleAndOpacityAnimation } from '@shared/animations'
 
 @Component({
 	selector: 'app-panel-link-menu',
 	standalone: true,
 	imports: [ContextMenuDirective, ShowSvgComponent, NgIf, ShowSvgNoStylesComponent],
 	templateUrl: './panel-link-menu.component.html',
-	styles: [],
+	animations: [scaleAndOpacityAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PanelLinkMenuComponent implements OnInit {

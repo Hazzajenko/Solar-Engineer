@@ -6,7 +6,7 @@ import {
 } from '@overlays/ui-store/data-access'
 import { injectUsersStore } from '@auth/data-access'
 import { NgForOf, NgIf, NgOptimizedImage, NgStyle } from '@angular/common'
-import { increaseScaleAndOpacity } from '@shared/animations'
+import { scaleAndOpacityAnimation } from '@shared/animations'
 import { InputSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { TruncatePipe } from '@shared/pipes'
 import { ContextMenuDirective } from '../directives'
@@ -30,7 +30,7 @@ import { ProjectModel } from '@entities/shared'
 	templateUrl: './context-menu-friend.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	animations: [increaseScaleAndOpacity],
+	animations: [scaleAndOpacityAnimation],
 })
 export class ContextMenuFriendComponent {
 	private _uiStore = injectUiStore()

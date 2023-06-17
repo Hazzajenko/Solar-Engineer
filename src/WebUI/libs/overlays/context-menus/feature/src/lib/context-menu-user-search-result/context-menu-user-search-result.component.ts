@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, Injector } from '@angular/core'
-import { increaseScaleAndOpacity } from '@shared/animations'
+import { scaleAndOpacityAnimation } from '@shared/animations'
 import { NgForOf, NgIf, NgOptimizedImage } from '@angular/common'
 import { ShowSvgNoStylesComponent } from '@shared/ui'
 import { ContextMenuDirective } from '../directives'
@@ -21,7 +21,7 @@ import { ContextMenuUserSearchResultMenu, injectUiStore } from '@overlays/ui-sto
 	],
 	templateUrl: './context-menu-user-search-result.component.html',
 	styles: [],
-	animations: [increaseScaleAndOpacity],
+	animations: [scaleAndOpacityAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContextMenuUserSearchResultComponent {

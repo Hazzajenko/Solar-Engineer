@@ -5,6 +5,7 @@ export * from './svgs/index'
 export * from './tooltip/tooltip.component'
 export * from './notifications/index'
 export * from './spinner/index'
+export * from './svg-buttons/index'
 
 /*export * from './menus/menu-builder.component'
  export * from './menus/menu-item.model'

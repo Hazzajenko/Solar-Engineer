@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, inject, Injector } from '
 import { injectProjectsStore } from '@entities/data-access'
 import { DialogInputInviteToProjectConfirm, injectUiStore } from '@overlays/ui-store/data-access'
 import { dialogInputInjectionToken } from '@overlays/dialogs/feature'
-import { increaseScaleAndOpacity } from '@shared/animations'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
 import { NgIf } from '@angular/common'
 import { injectUsersStore } from '@auth/data-access'
@@ -14,7 +13,6 @@ import { assertNotNull } from '@shared/utils'
 	imports: [DialogBackdropTemplateComponent, NgIf],
 	templateUrl: './dialog-invite-to-project-confirm.component.html',
 	styles: [],
-	animations: [increaseScaleAndOpacity],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogInviteToProjectConfirmComponent {

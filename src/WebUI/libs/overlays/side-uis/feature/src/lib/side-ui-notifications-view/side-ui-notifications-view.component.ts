@@ -27,6 +27,7 @@ import { TimeDifferenceFromNowPipe, TruncatePipe } from '@shared/pipes'
 import { LetDirective } from '@ngrx/component'
 import {
 	getContentMessageBasedOnTypeWithoutDisplayName,
+	GetContentMessageBasedOnTypeWithoutDisplayNamePipe,
 	getContentMessageHtmlBasedOnType,
 	getNotificationContentMessageBasedOnType,
 	getNotificationTypeToText,
@@ -65,6 +66,7 @@ import {
 		TimeDifferenceFromNowPipe,
 		MatTooltipModule,
 		SideUiBaseComponent,
+		GetContentMessageBasedOnTypeWithoutDisplayNamePipe,
 	],
 	templateUrl: './side-ui-notifications-view.component.html',
 	styles: [],

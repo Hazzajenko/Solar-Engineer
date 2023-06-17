@@ -15,5 +15,17 @@ body {
 	font-family: var(--font-family);
 }
 
+@media only screen and (max-width: 640px) {
+	.hide-mobile {
+		display: none !important;
+	}
+}
+
+@media only screen and (min-width: 641px) {
+	.hide-desktop {
+		display: none !important;
+	}
+}
+
 
 /* You can add global styles to this file, and also import other style files */

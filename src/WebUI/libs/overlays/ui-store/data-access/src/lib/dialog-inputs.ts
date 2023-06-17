@@ -1,4 +1,4 @@
-import { ProjectId } from '@entities/shared'
+import { ProjectId, StringId } from '@entities/shared'
 
 export type DialogInputTemplate = {
 	component: DialogComponent
@@ -12,6 +12,7 @@ export const DIALOG_COMPONENT = {
 	CREATE_PROJECT: 'DialogCreateProjectComponent',
 	DELETE_PROJECT_WARNING: 'DialogDeleteProjectWarningComponent',
 	INVITE_TO_PROJECT_CONFIRM: 'DialogInviteToProjectConfirmComponent',
+	CHANGE_STRING_COLOUR: 'DialogChangeStringColourComponent',
 } as const
 
 export type DialogComponent = (typeof DIALOG_COMPONENT)[keyof typeof DIALOG_COMPONENT]
@@ -54,6 +55,13 @@ export type DialogInputInviteToProjectConfirm = DialogInputTemplate & {
 	}
 }
 
+export type DialogInputChangeStringColour = DialogInputTemplate & {
+	component: typeof DIALOG_COMPONENT.CHANGE_STRING_COLOUR
+	data: {
+		stringId: StringId
+	}
+}
+
 export type DialogInput =
 	| DialogInputMovePanelsToString
 	| DialogInputAppSettings
@@ -62,3 +70,4 @@ export type DialogInput =
 	| DialogInputCreateProject
 	| DialogInputDeleteProjectWarning
 	| DialogInputInviteToProjectConfirm
+	| DialogInputChangeStringColour

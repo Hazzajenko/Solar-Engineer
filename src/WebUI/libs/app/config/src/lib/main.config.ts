@@ -1,30 +1,20 @@
 import { AppComponent } from './app.component'
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser'
 import { environment } from '@shared/environment'
-import {
-	ApplicationConfig,
-	importProvidersFrom,
-	makeEnvironmentProviders,
-	provideZoneChangeDetection,
-} from '@angular/core'
+import { ApplicationConfig, importProvidersFrom, makeEnvironmentProviders, provideZoneChangeDetection } from '@angular/core'
 import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router'
 import { appRoutes } from './main.routes'
 import { provideHttpClient, withInterceptors } from '@angular/common/http'
-import {
-	BrowserAnimationsModule,
-	provideAnimations,
-	provideNoopAnimations,
-} from '@angular/platform-browser/animations'
+import { BrowserAnimationsModule, provideAnimations, provideNoopAnimations } from '@angular/platform-browser/animations'
 import { provideNgrx } from './ngrx.config'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { DatePipe } from '@angular/common'
 import { JwtModule } from '@auth0/angular-jwt'
 import { jwtInterceptor } from './interceptors'
-import { initSentry, provideSentry } from './sentry'
 import { onCLS, onFID, onLCP } from 'web-vitals'
 
-initSentry()
+// initSentry()
 
 onCLS(console.log)
 onFID(console.log)
@@ -75,7 +65,6 @@ function provideWebAppProviders() {
 					tokenGetter: tokenGetter,
 				},
 			}),
-		),
-		provideSentry(),
+		), // provideSentry(),
 	])
 }

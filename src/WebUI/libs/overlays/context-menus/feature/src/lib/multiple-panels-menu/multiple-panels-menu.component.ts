@@ -13,6 +13,7 @@ import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuDirective } from '../directives'
 import { PanelId } from '@entities/shared'
 import { injectEntityStore } from '@entities/data-access'
+import { scaleAndOpacityAnimation } from '@shared/animations'
 
 @Component({
 	selector: 'app-multiple-panels-menu',
@@ -20,6 +21,7 @@ import { injectEntityStore } from '@entities/data-access'
 	imports: [NgIf, ShowSvgComponent, ContextMenuTemplateComponent, ContextMenuDirective],
 	templateUrl: './multiple-panels-menu.component.html',
 	styles: [],
+	animations: [scaleAndOpacityAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MultiplePanelsMenuComponent implements OnInit {

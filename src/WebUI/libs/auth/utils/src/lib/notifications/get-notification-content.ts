@@ -4,6 +4,7 @@ import {
 	NOTIFICATION_TYPE,
 	NotificationModel,
 } from '@auth/shared'
+import { Pipe, PipeTransform } from '@angular/core'
 
 export const getContentMessageBasedOnTypeWithoutDisplayName = (notification: NotificationModel) => {
 	switch (notification.notificationType) {
@@ -21,6 +22,17 @@ export const getContentMessageBasedOnTypeWithoutDisplayName = (notification: Not
 			throw new Error('Unknown notification type')
 	}
 }
+
+@Pipe({
+	name: 'getContentMessageBasedOnTypeWithoutDisplayName',
+	standalone: true,
+})
+export class GetContentMessageBasedOnTypeWithoutDisplayNamePipe implements PipeTransform {
+	transform(notification: NotificationModel): string {
+		return getContentMessageBasedOnTypeWithoutDisplayName(notification)
+	}
+}
+
 export const getNotificationContentMessageBasedOnType = (notification: NotificationModel) => {
 	switch (notification.notificationType) {
 		case NOTIFICATION_TYPE.MESSAGE_RECEIVED:

@@ -7,11 +7,11 @@ import {
 	OnInit,
 	Renderer2,
 } from '@angular/core'
-import { increaseScaleAndOpacity } from '@shared/animations'
 import { NgIf } from '@angular/common'
 import { InputSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { AppSvgKey } from '@shared/assets'
 import { ChildContextMenuDirective } from '../directives'
+import { scaleAndOpacityAnimation } from '@shared/animations'
 
 @Component({
 	selector: 'context-menu-expand',
@@ -43,7 +43,7 @@ import { ChildContextMenuDirective } from '../directives'
 			</div>
 			<ul
 				#expandMenu
-				@increaseScaleAndOpacity
+				@scaleAndOpacity
 				class="text-xs text-gray-700 dark:text-gray-200 absolute top-1 left-full ml-1 z-50 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
 				style="display: none"
 			>
@@ -51,8 +51,8 @@ import { ChildContextMenuDirective } from '../directives'
 			</ul>
 		</li>
 	`,
-	animations: [increaseScaleAndOpacity],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	animations: [scaleAndOpacityAnimation],
 })
 export class ContextMenuExpandComponent implements OnInit {
 	private _renderer = inject(Renderer2)

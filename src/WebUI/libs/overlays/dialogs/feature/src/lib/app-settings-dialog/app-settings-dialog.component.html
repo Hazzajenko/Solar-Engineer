@@ -1,10 +1,10 @@
-<dialog-backdrop-template-component #dialog>
-	<div
+<dialog-backdrop-template-component #dialog height="75%">
+	<!--	<div
 		class="relative w-full max-w-md max-h-full left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 overflow-y-auto p-4"
 	>
-		<!-- Modal content -->
+		&lt;!&ndash; Modal content &ndash;&gt;
 		<div class="relative bg-slate-100 rounded-lg shadow dark:bg-gray-700" id="dialog-content">
-			<!--      <div class='overflow-y-auto'>-->
+			&lt;!&ndash;      <div class='overflow-y-auto'>&ndash;&gt;
 			<button
 				(click)="dialog.closeDialog()"
 				class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
@@ -25,80 +25,80 @@
 					></path>
 				</svg>
 				<span class="sr-only">Close modal</span>
-			</button>
-			<!-- Modal header -->
+			</button>-->
+	<!-- Modal header -->
 
-			<div cdkDragHandle class="px-6 py-4 border-b rounded-t dark:border-gray-600">
-				<h3 class="text-base font-semibold text-gray-900 lg:text-xl dark:text-white">Settings</h3>
+	<div cdkDragHandle class="px-6 py-4 border-b rounded-t dark:border-gray-600">
+		<h3 class="text-base font-semibold text-gray-900 lg:text-xl dark:text-white">Settings</h3>
+	</div>
+	<!-- Modal body -->
+	<ng-container *ngrxLet="'keyMap' as name">
+		<h2 #accordion [id]="name">
+			<button
+				(click)="toggleAccordionView(name)"
+				class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+				type="button"
+			>
+				<span>Key Map</span>
+				<app-toggle-svg-no-styles
+					[predicate]="openedAccordions().get(name)"
+					falseSvgPath="hero-icons/down"
+					trueSvgPath="hero-icons/up"
+				/>
+			</button>
+		</h2>
+		<div *ngIf="openedAccordions().get(name)" @heightInOut>
+			<div class="p-5 border border-gray-200 dark:border-gray-700">
+				<app-key-map-settings />
 			</div>
-			<!-- Modal body -->
-			<ng-container *ngrxLet="'keyMap' as name">
-				<h2 #accordion [id]="name">
-					<button
-						(click)="toggleAccordionView(name)"
-						class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-						type="button"
-					>
-						<span>Key Map</span>
-						<app-toggle-svg-no-styles
-							[predicate]="openedAccordions().get(name)"
-							falseSvgPath="hero-icons/down"
-							trueSvgPath="hero-icons/up"
-						/>
-					</button>
-				</h2>
-				<div *ngIf="openedAccordions().get(name)" @heightInOut>
-					<div class="p-5 border border-gray-200 dark:border-gray-700">
-						<app-key-map-settings />
-					</div>
-				</div>
-			</ng-container>
-			<ng-container *ngrxLet="'display' as name">
-				<h2 #accordion [id]="name">
-					<button
-						(click)="toggleAccordionView(name)"
-						class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-						type="button"
-					>
-						<span>Display</span>
-						<app-toggle-svg-no-styles
-							[predicate]="openedAccordions().get(name)"
-							falseSvgPath="hero-icons/down"
-							trueSvgPath="hero-icons/up"
-						/>
-					</button>
-				</h2>
-				<div *ngIf="openedAccordions().get(name)" @heightInOut>
-					<div class="p-5 border border-gray-200 dark:border-gray-700">
-						<app-display-settings />
-						<!--            <app-graphics-settings />-->
-					</div>
-				</div>
-			</ng-container>
-			<ng-container *ngrxLet="'graphics' as name">
-				<h2 #accordion [id]="name">
-					<button
-						(click)="toggleAccordionView(name)"
-						class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-						type="button"
-					>
-						<span>Graphics</span>
-						<app-toggle-svg-no-styles
-							[predicate]="openedAccordions().get(name)"
-							falseSvgPath="hero-icons/down"
-							trueSvgPath="hero-icons/up"
-						/>
-					</button>
-				</h2>
-				<div *ngIf="openedAccordions().get(name)" @heightInOut>
-					<div class="p-5 border border-gray-200 dark:border-gray-700">
-						<app-graphics-settings />
-						<!--            <app-graphics-settings />-->
-					</div>
-				</div>
-			</ng-container>
-			<!--      </div>-->
-			<!--      <ng-container *ngTemplateOutlet='accordionTemplate; context: {
+		</div>
+	</ng-container>
+	<ng-container *ngrxLet="'display' as name">
+		<h2 #accordion [id]="name">
+			<button
+				(click)="toggleAccordionView(name)"
+				class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+				type="button"
+			>
+				<span>Display</span>
+				<app-toggle-svg-no-styles
+					[predicate]="openedAccordions().get(name)"
+					falseSvgPath="hero-icons/down"
+					trueSvgPath="hero-icons/up"
+				/>
+			</button>
+		</h2>
+		<div *ngIf="openedAccordions().get(name)" @heightInOut>
+			<div class="p-5 border border-gray-200 dark:border-gray-700">
+				<app-display-settings />
+				<!--            <app-graphics-settings />-->
+			</div>
+		</div>
+	</ng-container>
+	<ng-container *ngrxLet="'graphics' as name">
+		<h2 #accordion [id]="name">
+			<button
+				(click)="toggleAccordionView(name)"
+				class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+				type="button"
+			>
+				<span>Graphics</span>
+				<app-toggle-svg-no-styles
+					[predicate]="openedAccordions().get(name)"
+					falseSvgPath="hero-icons/down"
+					trueSvgPath="hero-icons/up"
+				/>
+			</button>
+		</h2>
+		<div *ngIf="openedAccordions().get(name)" @heightInOut>
+			<div class="p-5 border border-gray-200 dark:border-gray-700">
+				<app-graphics-settings />
+				<!--            <app-graphics-settings />-->
+			</div>
+		</div>
+	</ng-container>
+	<!--      </div>-->
+	<!--      <ng-container *ngTemplateOutlet='accordionTemplate; context: {
 						name: "keyMapContext",
 						label: "Key Map",
 						component: "app-key-map-settings"
@@ -109,8 +109,8 @@
 						component: "app-canvas-graphics-settings"
 						}' />-->
 
-			<!-- Modal header -->
-			<!--   <div
+	<!-- Modal header -->
+	<!--   <div
 					 cdkDragHandle
 					 class='px-6 py-4 border-b rounded-t dark:border-gray-600'>
 					 <h3 class='text-base font-semibold text-gray-900 lg:text-xl dark:text-white'>
@@ -140,7 +140,7 @@
 																		 [dynamicComponent]='section.component' />&ndash;&gt;
 					 </div>
 				 </div>-->
-			<!--      <ng-container *ngFor='let section of sectionsV2'>
+	<!--      <ng-container *ngFor='let section of sectionsV2'>
 							<h2>
 								<button type='button'
 												(ngInit)='addToMap(section.name)'
@@ -164,7 +164,7 @@
 								</div>
 							</div>
 						</ng-container>-->
-			<!--      <ng-container *ngFor='let section of sections'>
+	<!--      <ng-container *ngFor='let section of sections'>
 							<h2>
 								<button type='button'
 												ngInitDirective
@@ -189,8 +189,8 @@
 								</div>
 							</div>
 						</ng-container>-->
-			<!-- Modal body -->
-			<!--   <ng-container *ngTemplateOutlet='accordionTemplate; context: {
+	<!-- Modal body -->
+	<!--   <ng-container *ngTemplateOutlet='accordionTemplate; context: {
 							name: "keyMapContext",
 							label: "Key Map",
 							component: "app-key-map-settings"
@@ -200,9 +200,9 @@
 							label: "Graphics",
 							component: "app-canvas-graphics-settings"
 							}' />-->
-			<!--     <app-canvas-graphics-settings />
+	<!--     <app-canvas-graphics-settings />
 				 </ng-container>-->
-			<!--<h2 id='accordion-collapse-heading-3'>
+	<!--<h2 id='accordion-collapse-heading-3'>
 				&lt;!&ndash;        (click)='graphicsContent.style.display = graphicsContent.style.display === "none" ? "block" : "none"'&ndash;&gt;
 				<button type='button'
 								(ngInit)='addToMap("graphicsContent")'
@@ -224,8 +224,8 @@
 					<app-canvas-graphics-settings />
 				</div>
 			</div>-->
-		</div>
-	</div>
+	<!--		</div>-->
+	<!--	</div>-->
 </dialog-backdrop-template-component>
 
 <!--<ng-template #accordionTemplate

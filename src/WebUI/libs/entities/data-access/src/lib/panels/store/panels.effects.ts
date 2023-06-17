@@ -8,7 +8,7 @@ import { injectPanelLinksStore, PanelLinksActions } from '../../panel-links'
 import { assertNotNull } from '@shared/utils'
 import { injectPanelsStore } from './panels.store'
 import { ProjectsActions } from '../../projects'
-import { PanelId } from '@entities/shared'
+import { PanelId, UNDEFINED_STRING_NAME } from '@entities/shared'
 import { StringsActions } from '../../strings'
 
 export const panelsStoreInitialized$ = createEffect(
@@ -33,6 +33,22 @@ export const updatePanelsFromCreatingString$ = createEffect(
 				return PanelsActions.updateManyPanelsWithString({
 					updates: panelUpdates,
 				})
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+export const loadUndefinedStringId$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(StringsActions.loadStrings),
+			map(({ strings }) => {
+				const undefinedStringId = strings.find(
+					(string) => string.name === UNDEFINED_STRING_NAME,
+				)?.id
+				if (!undefinedStringId) return PanelsActions.noop()
+				return PanelsActions.setUndefinedStringId({ undefinedStringId })
 			}),
 		)
 	},
