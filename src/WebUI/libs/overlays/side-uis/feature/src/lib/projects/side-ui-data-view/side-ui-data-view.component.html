@@ -1,0 +1,324 @@
+<side-ui-base *ngrxLet="vm() as vm" [view]="sideUiView">
+	<div
+		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
+	>
+		<h3>Data</h3>
+	</div>
+	<div *ngIf="!vm.user" class="text-center">
+		<p class="mt-1 mb-1 text-sm text-gray-500">
+			<span
+				(click)="openSignInDialog()"
+				class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+				href="#"
+				>Sign in</span
+			>
+			to your account to save your progress.
+		</p>
+	</div>
+	<div *ngIf="vm.user && vm.project">
+		<p class="mt-1 mb-2 text-sm text-gray-500">Selected Project:</p>
+		<div
+			*ngrxLet="vm.project as project"
+			[ngStyle]="{
+				'border-left-color': project.colour
+			}"
+			class="flex mb-2 items-center py-1 justify-between bg-primary-50 text-primary-700 dark:bg-primary-700 dark:text-primary-100"
+			style="border-left-width: 4px; border-left-style: solid; margin-left: -4px"
+		>
+			<div class="flex justify-start">
+				<a
+					class="flex items-center text-base rounded-lg transition duration-75 group font-medium text-gray-900 dark:text-gray-200"
+				>
+					<span
+						[ngStyle]="{
+							'background-color': project.colour,
+							'border-color': project.colour
+						}"
+						class="w-4 h-4 rounded ml-2"
+					></span>
+					<span class="ml-3 capitalize text-sm text-gray-900">{{ project.name }}</span>
+				</a>
+			</div>
+		</div>
+	</div>
+	<div class="flex items-center justify-between mb-2 ml-2">
+		<!--		<div class="flex items-start justify-center">
+			<div class="flex h-6 items-center">
+				<input
+					(click)="selectAllStrings()"
+					[checked]="allStringsSelected()"
+					centerThisElement
+					class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+					type="checkbox"
+				/>
+			</div>
+			<div class="ml-3 text-sm leading-6">
+				<label class="font-medium text-gray-900">Select all</label>
+			</div>
+		</div>-->
+		<!--		<div class="flex items-center justify-end">
+			<svg-input
+				(click)="deleteSelectedStrings()"
+				enableDefaultHoverEffects
+				matTooltip="Delete selected"
+				matTooltipPosition="above"
+				svgName="SvgTrash"
+			/>
+		</div>-->
+	</div>
+	<div class="mt-4 relative">
+		<ul>
+			<ng-container
+				*ngIf="
+					vm.panelsGroupedByStringId && vm.panelsGroupedByStringId.length > 0;
+					then hasPanels;
+					else noPanels
+				"
+			/>
+			<ng-template #noPanels>
+				<li
+					class="sticky top-0 z-10 border-y bg-gray-50 px-3 md:px-0 py-1.5 text-sm font-semibold leading-6 text-gray-900"
+				>
+					<p class="flex text-xs font-semibold text-gray-900">No Panels in Scene</p>
+				</li>
+			</ng-template>
+			<ng-template #hasPanels>
+				<ng-container
+					*ngFor="
+						let stringIdGroup of vm.panelsGroupedByStringId;
+						trackBy: panelsGroupedByStringIdTrackByFn
+					"
+				>
+					<ng-container
+						*ngrxLet="{
+							isDefinedString:
+								stringIdGroup.string && stringIdGroup.string.name !== UNDEFINED_STRING_NAME,
+							isOpen: dataViewStore.openedStringId() === stringIdGroup.string.id
+						} as stringVm"
+					>
+						<li
+							class="sticky top-0 z-10 border-t border-gray-200 bg-gray-50 px-3 md:px-0 py-1.5 text-sm font-semibold leading-6 text-gray-900"
+						>
+							<div class="flex items-center justify-between py-1">
+								<div class="flex items-center justify-start">
+									<!--		<div
+										(click)="toggleStringMultiSelect(stringIdGroup)"
+										class="flex justify-start pl-2"
+									>
+										&lt;!&ndash;									[checked]="multiSelectedStringIds().has(stringIdGroup.string.id)"&ndash;&gt;
+										<input
+											[checked]="dataViewStore.multiSelectedStringIds().has(stringIdGroup.string.id)"
+											centerThisElement
+											class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+											type="checkbox"
+										/>
+									</div>-->
+									<div class="ml-3 flex items-center justify-center">
+										<p
+											*ngIf="stringVm.isDefinedString; else undefinedStringName"
+											class="flex text-xs font-semibold text-gray-900"
+										>
+											{{ stringIdGroup.string.name }} [{{ stringIdGroup.panels.length }}]
+										</p>
+										<ng-template #undefinedStringName>
+											<p class="flex text-xs font-semibold text-gray-900">
+												No String [{{ stringIdGroup.panels.length }}]
+											</p>
+										</ng-template>
+									</div>
+								</div>
+								<div class="flex justify-end">
+									<div
+										*ngIf="vm.selectedStringId === stringIdGroup.string.id"
+										class="rounded-md mr-2 py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20"
+									>
+										Selected
+									</div>
+									<btn-animated-down-up-arrow
+										(click)="toggleStringView(stringIdGroup.string.id)"
+										[isOpen]="stringVm.isOpen"
+									/>
+									<btn-context-menu
+										(click)="openStringContextMenu($event, stringIdGroup.string.id)"
+										hideMobile
+									/>
+								</div>
+							</div>
+						</li>
+						<div *ngIf="stringVm.isOpen" @heightInOut>
+							<div
+								*ngIf="stringVm.isDefinedString"
+								[class.justify-between]="stringVm.isDefinedString"
+								[class.justify-end]="!stringVm.isDefinedString"
+								class="flex items-center justify-between px-6 md:px-0 py-4 text-sm leading-6"
+							>
+								<span class="isolate inline-flex rounded-md shadow-sm">
+									<button
+										(click)="selectStringInApp(stringIdGroup.string.id)"
+										*ngIf="stringVm.isDefinedString"
+										class="group inline-flex items-center gap-x-1.5 rounded-l-md px-2.5 py-1.5 text-sm bg-white font-semibold text-gray-600 hover:text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										matTooltip="Select String in App"
+										matTooltipPosition="above"
+										type="button"
+									>
+										<svg-input
+											[class.text-indigo-500]="vm.selectedStringId === stringIdGroup.string.id"
+											class="group-hover:text-gray-700"
+											inputClass="h-5 w-5"
+											svgName="SvgPlayCircle"
+										/>
+										Select
+									</button>
+									<div class="relative inline-block text-left">
+										<button
+											(click)="openChangeColourDialog(stringIdGroup)"
+											*ngIf="stringVm.isDefinedString"
+											aria-expanded="true"
+											aria-haspopup="true"
+											class="group inline-flex w-full items-center justify-center gap-x-1.5 rounded-r-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+											matTooltip="Change String Colour"
+											matTooltipPosition="above"
+											type="button"
+										>
+											<span
+												[ngStyle]="{
+													'background-color': stringIdGroup.string.colour,
+													'border-color': stringIdGroup.string.colour
+												}"
+												class="w-5 h-5 rounded"
+											></span>
+											<svg-input
+												class="flex items-center justify-center text-gray-600 group-hover:text-gray-700"
+												inputClass="-mr-1"
+												svgName="SvgPaintBrush"
+											/>
+										</button>
+									</div>
+								</span>
+
+								<div class="flex items-center justify-end">
+									<svg-input
+										(click)="openStringSettings(stringIdGroup.string.id)"
+										class="text-gray-500"
+										enableDefaultHoverEffects
+										matTooltip="Open string settings"
+										matTooltipPosition="above"
+										svgName="SvgCog6Tooth"
+									/>
+									<svg-input
+										(click)="deleteString(stringIdGroup.string.id)"
+										class="text-gray-500"
+										enableDefaultHoverEffects
+										matTooltip="Delete string"
+										matTooltipPosition="above"
+										svgName="SvgTrash"
+									/>
+								</div>
+							</div>
+							<!--					<div class="flex flex-col gap-y-2 px-6 py-4 text-sm leading-6">
+								<p>
+									<span class="font-semibold text-gray-900">String ID:</span>
+									<span class="text-gray-700">{{ stringIdGroup.string.id }}</span>
+								</p>
+								<p>
+									<span class="font-semibold text-gray-900">String Name:</span>
+									<span class="text-gray-700">{{ stringIdGroup.string.name }}</span>
+								</p>
+
+								<div class="flex items-center justify-between">
+									<span class="font-semibold text-gray-900">Created By:</span>
+									&lt;!&ndash;					<auth-web-user
+										*ngIf='user() as user'
+										[user]='user'/>&ndash;&gt;
+									&lt;!&ndash;								<span class="text-gray-700">{{ stringIdGroup.string.parallel }}</span>&ndash;&gt;
+								</div>
+
+								<div class="flex items-center justify-between">
+									<span class="font-semibold text-gray-900">Parallel:</span>
+									<span class="text-gray-700">{{ stringIdGroup.string.parallel }}</span>
+								</div>
+							</div>-->
+							<dl class="-my-3 divide-y divide-gray-200 px-6 py-4 text-sm leading-6">
+								<div class="flex justify-between gap-x-4 py-3">
+									<div class="flex flex-col">
+										<dt class="text-gray-700">Panels</dt>
+										<dt class="text-gray-700">Unlinked</dt>
+									</div>
+									<dd class="flex items-end flex-col">
+										<div class="font-medium text-gray-900">
+											{{ stringIdGroup.panels.length }}
+										</div>
+										<div class="font-medium text-gray-900">
+											{{ stringIdGroup.stats.panelsWithoutLinks }}
+										</div>
+									</dd>
+								</div>
+								<div class="flex justify-between text-xs gap-x-4 py-3">
+									<div class="flex flex-col">
+										<dt class="text-gray-700">VOC</dt>
+										<dt class="text-gray-700">VMP</dt>
+									</div>
+									<dd class="flex items-end flex-col">
+										<div class="font-medium text-gray-900">
+											{{ stringIdGroup.stats.totalVoc }} V
+										</div>
+										<div class="font-medium text-gray-900">
+											{{ stringIdGroup.stats.totalVmp }} V
+										</div>
+									</dd>
+								</div>
+								<div class="flex justify-between text-xs gap-x-4 py-3">
+									<div class="flex flex-col">
+										<dt class="text-gray-700">ISC</dt>
+										<dt class="text-gray-700">IMP</dt>
+									</div>
+									<dd class="flex items-end flex-col">
+										<div class="font-medium text-gray-900">
+											{{ stringIdGroup.stats.totalIsc }} A
+										</div>
+										<div class="font-medium text-gray-900">
+											{{ stringIdGroup.stats.totalImp }} A
+										</div>
+									</dd>
+								</div>
+								<div class="flex justify-between text-xs gap-x-4 py-3">
+									<dt class="text-gray-700">PMAX</dt>
+									<dd class="font-medium text-gray-700">{{ stringIdGroup.stats.totalPmax }} W</dd>
+								</div>
+							</dl>
+						</div>
+					</ng-container>
+				</ng-container>
+			</ng-template>
+		</ul>
+	</div>
+</side-ui-base>
+<!--
+
+<ng-container *ngIf="stringColourOverlayOpen() && openedString()">
+	<div
+		*ngIf="openedString() as openedString"
+		class="absolute z-20 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"
+	>
+		<div class="grid grid-cols-4 gap-2 p-2">
+			<div
+				(click)="setStringColour(openedString.string.id, colour)"
+				*ngFor="let colour of TAILWIND_COLOUR_500_VALUES"
+				[style.background]="colour"
+				class="cursor-pointer"
+			>
+				<div
+					[ngClass]="{
+						'ring-2 ring-black': openedString.string.colour === colour
+					}"
+					[ngStyle]="{
+						'background-color': colour,
+						'border-color': colour
+					}"
+					class="w-6 h-6 rounded-sm"
+				></div>
+			</div>
+		</div>
+	</div>
+</ng-container>
+-->

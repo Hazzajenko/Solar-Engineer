@@ -26,7 +26,7 @@ import { NgIf } from '@angular/common'
 		>
 			<div
 				[style.height]="height"
-				class="relative w-1/2 min-w-fit left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 overflow-y-auto p-4"
+				class="relative w-fit left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 overflow-y-auto p-4"
 			>
 				<div
 					class="relative bg-slate-100 rounded-lg shadow dark:bg-gray-700 mb-2"
@@ -34,7 +34,7 @@ import { NgIf } from '@angular/common'
 				>
 					<button
 						(click)="closeDialog()"
-						class="absolute top-2 right-2 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
+						class="absolute top-2 right-2 text-gray-700 dark:text-gray-300 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
 						data-modal-hide="crypto-modal"
 						type="button"
 					>

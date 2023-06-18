@@ -1,0 +1,58 @@
+<div
+	(touchstart)="dialog.closeDialog()"
+	*ngIf="currentDialog() && string()"
+	class="z-[45] fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-50"
+	id="mobile-menu-backdrop"
+></div>
+
+<dialog-backdrop-template-component #dialog>
+	<div *ngIf="string() as string" class="top-10 w-1/2 min-w-fit h-3/4 overflow-y-auto p-4">
+		<div>
+			<h5
+				class="inline-flex items-center mb-6 text-sm font-semibold text-gray-800 dark:text-gray-200"
+				id="drawer-label"
+			>
+				Change String Colour for {{ string.name }}
+			</h5>
+			<form (ngSubmit)="onSubmit()" [formGroup]="changeColourForm">
+				<div
+					*ngrxLet="changeColourForm.get('colour') as selectedColour"
+					class="grid grid-cols-4 gap-2 p-2"
+					formControlName="colour"
+				>
+					<div
+						(click)="setColour(colour)"
+						*ngFor="let colour of TAILWIND_COLOUR_500_VALUES"
+						class="cursor-pointer flex justify-center"
+					>
+						<div
+							[ngClass]="{
+								'ring-2 ring-black': selectedColour?.value === colour
+							}"
+							[ngStyle]="{
+								'background-color': colour,
+								'border-color': colour
+							}"
+							class="w-6 h-6 rounded-sm"
+						></div>
+					</div>
+				</div>
+				<div class="mt-5 flex items-center justify-end gap-x-2">
+					<button
+						(click)="dialog.closeDialog()"
+						class="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+						type="button"
+					>
+						Cancel
+					</button>
+					<button
+						class="bg-primary-500 text-white inline-flex items-center justify-center font-medium rounded-lg text-sm px-3 py-2 text-center focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+						type="submit"
+					>
+						Save
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</dialog-backdrop-template-component>

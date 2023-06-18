@@ -1,9 +1,5 @@
 <side-ui-base [view]="sideUiView">
-	<div
-		class="pt-5 pl-2 mt-5 mb-4 text-sm text-gray-900 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700 dark:border-opacity-50 font-semibold"
-	>
-		<h3>Account</h3>
-	</div>
+	<side-ui-view-heading heading="Account" />
 	<div
 		*ngIf="user() as user; else notLoggedIn"
 		class="text-center text-gray-500 dark:text-gray-400"
@@ -19,7 +15,7 @@
 			<a href="#">{{ user.displayName }}</a>
 		</h3>
 		<p class="font-light text-gray-500 dark:text-gray-400">{{ user.userName }}</p>
-		<div class="justify-start text-left">
+		<div class="justify-start text-left pt-2">
 			<p
 				class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-xs"
 			>

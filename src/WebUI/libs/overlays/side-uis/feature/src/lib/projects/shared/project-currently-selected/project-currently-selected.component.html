@@ -1,0 +1,25 @@
+<div *ngIf="selectedProject" class="mb-3">
+	<p class="mt-1 mb-2 text-sm text-gray-500">Selected Project:</p>
+	<div
+		[ngStyle]="{
+			'border-left-color': selectedProject.colour
+		}"
+		class="flex items-center py-1 justify-between bg-primary-50 text-primary-700 dark:bg-primary-700 dark:text-primary-100"
+		style="border-left-width: 4px; border-left-style: solid; margin-left: -4px"
+	>
+		<div class="flex justify-start">
+			<a
+				class="flex items-center text-base rounded-lg transition duration-75 group font-medium text-gray-900 dark:text-gray-200"
+			>
+				<span
+					[ngStyle]="{
+						'background-color': selectedProject.colour,
+						'border-color': selectedProject.colour
+					}"
+					class="w-4 h-4 rounded ml-2"
+				></span>
+				<span class="ml-3 capitalize text-sm text-gray-900">{{ selectedProject.name }}</span>
+			</a>
+		</div>
+	</div>
+</div>

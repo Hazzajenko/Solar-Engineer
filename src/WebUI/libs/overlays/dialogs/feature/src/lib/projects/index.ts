@@ -1,0 +1,5 @@
+export * from './move-panels-to-string-dialog/move-panels-to-string-dialog.component'
+export * from './dialog-create-project/index'
+export * from './dialog-delete-project-warning/index'
+export * from './dialog-change-string-colour/dialog-change-string-colour.component'
+export * from './dialog-select-project/dialog-select-project.component'

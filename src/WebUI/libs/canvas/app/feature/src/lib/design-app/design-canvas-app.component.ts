@@ -28,11 +28,7 @@ import {
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import { OverlayNotificationModalComponent } from '@overlays/notifications/feature'
-import {
-	SideUiAuthViewComponent,
-	SideUiMobileMenuComponent,
-	SideUiNavBarComponent,
-} from '@overlays/side-uis/feature'
+import { SideUiAuthViewComponent, SideUiNavBarComponent } from '@overlays/side-uis/feature'
 import {
 	MobileBottomToolbarComponent,
 	OverlayToolBarComponent,
@@ -49,7 +45,7 @@ import { selectSelectedStringId } from '@canvas/selected/data-access'
 import { DialogRendererComponent } from '@overlays/dialogs/feature'
 import { injectProjectsStore } from '@entities/data-access'
 import { injectAuthStore } from '@auth/data-access'
-import { LoadingProjectSpinnerComponent } from '../loading-project-spinner/loading-project-spinner.component'
+import { LoadingProjectSpinnerComponent } from '../ui/loading-project-spinner/loading-project-spinner.component'
 import { DeviceDetectorService } from 'ngx-device-detector'
 
 @Component({
@@ -75,7 +71,6 @@ import { DeviceDetectorService } from 'ngx-device-detector'
 		DialogRendererComponent,
 		SideUiAuthViewComponent,
 		LoadingProjectSpinnerComponent,
-		SideUiMobileMenuComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,

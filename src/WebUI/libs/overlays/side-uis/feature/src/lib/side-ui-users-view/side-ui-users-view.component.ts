@@ -1,5 +1,20 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Injector, Signal, signal } from '@angular/core'
-import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle, NgTemplateOutlet } from '@angular/common'
+import {
+	ChangeDetectionStrategy,
+	Component,
+	computed,
+	inject,
+	Injector,
+	Signal,
+	signal,
+} from '@angular/core'
+import {
+	NgClass,
+	NgForOf,
+	NgIf,
+	NgOptimizedImage,
+	NgStyle,
+	NgTemplateOutlet,
+} from '@angular/common'
 import { ShowSvgNoStylesComponent } from '@shared/ui'
 import { injectAuthStore, injectUsersStore } from '@auth/data-access'
 import { CONTEXT_MENU_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
@@ -8,10 +23,11 @@ import { isWebUser, minimalToWebUser, WebUserModel } from '@auth/shared'
 import { notification } from '@tauri-apps/api'
 import { LetDirective } from '@ngrx/component'
 import { SideUiBaseComponent } from '../side-ui-base/side-ui-base.component'
-import { sideUiInjectionToken, SideUiNavBarView } from '../side-ui-nav-bar/side-ui-nav-bar.component'
-// import { injectUsersStore } from '@users/data-access'
-
-// import { injectUsersStore } from '@users/data-access'
+import {
+	sideUiInjectionToken,
+	SideUiNavBarView,
+} from '../side-ui-nav-bar/side-ui-nav-bar.component'
+import { SideUiViewHeadingComponent } from '../shared'
 
 @Component({
 	selector: 'side-ui-users-view',
@@ -27,6 +43,7 @@ import { sideUiInjectionToken, SideUiNavBarView } from '../side-ui-nav-bar/side-
 		NgTemplateOutlet,
 		LetDirective,
 		SideUiBaseComponent,
+		SideUiViewHeadingComponent,
 	],
 	templateUrl: './side-ui-users-view.component.html',
 	styles: [],
@@ -35,7 +52,6 @@ import { sideUiInjectionToken, SideUiNavBarView } from '../side-ui-nav-bar/side-
 export class SideUiUsersViewComponent {
 	private _authStore = injectAuthStore()
 	private _uiStore = injectUiStore()
-	// private _usersSignalr = inject(UsersSignalrService)
 	private _usersStore = injectUsersStore()
 
 	sideUiView = inject(Injector).get(sideUiInjectionToken) as SideUiNavBarView
@@ -50,7 +66,6 @@ export class SideUiUsersViewComponent {
 		const filteredNotAuthUser = results.filter((r) => r.id !== this.user()?.id)
 		return filteredNotAuthUser.map(minimalToWebUser)
 	})
-	// userSearchResults = this._usersStore.select.userSearchResults
 
 	friends = this._usersStore.select.allFriends as Signal<WebUserModel[]>
 	openedUsers = signal<Map<string, boolean>>(new Map())

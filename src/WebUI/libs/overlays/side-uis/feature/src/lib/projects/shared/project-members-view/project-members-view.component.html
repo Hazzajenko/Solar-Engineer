@@ -1,0 +1,34 @@
+<div>
+	<side-ui-view-heading heading="{{ project.name }} Members" />
+	<ul class="divide-y divide-gray-300 overflow-y-auto" role="list">
+		<ul
+			class="py-1 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+		>
+			<li
+				*ngFor="let member of project.members"
+				class="group hover:bg-gray-100 flex items-center justify-between"
+			>
+				<div
+					*ngrxLet="user()?.id === member.id as memberIsUser"
+					class="group flex items-center justify-center"
+				>
+					<div class="flex items-center justify-end ml-4">
+						<auth-web-user-avatar [avatarSize]="24" [user]="member" />
+					</div>
+					<div class="flex flex-col items-center justify-center">
+						<a
+							class="flex items-center px-4 py-2 text-sm text-gray-700 group-hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white"
+							role="menuitem"
+							tabindex="-1"
+						>
+							<span *ngIf="memberIsUser" class="text-xs font-semibold mr-1"> (You) </span>
+							<span class="text-xs font-semibold">
+								{{ member.displayName | truncate : 10 }}
+							</span>
+						</a>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</ul>
+</div>

@@ -13,6 +13,7 @@ import {
 	sideUiInjectionToken,
 	SideUiNavBarView,
 } from '../side-ui-nav-bar/side-ui-nav-bar.component'
+import { SideUiViewHeadingComponent } from '../shared'
 
 @Component({
 	selector: 'side-ui-auth-view',
@@ -28,6 +29,7 @@ import {
 		AuthSignOutButtonComponent,
 		StandaloneDatePipe,
 		TimeDifferenceFromNowPipe,
+		SideUiViewHeadingComponent,
 	],
 	hostDirectives: [MouseOverRenderDirective],
 	styles: [],

@@ -1,0 +1,6 @@
+export * from './side-ui-selected-project-view/side-ui-selected-project-view.component'
+export * from './selectors/custom-projects.selectors'
+export * from './shared/index'
+export * from './projects-list/index'
+export * from './side-ui-data-view/side-ui-data-view.component'
+export * from './selected-project-view.store'

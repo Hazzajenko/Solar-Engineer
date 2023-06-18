@@ -10,14 +10,17 @@ import {
 import { DIALOG_COMPONENT, DialogInput, injectUiStore } from '@overlays/ui-store/data-access'
 import { NgComponentOutlet, NgIf } from '@angular/common'
 import { AppSettingsDialogComponent } from '../app-settings-dialog'
-import { MovePanelsToStringDialogComponent } from '../move-panels-to-string-dialog/move-panels-to-string-dialog.component'
+import {
+	DialogChangeStringColourComponent,
+	DialogCreateProjectComponent,
+	DialogDeleteProjectWarningComponent,
+	DialogSelectProjectComponent,
+	MovePanelsToStringDialogComponent,
+} from '../projects'
 import { ProfileSettingsDialogComponent } from '../profile-settings-dialog/profile-settings-dialog.component'
 import { SignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.component'
-import { DialogCreateProjectComponent } from '../dialog-create-project'
 import { handleAllSwitchCases } from '@shared/utils'
-import { DialogDeleteProjectWarningComponent } from '../dialog-delete-project-warning'
-import { DialogInviteToProjectConfirmComponent } from '../dialog-invite-to-project-confirm/dialog-invite-to-project-confirm.component'
-import { DialogChangeStringColourComponent } from '../dialog-change-string-colour/dialog-change-string-colour.component'
+import { DialogInviteToProjectConfirmComponent } from '../projects/dialog-invite-to-project-confirm/dialog-invite-to-project-confirm.component'
 
 export const dialogInputInjectionToken = new InjectionToken<DialogInput>('')
 
@@ -90,6 +93,8 @@ export class DialogRendererComponent implements OnDestroy {
 				return DialogInviteToProjectConfirmComponent
 			case DIALOG_COMPONENT.CHANGE_STRING_COLOUR:
 				return DialogChangeStringColourComponent
+			case DIALOG_COMPONENT.SELECT_PROJECT:
+				return DialogSelectProjectComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

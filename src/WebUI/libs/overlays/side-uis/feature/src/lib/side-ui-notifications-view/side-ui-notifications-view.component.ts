@@ -44,6 +44,7 @@ import {
 	sideUiInjectionToken,
 	SideUiNavBarView,
 } from '../side-ui-nav-bar/side-ui-nav-bar.component'
+import { SideUiViewHeadingComponent } from '../shared'
 
 @Component({
 	selector: 'side-ui-notifications-view',
@@ -67,6 +68,7 @@ import {
 		MatTooltipModule,
 		SideUiBaseComponent,
 		GetContentMessageBasedOnTypeWithoutDisplayNamePipe,
+		SideUiViewHeadingComponent,
 	],
 	templateUrl: './side-ui-notifications-view.component.html',
 	styles: [],

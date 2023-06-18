@@ -14,88 +14,144 @@
 		class="overflow-y-auto z-30 py-5 px-3 w-16 h-full bg-gray-100 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
 	>
 		<app-show-svg svgPath="solar/solar-panels-colour" />
-		<ul class="space-y-2">
+		<ul class="flex flex-1 flex-col gap-y-7">
 			<li>
-				<a
-					(click)="changeView('auth')"
-					[ngClass]="{
-					'text-gray-900': currentView() === 'auth',
-					}"
-					[ngStyle]="{
-						'background-color': currentView() === 'auth' ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
-						'border-radius': currentView() === 'auth' ? '0.375rem' : '0.25rem',
-					}"
-					class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-				>
-					<svg-input inputClass="w-5 h-5" svgName="SvgUserCircle" />
-				</a>
-			</li>
-			<li>
-				<a
-					(click)="changeView('projects')"
-					[ngClass]="{
-					'text-gray-900': currentView() === 'projects',
-					}"
-					[ngStyle]="{
-						'background-color': currentView() === 'projects' ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
-						'border-radius': currentView() === 'projects' ? '0.375rem' : '0.25rem',
-					}"
-					class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-				>
-					<svg-input inputClass="w-5 h-5" svgName="SvgFolder" />
-				</a>
-			</li>
-			<li>
-				<a
-					(click)="changeView('data')"
-					[ngClass]="{
+				<ul class="space-y-2">
+					<li>
+						<a
+							(click)="changeView('auth')"
+							*ngrxLet="currentView() === 'auth' as isCurrentView"
+							[isSelected]="isCurrentView"
+							class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+							sideUiNavItem
+						>
+							<svg-input inputClass="w-5 h-5" svgName="SvgUserCircle" />
+						</a>
+					</li>
+					<li>
+						<a
+							(click)="changeView('projects')"
+							*ngrxLet="currentView() === 'projects' as isCurrentView"
+							[isSelected]="isCurrentView"
+							class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+							sideUiNavItem
+						>
+							<svg-input inputClass="w-5 h-5" svgName="SvgFolder" />
+						</a>
+					</li>
+					<!--					<li>
+						<a
+							(click)="changeView('data')"
+							[ngClass]="{
 					'text-gray-900': currentView() === 'data',
 					}"
-					[ngStyle]="{
+							[ngStyle]="{
 						'background-color': currentView() === 'data' ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
 						'border-radius': currentView() === 'data' ? '0.375rem' : '0.25rem',
 					}"
-					class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-				>
-					<svg-input inputClass="w-5 h-5" svgName="SvgData" />
-				</a>
+							class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+						>
+							<svg-input inputClass="w-5 h-5" svgName="SvgData" />
+						</a>
+					</li>-->
+					<li>
+						<a
+							(click)="changeView('users')"
+							*ngrxLet="currentView() === 'users' as isCurrentView"
+							[isSelected]="isCurrentView"
+							class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+							sideUiNavItem
+						>
+							<svg-input inputClass="w-5 h-5" svgName="SvgUsers" />
+						</a>
+					</li>
+					<li>
+						<a
+							(click)="changeView('notifications')"
+							*ngrxLet="currentView() === 'notifications' as isCurrentView"
+							[isSelected]="isCurrentView"
+							class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+							sideUiNavItem
+						>
+							<svg-input inputClass="w-5 h-5" svgName="SvgBell" />
+							<ng-container *ngrxLet="amountOfUnreadNotifications() as amountOfUnreadNotifications">
+								<div
+									*ngIf="amountOfUnreadNotifications && amountOfUnreadNotifications > 0"
+									class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2 dark:border-gray-900"
+								>
+									{{ amountOfUnreadNotifications }}
+								</div>
+							</ng-container>
+						</a>
+					</li>
+				</ul>
 			</li>
 			<li>
-				<a
-					(click)="changeView('users')"
-					[ngClass]="{
-					'text-gray-900': currentView() === 'users',
-					}"
-					[ngStyle]="{
-						'background-color': currentView() === 'users' ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
-						'border-radius': currentView() === 'users' ? '0.375rem' : '0.25rem',
-					}"
-					class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-				>
-					<svg-input inputClass="w-5 h-5" svgName="SvgUsers" />
-				</a>
-			</li>
-			<li>
-				<a
-					(click)="changeView('notifications')"
-					*ngrxLet="amountOfUnreadNotifications() as amountOfUnreadNotifications"
-					[ngClass]="{
-					'text-gray-900': currentView() === 'notifications',
-					}"
-					[ngStyle]="{
-						'background-color': currentView() === 'notifications' ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
-						'border-radius': currentView() === 'notifications' ? '0.375rem' : '0.25rem',
-					}"
-					class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-				>
-					<svg-input inputClass="w-5 h-5" svgName="SvgBell" />
-					<div
-						*ngIf="amountOfUnreadNotifications && amountOfUnreadNotifications > 0"
-						class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2 dark:border-gray-900"
+				<ul *ngIf="selectedProject() as project" class="space-y-1">
+					<ng-container
+						*ngrxLet="currentView() === 'selected-project' as selectedProjectIsCurrentView"
 					>
-						{{ amountOfUnreadNotifications }}
-					</div>
-				</a>
+						<li>
+							<a
+								(click)="changeView('selected-project')"
+								[ngClass]="{
+						'bg-indigo-100': selectedProjectIsCurrentView,
+							}"
+								[ngStyle]="{
+
+						'border-radius': selectedProjectIsCurrentView ? '0.375rem' : '0.25rem',
+					}"
+								class="text-gray-400 hover:text-indigo-600 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+							>
+								<span
+									[ngClass]="{
+							'border-indigo-600 text-indigo-600': selectedProjectIsCurrentView,
+							}"
+									class="flex cursor-default h-6 w-6 shrink-0 capitalize items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white text-gray-400 border-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600"
+									>{{ project.name | slice : 0 : 1 }}</span
+								>
+								<span class="truncate"> {{ project.name }}</span>
+							</a>
+						</li>
+						<li>
+							<a
+								(click)="setSelectedProjectView('data')"
+								*ngrxLet="selectedProjectIsCurrentView && projectView() === 'data' as isProjectView"
+								[isSelected]="isProjectView"
+								class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+								sideUiNavItem
+							>
+								<svg-input inputClass="w-5 h-5" svgName="SvgData" />
+							</a>
+						</li>
+						<li>
+							<a
+								(click)="setSelectedProjectView('members')"
+								*ngrxLet="
+									selectedProjectIsCurrentView && projectView() === 'members' as isProjectView
+								"
+								[isSelected]="isProjectView"
+								class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+								sideUiNavItem
+							>
+								<svg-input inputClass="w-5 h-5" svgName="SvgUsers" />
+							</a>
+						</li>
+						<li>
+							<a
+								(click)="setSelectedProjectView('settings')"
+								*ngrxLet="
+									selectedProjectIsCurrentView && projectView() === 'settings' as isProjectView
+								"
+								[isSelected]="isProjectView"
+								class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+								sideUiNavItem
+							>
+								<svg-input inputClass="w-5 h-5" svgName="SvgCog6Tooth" />
+							</a>
+						</li>
+					</ng-container>
+				</ul>
 			</li>
 			<li class="absolute bottom-5">
 				<a
