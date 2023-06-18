@@ -14,7 +14,7 @@ import {
 } from '@overlays/side-uis/feature'
 import { DialogBackdropTemplateComponent } from '../../dialog-backdrop-template/dialog-backdrop-template.component'
 import { NgClass, NgForOf, NgIf } from '@angular/common'
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { LetDirective } from '@ngrx/component'
 import { ProjectWebModel } from '@entities/shared'
 import { injectProjectsStore } from '@entities/data-access'
@@ -42,29 +42,17 @@ import { TruncatePipe } from '@shared/pipes'
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogSelectProjectComponent {
-	private _fb = inject(FormBuilder)
 	private _projects = injectProjectsStore()
 	private _uiStore = injectUiStore()
 	currentDialog = this._uiStore.select.currentDialog
 	dialog = inject(Injector).get(dialogInputInjectionToken) as DialogInputInviteToProjectConfirm
 	allWebProjects = selectSignalFromStore(selectAllWebProjectsExceptSelected)
-	// allWebProjects = selectSignalFromStore(selectAllWebProjects)
 	currentProjectId = this._projects.select.selectedProjectId
-	// selectProjectForm = this._fb.group({
-	// 	projectId: ['', [Validators.required]],
-	// })
+
 	selectedProjectId = signal<ProjectWebModel['id'] | undefined>(undefined)
 	selectedProjectName = computed(() => {
 		return this.allWebProjects().find((project) => project.id === this.selectedProjectId())?.name
 	})
-
-	onSubmit() {
-		// if (!this.selectProjectForm.valid) {
-		// 	console.error('Form is invalid', this.selectProjectForm)
-		// 	return
-		// }
-		// console.log('Form is valid', this.selectProjectForm)
-	}
 
 	chooseProject(project: ProjectWebModel) {
 		this.selectedProjectId.set(project.id)

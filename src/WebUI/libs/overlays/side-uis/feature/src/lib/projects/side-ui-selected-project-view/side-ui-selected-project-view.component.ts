@@ -67,4 +67,13 @@ export class SideUiSelectedProjectViewComponent implements OnInit {
 			component: DIALOG_COMPONENT.SELECT_PROJECT,
 		})
 	}
+
+	openProjectViewSelectorDialog() {
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.SELECT_PROJECT_VIEW,
+			data: {
+				currentView: this.currentProjectView(),
+			},
+		})
+	}
 }

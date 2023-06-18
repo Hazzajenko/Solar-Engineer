@@ -10,7 +10,7 @@ import {
 	Renderer2,
 	ViewChild,
 } from '@angular/core'
-import { UiStoreService } from '@overlays/ui-store/data-access'
+import { injectUiStore } from '@overlays/ui-store/data-access'
 import { scaleAndOpacityAnimation } from '@shared/animations'
 import { NgIf } from '@angular/common'
 
@@ -18,6 +18,12 @@ import { NgIf } from '@angular/common'
 	selector: 'dialog-backdrop-template-component',
 	standalone: true,
 	template: `
+		<div
+			(click)="closeDialog()"
+			*ngIf="currentDialog()"
+			class="z-[45] fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-50"
+			id="backdrop"
+		></div>
 		<div
 			@scaleAndOpacity
 			#backdrop
@@ -64,17 +70,12 @@ import { NgIf } from '@angular/common'
 export class DialogBackdropTemplateComponent implements AfterViewInit {
 	private _renderer = inject(Renderer2)
 	private _ngZone = inject(NgZone)
-	// private _appStore = inject(AppStateStoreService)
-	private _uiStore = inject(UiStoreService)
+	private _uiStore = injectUiStore()
 	private _dispose: ReturnType<typeof this._renderer.listen> | undefined = undefined
-	// private mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
-
+	currentDialog = this._uiStore.select.currentDialog
 	@Input() height = ''
-
 	@ViewChild('backdrop') backdrop!: ElementRef<HTMLDivElement>
 	@Output() backdropClick = new EventEmitter<void>()
-
-	// @Input({ required: true }) dialogId!: string
 
 	ngAfterViewInit(): void {
 		this._ngZone.runOutsideAngular(() => {

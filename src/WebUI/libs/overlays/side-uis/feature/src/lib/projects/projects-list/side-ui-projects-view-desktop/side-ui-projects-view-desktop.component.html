@@ -45,36 +45,6 @@
 			</div>
 		</div>
 	</div>
-	<ng-container *ngIf="selectedProject() as project">
-		<div class="p-1 dark:bg-gray-800">
-			<div class="flex justify-between items-center mb-4 sm:mb-5 dark:border-gray-600">
-				<div class="flex flex-col justify-start">
-					<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-						{{ project.name }}
-					</h3>
-					<ng-container *ngrxLet="project | filterProjectMembersByOnline as onlineMembers"
-						><p *ngIf="onlineMembers.length > 0" class="text-sm text-gray-500 dark:text-gray-400">
-							{{ onlineMembers.length }}
-							{{ "member" | pluralize : project.members.length }} online
-						</p>
-						<p *ngIf="onlineMembers.length === 0" class="text-sm text-gray-500 dark:text-gray-400">
-							No members online
-						</p></ng-container
-					>
-				</div>
-				<button
-					class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-					data-modal-toggle="updateEventModal"
-					type="button"
-				>
-					<svg-input inputClass="h-5 w-5" svgName="SvgCog6Tooth" />
-					<span class="sr-only">Edit Project</span>
-				</button>
-			</div>
-
-			<app-project-details-view [project]="project" />
-		</div>
-	</ng-container>
 	<ng-container *ngFor="let project of projects">
 		<li
 			*ngrxLet="{
@@ -103,6 +73,12 @@
 						[project]="project"
 					/>
 				</div>
+				<!--		<div
+							*ngIf="projectVm.isSelected"
+							class="absolute right-0 top-0 rounded-md mr-2 py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20"
+						>
+							Selected
+						</div>-->
 				<div class="justify-end absolute right-0 flex">
 					<btn-animated-down-up-arrow
 						(click)="toggleProjectView(project)"

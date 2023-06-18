@@ -24,7 +24,7 @@ import { SideUiNavBarView } from '../side-ui-nav-bar/side-ui-nav-bar.component'
 			}"
 			class="{{
 				this.fullscreenMobileClasses
-			}} md:w-60 overflow-y-auto overflow-x-hidden py-4 px-3 h-full bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700  transition-transform -translate-x-full"
+			}} md:w-60 overflow-y-auto z-50 overflow-x-hidden py-4 px-3 h-full bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700  transition-transform -translate-x-full"
 		>
 			<ng-content></ng-content>
 		</div>

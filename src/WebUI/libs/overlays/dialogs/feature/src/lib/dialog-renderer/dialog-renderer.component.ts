@@ -15,6 +15,7 @@ import {
 	DialogCreateProjectComponent,
 	DialogDeleteProjectWarningComponent,
 	DialogSelectProjectComponent,
+	DialogSelectProjectViewComponent,
 	MovePanelsToStringDialogComponent,
 } from '../projects'
 import { ProfileSettingsDialogComponent } from '../profile-settings-dialog/profile-settings-dialog.component'
@@ -72,7 +73,6 @@ export class DialogRendererComponent implements OnDestroy {
 
 	ngOnDestroy() {
 		this._killEvent?.()
-		// this._uiStore.dispatch.closeDialog()
 	}
 
 	private switchFn(component: DialogInput['component']) {
@@ -95,6 +95,8 @@ export class DialogRendererComponent implements OnDestroy {
 				return DialogChangeStringColourComponent
 			case DIALOG_COMPONENT.SELECT_PROJECT:
 				return DialogSelectProjectComponent
+			case DIALOG_COMPONENT.SELECT_PROJECT_VIEW:
+				return DialogSelectProjectViewComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

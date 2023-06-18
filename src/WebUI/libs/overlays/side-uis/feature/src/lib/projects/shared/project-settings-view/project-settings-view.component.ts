@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, Input, signal } from '@angular/core'
-import { FormBuilder, Validators } from '@angular/forms'
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
 import { ProjectWebModel } from '@entities/shared'
 import { injectAppUser } from '@auth/data-access'
 import {
@@ -12,6 +12,9 @@ import { LetDirective } from '@ngrx/component'
 import { NgClass, NgForOf, NgIf, NgStyle } from '@angular/common'
 import { TruncatePipe } from '@shared/pipes'
 import { SideUiViewHeadingComponent } from '../../../shared'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input'
+import { InputSvgComponent } from '@shared/ui'
 
 @Component({
 	selector: 'app-project-settings-view',
@@ -25,6 +28,10 @@ import { SideUiViewHeadingComponent } from '../../../shared'
 		NgStyle,
 		NgClass,
 		SideUiViewHeadingComponent,
+		MatFormFieldModule,
+		MatInputModule,
+		ReactiveFormsModule,
+		InputSvgComponent,
 	],
 	templateUrl: './project-settings-view.component.html',
 	styles: [],
@@ -38,7 +45,11 @@ export class ProjectSettingsViewComponent {
 		name: ['', [Validators.required, Validators.minLength(4)]],
 		colour: [TAILWIND_COLOUR_500.blue as string, [Validators.required]],
 	})
+	updateProjectNameForm = this._fb.group({
+		name: ['', [Validators.required, Validators.minLength(4)]],
+	})
 	loading = signal(false)
+	editingProjectName = signal(false)
 	protected readonly TAILWIND_COLOUR_500_VALUES = TAILWIND_COLOUR_500_VALUES
 
 	get project() {
@@ -47,6 +58,9 @@ export class ProjectSettingsViewComponent {
 
 	@Input({ required: true }) set project(value: ProjectWebModel) {
 		this._project = value
+		this.updateProjectNameForm.patchValue({
+			name: value.name,
+		})
 		this.updateProjectForm.patchValue({
 			name: value.name,
 			colour: value.colour,
@@ -88,5 +102,9 @@ export class ProjectSettingsViewComponent {
 
 		this.updateProjectForm.controls.name.markAsTouched()
 		this.updateProjectForm.controls.name.updateValueAndValidity()
+	}
+
+	startEditingProjectName() {
+		this.editingProjectName.set(true)
 	}
 }

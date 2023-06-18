@@ -13,19 +13,19 @@
 		class="w-4 h-4 rounded ml-2"
 	></span>
 	<div class="flex flex-col justify-center truncate ml-3">
-		<!--		<div class="flex items-center justify-between">-->
-		<span
-			[class.font-medium]="isSelected"
-			class="ml-3 capitalize text-sm text-gray-900 md:group-hover:underline"
-			>{{ project.name | truncate : 10 }}</span
-		>
-		<!--			<div
+		<div class="flex items-center justify-between">
+			<span
+				[class.font-medium]="isSelected"
+				class="ml-3 capitalize text-sm text-gray-900 md:group-hover:underline md:cursor-pointer md:hover:text-blue-600 dark:md:group-hover:text-white"
+				>{{ project.name | truncate : 10 }}
+			</span>
+			<!--		<div
 						*ngIf="isSelected"
 						class="rounded-md mr-2 py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20"
 					>
 						Selected
 					</div>-->
-		<!--		</div>-->
+		</div>
 		<span *ngIf="project.members.length > 0" class="ml-3 text-xs text-gray-500 dark:text-gray-400">
 			{{ project.members.length }} {{ "member" | pluralize : project.members.length }}
 		</span>

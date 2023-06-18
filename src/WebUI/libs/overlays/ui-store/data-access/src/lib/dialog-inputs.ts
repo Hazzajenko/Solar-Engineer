@@ -14,6 +14,7 @@ export const DIALOG_COMPONENT = {
 	INVITE_TO_PROJECT_CONFIRM: 'DialogInviteToProjectConfirmComponent',
 	CHANGE_STRING_COLOUR: 'DialogChangeStringColourComponent',
 	SELECT_PROJECT: 'DialogSelectProjectComponent',
+	SELECT_PROJECT_VIEW: 'DialogSelectProjectViewComponent',
 } as const
 
 export type DialogComponent = (typeof DIALOG_COMPONENT)[keyof typeof DIALOG_COMPONENT]
@@ -67,6 +68,13 @@ export type DialogInputSelectProject = DialogInputTemplate & {
 	component: typeof DIALOG_COMPONENT.SELECT_PROJECT
 }
 
+export type DialogInputSelectProjectView = DialogInputTemplate & {
+	component: typeof DIALOG_COMPONENT.SELECT_PROJECT_VIEW
+	data: {
+		currentView: 'data' | 'members' | 'settings'
+	}
+}
+
 export type DialogInput =
 	| DialogInputMovePanelsToString
 	| DialogInputAppSettings
@@ -77,3 +85,4 @@ export type DialogInput =
 	| DialogInputInviteToProjectConfirm
 	| DialogInputChangeStringColour
 	| DialogInputSelectProject
+	| DialogInputSelectProjectView
