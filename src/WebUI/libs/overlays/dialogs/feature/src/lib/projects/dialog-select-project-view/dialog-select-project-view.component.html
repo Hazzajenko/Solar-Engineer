@@ -1,17 +1,22 @@
 <dialog-backdrop-template-component #dialog>
 	<div class="top-10 w-1/2 min-w-fit h-3/4 overflow-y-auto p-4">
 		<div>
-			<h5
-				class="inline-flex items-center mb-6 text-sm font-semibold text-gray-800 dark:text-gray-200"
-				id="drawer-label"
-			>
-				Select Project View
-			</h5>
-			<div>
-				<div class="flex flex-col items-start justify-center px-4">
+			<div class="flex flex-col items-start justify-center mb-4 pr-4">
+				<h5
+					class="inline-flex items-center text-sm font-semibold text-gray-800 dark:text-gray-200"
+					id="drawer-label"
+				>
+					Select Project View
+				</h5>
+				<p class="text-xs text-gray-500 dark:text-gray-400" id="drawer-description">
+					Current View: {{ currentViewName }}
+				</p>
+			</div>
+			<div class="p-2">
+				<div class="flex flex-col items-start justify-center">
 					<button
 						(click)="chooseView(view.key)"
-						*ngFor="let view of views"
+						*ngFor="let view of viewSelections"
 						[ngClass]='{
 						"bg-indigo-100 dark:bg-indigo-800": view.key === selectedViewKey(),
 					}'
@@ -21,62 +26,22 @@
 						name="projectId"
 						type="button"
 					>
-						<!--						<button mat-stroked-button>Primary</button>-->
-						<div class="min-w-0 flex-1 text-sm leading-6">
-							<div class="flex items-center justify-center">
-								<svg-input *ngIf="view.key === 'data'" class="scale-90" svgName="SvgData" />
-								<svg-input *ngIf="view.key === 'members'" class="scale-90" svgName="SvgUsers" />
-								<svg-input
-									*ngIf="view.key === 'settings'"
-									class="scale-90"
-									svgName="SvgCog6Tooth"
-								/>
-								<label class="select-none ml-1 font-medium text-gray-900">{{ view.name }}</label>
-							</div>
-						</div>
-						<!--		<div class="ml-3 flex h-6 items-center">
-									<input
-										[checked]="view.key === selectedViewKey()"
-										class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-										id="person-3"
-										name="person-3"
-										type="checkbox"
-									/>
-								</div>-->
-						<!--	<div></div>
-							<div
-								*ngIf="view.key === selectedViewKey()"
-								class="absolute top-1 right-1 rounded-md mr-2 py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20"
-							>
-								Selected
-							</div>-->
+						<svg-input *ngIf="view.key === 'data'" class="scale-90" svgName="SvgData" />
+						<svg-input *ngIf="view.key === 'members'" class="scale-90" svgName="SvgUsers" />
+						<svg-input *ngIf="view.key === 'settings'" class="scale-90" svgName="SvgCog6Tooth" />
+						<label class="select-none ml-1 font-medium text-gray-900">{{ view.name }}</label>
+					</button>
+				</div>
+				<div class="mt-4">
+					<button
+						(click)="dialog.closeDialog()"
+						class="inline-flex min-w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+						type="button"
+					>
+						Cancel
 					</button>
 				</div>
 			</div>
-			<!--<div class="mt-5 flex items-center justify-between gap-x-2">
-				<button
-					(click)="dialog.closeDialog()"
-					class="inline-flex max-w-fit justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-					type="button"
-				>
-					Cancel
-				</button>
-				<button
-					(click)="selectView()"
-					[disabled]="!selectedViewKey()"
-					[ngClass]="{
-						'opacity-50 cursor-not-allowed bg-blue-700 hover:bg-blue-800': !selectedViewKey(),
-						'bg-blue-500 hover:bg-blue-600': selectedViewKey()
-					}"
-					class="bg-primary-500 w-full text-white inline-flex items-center justify-center font-medium rounded-lg text-sm px-3 py-2 text-center focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-					type="submit"
-				>
-					<span *ngIf="selectedViewName() as selectedViewName">
-						Select {{ selectedViewName }}
-					</span>
-					<span *ngIf="!selectedViewName()"> No View Selected </span>
-				</button>
-			</div>-->
 		</div>
 	</div>
 </dialog-backdrop-template-component>

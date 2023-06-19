@@ -36,9 +36,10 @@ export class DialogSelectProjectViewComponent {
 	private _projects = injectProjectsStore()
 	private _uiStore = injectUiStore()
 	private _selectedProjectViewStore = inject(SelectedProjectViewStore)
-	currentDialog = this._uiStore.select.currentDialog
 	dialog = inject(Injector).get(dialogInputInjectionToken) as DialogInputSelectProjectView
+	currentDialog = this._uiStore.select.currentDialog
 	currentView = this.dialog.data.currentView
+
 	currentProjectId = this._projects.select.selectedProjectId
 	views = [
 		{
@@ -53,11 +54,14 @@ export class DialogSelectProjectViewComponent {
 			key: 'settings',
 			name: 'Settings',
 		},
-	].filter((view) => view.key !== this.currentView)
+	]
+	viewSelections = this.views.filter((view) => view.key !== this.currentView)
+
+	currentViewName = this.views.find((view) => view.key === this.currentView)?.name
 
 	selectedViewKey = signal<(typeof this.views)[number]['key'] | undefined>(undefined)
 	selectedViewName = computed(() => {
-		return this.views.find((view) => view.key === this.selectedViewKey())?.name
+		return this.views.find((view) => view.key === this.currentView)?.name
 	})
 
 	chooseView(viewKey: (typeof this.views)[number]['key']) {

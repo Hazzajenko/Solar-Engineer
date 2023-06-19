@@ -71,6 +71,17 @@ export class ProjectsSignalrService {
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED, (response: ProjectUpdatedResponse) => {
 			console.log(PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED, response)
+			const changes: Record<string, any> = {}
+			if (response.changes.name) {
+				changes['name'] = response.changes.name
+			}
+			if (response.changes.colour) {
+				changes['colour'] = response.changes.colour
+			}
+			this._projectsStore.dispatch.updateProjectNoSignalr({
+				id: response.projectId,
+				changes,
+			})
 		})
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.PROJECT_DELETED, (response: ProjectDeletedResponse) => {

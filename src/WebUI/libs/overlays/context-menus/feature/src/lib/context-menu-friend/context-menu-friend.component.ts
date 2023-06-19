@@ -13,6 +13,12 @@ import { ContextMenuDirective } from '../directives'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { injectProjectsStore } from '@entities/data-access'
 import { ProjectModel } from '@entities/shared'
+import {
+	ContextMenuBaseComponent,
+	ContextMenuExpandComponent,
+	ContextMenuItemComponent,
+	ContextMenuSubHeadingComponent,
+} from '../context-menu-builder'
 
 @Component({
 	selector: 'context-menu-friend',
@@ -26,6 +32,10 @@ import { ProjectModel } from '@entities/shared'
 		NgForOf,
 		NgStyle,
 		InputSvgComponent,
+		ContextMenuBaseComponent,
+		ContextMenuItemComponent,
+		ContextMenuExpandComponent,
+		ContextMenuSubHeadingComponent,
 	],
 	templateUrl: './context-menu-friend.component.html',
 	styles: [],

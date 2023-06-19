@@ -22,6 +22,8 @@ import { ProfileSettingsDialogComponent } from '../profile-settings-dialog/profi
 import { SignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.component'
 import { handleAllSwitchCases } from '@shared/utils'
 import { DialogInviteToProjectConfirmComponent } from '../projects/dialog-invite-to-project-confirm/dialog-invite-to-project-confirm.component'
+import { DialogUserOptionsComponent } from '../users'
+import { DialogWarningTemplateComponent } from '../shared'
 
 export const dialogInputInjectionToken = new InjectionToken<DialogInput>('')
 
@@ -97,6 +99,10 @@ export class DialogRendererComponent implements OnDestroy {
 				return DialogSelectProjectComponent
 			case DIALOG_COMPONENT.SELECT_PROJECT_VIEW:
 				return DialogSelectProjectViewComponent
+			case DIALOG_COMPONENT.USER_OPTIONS:
+				return DialogUserOptionsComponent
+			case DIALOG_COMPONENT.WARNING_TEMPLATE:
+				return DialogWarningTemplateComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

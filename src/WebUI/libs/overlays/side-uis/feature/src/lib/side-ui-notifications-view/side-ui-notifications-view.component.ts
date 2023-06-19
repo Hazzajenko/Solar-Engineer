@@ -26,16 +26,13 @@ import { NOTIFICATION_TYPE, NotificationModel } from '@auth/shared'
 import { TimeDifferenceFromNowPipe, TruncatePipe } from '@shared/pipes'
 import { LetDirective } from '@ngrx/component'
 import {
-	getContentMessageBasedOnTypeWithoutDisplayName,
 	GetContentMessageBasedOnTypeWithoutDisplayNamePipe,
 	getContentMessageHtmlBasedOnType,
-	getNotificationContentMessageBasedOnType,
-	getNotificationTypeToText,
 	isProjectNotification,
 } from '@auth/utils'
 import { CenterThisElementDirective, DefaultHoverEffectsDirective } from '@shared/directives'
 import { notification } from '@tauri-apps/api'
-import { assertNotNull, getTimeDifferenceFromNow, ToSafeHtmlPipe } from '@shared/utils'
+import { assertNotNull, ToSafeHtmlPipe } from '@shared/utils'
 import { heightInOutWithConfig } from '@shared/animations'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { injectProjectsStore } from '@entities/data-access'
@@ -45,6 +42,8 @@ import {
 	SideUiNavBarView,
 } from '../side-ui-nav-bar/side-ui-nav-bar.component'
 import { SideUiViewHeadingComponent } from '../shared'
+import { NotificationsViewNotificationPreviewComponent } from './notifications-view-notification-preview/notifications-view-notification-preview.component'
+import { NotificationsViewNotificationItemComponent } from './notifications-view-notification-item/notifications-view-notification-item.component'
 
 @Component({
 	selector: 'side-ui-notifications-view',
@@ -69,6 +68,8 @@ import { SideUiViewHeadingComponent } from '../shared'
 		SideUiBaseComponent,
 		GetContentMessageBasedOnTypeWithoutDisplayNamePipe,
 		SideUiViewHeadingComponent,
+		NotificationsViewNotificationPreviewComponent,
+		NotificationsViewNotificationItemComponent,
 	],
 	templateUrl: './side-ui-notifications-view.component.html',
 	styles: [],
@@ -129,14 +130,9 @@ export class SideUiNotificationsViewComponent implements OnInit, OnDestroy {
 		}
 	})
 	trackByFn = (index: number, notification: NotificationModel) => notification.id
-	protected readonly getNotificationTypeToText = getNotificationTypeToText
 	protected readonly notification = notification
 	protected readonly getContentMessageHtmlBasedOnType = getContentMessageHtmlBasedOnType
 	protected readonly NOTIFICATION_TYPE = NOTIFICATION_TYPE
-	protected readonly getContentMessageBasedOnType = getNotificationContentMessageBasedOnType
-	protected readonly getContentMessageBasedOnTypeWithoutDisplayName =
-		getContentMessageBasedOnTypeWithoutDisplayName
-	protected readonly getTimeDifferenceFromNow = getTimeDifferenceFromNow
 
 	ngOnInit() {
 		this._disposeClickListener = this._renderer.listen(

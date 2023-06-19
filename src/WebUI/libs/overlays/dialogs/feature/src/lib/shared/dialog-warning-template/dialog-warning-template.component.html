@@ -1,4 +1,4 @@
-<dialog-backdrop-template-component #dialog *ngIf="project() as project">
+<dialog-backdrop-template-component #dialog *ngIf="title && message && buttonText">
 	<div
 		class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
 	>
@@ -23,23 +23,22 @@
 			</div>
 			<div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
 				<h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">
-					Delete Project {{ project.name }}
+					{{ title }}
 				</h3>
 				<div class="mt-2">
 					<p class="text-sm text-gray-500">
-						Are you sure you want to delete {{ project.name }}? All of your data will be permanently
-						removed from our servers forever. This action cannot be undone.
+						{{ message }}
 					</p>
 				</div>
 			</div>
 		</div>
 		<div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
 			<button
-				(click)="deleteProject(project)"
+				(click)="buttonAction()"
 				class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
 				type="button"
 			>
-				Delete
+				{{ buttonText }}
 			</button>
 			<button
 				(click)="dialog.closeDialog()"

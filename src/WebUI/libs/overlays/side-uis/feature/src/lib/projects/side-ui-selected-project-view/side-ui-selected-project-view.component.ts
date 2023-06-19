@@ -12,6 +12,7 @@ import {
 	ProjectDataViewComponent,
 	ProjectDetailsViewComponent,
 	ProjectMembersViewComponent,
+	ProjectProfileViewComponent,
 	ProjectSettingsViewComponent,
 } from '../shared'
 import { SideUiBaseComponent } from '../../side-ui-base/side-ui-base.component'
@@ -39,6 +40,7 @@ import { ProjectWebModel } from '@entities/shared'
 		ProjectDataViewComponent,
 		ProjectMembersViewComponent,
 		ProjectSettingsViewComponent,
+		ProjectProfileViewComponent,
 	],
 	templateUrl: './side-ui-selected-project-view.component.html',
 	styles: [],

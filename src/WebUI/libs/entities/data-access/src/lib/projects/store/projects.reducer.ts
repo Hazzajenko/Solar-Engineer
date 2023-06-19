@@ -75,6 +75,9 @@ const reducer = createReducer(
 	on(ProjectsActions.updateProject, (state, { update }) =>
 		projectsAdapter.updateOne(update, state),
 	),
+	on(ProjectsActions.updateProjectNoSignalr, (state, { update }) =>
+		projectsAdapter.updateOne(update, state),
+	),
 	on(ProjectsActions.updateManyProjects, (state, { updates }) =>
 		projectsAdapter.updateMany(updates, state),
 	),

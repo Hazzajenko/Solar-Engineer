@@ -16,7 +16,6 @@ import { MouseOverRenderDirective } from '@canvas/rendering/data-access'
 import {
 	SelectedProjectView,
 	SelectedProjectViewStore,
-	SideUiDataViewComponent,
 	SideUiProjectsListViewComponent,
 	SideUiSelectedProjectViewComponent,
 } from '../projects'
@@ -33,7 +32,6 @@ import { SideUiNavItemDirective } from './side-ui-nav-item.directive'
 export type SideUiNavBarView =
 	| 'auth'
 	| 'projects'
-	| 'data'
 	| 'users'
 	| 'notifications'
 	| 'selected-project'
@@ -41,7 +39,6 @@ export type SideUiNavBarView =
 export type SideUiNavBarViewComponent =
 	| typeof SideUiAuthViewComponent
 	| typeof SideUiProjectsListViewComponent
-	| typeof SideUiDataViewComponent
 	| typeof SideUiUsersViewComponent
 	| typeof SideUiNotificationsViewComponent
 	| typeof SideUiSelectedProjectViewComponent
@@ -59,7 +56,6 @@ export const sideUiInjectionToken = new InjectionToken<SideUiNavBarView>('Curren
 		LogoComponent,
 		ShowSvgComponent,
 		ShowSvgNoStylesComponent,
-		SideUiDataViewComponent,
 		SideUiAuthViewComponent,
 		NgSwitch,
 		NgSwitchCase,
@@ -87,8 +83,6 @@ export class SideUiNavBarComponent {
 				return SideUiAuthViewComponent
 			case 'projects':
 				return SideUiProjectsListViewComponent
-			case 'data':
-				return SideUiDataViewComponent
 			case 'users':
 				return SideUiUsersViewComponent
 			case 'notifications':
@@ -109,9 +103,6 @@ export class SideUiNavBarComponent {
 	})
 	currentView = signal<SideUiNavBarView>('auth')
 
-	/*	get currentProjectView(): SelectedProjectView {
-	 return this._selectedProjectViewStore.selectedProjectView()
-	 }*/
 	currentViewComponent = signal<SideUiNavBarViewComponent>(SideUiAuthViewComponent)
 	sideUiInjector: Injector = Injector.create({
 		providers: [
@@ -123,29 +114,50 @@ export class SideUiNavBarComponent {
 		parent: this._injector,
 	})
 	setSelectedProjectView = (selectedProjectView: SelectedProjectView) => {
-		if (this._selectedProjectViewStore.selectedProjectView() === selectedProjectView) {
+		if (this.currentView() !== 'selected-project') {
 			this.changeView('selected-project')
 			this._selectedProjectViewStore.setSelectedProjectView(selectedProjectView)
 			return
 		}
+		if (this._selectedProjectViewStore.selectedProjectView() === selectedProjectView) {
+			this.changeView('none')
+			return
+		}
 		this._selectedProjectViewStore.setSelectedProjectView(selectedProjectView)
-		if (this.currentView() === 'selected-project') return
-		this.changeView('selected-project')
 	}
 
 	changeView(view: SideUiNavBarView) {
+		const isGoingBackToProjectProfile =
+			this.currentView() === 'selected-project' &&
+			this._selectedProjectViewStore.selectedProjectView() !== 'profile' &&
+			view === 'selected-project'
+
+		if (isGoingBackToProjectProfile) {
+			this._selectedProjectViewStore.setSelectedProjectView('profile')
+			return
+		}
+
 		if (this.currentView() === view) {
-			/*			if (view === 'selected-project') {
-			 this._selectedProjectViewStore.setSelectedProjectView('none')
-			 }*/
 			this.currentView.set('none')
 			this.currentViewComponent.set(null)
 			return
 		}
 
-		/*		if (view !== 'selected-project' && this.currentView() === 'selected-project') {
-		 this._selectedProjectViewStore.setSelectedProjectView('none')
-		 }*/
+		if (view === 'selected-project') {
+			this.currentView.set(view)
+			this.currentViewComponent.set(SideUiSelectedProjectViewComponent)
+			this._selectedProjectViewStore.setSelectedProjectView('profile')
+			this.sideUiInjector = Injector.create({
+				providers: [
+					{
+						provide: sideUiInjectionToken,
+						useValue: this.currentView(),
+					},
+				],
+				parent: this._injector,
+			})
+			return
+		}
 
 		this.currentView.set(view)
 		const viewComponent = this.getCurrentViewComponent(view)

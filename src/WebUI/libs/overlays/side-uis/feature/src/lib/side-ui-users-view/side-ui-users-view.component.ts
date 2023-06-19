@@ -17,7 +17,11 @@ import {
 } from '@angular/common'
 import { ShowSvgNoStylesComponent } from '@shared/ui'
 import { injectAuthStore, injectUsersStore } from '@auth/data-access'
-import { CONTEXT_MENU_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
+import {
+	CONTEXT_MENU_COMPONENT,
+	DIALOG_COMPONENT,
+	injectUiStore,
+} from '@overlays/ui-store/data-access'
 import { TruncatePipe } from '@shared/pipes'
 import { isWebUser, minimalToWebUser, WebUserModel } from '@auth/shared'
 import { notification } from '@tauri-apps/api'
@@ -28,6 +32,8 @@ import {
 	SideUiNavBarView,
 } from '../side-ui-nav-bar/side-ui-nav-bar.component'
 import { SideUiViewHeadingComponent } from '../shared'
+import { UsersViewUserPreviewComponent } from './users-view-user-preview/users-view-user-preview.component'
+import { UsersViewWebUserItemComponent } from './users-view-web-user-item/users-view-web-user-item.component'
 
 @Component({
 	selector: 'side-ui-users-view',
@@ -44,6 +50,9 @@ import { SideUiViewHeadingComponent } from '../shared'
 		LetDirective,
 		SideUiBaseComponent,
 		SideUiViewHeadingComponent,
+		UsersViewWebUserItemComponent,
+		UsersViewUserPreviewComponent,
+		UsersViewWebUserItemComponent,
 	],
 	templateUrl: './side-ui-users-view.component.html',
 	styles: [],
@@ -67,8 +76,15 @@ export class SideUiUsersViewComponent {
 		return filteredNotAuthUser.map(minimalToWebUser)
 	})
 
+	/*	friends = computed(() => {
+	 const friends = this._usersStore.select.allFriends()
+	 const fakeData = GenerateFriendData(10)
+	 return friends.concat(fakeData)
+	 })*/
 	friends = this._usersStore.select.allFriends as Signal<WebUserModel[]>
-	openedUsers = signal<Map<string, boolean>>(new Map())
+
+	openedUsers = signal<Set<string>>(new Set())
+	// openedUsers = signal<Map<string, boolean>>(new Map())
 	selectedUserId = signal<string | undefined>(undefined)
 	protected readonly isWebUser = isWebUser
 	protected readonly notification = notification
@@ -80,7 +96,16 @@ export class SideUiUsersViewComponent {
 
 	toggleUserView(userId: string) {
 		const id = userId
-		this.openedUsers.set(new Map(this.openedUsers()).set(id, !this.openedUsers().get(id)))
+		this.openedUsers.update((openedUsers) => {
+			if (openedUsers.has(id)) {
+				openedUsers.delete(id)
+			} else {
+				openedUsers.add(id)
+			}
+			return openedUsers
+		})
+		// this.openedUsers.set(new Set(this.openedUsers()).add(id))
+		// this.openedUsers.set(new Map(this.openedUsers()).set(id, !this.openedUsers().get(id)))
 	}
 
 	openUserContextMenu(event: MouseEvent, user: WebUserModel) {
@@ -117,8 +142,14 @@ export class SideUiUsersViewComponent {
 		this.lastKeyUpTime = Date.now()
 		setTimeout(() => {
 			this.querySearchBox(value)
-			// clearTimeout(this.searchBoxTimer)
 		}, 500)
+	}
+
+	openUserOptionsDialog(user: WebUserModel) {
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.USER_OPTIONS,
+			data: { user },
+		})
 	}
 
 	private querySearchBox(value: string) {

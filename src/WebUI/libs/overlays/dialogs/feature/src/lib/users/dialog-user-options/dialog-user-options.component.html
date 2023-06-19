@@ -1,0 +1,98 @@
+<dialog-backdrop-template-component #dialog *ngIf="user">
+	<div class="top-10 w-1/2 min-w-fit h-3/4 overflow-y-auto p-4">
+		<div>
+			<div class="flex flex-col items-start justify-center mb-4 pr-4">
+				<h5
+					class="inline-flex items-center text-sm font-semibold text-gray-800 dark:text-gray-200"
+					id="drawer-label"
+				>
+					User {{ user.displayName }} Options
+				</h5>
+			</div>
+			<div class="p-2">
+				<div class="flex flex-col items-start justify-center text-sm">
+					<ng-container *ngIf="user.isFriend; then friendTemplate; else notFriendTemplate" />
+					<ng-template #friendTemplate>
+						<button
+							class="cursor-default flex relative hover:bg-gray-200 my-1 py-1 rounded-md w-full items-center justify-between"
+							matRipple
+							type="button"
+						>
+							<svg-input class="scale-90" svgName="SvgChatBubbleLeft" />
+							<label class="select-none ml-1 font-medium text-gray-900">Message</label>
+						</button>
+						<button
+							(click)="invitingToProject.set(!invitingToProject())"
+							class="cursor-default flex relative hover:bg-gray-200 my-1 py-1 rounded-md w-full items-center justify-between"
+							matRipple
+							type="button"
+						>
+							<svg-input class="scale-90" svgName="SvgEnvelope" />
+							<label class="select-none ml-1 font-medium text-gray-900">Invite to Project</label>
+						</button>
+						<ng-container *ngIf="invitingToProject()">
+							<div
+								*ngFor="let project of projectsThatFriendIsNotIn()"
+								class="group hover:bg-gray-100 flex items-center justify-between"
+							>
+								<div
+									(click)="openInviteToProjectDialog(project)"
+									class="group flex items-center justify-center"
+								>
+									<span
+										[ngStyle]="{
+											'background-color': project.colour,
+											'border-color': project.colour
+										}"
+										class="w-4 h-4 rounded ml-3"
+									></span>
+									<div class="flex flex-col items-center justify-center">
+										<a
+											class="flex items-center px-4 py-2 text-sm text-gray-700 group-hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white"
+											role="menuitem"
+											tabindex="-1"
+										>
+											<app-show-svg-no-styles
+												class="mr-1 group-hover:text-gray-600"
+												svgPath="profile/user-plus"
+											/>
+											{{ project.name }}
+										</a>
+									</div>
+								</div>
+							</div>
+						</ng-container>
+						<button
+							(click)="openRemoveFriendDialog()"
+							class="cursor-default flex relative hover:bg-gray-200 my-1 py-1 rounded-md w-full items-center justify-between"
+							matRipple
+							type="button"
+						>
+							<svg-input class="scale-90" svgName="SvgUserMinus" />
+							<label class="select-none ml-1 font-medium text-gray-900">Remove Friend</label>
+						</button>
+					</ng-template>
+					<ng-template #notFriendTemplate>
+						<button
+							class="cursor-default flex relative hover:bg-gray-200 my-1 py-1 rounded-md w-full items-center justify-between"
+							matRipple
+							type="button"
+						>
+							<svg-input class="scale-90" svgName="SvgUserPlus" />
+							<label class="select-none ml-1 font-medium text-gray-900">Send Friend Request</label>
+						</button>
+					</ng-template>
+				</div>
+				<div class="mt-4">
+					<button
+						(click)="dialog.closeDialog()"
+						class="inline-flex min-w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+						type="button"
+					>
+						Cancel
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</dialog-backdrop-template-component>

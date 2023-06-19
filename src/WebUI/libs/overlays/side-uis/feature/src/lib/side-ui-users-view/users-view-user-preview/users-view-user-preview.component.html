@@ -1,0 +1,39 @@
+<div
+	(click)="toggleUserView()"
+	*ngIf="user"
+	class="flex justify-between px-2 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+>
+	<div class="flex justify-start">
+		<a
+			class="flex items-center text-base rounded-lg transition duration-75 hover:underline dark:text-white group"
+		>
+			<span class="relative inline-block">
+				<img
+					[alt]="user.displayName + ' profile picture'"
+					[ngSrc]="user.photoUrl"
+					class="h-6 w-6 rounded-full"
+					height="24"
+					width="24"
+				/>
+				<!--If Is Offline-->
+				<!-- <span
+											class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-gray-300 ring-2 ring-white"></span>-->
+				<!-- If Is Online -->
+				<span
+					*ngIf="user.isOnline"
+					class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-green-400 ring-2 ring-white"
+				></span>
+			</span>
+			<div class="ml-3">
+				<span class="capitalize text-sm text-gray-900">{{ user.displayName | truncate : 10 }}</span>
+				<p class="text-xs font-medium text-gray-500 group-hover:text-gray-700">
+					{{ user.userName | truncate : 15 }}
+				</p>
+			</div>
+		</a>
+	</div>
+	<div class="flex justify-end items-center">
+		<btn-animated-down-up-arrow [isOpen]="isOpen" />
+		<btn-context-menu (click)="openUserContextMenu($event)" hideMobile />
+	</div>
+</div>

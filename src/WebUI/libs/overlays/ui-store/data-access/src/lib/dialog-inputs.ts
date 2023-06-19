@@ -1,4 +1,5 @@
 import { ProjectId, StringId } from '@entities/shared'
+import { WebUserModel } from '@auth/shared'
 
 export type DialogInputTemplate = {
 	component: DialogComponent
@@ -15,6 +16,8 @@ export const DIALOG_COMPONENT = {
 	CHANGE_STRING_COLOUR: 'DialogChangeStringColourComponent',
 	SELECT_PROJECT: 'DialogSelectProjectComponent',
 	SELECT_PROJECT_VIEW: 'DialogSelectProjectViewComponent',
+	USER_OPTIONS: 'DialogUserOptionsComponent',
+	WARNING_TEMPLATE: 'DialogWarningTemplateComponent',
 } as const
 
 export type DialogComponent = (typeof DIALOG_COMPONENT)[keyof typeof DIALOG_COMPONENT]
@@ -71,7 +74,24 @@ export type DialogInputSelectProject = DialogInputTemplate & {
 export type DialogInputSelectProjectView = DialogInputTemplate & {
 	component: typeof DIALOG_COMPONENT.SELECT_PROJECT_VIEW
 	data: {
-		currentView: 'data' | 'members' | 'settings'
+		currentView: 'profile' | 'data' | 'members' | 'settings'
+	}
+}
+
+export type DialogInputUserOptions = DialogInputTemplate & {
+	component: typeof DIALOG_COMPONENT.USER_OPTIONS
+	data: {
+		user: WebUserModel
+	}
+}
+
+export type DialogInputWarningTemplate = DialogInputTemplate & {
+	component: typeof DIALOG_COMPONENT.WARNING_TEMPLATE
+	data: {
+		title: string
+		message: string
+		buttonText: string
+		buttonAction: () => void
 	}
 }
 
@@ -86,3 +106,5 @@ export type DialogInput =
 	| DialogInputChangeStringColour
 	| DialogInputSelectProject
 	| DialogInputSelectProjectView
+	| DialogInputUserOptions
+	| DialogInputWarningTemplate

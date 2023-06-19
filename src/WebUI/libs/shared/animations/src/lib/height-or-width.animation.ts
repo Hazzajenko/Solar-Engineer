@@ -37,7 +37,7 @@ export const heightInOutWithConfig = (seconds: number) => {
 				opacity: 1,
 			}),
 			animate(
-				`${seconds}s ease-in`,
+				`0.1s`,
 				style({
 					height: 0,
 					opacity: 0,

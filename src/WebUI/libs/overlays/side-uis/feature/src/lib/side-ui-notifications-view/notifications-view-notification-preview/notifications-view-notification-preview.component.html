@@ -1,0 +1,79 @@
+<div
+	*ngIf="notification"
+	[ngClass]="{
+		'bg-blue-50 dark:bg-gray-800': isOpen,
+		'bg-white dark:bg-gray-900': !notification.seenByAppUser,
+		'bg-gray-100 dark:bg-gray-800': notification.seenByAppUser
+	}"
+	class="flex justify-between px-2 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+>
+	<div class="flex justify-start">
+		<div (click)="toggleNotificationMultiSelect()" class="flex justify-start pl-2">
+			<input
+				[checked]="isChecked"
+				aria-describedby="comments-description"
+				centerThisElement
+				class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+				id="comments"
+				name="comments"
+				type="checkbox"
+			/>
+		</div>
+		<div
+			(click)="toggleNotificationView()"
+			[id]="notification.id"
+			attr.data-target="notification{{ notification.id }}"
+			attr.data-type="notification-preview"
+			class="flex justify-between items-center"
+		>
+			<div class="flex items-center justify-start ml-4">
+				<div class="flex items-center justify-end">
+					<img
+						[alt]="notification.senderAppUserUserName + ' profile picture'"
+						[ngSrc]="notification.senderAppUserPhotoUrl"
+						class="h-6 w-6 flex-none rounded-full bg-gray-800"
+						height="24"
+						width="24"
+					/>
+				</div>
+				<a
+					class="flex items-center text-base rounded-lg transition duration-75 dark:text-white group"
+				>
+					<div class="ml-3">
+						<span class="capitalize text-sm text-gray-900">{{
+							notification.senderAppUserDisplayName | truncate : 20
+						}}</span>
+						<p
+							[ngClass]="{
+								'text-gray-500 dark:text-gray-400': !isOpen,
+								'text-gray-700 dark:text-gray-300': isOpen
+							}"
+							class="text-xs font-medium group-hover:text-gray-700"
+						>
+							<span class="pt-2 text-xs text-gray-500 truncate capitalize">
+								{{ notification | getContentMessageBasedOnTypeWithoutDisplayName | truncate : 10 }}
+							</span>
+						</p>
+					</div>
+				</a>
+			</div>
+		</div>
+
+		<!--		<btn-animated-down-up-arrow [isOpen]="isOpen" />-->
+
+		<div class="flex justify-end pr-1 absolute right-4">
+			<div class="justify-end">
+				<time
+					[ngClass]="{
+						'text-gray-500 dark:text-gray-400': !isOpen,
+						'text-gray-700 dark:text-gray-300': isOpen
+					}"
+					class="flex-none text-xs"
+					datetime="2023-01-23T11:00"
+				>
+					{{ notification.createdTime | timeDifferenceFromNow }}
+				</time>
+			</div>
+		</div>
+	</div>
+</div>

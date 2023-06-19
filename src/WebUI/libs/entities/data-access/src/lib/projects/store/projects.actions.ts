@@ -55,6 +55,9 @@ export const ProjectsActions = createActionGroup({
 		'Update Project': props<{
 			update: EntityUpdate<ProjectModel>
 		}>(),
+		'Update Project No Signalr': props<{
+			update: EntityUpdate<ProjectModel>
+		}>(),
 		'Update Many Projects': props<{
 			updates: UpdateStr<ProjectModel>[]
 		}>(),

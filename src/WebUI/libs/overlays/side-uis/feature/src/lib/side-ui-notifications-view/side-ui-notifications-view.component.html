@@ -1,10 +1,5 @@
-<!--<div
-	*ngrxLet="vm() as vm"
-	class="overflow-y-auto py-4 px-3 h-full z-50 w-60 bg-slate-50 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
->-->
 <side-ui-base *ngrxLet="vm() as vm" [view]="sideUiView">
 	<side-ui-view-heading heading="Notifications" />
-
 	<ng-container *ngIf="vm.user; then loggedIn; else notLoggedIn" />
 	<ng-template #loggedIn>
 		<div class="flex items-center justify-between mb-2">
@@ -44,25 +39,40 @@
 			<ul class="space-y-1" role="list">
 				<ng-container *ngFor="let notification of vm.notifications; trackBy: trackByFn">
 					<div>
-						<ng-container
-							*ngTemplateOutlet="
-								notificationPreview;
-								context: {
-									notificationId: notification.id,
-									isOpen: vm.openedNotifications.get(notification.id)
-								}
-							"
+						<app-notifications-view-notification-preview
+							(notificationMultiSelect)="toggleNotificationMultiSelect(notification)"
+							(notificationViewToggle)="toggleNotificationView(notification)"
+							[isChecked]="multiSelectedNotificationIds().includes(notification.id)"
+							[isOpen]="!!vm.openedNotifications.get(notification.id)"
+							[notification]="notification"
 						/>
-						<ng-container *ngIf="vm.openedNotifications.get(notification.id)">
-							<ng-container
-								*ngTemplateOutlet="
-									openedNotification;
-									context: {
-										notificationId: notification.id
-									}
-								"
-							/>
-						</ng-container>
+						<app-notifications-view-notification-item
+							(acceptedNotification)="acceptNotification(notification)"
+							(declinedNotification)="declineNotification(notification)"
+							(dismissedNotification)="dismissNotification(notification)"
+							(repliedToMessage)="replyToMessage(notification)"
+							*ngIf="vm.openedNotifications.get(notification.id)"
+							[notification]="notification"
+						/>
+						<!--					<ng-container
+												*ngTemplateOutlet="
+													notificationPreview;
+													context: {
+														notificationId: notification.id,
+														isOpen: vm.openedNotifications.get(notification.id)
+													}
+												"
+											/>-->
+						<!--	<ng-container *ngIf="vm.openedNotifications.get(notification.id)">
+								<ng-container
+									*ngTemplateOutlet="
+										openedNotification;
+										context: {
+											notificationId: notification.id
+										}
+									"
+								/>
+							</ng-container>-->
 					</div>
 				</ng-container>
 			</ul>

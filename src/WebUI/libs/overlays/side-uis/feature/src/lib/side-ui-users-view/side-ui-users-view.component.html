@@ -42,32 +42,49 @@
 		</form>
 		<div *ngIf="userSearchResults().length" class="pt-2">
 			<ul>
-				<ng-container *ngFor="let userResult of userSearchResults()">
-					<ng-container
-						*ngTemplateOutlet="
-							userView;
-							context: {
-								user: userResult
-							}
-						"
+				<li *ngFor="let userResult of userSearchResults()">
+					<app-users-view-user-preview
+						(userContextMenuOpen)="openUserContextMenu($event, userResult)"
+						(userViewToggle)="toggleUserView(userResult.id)"
+						[isOpen]="openedUsers().has(userResult.id)"
+						[user]="userResult"
 					/>
-				</ng-container>
+					<app-users-view-web-user-item
+						(userOptionsDialogOpen)="openUserOptionsDialog(userResult)"
+						*ngIf="openedUsers().has(userResult.id)"
+						[friend]="userResult"
+					/>
+				</li>
 			</ul>
 		</div>
 	</ng-template>
 	<ng-container *ngIf="friends().length; then friendsList; else noFriends" />
 	<ng-template #friendsList>
 		<ul>
-			<ng-container *ngFor="let friend of friends()">
-				<ng-container
-					*ngTemplateOutlet="
-						userView;
-						context: {
-							user: friend
-						}
-					"
+			<li *ngFor="let friend of friends()">
+				<app-users-view-user-preview
+					(userContextMenuOpen)="openUserContextMenu($event, friend)"
+					(userViewToggle)="toggleUserView(friend.id)"
+					[isOpen]="openedUsers().has(friend.id)"
+					[user]="friend"
 				/>
-			</ng-container>
+				<app-users-view-web-user-item
+					(userOptionsDialogOpen)="openUserOptionsDialog(friend)"
+					*ngIf="openedUsers().has(friend.id)"
+					[friend]="friend"
+				/>
+			</li>
+
+			<!--			<ng-container *ngFor="let friend of friends()">
+							<ng-container
+								*ngTemplateOutlet="
+									userView;
+									context: {
+										user: friend
+									}
+								"
+							/>
+						</ng-container>-->
 		</ul>
 	</ng-template>
 	<ng-template #noFriends>
@@ -168,13 +185,13 @@
 		</div>
 		<div class="flex justify-end items-center">
 			<div class="flex-none">
-				<button
-					(click)="toggleUserView(user.id)"
-					class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-					type="button"
-				>
-					<ng-container *ngIf="openedUsers().get(user.id); then contentOpen; else contentClosed" />
-				</button>
+				<!--				<button
+									(click)="toggleUserView(user.id)"
+									class="flex items-center justify-between w-full font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+									type="button"
+								>
+									<ng-container *ngIf="openedUsers().get(user.id); then contentOpen; else contentClosed" />
+								</button>-->
 			</div>
 			<div class="flex-none">
 				<button

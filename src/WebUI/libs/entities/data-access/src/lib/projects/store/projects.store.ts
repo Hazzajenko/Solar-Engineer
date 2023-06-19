@@ -66,6 +66,8 @@ export function projectsStoreFactory(store: Store) {
 			store.dispatch(ProjectsActions.addManyProjects({ projects })),
 		updateProject: (update: EntityUpdate<ProjectModel>) =>
 			store.dispatch(ProjectsActions.updateProject({ update })),
+		updateProjectNoSignalr: (update: EntityUpdate<ProjectModel>) =>
+			store.dispatch(ProjectsActions.updateProjectNoSignalr({ update })),
 		updateManyProjects: (updates: UpdateStr<ProjectModel>[]) =>
 			store.dispatch(ProjectsActions.updateManyProjects({ updates })),
 		deleteProject: (projectId: ProjectId) =>

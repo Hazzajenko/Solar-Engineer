@@ -1,0 +1,111 @@
+<div>
+	<div
+		*ngIf="isDefined"
+		[class.justify-between]="isDefined"
+		[class.justify-end]="!isDefined"
+		class="flex items-center justify-between px-6 md:px-0 py-4 text-sm leading-6"
+	>
+		<span class="isolate inline-flex rounded-md shadow-sm">
+			<button
+				(click)="selectStringInApp(stringGroup.string.id)"
+				*ngIf="isDefined"
+				class="group inline-flex items-center gap-x-1.5 rounded-l-md px-2.5 py-1.5 text-sm bg-white font-semibold text-gray-600 hover:text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+				matTooltip="Select String in App"
+				matTooltipPosition="above"
+				type="button"
+			>
+				<svg-input
+					[class.text-indigo-500]="selectedStringId === stringGroup.string.id"
+					class="group-hover:text-gray-700"
+					inputClass="h-5 w-5"
+					svgName="SvgPlayCircle"
+				/>
+				Select
+			</button>
+			<div class="relative inline-block text-left">
+				<button
+					(click)="openStringColourPicker(stringGroup.string.id)"
+					*ngIf="isDefined"
+					aria-expanded="true"
+					aria-haspopup="true"
+					class="group inline-flex w-full items-center justify-center gap-x-1.5 rounded-r-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+					matTooltip="Change String Colour"
+					matTooltipPosition="above"
+					type="button"
+				>
+					<span
+						[ngStyle]="{
+							'background-color': stringGroup.string.colour,
+							'border-color': stringGroup.string.colour
+						}"
+						class="w-5 h-5 rounded"
+					></span>
+					<svg-input
+						class="flex items-center justify-center text-gray-600 group-hover:text-gray-700"
+						inputClass="-mr-1"
+						svgName="SvgPaintBrush"
+					/>
+				</button>
+			</div>
+		</span>
+
+		<div class="flex items-center justify-end">
+			<svg-input
+				(click)="openStringSettings(stringGroup.string.id)"
+				class="text-gray-500"
+				enableDefaultHoverEffects
+				matTooltip="Open string settings"
+				matTooltipPosition="above"
+				svgName="SvgCog6Tooth"
+			/>
+			<svg-input
+				(click)="deleteString(stringGroup.string.id)"
+				class="text-gray-500"
+				enableDefaultHoverEffects
+				matTooltip="Delete string"
+				matTooltipPosition="above"
+				svgName="SvgTrash"
+			/>
+		</div>
+	</div>
+	<dl class="-my-3 divide-y divide-gray-200 px-6 py-4 text-sm leading-6">
+		<div class="flex justify-between gap-x-4 py-3">
+			<div class="flex flex-col">
+				<dt class="text-gray-700">Panels</dt>
+				<dt class="text-gray-700">Unlinked</dt>
+			</div>
+			<dd class="flex items-end flex-col">
+				<div class="font-medium text-gray-900">
+					{{ stringGroup.panels.length }}
+				</div>
+				<div class="font-medium text-gray-900">
+					{{ stringGroup.stats.panelsWithoutLinks }}
+				</div>
+			</dd>
+		</div>
+		<div class="flex justify-between text-xs gap-x-4 py-3">
+			<div class="flex flex-col">
+				<dt class="text-gray-700">VOC</dt>
+				<dt class="text-gray-700">VMP</dt>
+			</div>
+			<dd class="flex items-end flex-col">
+				<div class="font-medium text-gray-900">{{ stringGroup.stats.totalVoc }} V</div>
+				<div class="font-medium text-gray-900">{{ stringGroup.stats.totalVmp }} V</div>
+			</dd>
+		</div>
+		<div class="flex justify-between text-xs gap-x-4 py-3">
+			<div class="flex flex-col">
+				<dt class="text-gray-700">ISC</dt>
+				<dt class="text-gray-700">IMP</dt>
+			</div>
+			<dd class="flex items-end flex-col">
+				<div class="font-medium text-gray-900">{{ stringGroup.stats.totalIsc }} A</div>
+				<div class="font-medium text-gray-900">{{ stringGroup.stats.totalImp }} A</div>
+			</dd>
+		</div>
+		<div class="flex justify-between text-xs gap-x-4 py-3">
+			<dt class="text-gray-700">PMAX</dt>
+			<dd class="font-medium text-gray-700">{{ stringGroup.stats.totalPmax }} W</dd>
+		</div>
+	</dl>
+</div>

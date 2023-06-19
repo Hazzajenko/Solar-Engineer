@@ -4,7 +4,8 @@ import {
 	NOTIFICATION_TYPE,
 	NotificationModel,
 } from '@auth/shared'
-import { Pipe, PipeTransform } from '@angular/core'
+import { inject, Pipe, PipeTransform } from '@angular/core'
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 
 export const getContentMessageBasedOnTypeWithoutDisplayName = (notification: NotificationModel) => {
 	switch (notification.notificationType) {
@@ -87,5 +88,19 @@ export const getContentMessageHtmlBasedOnType = (notification: NotificationModel
 			accepted your project invite`
 		default:
 			throw new Error('Unknown notification type')
+	}
+}
+
+@Pipe({
+	name: 'getContentMessageHtmlBasedOnType',
+	standalone: true,
+})
+export class GetContentMessageHtmlBasedOnTypePipe implements PipeTransform {
+	private _domSanitizer = inject(DomSanitizer)
+
+	transform(notification: NotificationModel): SafeHtml {
+		return this._domSanitizer.bypassSecurityTrustHtml(
+			getContentMessageHtmlBasedOnType(notification),
+		)
 	}
 }
