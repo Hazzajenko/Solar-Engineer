@@ -1,11 +1,20 @@
 import { AppComponent } from './app.component'
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser'
 import { environment } from '@shared/environment'
-import { ApplicationConfig, importProvidersFrom, makeEnvironmentProviders, provideZoneChangeDetection } from '@angular/core'
+import {
+	ApplicationConfig,
+	importProvidersFrom,
+	makeEnvironmentProviders,
+	provideZoneChangeDetection,
+} from '@angular/core'
 import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router'
 import { appRoutes } from './main.routes'
 import { provideHttpClient, withInterceptors } from '@angular/common/http'
-import { BrowserAnimationsModule, provideAnimations, provideNoopAnimations } from '@angular/platform-browser/animations'
+import {
+	BrowserAnimationsModule,
+	provideAnimations,
+	provideNoopAnimations,
+} from '@angular/platform-browser/animations'
 import { provideNgrx } from './ngrx.config'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
@@ -14,11 +23,11 @@ import { JwtModule } from '@auth0/angular-jwt'
 import { jwtInterceptor } from './interceptors'
 import { onCLS, onFID, onLCP } from 'web-vitals'
 
-// initSentry()
-
-onCLS(console.log)
-onFID(console.log)
-onLCP(console.log)
+if (!environment.production) {
+	onCLS(console.log)
+	onFID(console.log)
+	onLCP(console.log)
+}
 
 export function initMainTs() {
 	if (environment.production) {
@@ -47,10 +56,10 @@ export function tokenGetter() {
 
 function provideWebAppProviders() {
 	return makeEnvironmentProviders([
-		provideZoneChangeDetection({ eventCoalescing: true }), // provideFirebase(),
+		provideZoneChangeDetection({ eventCoalescing: true }),
 		provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
 		provideNgrx(),
-		provideHttpClient(withInterceptors([jwtInterceptor()])), // provideClientHydration(),
+		provideHttpClient(withInterceptors([jwtInterceptor()])),
 		provideAnimations(),
 		provideNoopAnimations(),
 		importProvidersFrom(
@@ -65,6 +74,6 @@ function provideWebAppProviders() {
 					tokenGetter: tokenGetter,
 				},
 			}),
-		), // provideSentry(),
+		),
 	])
 }

@@ -1,7 +1,7 @@
 import { STRINGS_FEATURE_KEY, stringsAdapter, StringsState } from './strings.reducer'
 import { Dictionary } from '@ngrx/entity'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import { PanelModel, StringId, StringModel } from '@entities/shared'
+import { PanelModel, StringId, StringModel, UNDEFINED_STRING_NAME } from '@entities/shared'
 import { selectAllPanels, selectPanelsByStringId } from '../../panels'
 
 export const selectStringsState = createFeatureSelector<StringsState>(STRINGS_FEATURE_KEY)
@@ -30,6 +30,19 @@ export const selectStringsEntities = createSelector(selectStringsState, (state: 
 
 export const selectStringById = (props: { id: string }) =>
 	createSelector(selectStringsEntities, (strings: Dictionary<StringModel>) => strings[props.id])
+
+export const selectStringByName = (props: { name: string }) =>
+	createSelector(selectAllStrings, (strings: StringModel[]) =>
+		strings.find((string) => string.name === props.name),
+	)
+
+export const selectUndefinedString = createSelector(selectAllStrings, (strings: StringModel[]) =>
+	strings.find((string) => string.name === UNDEFINED_STRING_NAME),
+)
+
+/*export const selectUndefinedStringId = createSelector(selectAllStrings, (strings: StringModel[]) =>
+ strings.find((string) => string.name === UNDEFINED_STRING_NAME)?.id,
+ )*/
 
 export const selectAllStringsWithPanels = createSelector(
 	selectAllStrings,

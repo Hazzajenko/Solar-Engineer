@@ -11,6 +11,7 @@ export type ProjectModel = {
 	memberIds: string[]
 	members: ProjectUserModel[]
 	createdTime: string
+	undefinedStringId: string
 	lastModifiedTime: string
 	createdById: string
 }

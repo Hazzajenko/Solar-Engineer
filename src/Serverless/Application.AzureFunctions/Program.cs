@@ -10,10 +10,10 @@ builder.ConfigureServices(
     {
         services.Configure<DockerHubSettings>(settings =>
         {
-            settings.ApiBaseUrl = GetEnvironmentVariable("DOCKER_HUB__API_BASE_URL");
-            settings.RepositoriesUrl = GetEnvironmentVariable("DOCKER_HUB__REPOSITORIES_URL");
-            settings.UserName = GetEnvironmentVariable("DOCKER_HUB__USER_NAME");
-            settings.Password = GetEnvironmentVariable("DOCKER_HUB__PASSWORD");
+            settings.ApiBaseUrl = GetEnvironmentVariable("DOCKER_HUB_API_BASE_URL");
+            settings.RepositoriesUrl = GetEnvironmentVariable("DOCKER_HUB_REPOSITORIES_URL");
+            settings.UserName = GetEnvironmentVariable("DOCKER_HUB_USERNAME");
+            settings.Password = GetEnvironmentVariable("DOCKER_HUB_PASSWORD");
         });
 
         services.AddHttpClient(

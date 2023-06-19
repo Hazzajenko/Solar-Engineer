@@ -2,9 +2,9 @@ import { inject, Injectable } from '@angular/core'
 import { NearbyService } from '@canvas/object-positioning/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { injectSelectedStore } from '@canvas/selected/data-access'
-import { createPanel, createUndefinedString } from '@entities/utils'
+import { createPanel } from '@entities/utils'
 import { getTopLeftPointFromTransformedPoint } from '@canvas/utils'
-import { ENTITY_TYPE, SizeByType, UNDEFINED_STRING_ID } from '@entities/shared'
+import { ENTITY_TYPE, SizeByType } from '@entities/shared'
 import { TransformedPoint } from '@shared/data-access/models'
 import { injectEntityStore } from '../store'
 import { injectAppStateStore } from '@canvas/app/data-access'
@@ -34,18 +34,15 @@ export class EntityFactoryService {
 				y: this._nearby.axisPreviewRect.top,
 			}
 
-			const selectedStringId = this._selectedStore.select.selectedStringId()
-			const entity = selectedStringId
-				? createPanel(previewRectLocation, selectedStringId)
-				: createPanel(previewRectLocation)
+			const selectedStringId =
+				this._selectedStore.select.selectedStringId() ??
+				this._entities.strings.select.undefinedStringId()
+			// const undefinedString = this._entities.strings.select.getById(UNDEFINED_STRING_ID)
+			const entity = createPanel(previewRectLocation, selectedStringId)
+			/*		const entity = selectedStringId
+			 ? createPanel(previewRectLocation, selectedStringId)
+			 : createPanel(previewRectLocation)*/
 			this._entities.panels.dispatch.addPanel(entity)
-			if (entity.stringId === UNDEFINED_STRING_ID) {
-				const undefinedString = this._entities.strings.select.getById(UNDEFINED_STRING_ID)
-				if (!undefinedString) {
-					const newUndefinedString = createUndefinedString()
-					this._entities.strings.dispatch.addString(newUndefinedString)
-				}
-			}
 			this._nearby.axisPreviewRect = undefined
 			this._appStore.dispatch.setPreviewAxisState('None')
 
@@ -57,18 +54,15 @@ export class EntityFactoryService {
 			currentPoint,
 			SizeByType[ENTITY_TYPE.PANEL],
 		)
-		const selectedStringId = this._selectedStore.select.selectedStringId()
-		const entity = selectedStringId
-			? createPanel(location, selectedStringId)
-			: createPanel(location)
+		// const selectedStringId = this._selectedStore.select.selectedStringId()
+		const selectedStringId =
+			this._selectedStore.select.selectedStringId() ??
+			this._entities.strings.select.undefinedStringId()
+		const entity = createPanel(location, selectedStringId)
+		/*		const entity = selectedStringId
+		 ? createPanel(location, selectedStringId)
+		 : createPanel(location)*/
 		this._entities.panels.dispatch.addPanel(entity)
-		if (entity.stringId === UNDEFINED_STRING_ID) {
-			const undefinedString = this._entities.strings.select.getById(UNDEFINED_STRING_ID)
-			if (!undefinedString) {
-				const newUndefinedString = createUndefinedString()
-				this._entities.strings.dispatch.addString(newUndefinedString)
-			}
-		}
 
 		this._render.renderCanvasApp()
 	}

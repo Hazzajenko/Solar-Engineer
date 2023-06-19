@@ -13,6 +13,7 @@ public class ProjectDto : IProjectItemDto
     public DateTime CreatedTime { get; set; }
     public DateTime LastModifiedTime { get; set; }
     public string CreatedById { get; set; } = default!;
+    public string UndefinedStringId { get; set; } = default!;
 
     /*
     public void ThrowIfNull()

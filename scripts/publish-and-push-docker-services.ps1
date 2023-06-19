@@ -33,7 +33,25 @@ foreach ($service in $options[$selection]) {
     dotnet publish ${project} --os linux --arch x64 -c Release -p:ContainerImageTag=${version}
 }
 
+function Map-Service {
+    param (
+        $service
+    )
+    switch ($service) {
+        "WebUi" {
+            return "web-ui"
+        }
+        "Identity" {
+            return "identity-api"
+        }
+        "Projects" {
+            return "projects-api"
+        }
+    }
+}
+
 foreach ($service in $options[$selection]) {
+    $service = Map-Service $service
     $image = "solarengineer-$($service):$($version)"
     $taggedImage = "hazzajenko/$($image)"
     Write-Host "docker image tag ${image} ${taggedImage}"

@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Contracts.Events;
 using Infrastructure.Events;
+using Infrastructure.Exceptions;
 using MassTransit;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
@@ -42,9 +43,20 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
         await _unitOfWork.AppUserProjectsRepository.AddAsync(appUserProject);
         await _unitOfWork.SaveChangesAsync();
 
-        var project = appUserProject.Project;
-        var projectDto = appUserProject.Project.ToDto();
+        appUserProject =
+            await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
+                appUserId,
+                appUserProject.ProjectId
+            );
 
+        appUserProject.ThrowHubExceptionIfNull();
+        var project = appUserProject.Project;
+
+        String undefinedString = String.CreateUndefinedStringFromProject(appUserProject);
+        await _unitOfWork.StringsRepository.AddAsync(undefinedString);
+        await _unitOfWork.SaveChangesAsync();
+
+        var projectDto = appUserProject.Project.ToDto();
         var projectCreatedResponse = new ProjectCreatedResponse { Project = projectDto };
 
         await _hubContext.Clients.User(appUserId.ToString()).ProjectCreated(projectCreatedResponse);

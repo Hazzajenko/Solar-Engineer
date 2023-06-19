@@ -22,6 +22,7 @@ export class SideUiDemoProjectViewComponent {
 	demoProject: ProjectWebModel = {
 		id: 'demo' as ProjectId,
 		name: 'Demo Project',
+		undefinedStringId: 'demo',
 		memberIds: ['demo'],
 		members: [],
 		colour: '#000000',

@@ -3,7 +3,7 @@ services:
     hostname: "web-ui"
     labels:
       NAME: "web-ui"
-    image: hazzajenko/solarengineer-web-ui:1.0.4
+    image: hazzajenko/solarengineer-web-ui:1.0.5
     ports:
       - 4200:80
 
@@ -11,7 +11,7 @@ services:
     hostname: "identity-api"
     labels:
       NAME: "identity-api"
-    image: hazzajenko/solarengineer-identity-api:1.0.4
+    image: hazzajenko/solarengineer-identity-api:1.0.5
     ports:
       - ${IDENTITY_HTTPS_PORT}:443
       - ${IDENTITY_HTTP_PORT}:80
@@ -21,6 +21,7 @@ services:
       redis:
         condition: service_started
     environment:
+      APP_SERVICE_NAME: "IdentityAPI"
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
       DATABASE_HOST: ${DATABASE_HOST}
       DATABASE_PORT: ${DATABASE_PORT}
@@ -40,6 +41,13 @@ services:
       AZURE_CLIENT_CERTIFICATE_PATH: ${AZURE_CLIENT_CERTIFICATE_PATH}
       AZURE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY: ${AZURE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY}
       AZURE_APPLICATION_INSIGHTS_CONNECTION_STRING: ${AZURE_APPLICATION_INSIGHTS_CONNECTION_STRING}
+      AZURE_STORAGE_CONTAINER_NAME: ${AZURE_STORAGE_CONTAINER_NAME}
+      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
+      DOCKER_HUB_API_BASE_URL: ${DOCKER_HUB_API_BASE_URL}
+      DOCKER_HUB_API_PASSWORD: ${DOCKER_HUB_API_PASSWORD}
+      DOCKER_HUB_REPOSITORIES_URL: ${DOCKER_HUB_REPOSITORIES_URL}
+      DOCKER_HUB_USER_NAME: ${DOCKER_HUB_USER_NAME}
+
     volumes:
       - ./https:/https:ro
 
@@ -47,7 +55,7 @@ services:
     hostname: "projects-api"
     labels:
       NAME: "projects-api"
-    image: hazzajenko/solarengineer-projects-api:1.0.4
+    image: hazzajenko/solarengineer-projects-api:1.0.5
     ports:
       - ${PROJECTS_HTTPS_PORT}:443
       - ${PROJECTS_HTTP_PORT}:80
@@ -57,6 +65,7 @@ services:
       redis:
         condition: service_started
     environment:
+      APP_SERVICE_NAME: "ProjectsAPI"
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
       DATABASE_HOST: ${DATABASE_HOST}
       DATABASE_PORT: ${DATABASE_PORT}

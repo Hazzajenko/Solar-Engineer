@@ -45,9 +45,7 @@ public class String : IEntity, IProjectItem, IUserObject
         Panels = panels ?? new List<Panel>();
     }
 
-    public String()
-    {
-    }
+    public String() { }
 
     public string Name { get; set; } = default!;
     public string Colour { get; set; } = default!;
@@ -79,6 +77,25 @@ public class String : IEntity, IProjectItem, IUserObject
 
     public static String CreateUndefined(Guid projectId, Guid appUserId)
     {
-        return new String(Guid.NewGuid(), projectId, appUserId, UndefinedStringName, DefaultPanelFillStyle, false);
+        return new String(
+            Guid.NewGuid(),
+            projectId,
+            appUserId,
+            UndefinedStringName,
+            DefaultPanelFillStyle,
+            false
+        );
+    }
+
+    public static String CreateUndefinedStringFromProject(AppUserProject appUserProject)
+    {
+        return new String(
+            appUserProject.Project.UndefinedStringId,
+            appUserProject.ProjectId,
+            appUserProject.AppUserId,
+            UndefinedStringName,
+            DefaultPanelFillStyle,
+            false
+        );
     }
 }

@@ -48,7 +48,8 @@ public static class ProjectsMapping
             CreatedById = request.CreatedById.ToString(),
             CreatedTime = request.CreatedTime,
             LastModifiedTime = request.LastModifiedTime,
-            MemberIds = request.AppUserProjects.Select(x => x.AppUserId.ToString())
+            MemberIds = request.AppUserProjects.Select(x => x.AppUserId.ToString()),
+            UndefinedStringId = request.UndefinedStringId.ToString(),
         };
     }
 }

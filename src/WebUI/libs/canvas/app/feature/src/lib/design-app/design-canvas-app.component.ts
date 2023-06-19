@@ -97,7 +97,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		return !this.isProjectReadyToRender() && !!this.user() && this.userProjects().length > 0
 	})
 
-	version = signal('1.0.4')
+	version = signal('1.0.5')
 	showFpsState = toSignal(this._graphicsStore.state$.pipe(map((state) => state.showFps)), {
 		initialValue: this._graphicsStore.state.showFps,
 	})

@@ -8,9 +8,17 @@ public class ProjectsConfig : IEntityTypeConfiguration<Project>
 {
     public void Configure(EntityTypeBuilder<Project> builder)
     {
-        builder
-            .Property(x => x.Id)
-            .HasDefaultValueSql("uuid_generate_v4()");
+        builder.Property(x => x.Id).HasDefaultValueSql("uuid_generate_v4()");
+
+        builder.Property(x => x.UndefinedStringId).HasDefaultValueSql("uuid_generate_v4()");
+
+        /*builder
+            .HasOne(x => x.UndefinedString)
+            .WithOne(x => x.Project)
+            .HasForeignKey<String>(x => x.Id)
+            // .HasPrincipalKey<String>(x => x.Id)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();*/
 
         builder
             .HasMany(u => u.AppUserProjects)

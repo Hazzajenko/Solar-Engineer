@@ -67,6 +67,7 @@ export class ProjectsSignalrService {
 			console.log(PROJECTS_SIGNALR_EVENT.PROJECT_CREATED, response)
 			this._projectsStore.dispatch.addProject(response.project)
 			this._projectsStore.dispatch.selectProject(response.project.id)
+			// this._entitiesStore.strings.dispatch.loadStrings([re])
 		})
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED, (response: ProjectUpdatedResponse) => {

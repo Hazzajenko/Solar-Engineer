@@ -5,6 +5,8 @@ import {
 	selectAllStringsExceptUndefinedString,
 	selectStringById,
 	selectStringsEntities,
+	selectUndefinedString,
+	selectUndefinedStringId,
 } from './strings.selectors'
 import { StringsActions } from './strings.actions'
 import { EntityUpdate } from '@shared/data-access/models'
@@ -27,6 +29,8 @@ function stringsStoreFactory(store: Store) {
 		getById: (id: StringId) => entities()[id],
 		selectById: (id: StringId) => store.selectSignal(selectStringById({ id })),
 		getByIds: (ids: StringId[]) => ids.map((id) => entities()[id]).filter(isNotNull),
+		undefinedString: store.selectSignal(selectUndefinedString),
+		undefinedStringId: store.selectSignal(selectUndefinedStringId),
 	}
 
 	const dispatch = {

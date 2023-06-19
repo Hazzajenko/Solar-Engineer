@@ -3,33 +3,6 @@ using Projects.Domain.Common;
 
 namespace Projects.Domain.Entities;
 
-/*public sealed class ProjectId
-{
-    private ProjectId(Guid value)
-    {
-        Value = value;
-    }
-
-    public Guid Value { get; private set; }
-
-    public static ErrorOr<ProjectId> Create(string projectId)
-    {
-        var guidResult = Guid.TryParse(projectId, out var guid);
-        if (!guidResult)
-        {
-            return Errors.Guid.InvalidGuid;
-        }
-        return new ProjectId(guid);
-    }
-
-    public static ProjectId Create(Guid projectId)
-    {
-        return new ProjectId(projectId);
-    }
-}*/
-
-// public record ProjectId(Guid Value);
-
 public class Project : IEntity, IUserObject, IProject
 {
     private Project(string name, string colour, Guid createdById)
@@ -39,13 +12,14 @@ public class Project : IEntity, IUserObject, IProject
         CreatedById = createdById;
     }
 
-    public Project()
-    {
-    }
+    public Project() { }
 
     public string Name { get; set; } = default!;
     public ICollection<AppUserProject> AppUserProjects { get; set; } = default!;
     public ICollection<String> Strings { get; set; } = default!;
+
+    // public String UndefinedString { get; set; } = default!;
+    public Guid UndefinedStringId { get; set; }
     public ICollection<PanelLink> PanelLinks { get; set; } = default!;
     public ICollection<Panel> Panels { get; set; } = default!;
 
@@ -53,6 +27,7 @@ public class Project : IEntity, IUserObject, IProject
 
     // public ProjectId Id { get; set; }
     public Guid Id { get; set; }
+
     // public ProjectId Id2 { get; set; } = default!;
 
     public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
