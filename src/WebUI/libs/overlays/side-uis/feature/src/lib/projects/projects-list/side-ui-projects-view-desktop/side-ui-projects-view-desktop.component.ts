@@ -40,6 +40,8 @@ import {
 	SideUiNavBarView,
 } from '../../../side-ui-nav-bar/side-ui-nav-bar.component'
 import { ProjectDetailsViewComponent, ProjectListItemComponent } from '../../shared'
+import { MatTooltipModule } from '@angular/material/tooltip'
+import { SideUiNavBarStore } from '../../../side-ui-nav-bar/side-ui-nav-bar.store'
 
 @Component({
 	selector: 'side-ui-projects-view-desktop',
@@ -65,6 +67,7 @@ import { ProjectDetailsViewComponent, ProjectListItemComponent } from '../../sha
 		ProjectListItemComponent,
 		ButtonAnimatedDownUpArrowComponent,
 		ButtonContextMenuComponent,
+		MatTooltipModule,
 	],
 	templateUrl: './side-ui-projects-view-desktop.component.html',
 	styles: [
@@ -97,6 +100,7 @@ export class SideUiProjectsViewDesktopComponent {
 	private _auth = injectAuthStore()
 	private _projects = injectProjectsStore()
 	private _uiStore = injectUiStore()
+	private _sideUiNavBarStore = inject(SideUiNavBarStore)
 	user = this._auth.select.user
 	@Input({ required: true }) projects: ProjectWebModel[] = []
 	// selectedProject = this._projects.select.selectedProject
@@ -130,6 +134,7 @@ export class SideUiProjectsViewDesktopComponent {
 	selectProject(project: ProjectModel) {
 		if (this.selectedProject()?.id === project.id) return
 		this._projects.dispatch.selectProject(project.id)
+		// this._sideUiNavBarStore.changeView('selected-project')
 	}
 
 	createProject() {
@@ -160,4 +165,6 @@ export class SideUiProjectsViewDesktopComponent {
 			component: DIALOG_COMPONENT.SIGN_IN,
 		})
 	}
+
+	selectStringInApp(id: any) {}
 }

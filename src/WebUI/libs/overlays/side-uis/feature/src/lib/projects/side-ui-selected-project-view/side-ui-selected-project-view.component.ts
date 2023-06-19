@@ -22,6 +22,7 @@ import {
 } from '../../side-ui-nav-bar/side-ui-nav-bar.component'
 import { SELECTED_PROJECT_VIEW, SelectedProjectViewStore } from '../selected-project-view.store'
 import { ProjectWebModel } from '@entities/shared'
+import { TruncatePipe } from '@shared/pipes'
 
 @Component({
 	selector: 'side-ui-selected-project-view',
@@ -41,6 +42,7 @@ import { ProjectWebModel } from '@entities/shared'
 		ProjectMembersViewComponent,
 		ProjectSettingsViewComponent,
 		ProjectProfileViewComponent,
+		TruncatePipe,
 	],
 	templateUrl: './side-ui-selected-project-view.component.html',
 	styles: [],

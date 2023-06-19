@@ -47,6 +47,7 @@
 	</div>
 	<ng-container *ngFor="let project of projects">
 		<li
+			(click)="selectProject(project)"
 			*ngrxLet="{
 				isSelected: selectedProject()?.id === project.id,
 				isOpen: openedProjectId() === project.id
@@ -64,14 +65,11 @@
 					'border-left-style': projectVm.isSelected ? 'solid' : 'none',
 					'margin-left': projectVm.isSelected ? '-4px' : '0px'
 				}"
-				class="flex items-center py-1 justify-between relative"
+				class="flex items-center py-1 justify-between relative transition duration-75 group font-medium cursor-pointer hover:bg-gray-200 dark:hover:bg-primary-700 dark:hover:text-primary-100"
 			>
 				<div class="flex justify-start">
-					<app-project-list-item
-						(click)="selectProject(project)"
-						[isSelected]="projectVm.isSelected"
-						[project]="project"
-					/>
+					<!--					(click)="selectProject(project)"-->
+					<app-project-list-item [isSelected]="projectVm.isSelected" [project]="project" />
 				</div>
 				<!--		<div
 							*ngIf="projectVm.isSelected"
@@ -79,13 +77,13 @@
 						>
 							Selected
 						</div>-->
-				<div class="justify-end absolute right-0 flex">
-					<btn-animated-down-up-arrow
-						(click)="toggleProjectView(project)"
-						[isOpen]="projectVm.isOpen"
-					/>
-					<btn-context-menu (click)="openProjectContextMenu($event, project)" hideMobile />
-				</div>
+				<!--			<div class="justify-end absolute right-0 flex">
+								<btn-animated-down-up-arrow
+									(click)="toggleProjectView(project)"
+									[isOpen]="projectVm.isOpen"
+								/>
+								<btn-context-menu (click)="openProjectContextMenu($event, project)" hideMobile />
+							</div>-->
 			</div>
 			<ng-container *ngIf="projectVm.isOpen">
 				<div class="p-1 dark:bg-gray-800">
@@ -121,7 +119,23 @@
 						</button>
 					</div>
 
-					<app-project-details-view [project]="project" />
+					<button
+						(click)="selectProject(project)"
+						class="group inline-flex items-center gap-x-1.5 rounded-md px-2.5 py-1.5 text-sm bg-white font-semibold text-gray-600 hover:text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+						matTooltip="Select String in App"
+						matTooltipPosition="above"
+						type="button"
+					>
+						<svg-input
+							[class.text-indigo-500]="selectedProject()?.id === project.id"
+							class="group-hover:text-gray-700"
+							inputClass="h-5 w-5"
+							svgName="SvgPlayCircle"
+						/>
+						Select
+					</button>
+
+					<!--					<app-project-details-view [project]="project" />-->
 				</div>
 			</ng-container>
 		</li>

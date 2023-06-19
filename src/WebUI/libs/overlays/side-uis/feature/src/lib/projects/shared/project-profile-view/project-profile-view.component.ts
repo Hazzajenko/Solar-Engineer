@@ -10,6 +10,8 @@ import { NgClass, NgForOf, NgIf, NgStyle } from '@angular/common'
 import { TruncatePipe } from '@shared/pipes'
 import { SideUiViewHeadingComponent } from '../../../shared'
 import { injectProjectsStore } from '@entities/data-access'
+import { PluralizePipe } from '@shared/utils'
+import { FilterProjectMembersByOnlinePipe } from '@entities/utils'
 
 @Component({
 	selector: 'app-project-profile-view',
@@ -26,6 +28,8 @@ import { injectProjectsStore } from '@entities/data-access'
 		SideUiViewHeadingComponent,
 		SpinnerComponent,
 		ReactiveFormsModule,
+		FilterProjectMembersByOnlinePipe,
+		PluralizePipe,
 	],
 	templateUrl: './project-profile-view.component.html',
 	styles: [],

@@ -1,4 +1,4 @@
-import { Component, computed, inject, InjectionToken, Injector, signal } from '@angular/core'
+import { Component, computed, inject, InjectionToken, Injector } from '@angular/core'
 import {
 	NgClass,
 	NgComponentOutlet,
@@ -28,6 +28,8 @@ import { injectAuthStore } from '@auth/data-access'
 import { LetDirective } from '@ngrx/component'
 import { injectProjectsStore } from '@entities/data-access'
 import { SideUiNavItemDirective } from './side-ui-nav-item.directive'
+import { SideUiNavBarStore } from './side-ui-nav-bar.store'
+import { SideUiDemoProjectViewComponent } from '../projects/side-ui-demo-project-view/side-ui-demo-project-view.component'
 
 export type SideUiNavBarView =
 	| 'auth'
@@ -35,6 +37,7 @@ export type SideUiNavBarView =
 	| 'users'
 	| 'notifications'
 	| 'selected-project'
+	| 'demo-project'
 	| 'none'
 export type SideUiNavBarViewComponent =
 	| typeof SideUiAuthViewComponent
@@ -42,6 +45,7 @@ export type SideUiNavBarViewComponent =
 	| typeof SideUiUsersViewComponent
 	| typeof SideUiNotificationsViewComponent
 	| typeof SideUiSelectedProjectViewComponent
+	| typeof SideUiDemoProjectViewComponent
 	| null
 
 export const sideUiInjectionToken = new InjectionToken<SideUiNavBarView>('CurrentView')
@@ -77,6 +81,7 @@ export class SideUiNavBarComponent {
 	private _projectsStore = injectProjectsStore()
 	private _injector = inject(Injector)
 	private _selectedProjectViewStore = inject(SelectedProjectViewStore)
+	private _sideUiNavBarStore = inject(SideUiNavBarStore)
 	private getCurrentViewComponent = (view: SideUiNavBarView) => {
 		switch (view) {
 			case 'auth':
@@ -89,6 +94,8 @@ export class SideUiNavBarComponent {
 				return SideUiNotificationsViewComponent
 			case 'selected-project':
 				return SideUiSelectedProjectViewComponent
+			case 'demo-project':
+				return SideUiDemoProjectViewComponent
 			default:
 				return null
 		}
@@ -101,9 +108,13 @@ export class SideUiNavBarComponent {
 		if (!this._authStore.select.user()) return undefined
 		return this._notificationsStore.select.amountOfUnreadNotifications()
 	})
-	currentView = signal<SideUiNavBarView>('auth')
+	currentView = this._sideUiNavBarStore.currentView
+	// currentView = signal<SideUiNavBarView>('auth')
 
-	currentViewComponent = signal<SideUiNavBarViewComponent>(SideUiAuthViewComponent)
+	currentViewComponent = computed(() => {
+		return this.getCurrentViewComponent(this.currentView())
+	})
+	// currentViewComponent = signal<SideUiNavBarViewComponent>(SideUiAuthViewComponent)
 	sideUiInjector: Injector = Injector.create({
 		providers: [
 			{
@@ -138,14 +149,16 @@ export class SideUiNavBarComponent {
 		}
 
 		if (this.currentView() === view) {
-			this.currentView.set('none')
-			this.currentViewComponent.set(null)
+			this._sideUiNavBarStore.changeView('none')
+			// this._sideUiNavBarStore.changeView('none')
+
+			// this.currentViewComponent.set(null)
 			return
 		}
 
 		if (view === 'selected-project') {
-			this.currentView.set(view)
-			this.currentViewComponent.set(SideUiSelectedProjectViewComponent)
+			this._sideUiNavBarStore.changeView(view)
+			// this.currentViewComponent.set(SideUiSelectedProjectViewComponent)
 			this._selectedProjectViewStore.setSelectedProjectView('profile')
 			this.sideUiInjector = Injector.create({
 				providers: [
@@ -159,9 +172,9 @@ export class SideUiNavBarComponent {
 			return
 		}
 
-		this.currentView.set(view)
-		const viewComponent = this.getCurrentViewComponent(view)
-		this.currentViewComponent.set(viewComponent)
+		this._sideUiNavBarStore.changeView(view)
+		// const viewComponent = this.getCurrentViewComponent(view)
+		// this.currentViewComponent.set(viewComponent)
 
 		this.sideUiInjector = Injector.create({
 			providers: [

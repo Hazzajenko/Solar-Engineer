@@ -10,7 +10,7 @@
 	<!--	class="flex z-50 fixed top-0 left-0 w-16 h-full transition-transform -translate-x-full sm:translate-x-0"-->
 	<!--	class="z-[45] fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-50"-->
 	<div
-		*ngIf="user() as user"
+		*ngrxLet="user() as user"
 		class="overflow-y-auto z-30 py-5 px-3 w-16 h-full bg-gray-100 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
 	>
 		<app-show-svg svgPath="solar/solar-panels-colour" />
@@ -136,6 +136,19 @@
 							</a>
 						</li>
 					</ng-container>
+				</ul>
+				<ul *ngIf="!user">
+					<li>
+						<a
+							(click)="changeView('demo-project')"
+							*ngrxLet="currentView() === 'demo-project' as isCurrentView"
+							[isSelected]="isCurrentView"
+							class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+							sideUiNavItem
+						>
+							<svg-input inputClass="w-5 h-5" svgName="SvgData" />
+						</a>
+					</li>
 				</ul>
 			</li>
 			<li class="absolute bottom-5">

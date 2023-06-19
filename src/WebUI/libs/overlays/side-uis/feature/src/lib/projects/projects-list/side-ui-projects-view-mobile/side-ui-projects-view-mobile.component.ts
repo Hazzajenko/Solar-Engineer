@@ -30,7 +30,11 @@ import { AccordionModule } from 'primeng/accordion'
 import { LetDirective } from '@ngrx/component'
 import { SideUiBaseComponent } from '../../../side-ui-base/side-ui-base.component'
 import { getTimeDifferenceFromNow, pluralize, PluralizePipe } from '@shared/utils'
-import { ProjectDetailsViewComponent, ProjectListItemComponent } from '../../shared'
+import {
+	ProjectDetailsViewComponent,
+	ProjectListItemComponent,
+	ProjectProfileViewComponent,
+} from '../../shared'
 import {
 	ANIMATION_EVENT,
 	fadeInFadeOutWithConfig,
@@ -79,6 +83,7 @@ import { TAILWIND_COLOUR_500_VALUES } from '@shared/data-access/models'
 		AssertIsProjectPipe,
 		TimeDifferenceFromNowPipe,
 		ProjectListItemComponent,
+		ProjectProfileViewComponent,
 	],
 	templateUrl: './side-ui-projects-view-mobile.component.html',
 	styles: [

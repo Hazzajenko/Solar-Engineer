@@ -1,4 +1,4 @@
-<side-ui-view-heading heading="{{ project.name }} Profile" />
+<side-ui-view-heading heading="{{ project.name | truncate : 10 }} Project Profile" />
 
 <div class="mb-4 sm:mb-6">
 	<div class="space-y-4">
@@ -74,11 +74,10 @@
 				>
 				<svg-input (click)="toggleEditingProjectColour()" svgName="SvgEdit" />
 			</div>
-			<!--			<div class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Colour</div>-->
 			<form (ngSubmit)="saveProjectColour()" [formGroup]="updateProjectColourForm">
 				<div
 					*ngrxLet="updateProjectColourForm.get('colour') as selectedColour"
-					class="grid grid-cols-5 gap-4 items-center"
+					class="grid grid-cols-5 gap-5 items-center ml-3"
 				>
 					<button
 						(click)="setColour(colour)"
@@ -116,8 +115,17 @@
 			</form>
 		</div>
 		<div>
-			<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Members</label>
-			<ul class="divide-y divide-gray-300 overflow-y-auto" role="list">
+			<label class="block text-sm font-medium text-gray-900 dark:text-white">Members</label>
+			<ng-container *ngrxLet="project | filterProjectMembersByOnline as onlineMembers"
+				><p *ngIf="onlineMembers.length > 0" class="text-sm text-gray-500 dark:text-gray-400">
+					{{ onlineMembers.length }}
+					{{ "member" | pluralize : onlineMembers.length }} online
+				</p>
+				<p *ngIf="onlineMembers.length === 0" class="text-sm text-gray-500 dark:text-gray-400">
+					No members online
+				</p></ng-container
+			>
+			<ul class="divide-y divide-gray-300 overflow-y-auto mt-2" role="list">
 				<ul
 					class="py-1 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
 				>

@@ -9,7 +9,7 @@
 					<a
 						class="ml-1 capitalize text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
 						href="#"
-						>{{ selectedProject().name }}</a
+						>{{ selectedProject().name | truncate : 10 }}</a
 					>
 				</div>
 			</li>
