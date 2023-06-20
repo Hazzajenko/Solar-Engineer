@@ -1,5 +1,5 @@
 import { ENTITY_TYPE, EntityType } from './entity.type'
-import { AngleRadians, Point, Size } from '@shared/data-access/models'
+import { AngleRadians, POINT, Point, Size } from '@shared/data-access/models'
 import { PanelModel } from '../panels'
 import { z } from 'zod'
 // import { Point } from '@shared/data-access/models'
@@ -12,7 +12,7 @@ export type EntityBase = {
 }
 
 export const EntityBase = z.object({
-	location: Point,
+	location: POINT,
 	angle: z.number(),
 })
 

@@ -2,6 +2,7 @@ import { StringsActions } from './strings.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
 import { StringId, StringModel, UNDEFINED_STRING_NAME } from '@entities/shared'
+import { newGuid, newGuidT } from '@shared/utils'
 
 export const STRINGS_FEATURE_KEY = 'strings'
 
@@ -15,8 +16,21 @@ export const stringsAdapter: EntityAdapter<StringModel> = createEntityAdapter<St
 	selectId: (string) => string.id,
 })
 
+const undefinedStringId = newGuidT<StringId>()
+
 export const initialStringsState: StringsState = stringsAdapter.getInitialState({
-	undefinedStringId: undefined,
+	undefinedStringId,
+	ids: [undefinedStringId],
+	entities: {
+		[undefinedStringId]: {
+			id: undefinedStringId,
+			name: UNDEFINED_STRING_NAME,
+			type: 'String',
+			colour: '#000000',
+			disconnectionPointId: newGuid(),
+			parallel: false,
+		},
+	},
 	loaded: false,
 })
 

@@ -1,9 +1,16 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { PanelId, PanelLinkId, StringId } from '@entities/shared'
+import { CompleteEntityBounds } from '@shared/data-access/models'
 
 export const SelectedActions = createActionGroup({
 	source: 'Selected Store',
 	events: {
+		'Set Selected Panels Box Bounds': props<{
+			bounds: CompleteEntityBounds
+		}>(),
+		'Set Selected String Box Bounds': props<{
+			bounds: CompleteEntityBounds
+		}>(),
 		'Select Panel': props<{
 			panelId: PanelId
 		}>(),

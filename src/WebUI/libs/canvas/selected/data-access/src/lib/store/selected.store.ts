@@ -3,6 +3,7 @@ import { SelectedActions } from './selected.actions'
 import { selectedFeature } from './selected.feature'
 import { PanelId, PanelLinkId, StringId } from '@entities/shared'
 import { createRootServiceInjector } from '@shared/utils'
+import { TransformedPoint } from '@shared/data-access/models'
 
 export function injectSelectedStore(): SelectedStore {
 	return selectedStoreInjector()
@@ -22,6 +23,10 @@ function selectedStoreFactory(store: Store) {
 		selectSingleSelectedPanelId,
 		selectMultipleSelectedPanelIds,
 		selectEntityState,
+		selectSelectedPanelsBoxBounds,
+		selectSelectedStringBoxBounds,
+		selectIsPointInsideSelectedPanelsBoxBounds,
+		selectIsPointInsideSelectedStringBoxBounds,
 	} = selectedFeature
 
 	const select = {
@@ -31,6 +36,12 @@ function selectedStoreFactory(store: Store) {
 		singleSelectedPanelId: store.selectSignal(selectSingleSelectedPanelId),
 		multipleSelectedPanelIds: store.selectSignal(selectMultipleSelectedPanelIds),
 		entityState: store.selectSignal(selectEntityState),
+		selectedPanelsBoxBounds: store.selectSignal(selectSelectedPanelsBoxBounds),
+		selectedStringBoxBounds: store.selectSignal(selectSelectedStringBoxBounds),
+		isPointInsideSelectedPanelsBoxBounds: (point: TransformedPoint) =>
+			store.selectSignal(selectIsPointInsideSelectedPanelsBoxBounds(point))(),
+		isPointInsideSelectedStringBoxBounds: (point: TransformedPoint) =>
+			store.selectSignal(selectIsPointInsideSelectedStringBoxBounds(point))(),
 	}
 
 	const dispatch = {

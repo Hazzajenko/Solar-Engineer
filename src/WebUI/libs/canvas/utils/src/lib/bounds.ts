@@ -160,6 +160,12 @@ export const getBoundsFromArrPoints = (points: number[][]): EntityBounds => {
 	}
 }
 
+export const getDefaultBoundsBoxFromMultipleEntities = (
+	entities: EntityBase[],
+): CompleteEntityBounds => {
+	return getCompleteBoundsFromMultipleEntitiesWithPadding(entities, 10)
+}
+
 export const getCompleteBoundsFromMultipleEntitiesWithPadding = (
 	entities: EntityBase[],
 	padding: number,

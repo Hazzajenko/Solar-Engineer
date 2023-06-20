@@ -1,6 +1,7 @@
 import { SelectedActions } from './selected.actions'
 import { Action, createReducer, on } from '@ngrx/store'
 import { PanelId, PanelLinkId, StringId } from '@entities/shared'
+import { CompleteEntityBounds } from '@shared/data-access/models'
 
 export const SELECTED_FEATURE_KEY = 'selected'
 
@@ -18,6 +19,8 @@ export interface SelectedState {
 	selectedStringId: StringId | undefined
 	selectedPanelLinkId: PanelLinkId | undefined
 	entityState: EntitySelectedState
+	selectedPanelsBoxBounds: CompleteEntityBounds | undefined
+	selectedStringBoxBounds: CompleteEntityBounds | undefined
 }
 
 export const initialSelectedState: SelectedState = {
@@ -26,6 +29,8 @@ export const initialSelectedState: SelectedState = {
 	selectedStringId: undefined,
 	selectedPanelLinkId: undefined,
 	entityState: ENTITY_SELECTED_STATE.NONE_SELECTED,
+	selectedPanelsBoxBounds: undefined,
+	selectedStringBoxBounds: undefined,
 }
 
 const reducer = createReducer(
@@ -79,6 +84,11 @@ const reducer = createReducer(
 		},
 	})),
 
+	on(SelectedActions.setSelectedPanelsBoxBounds, (state, { bounds }) => ({
+		...state,
+		selectedPanelsBoxBounds: bounds,
+	})),
+
 	on(SelectedActions.clearMultiSelected, (state) => ({
 		...state,
 		entityState:
@@ -94,6 +104,11 @@ const reducer = createReducer(
 	on(SelectedActions.selectString, (state, { stringId }) => ({
 		...state,
 		selectedStringId: stringId,
+	})),
+
+	on(SelectedActions.setSelectedStringBoxBounds, (state, { bounds }) => ({
+		...state,
+		selectedStringBoxBounds: bounds,
 	})),
 
 	on(SelectedActions.clearSelectedString, (state) => ({

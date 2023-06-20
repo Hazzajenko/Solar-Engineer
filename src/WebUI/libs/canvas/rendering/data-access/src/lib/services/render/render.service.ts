@@ -36,10 +36,12 @@ import {
 	PANEL_STROKE_STYLE,
 	PanelModel,
 	UNDEFINED_STRING_ID,
+	UNDEFINED_STRING_NAME,
 } from '@entities/shared'
 import { throttle } from 'lodash'
 import { ObjectPositioningStoreService } from '@canvas/object-positioning/data-access'
 import { injectAuthStore } from '@auth/data-access'
+import { injectUiStore } from '@overlays/ui-store/data-access'
 
 @Injectable({
 	providedIn: 'root',
@@ -49,6 +51,7 @@ export class RenderService {
 	private _divElements = inject(DivElementsService)
 	private _entities = injectEntityStore()
 	private _authStore = injectAuthStore()
+	private _uiStore = injectUiStore()
 	// private _entities = injectEntityStore()
 	// private _entities = injectEntityStore()
 	// private _app = inject(AppStoreService)
@@ -424,6 +427,14 @@ export class RenderService {
 				}
 				drawTooltipWithOptionsCtx(ctx, point, hoveringOverPanel.id)
 			}
+
+			/*			const isMobile = this._uiStore.select.isMobile()
+			 if (isMobile) {
+			 if (singleSelectedPanel) {
+			 drawMoveSvg(ctx, singleSelectedPanel.location)
+			 console.log('drawMoveSvg singleSelectedPanel', singleSelectedPanel)
+			 }
+			 }*/
 		})
 	}
 
@@ -503,10 +514,9 @@ export class RenderService {
 				if (entity.stringId !== UNDEFINED_STRING_ID) {
 					const string = this._entities.strings.select.getById(entity.stringId)
 					// assertNotNull(string, JSON.stringify(entity, null, 2))
-					if (string && string.colour) {
-					fillStyle = string.colour	
+					if (string && string.colour && string.name !== UNDEFINED_STRING_NAME) {
+						fillStyle = string.colour
 					}
-					
 				}
 			}
 

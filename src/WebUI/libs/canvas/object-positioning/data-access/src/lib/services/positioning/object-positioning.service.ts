@@ -206,6 +206,12 @@ export class ObjectPositioningService {
 		this._positioningStore.dispatch.startMovingMultipleEntities(multipleSelectedIds)
 	}
 
+	setMultipleEntitiesToMoveTouchHold(point: Point, multipleSelectedIds: PanelId[]) {
+		this.multipleToMoveIds = multipleSelectedIds
+		this.multiToMoveStart = point as EventPoint
+		this._positioningStore.dispatch.startMovingMultipleEntities(multipleSelectedIds)
+	}
+
 	setMultipleEntitiesToMove(event: PointerEvent, multipleSelectedIds: PanelId[]) {
 		if (!multiSelectDraggingKeysDown(event)) return
 		this.multipleToMoveIds = multipleSelectedIds
@@ -213,13 +219,13 @@ export class ObjectPositioningService {
 		this._positioningStore.dispatch.startMovingMultipleEntities(multipleSelectedIds)
 	}
 
-	multipleEntitiesToMoveMouseMove(event: PointerEvent) {
-		if (!multiSelectDraggingKeysDown(event)) {
-			this.stopMultipleEntitiesToMove(event)
-			// changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-			return
+	multipleEntitiesToMoveMouseMove(event: PointerEvent | TouchEvent) {
+		if (event instanceof PointerEvent) {
+			if (!multiSelectDraggingKeysDown(event)) {
+				this.stopMultipleEntitiesToMove(event)
+				return
+			}
 		}
-		// changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 		const multiToMoveStart = this.multiToMoveStart
 		assertNotNull(multiToMoveStart)
 		const eventLocation = eventToPointLocation(event)
@@ -262,8 +268,6 @@ export class ObjectPositioningService {
 		}
 
 		this._render.renderCanvasApp({
-			// excludedEntityIds: multipleToMoveIds,
-			// drawFns: [drawMultipleToMove],
 			multipleToMoveIds,
 			multipleToMovePanels: updates,
 			multipleToMoveSpotsTakenIds: spotTakenIds,

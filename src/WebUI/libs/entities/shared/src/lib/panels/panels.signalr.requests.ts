@@ -1,5 +1,5 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { AngleRadians, Point } from '@shared/data-access/models'
+import { AngleRadians, POINT } from '@shared/data-access/models'
 import { z } from 'zod'
 import { PANEL_MODEL, PanelId, PanelModel } from './panel.model'
 import { ProjectId } from '../projects'
@@ -37,7 +37,7 @@ export const CREATE_MANY_PANELS_SIGNALR_REQUEST = z.object({
 	panels: z.array(
 		z.object({
 			id: z.string(),
-			location: Point,
+			location: POINT,
 		}),
 	),
 })

@@ -17,12 +17,20 @@ export const getTopLeftPointFromTransformedPoint = (
 	} as TransformedPoint
 }
 
-export function eventToPointLocation(event: MouseEvent): Point {
-	return { x: event.offsetX, y: event.offsetY }
+export function eventToPointLocation(event: MouseEvent | TouchEvent): Point {
+	if (event instanceof MouseEvent) {
+		return { x: event.offsetX, y: event.offsetY }
+	}
+	return singleTouchEventToPointLocation(event)
 }
 
 export const singleTouchEventToPointLocation = (event: TouchEvent): Point => {
 	const touch = event.touches[0]
+	return { x: touch.clientX, y: touch.clientY }
+}
+
+export const singleTouchEventEndToPointLocation = (event: TouchEvent): Point => {
+	const touch = event.changedTouches[0]
 	return { x: touch.clientX, y: touch.clientY }
 }
 

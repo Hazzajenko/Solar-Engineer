@@ -31,6 +31,7 @@ import { OverlayNotificationModalComponent } from '@overlays/notifications/featu
 import { SideUiAuthViewComponent, SideUiNavBarComponent } from '@overlays/side-uis/feature'
 import {
 	MobileBottomToolbarComponent,
+	MobileSideActionToolbarComponent,
 	OverlayToolBarComponent,
 	SelectedStringToolBarComponent,
 } from '@overlays/toolbars/feature'
@@ -71,6 +72,7 @@ import { DeviceDetectorService } from 'ngx-device-detector'
 		DialogRendererComponent,
 		SideUiAuthViewComponent,
 		LoadingProjectSpinnerComponent,
+		MobileSideActionToolbarComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
@@ -138,7 +140,6 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		const deviceInfo = this._deviceService.getDeviceInfo()
 
 		console.log(deviceInfo)
-		// throw new Error('Method not implemented.')
 	}
 
 	ngAfterViewInit() {
@@ -159,8 +160,4 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	toggleSideUiNav() {
 		this._uiStore.dispatch.toggleSideUiNav()
 	}
-
-	/*	toggleMobileSideMenu() {
-	 this._uiStore.dispatch.toggleSideUiMobileMenu()
-	 }*/
 }

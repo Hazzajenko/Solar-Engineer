@@ -8,6 +8,7 @@ import { ENTITY_TYPE, SizeByType } from '@entities/shared'
 import { TransformedPoint } from '@shared/data-access/models'
 import { injectEntityStore } from '../store'
 import { injectAppStateStore } from '@canvas/app/data-access'
+import { injectAppUser } from '@auth/data-access'
 
 @Injectable({
 	providedIn: 'root',
@@ -18,6 +19,7 @@ export class EntityFactoryService {
 	private _nearby = inject(NearbyService)
 	private _render = inject(RenderService)
 	private _entities = injectEntityStore()
+	private user = injectAppUser()
 
 	createEntity(event: PointerEvent, currentPoint: TransformedPoint) {
 		const previewAxisState = this._appStore.select.previewAxis()
@@ -55,6 +57,7 @@ export class EntityFactoryService {
 			SizeByType[ENTITY_TYPE.PANEL],
 		)
 		// const selectedStringId = this._selectedStore.select.selectedStringId()
+
 		const selectedStringId =
 			this._selectedStore.select.selectedStringId() ??
 			this._entities.strings.select.undefinedStringId()
@@ -82,11 +85,16 @@ export class EntityFactoryService {
 				y: this._nearby.axisPreviewRect.top,
 			}
 
-			const selectedStringId = this._selectedStore.select.selectedStringId()
-			const entity = selectedStringId
-				? createPanel(previewRectLocation, selectedStringId)
-				: createPanel(previewRectLocation)
+			const selectedStringId =
+				this._selectedStore.select.selectedStringId() ??
+				this._entities.strings.select.undefinedStringId()
+			const entity = createPanel(previewRectLocation, selectedStringId)
 			this._entities.panels.dispatch.addPanel(entity)
+			/*			const selectedStringId = this._selectedStore.select.selectedStringId()
+			 const entity = selectedStringId
+			 ? createPanel(previewRectLocation, selectedStringId)
+			 : createPanel(previewRectLocation)
+			 this._entities.panels.dispatch.addPanel(entity)*/
 			this._nearby.axisPreviewRect = undefined
 			this._appStore.dispatch.setPreviewAxisState('None')
 
@@ -98,12 +106,27 @@ export class EntityFactoryService {
 			currentPoint,
 			SizeByType[ENTITY_TYPE.PANEL],
 		)
-		const selectedStringId = this._selectedStore.select.selectedStringId()
-		const entity = selectedStringId
-			? createPanel(location, selectedStringId)
-			: createPanel(location)
+		const selectedStringId =
+			this._selectedStore.select.selectedStringId() ??
+			this._entities.strings.select.undefinedStringId()
+		const entity = createPanel(location, selectedStringId)
 		this._entities.panels.dispatch.addPanel(entity)
+		/*		const selectedStringId = this._selectedStore.select.selectedStringId()
+		 const entity = selectedStringId
+		 ? createPanel(location, selectedStringId)
+		 : createPanel(location)
+		 this._entities.panels.dispatch.addPanel(entity)*/
 
 		this._render.renderCanvasApp()
+	}
+
+	private getSelectedStringId() {
+		if (!this.user()) {
+			return this._entities.strings.select.undefinedStringId()
+		}
+		return (
+			this._selectedStore.select.selectedStringId() ??
+			this._entities.strings.select.undefinedStringId()
+		)
 	}
 }

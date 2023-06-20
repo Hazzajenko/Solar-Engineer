@@ -10,6 +10,7 @@ export * from './entities/index'
 export * from './links/index'
 export * from './html/index'
 export * from './strings/index'
+export * from './move-svg/index'
 export * from './drag-box/index'
 export * from './draw-tooltip-with-options.ctx'
 

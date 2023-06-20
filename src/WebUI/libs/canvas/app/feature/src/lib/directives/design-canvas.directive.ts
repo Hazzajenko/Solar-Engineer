@@ -24,12 +24,7 @@ import {
 	TransformedPoint,
 } from '@shared/data-access/models'
 import { assertNotNull, getCenter, getDistance, OnDestroyDirective } from '@shared/utils'
-import {
-	CanvasElementService,
-	injectAppStateStore,
-	isNoDragBoxState,
-	MODE_STATE,
-} from '@canvas/app/data-access'
+import { CanvasElementService, injectAppStateStore, MODE_STATE } from '@canvas/app/data-access'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import {
 	DomPointService,
@@ -51,6 +46,7 @@ import {
 	eventToPointLocation,
 	getBoundsFromCenterPoint,
 	getCompleteBoundsFromMultipleEntitiesWithPadding,
+	getDefaultBoundsBoxFromMultipleEntities,
 	isContextMenu,
 	isDraggingEntity,
 	isEntityOverlappingWithBounds,
@@ -63,6 +59,7 @@ import {
 	isWheelButton,
 	multiSelectDraggingKeysDownAndIdsNotEmpty,
 	rotatingKeysDown,
+	singleTouchEventEndToPointLocation,
 	singleTouchEventToPointLocation,
 } from '@canvas/utils'
 import { isPanel, isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels } from '@entities/utils'
@@ -167,6 +164,11 @@ export class DesignCanvasDirective implements OnInit {
 	}
 
 	clearGesture() {
+		const pointers = this.gesture.pointers.values()
+		for (const pointer of pointers) {
+			console.log('pointer removed', pointer)
+		}
+
 		this.gesture = {
 			pointers: new Map(),
 			lastCenter: null,
@@ -815,21 +817,44 @@ export class DesignCanvasDirective implements OnInit {
 	 * * Touch Start handler
 	 */
 	onTouchStartHandler(event: TouchEvent) {
-		// * If there is only one touch, handle as a click
-		if (event.touches.length === 1) {
-			this.gesture.pointers.clear()
-			const touch = event.touches[0]
-			const pointerId = touch.identifier
-			this.gesture.pointers.set(pointerId, {
-				x: touch.clientX,
-				y: touch.clientY,
-			})
-			this.rawMousePos = singleTouchEventToPointLocation(event)
-			this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
-			// this.touchStartTimeOutFn()
+		// * If there are two touches, handle as a gesture
+		if (event.touches.length > 1) {
+			this.handleMultiTouchStart(event)
 			return
 		}
 
+		const moveEntityState = this._positioningStore.state.moveEntityState
+		const pointer = singleTouchEventToPointLocation(event)
+		const currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
+		// * Handle move multiple entities
+		if (
+			moveEntityState === 'MovingMultipleEntities' &&
+			this._selectedStore.select.isPointInsideSelectedPanelsBoxBounds(currentPoint)
+			// this.isPointInsideSelectedBox(pointer, currentPoint)
+		) {
+			this._objPositioning.multipleEntitiesToMoveMouseMove(event)
+			return
+		}
+
+		// * Handle as a click
+
+		this.gesture.pointers.clear()
+		const touch = event.touches[0]
+		const pointerId = touch.identifier
+		this.gesture.pointers.set(pointerId, {
+			x: touch.clientX,
+			y: touch.clientY,
+		})
+		this.rawMousePos = singleTouchEventToPointLocation(event)
+		this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
+		// this.touchStartTimeOutFn()
+	}
+
+	/**
+	 * * Multi Touch Move handler
+	 * @param event
+	 */
+	handleMultiTouchStart(event: TouchEvent) {
 		// * If there are two touches, handle as a gesture
 		for (let i = 0; i < event.touches.length; i++) {
 			const touch = event.touches[i]
@@ -854,6 +879,7 @@ export class DesignCanvasDirective implements OnInit {
 	 */
 	onTouchMoveHandler(event: TouchEvent) {
 		this.rawMousePos = singleTouchEventToPointLocation(event)
+
 		this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
 
 		// * Handle pinch to zoom
@@ -869,73 +895,119 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		// * Handle touch hold
-		if (gesture.pointers.size === 1) {
-			const touch = event.touches[0]
-			const pointerId = touch.identifier
-			const pointer = gesture.pointers.get(pointerId)
-			if (!pointer) {
-				this.touchHolding = false
-				console.error('Pointer not found')
-				return
-			}
-			if (this.touchHolding) {
-				this.singleTouchHoldHandler(event, this.currentPoint)
-				return
-			}
-			setTimeout(() => {
-				if (this.gesture.pointers.get(pointerId)) {
-					this.touchHolding = true
-					this.singleTouchHoldHandler(event, this.currentPoint)
-				}
-			}, 50)
+		if (gesture.pointers.size > 1) {
+			console.error('Gesture not ready for pinch to zoom')
+			return
 		}
+		const moveEntityState = this._positioningStore.state.moveEntityState
+		/*		// * Handle move multiple entities
+		 if (moveEntityState === 'MovingMultipleEntities') {
+		 this._objPositioning.multipleEntitiesToMoveMouseMove(event)
+		 return
+		 }
+
+		 // const currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
+		 // const rawPoint = singleTouchEventToPointLocation(event)
+		 if (this._selectedStore.select.isPointInsideSelectedPanelsBoxBounds(this.currentPoint)) {
+		 // if (this.isPointInsideSelectedBox(pointer, currentPoint)) {
+		 this._objPositioning.setMultipleEntitiesToMoveTouchHold(
+		 this.rawMousePos,
+		 this._selectedStore.select.multipleSelectedPanelIds(),
+		 )
+		 this._objPositioning.multipleEntitiesToMoveMouseMove(event)
+		 return
+		 }*/
+
+		// * Handle touch hold
+		const touch = event.touches[0]
+		const pointerId = touch.identifier
+		const pointer = gesture.pointers.get(pointerId)
+		if (!pointer) {
+			this.touchHolding = false
+			console.error('Pointer not found')
+			return
+		}
+		if (this.touchHolding) {
+			this.singleTouchHoldHandler(event, this.currentPoint, pointerId)
+			return
+		}
+		/*			// If the pointer has moved more than 10px, cancel the touch hold
+		 if (getDistance([pointer, { x: touch.clientX, y: touch.clientY }]) > 10) {
+		 this.touchHolding = false
+		 return
+		 }*/
+		// * If the pointer has lifted before the timeout, cancel the touch hold
+		setTimeout(() => {
+			if (this.gesture.pointers.get(pointerId)) {
+				this.touchHolding = true
+				this.singleTouchHoldHandler(event, this.currentPoint, pointerId)
+			}
+		}, 50)
 	}
 
 	/**
 	 * * Single touch hold handler
 	 */
-	singleTouchHoldHandler(event: TouchEvent, currentPoint: TransformedPoint) {
-		const touch = event.touches[0]
-		const pointerId = touch.identifier
+	singleTouchHoldHandler(event: TouchEvent, currentPoint2: TransformedPoint, pointerId: number) {
+		// console.log('Single touch hold')
+		const currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
 		const pointer = this.gesture.pointers.get(pointerId)
 		if (!pointer) {
 			console.error('Pointer not found')
 			return
 		}
-		// this.rawMousePos = singleTouchEventToPointLocation(event)
-		// this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
-		// const currentPoint = this.currentPoint
 
+		const dragBox = this._appStore.select.dragBox()
 		// * Handle move single entity
 		const moveEntityState = this._positioningStore.state.moveEntityState
-		const panelUnderMouse = this.getPanelUnderMouse(this.currentPoint)
-		if (panelUnderMouse && moveEntityState !== 'MovingSingleEntity') {
-			this._objPositioning.setSingleToMoveEntity(event, panelUnderMouse.id)
-			this._objPositioning.singleEntityToMoveMouseMove(event, currentPoint)
-			return
-		}
+
 		if (moveEntityState === 'MovingSingleEntity') {
 			this._objPositioning.singleEntityToMoveMouseMove(event, currentPoint)
 			return
 		}
 
+		// * Handle move multiple entities
+		if (moveEntityState === 'MovingMultipleEntities') {
+			this._objPositioning.multipleEntitiesToMoveMouseMove(event)
+			return
+		}
+
+		if (this._selectedStore.select.isPointInsideSelectedPanelsBoxBounds(currentPoint)) {
+			// if (this.isPointInsideSelectedBox(pointer, currentPoint)) {
+			this._objPositioning.setMultipleEntitiesToMoveTouchHold(
+				pointer,
+				this._selectedStore.select.multipleSelectedPanelIds(),
+			)
+			this._objPositioning.multipleEntitiesToMoveMouseMove(event)
+			return
+		}
+
+		const panelUnderMouse = this.getPanelUnderMouse(this.currentPoint)
+
 		// * Handle drag box
-		const dragBox = this._appStore.select.dragBox()
-		if (dragBox.state === 'NoDragBox') {
+		if (dragBox.state === 'NoDragBox' && !panelUnderMouse) {
 			dragBoxOnMouseDownHandler(currentPoint, this._appStore)
 		}
-		if (isNoDragBoxState(dragBox)) return
-		const start = dragBox.start
-		const renderOptions = dragBoxOnMouseMoveHandler(
-			event,
-			currentPoint,
-			start,
-			this._entities.panels.select.allPanels(),
-			this._appStore,
-		)
-		if (renderOptions) {
-			this._render.renderCanvasApp(renderOptions)
+
+		if (dragBox.state !== 'NoDragBox') {
+			const start = dragBox.start
+			const renderOptions = dragBoxOnMouseMoveHandler(
+				event,
+				currentPoint,
+				start,
+				this._entities.panels.select.allPanels(),
+				this._appStore,
+			)
+			if (renderOptions) {
+				this._render.renderCanvasApp(renderOptions)
+			}
+			return
+		}
+
+		if (panelUnderMouse) {
+			this._objPositioning.setSingleToMoveEntity(event, panelUnderMouse.id)
+			this._objPositioning.singleEntityToMoveMouseMove(event, currentPoint)
+			return
 		}
 	}
 
@@ -944,6 +1016,10 @@ export class DesignCanvasDirective implements OnInit {
 	 */
 
 	onTouchEndHandler(event: TouchEvent) {
+		console.log('Touch end')
+		this.touchHolding = false
+		this.rawMousePos = singleTouchEventEndToPointLocation(event)
+		this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEndEvent(event)
 		if (this.gesture.pointers.size === 0) {
 			this.clearGesture()
 			return
@@ -975,6 +1051,14 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
+		// * Handle end move multiple entities
+		if (moveEntityState === 'MovingMultipleEntities') {
+			this._objPositioning.stopMultipleEntitiesToMove(this.rawMousePos)
+			this.clearGesture()
+			this.touchHolding = false
+			return
+		}
+
 		// * If there is only one touch, handle as a click
 		if (this.gesture.pointers.size === 1) {
 			const entityUnderMouse = this.getPanelUnderMouse(this.currentPoint)
@@ -982,16 +1066,19 @@ export class DesignCanvasDirective implements OnInit {
 				const mode = this._appStore.select.mode()
 				if (mode === 'SelectMode') {
 					this._selected.handleEntityUnderTouch(event, entityUnderMouse)
+					this.clearGesture()
 					return
 				}
 				this._selected.handleNotClickedOnEntity()
 				if (this.anyEntitiesNearAreaOfTouch(event)) {
+					this.clearGesture()
 					return
 				}
 			}
 			this._entityFactory.createEntityFromTouch(event, this.currentPoint)
 			this.clearGesture()
 		}
+		this.clearGesture()
 	}
 
 	onTouchCancelHandler(event: TouchEvent) {
@@ -1004,6 +1091,16 @@ export class DesignCanvasDirective implements OnInit {
 		this.canvas = canvas
 		this.ctx = ctx
 		this._canvasEl.init(this.canvas, this.ctx)
+	}
+
+	private isPointInsideSelectedBox(point: Point, currentPoint: TransformedPoint) {
+		const multipleSelectedPanelIds = this._selectedStore.select.multipleSelectedPanelIds()
+		if (multipleSelectedPanelIds.length > 0) {
+			const multipleSelectedPanels = this._entities.panels.select.getByIds(multipleSelectedPanelIds)
+			const selectionBoxBoundsBox = getDefaultBoundsBoxFromMultipleEntities(multipleSelectedPanels)
+			return isPointInsideBounds(currentPoint, selectionBoxBoundsBox)
+		}
+		return false
 	}
 
 	private setupEventListenersBasedOnPlatform() {
@@ -1076,6 +1173,11 @@ export class DesignCanvasDirective implements OnInit {
 				break
 			}
 			case PLATFORM.ANDROID: {
+				this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_UP, (event: PointerEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					console.log('POINTER_UP start', event)
+				})
 				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_START, (event: TouchEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
@@ -1093,6 +1195,12 @@ export class DesignCanvasDirective implements OnInit {
 					event.preventDefault()
 					console.log('touch end', event)
 					this.onTouchEndHandler(event)
+				})
+				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_CANCEL, (event: TouchEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					console.log('touch cancel', event)
+					// this.onTouchCancelHandler(event)
 				})
 				/*				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_CANCEL, (event: TouchEvent) => {
 				 event.stopPropagation()
