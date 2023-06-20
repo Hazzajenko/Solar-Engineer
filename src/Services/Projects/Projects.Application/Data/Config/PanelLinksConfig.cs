@@ -23,43 +23,9 @@ public class PanelLinksConfig : IEntityTypeConfiguration<PanelLink>
             .HasOne(x => x.PanelNegativeTo)
             .WithOne(x => x.LinkPositiveTo)
             .HasForeignKey<Panel>(x => x.LinkPositiveToId)
-            // .
             .HasPrincipalKey<PanelLink>(x => x.Id)
             .OnDelete(DeleteBehavior.SetNull);
-        /*  /*
-          builder
-              .HasOne(x => x.PanelPositiveTo)
-              .WithOne();
-  
-          builder
-              .HasOne(x => x.PanelNegativeTo)
-              .WithOne();*/
 
-        /*/*builder
-            .HasOne(x => x.PanelPositiveTo)
-            .WithOne(x => x.LinkNegativeTo)
-            // .HasForeignKey<Panel>(x => x.LinkNegativeToId)
-            .HasPrincipalKey<PanelLink>(x => x.Id)
-            .OnDelete(DeleteBehavior.SetNull);*/
-
-        /*builder
-            .HasOne(x => x.PanelNegativeTo)
-            .WithOne(x => x.LinkPositiveTo)
-            // .HasForeignKey<Panel>(x => x.LinkPositiveToId)
-            // .
-            .HasPrincipalKey<PanelLink>(x => x.Id)
-            .OnDelete(DeleteBehavior.SetNull);*/
-
-        // builder
-        //     .HasOne(x => x.LinkPositiveTo)
-        //     .WithOne(x => x.PanelNegativeTo)
-        //     .HasForeignKey<PanelLink>(x => x.PanelNegativeToId)
-        //     .HasPrincipalKey<Panel>(x => x.Id)
-        //     .OnDelete(DeleteBehavior.Cascade);
-        /*builder
-            .Property(x => x.StringId)
-            .HasDefaultValueSql("uuid_generate_v4()").IsRequired();*/
-
-        // builder.
+        builder.Property(x => x.Points).HasColumnType("jsonb");
     }
 }

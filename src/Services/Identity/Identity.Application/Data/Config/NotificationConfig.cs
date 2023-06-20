@@ -15,14 +15,5 @@ public class NotificationConfig : IEntityTypeConfiguration<Notification>
             .HasConversion(p => p.Name, p => NotificationType.FromName(p, true));
 
         builder.Property(x => x.ProjectInvite).HasColumnType("jsonb");
-        /*builder.OwnsOne(
-            x => x.ProjectInvite,
-            navigationsBuilder =>
-            {
-                // navigationsBuilder.OwnsOne(x => x.Data);
-                // navigationsBuilder.Property(x => x.Data).;
-                navigationsBuilder.ToJson();
-            }
-        );*/
     }
 }

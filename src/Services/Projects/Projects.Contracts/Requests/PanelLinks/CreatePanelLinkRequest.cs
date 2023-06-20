@@ -1,26 +1,26 @@
-﻿namespace Projects.Contracts.Requests.PanelLinks;
+﻿using Projects.Domain.Entities;
+
+namespace Projects.Contracts.Requests.PanelLinks;
 
 public class CreatePanelLinkRequest : IProjectEventRequest
 {
-    public required string Id { get; init; }
     public required string ProjectId { get; init; }
+    public required PanelLinkObject PanelLink { get; init; }
+}
+
+public class PanelLinkObject
+{
+    public required string Id { get; init; }
     public required string StringId { get; init; }
     public required string PanelPositiveToId { get; init; }
     public required string PanelNegativeToId { get; init; }
+    public required IEnumerable<PanelLink.Point> Points { get; init; }
 }
 
 public class CreatePanelLinkRequestValidator : AbstractValidator<CreatePanelLinkRequest>
 {
     public CreatePanelLinkRequestValidator()
     {
-        RuleFor(v => v.Id)
-            .NotNull()
-            .WithMessage("Id cannot be null")
-            .NotEmpty()
-            .WithMessage("Id cannot be empty")
-            .Must(x => Guid.TryParse(x, out _))
-            .WithMessage("Id must be a valid Guid");
-
         RuleFor(v => v.ProjectId)
             .NotNull()
             .WithMessage("ProjectId cannot be null")
@@ -29,7 +29,17 @@ public class CreatePanelLinkRequestValidator : AbstractValidator<CreatePanelLink
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("ProjectId must be a valid Guid");
 
-        RuleFor(v => v.StringId)
+        RuleFor(v => v.PanelLink).NotNull().WithMessage("PanelLink cannot be null");
+
+        RuleFor(v => v.PanelLink.Id)
+            .NotNull()
+            .WithMessage("PanelLinkId cannot be null")
+            .NotEmpty()
+            .WithMessage("PanelLinkId cannot be empty")
+            .Must(x => Guid.TryParse(x, out _))
+            .WithMessage("PanelLinkId must be a valid Guid");
+
+        RuleFor(v => v.PanelLink.StringId)
             .NotNull()
             .WithMessage("StringId cannot be null")
             .NotEmpty()
@@ -37,7 +47,7 @@ public class CreatePanelLinkRequestValidator : AbstractValidator<CreatePanelLink
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("StringId must be a valid Guid");
 
-        RuleFor(v => v.PanelPositiveToId)
+        RuleFor(v => v.PanelLink.PanelPositiveToId)
             .NotNull()
             .WithMessage("PositiveToId cannot be null")
             .NotEmpty()
@@ -45,7 +55,7 @@ public class CreatePanelLinkRequestValidator : AbstractValidator<CreatePanelLink
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("PositiveToId must be a valid Guid");
 
-        RuleFor(v => v.PanelNegativeToId)
+        RuleFor(v => v.PanelLink.PanelNegativeToId)
             .NotNull()
             .WithMessage("NegativeToId cannot be null")
             .NotEmpty()

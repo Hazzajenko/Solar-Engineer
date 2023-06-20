@@ -34,6 +34,7 @@ public class PanelLink : IEntity, IProjectItem, IUserObject
     public Panel PanelNegativeTo { get; set; } = default!;
     public Guid PanelPositiveToId { get; set; }
     public Guid PanelNegativeToId { get; set; }
+    public IEnumerable<Point> Points { get; set; } = default!;
     public Guid Id { get; set; }
     public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
     public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;
@@ -58,5 +59,21 @@ public class PanelLink : IEntity, IProjectItem, IUserObject
             panelNegativeToId,
             createdById
         );
+    }
+    
+    public class Point
+    {
+        public Point(double x, double y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public Point()
+        {
+        }
+
+        public double X { get; set; }
+        public double Y { get; set; }
     }
 }

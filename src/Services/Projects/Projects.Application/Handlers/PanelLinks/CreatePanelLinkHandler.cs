@@ -39,10 +39,10 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
             );
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
-        var panelLinkIdGuid = command.Request.Id.ToGuid();
-        var positiveToIdGuid = command.Request.PanelPositiveToId.ToGuid();
-        var negativeToIdGuid = command.Request.PanelNegativeToId.ToGuid();
-        var stringIdGuid = command.Request.StringId.ToGuid();
+        var panelLinkIdGuid = command.Request.PanelLink.Id.ToGuid();
+        var positiveToIdGuid = command.Request.PanelLink.PanelPositiveToId.ToGuid();
+        var negativeToIdGuid = command.Request.PanelLink.PanelNegativeToId.ToGuid();
+        var stringIdGuid = command.Request.PanelLink.StringId.ToGuid();
 
         var positiveToPanel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
             positiveToIdGuid,

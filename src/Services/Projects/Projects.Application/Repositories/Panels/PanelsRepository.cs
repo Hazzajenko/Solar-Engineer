@@ -14,9 +14,7 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
 {
     // private readonly IMapper _mapper;
     public PanelsRepository(ProjectsContext context)
-        : base(context)
-    {
-    }
+        : base(context) { }
 
     public async Task<IEnumerable<PanelDto>> GetPanelsByProjectIdAsync(Guid projectId)
     {
@@ -36,7 +34,11 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
         );*/
     }
 
-    public async Task<PanelDto?> GetPanelByLocationAsync(Guid id, Guid projectId, Panel.Point location)
+    public async Task<PanelDto?> GetPanelByLocationAsync(
+        Guid id,
+        Guid projectId,
+        Panel.Point location
+    )
     {
         return await Queryable
             .Where(x => x.Id == id && x.ProjectId == projectId && x.Location == location)
@@ -64,23 +66,18 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
             .AnyAsync();
     }*/
 
-    public async Task<TPanelResponse> CreatePanelAsync<TPanelResponse>(Panel panel)
+    public async Task<TPanelResponse> CreatePanelAndSaveChangesAsync<TPanelResponse>(Panel panel)
         where TPanelResponse : IMappable<Panel>
     {
         await AddAsync(panel);
         await SaveChangesAsync();
-
-        // _mapper.Map<(Panel, string), TPanelResponse>((panel, "Create"));
         return panel.Adapt<TPanelResponse>();
     }
 
     public async Task<bool> DeletePanelByIdAndProjectIdAsync(Guid id, Guid projectId)
     {
         Expression<Func<Panel, bool>> where = x => x.Id == id && x.ProjectId == projectId;
-        var panel = await Queryable.SingleOrDefaultAsync(
-            where
-            // x => x.Id == id && x.ProjectId == projectId
-        );
+        var panel = await Queryable.SingleOrDefaultAsync(where);
         if (panel is null)
             return false;
         var keys = GetKeys(panel);
@@ -88,13 +85,6 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
             keys.DumpObjectJson();
 
         await Queryable.Where(where).ExecuteDeleteAsync();
-
-        // await FindManyAndDeleteAsync(where);
-
-        // await DeleteAsync(new { id, projectId });
-        // await DeleteAsync(where);
-        // await DeleteAsync(x => x.Id == id && x.ProjectId == projectId);
-        // await DeleteAsync(panel.Id);
         await SaveChangesAsync();
 
         return true;
@@ -102,19 +92,6 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
 
     public async Task<bool> DeleteManyPanelsAsync(Guid projectId, IEnumerable<Guid> panelIds)
     {
-        /*Expression<Func<Panel, bool>> where = x =>
-            x.ProjectId == projectId && panelIds.Contains(x.Id);
-        var panels = await Queryable
-            .Where(
-                where
-                // x => x.Id == id && x.ProjectId == projectId
-            )
-            .ToListAsync();
-        if (panels.Any() is false)
-            return false;
-        if (panels.Count() != panelIds.Count())
-            throw new HubException("Some panels do not exist");*/
-
         await Queryable
             .Where(x => x.ProjectId == projectId && panelIds.Contains(x.Id))
             .ExecuteDeleteAsync();
