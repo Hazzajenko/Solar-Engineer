@@ -1,4 +1,4 @@
-import { createString, createStringWithPanelsV2, genStringNameV2 } from '@entities/utils'
+import { createString, createStringWithPanels, genStringNameV2 } from '@entities/utils'
 import { MOVE_ENTITY_STATE, ObjectPositioningService, ObjectPositioningStoreService, ObjectRotatingService, ROTATE_ENTITY_STATE } from '@canvas/object-positioning/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { injectSelectedStore, SelectedService } from '@canvas/selected/data-access'
@@ -228,7 +228,7 @@ export class KeyEventsService {
 		const multipleSelectedIds = this._selectedStore.select.multipleSelectedPanelIds()
 		if (multipleSelectedIds.length <= 1) return
 		const amountOfStrings = this._entities.strings.select.allStrings().length
-		const { string, panelUpdates } = createStringWithPanelsV2(multipleSelectedIds, amountOfStrings)
+		const { string, panelUpdates } = createStringWithPanels(multipleSelectedIds, amountOfStrings)
 		this._entities.strings.dispatch.addStringWithPanels(string, panelUpdates)
 		// this._entities.strings.dispatch.addString(string)
 		// this._entities.panels.dispatch.updateManyPanels(panelUpdates)

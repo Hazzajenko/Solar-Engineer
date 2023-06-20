@@ -91,6 +91,7 @@ const reducer = createReducer(
 
 	on(SelectedActions.clearMultiSelected, (state) => ({
 		...state,
+		selectedPanelsBoxBounds: undefined,
 		entityState:
 			ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED || ENTITY_SELECTED_STATE.NONE_SELECTED,
 		multipleSelectedPanelIds: [],
@@ -113,6 +114,7 @@ const reducer = createReducer(
 
 	on(SelectedActions.clearSelectedString, (state) => ({
 		...state,
+		selectedStringBoxBounds: undefined,
 		selectedStringId: undefined,
 	})),
 

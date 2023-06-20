@@ -4,8 +4,9 @@ import { makeEnvironmentProviders } from '@angular/core'
 import { omit } from '@shared/utils'
 import { provideEffects } from '@ngrx/effects'
 import * as SelectedEffects from './selected.effects'
-import { TransformedPoint } from '@shared/data-access/models'
+import { CompleteEntityBounds, TransformedPoint } from '@shared/data-access/models'
 import { isPointInsideBounds } from '@canvas/utils'
+import { PanelId, StringId } from '@entities/shared'
 
 export const selectedFeature = createFeature({
 	name: SELECTED_FEATURE_KEY,
@@ -29,12 +30,24 @@ export const selectedFeature = createFeature({
 		selectSelectedPanelsBoxBounds,
 		selectSelectedStringBoxBounds,
 		selectIsPointInsideSelectedPanelsBoxBounds: (point: TransformedPoint) =>
-			createSelector(selectSelectedPanelsBoxBounds, (boxBounds) =>
-				boxBounds ? isPointInsideBounds(point, boxBounds) : false,
+			createSelector(
+				selectMultipleSelectedPanelIds,
+				selectSelectedPanelsBoxBounds,
+				(multipleSelectedPanelIds: PanelId[], boxBounds: CompleteEntityBounds | undefined) => {
+					if (!boxBounds) return false
+					if (multipleSelectedPanelIds.length < 2) return false
+					return isPointInsideBounds(point, boxBounds)
+				},
 			),
 		selectIsPointInsideSelectedStringBoxBounds: (point: TransformedPoint) =>
-			createSelector(selectSelectedStringBoxBounds, (boxBounds) =>
-				boxBounds ? isPointInsideBounds(point, boxBounds) : false,
+			createSelector(
+				selectSelectedStringId,
+				selectSelectedStringBoxBounds,
+				(selectedStringId: StringId | undefined, boxBounds: CompleteEntityBounds | undefined) => {
+					if (!boxBounds) return false
+					if (!selectedStringId) return false
+					return isPointInsideBounds(point, boxBounds)
+				},
 			),
 	}),
 })

@@ -39,6 +39,7 @@ import { injectAppUser } from '@auth/data-access'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
 import { SideUiNavBarStore } from '../../../../../side-uis/feature/src/lib/side-ui-nav-bar/side-ui-nav-bar.store'
 import {
+	SELECTED_PROJECT_VIEW,
 	SelectedProjectView,
 	SelectedProjectViewStore,
 	SideUiNavBarView,
@@ -125,8 +126,12 @@ export class MobileBottomToolbarComponent {
 
 	toggleSideUiNavWithProjectPage(page: SelectedProjectView) {
 		this._uiStore.dispatch.toggleSideUiNav()
+		if (!this.user()) {
+			this._navBarStore.changeView('demo-project')
+			return
+		}
 		this._navBarStore.changeView('selected-project')
-		this._selectedProjectStore.setSelectedProjectView(page)
+		this._selectedProjectStore.setSelectedProjectView(SELECTED_PROJECT_VIEW.DATA)
 	}
 
 	setStringColor(color: StringColor) {

@@ -51,6 +51,7 @@ export class ObjectPositioningService {
 	private _graphicsStore = inject(GraphicsStoreService)
 	private _positioningStore = inject(ObjectPositioningStoreService)
 	singleToMoveId: PanelId | undefined
+	singleToMoveStart: TransformedPoint | undefined
 	multiToMoveStart: EventPoint | undefined
 	multipleToMoveIds: PanelId[] = []
 
@@ -67,6 +68,10 @@ export class ObjectPositioningService {
 
 	setSingleToMoveEntity(event: PointerEvent | TouchEvent, singleToMoveId: PanelId) {
 		this.singleToMoveId = singleToMoveId
+		this.singleToMoveStart =
+			event instanceof PointerEvent
+				? this._domPoint.getTransformedPointFromEvent(event)
+				: this._domPoint.getTransformedPointFromSingleTouchEndEvent(event)
 		this._positioningStore.dispatch.startMovingSingleEntity(singleToMoveId)
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 	}
@@ -319,6 +324,20 @@ export class ObjectPositioningService {
 		}
 		if (this.singleToMoveId) {
 			this.singleEntityToMoveMouseUp(event, currentPoint)
+			this._positioningStore.dispatch.stopMoving()
+		}
+
+		this._canvasElement.changeCursor(CURSOR_TYPE.AUTO)
+		this.singleToMoveId = undefined
+		this.multipleToMoveIds = []
+		this.multiToMoveStart = undefined
+	}
+
+	cancelObjectPositioning() {
+		if (this.multiToMoveStart) {
+			this._positioningStore.dispatch.stopMoving()
+		}
+		if (this.singleToMoveId) {
 			this._positioningStore.dispatch.stopMoving()
 		}
 

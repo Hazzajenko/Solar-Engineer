@@ -30,7 +30,7 @@ export const setSelectedStringPanelsBounds = createEffect(
 			switchMap(({ stringId }) => store.select(selectPanelsByStringId({ stringId }))),
 			map((selectedStringPanels) => {
 				const bounds = getDefaultBoundsBoxFromMultipleEntities(selectedStringPanels)
-				return SelectedActions.setSelectedPanelsBoxBounds({ bounds })
+				return SelectedActions.setSelectedStringBoxBounds({ bounds })
 			}),
 		)
 	},

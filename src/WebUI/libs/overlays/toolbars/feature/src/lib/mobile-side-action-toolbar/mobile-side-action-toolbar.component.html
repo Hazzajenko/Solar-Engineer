@@ -7,11 +7,13 @@
 		<div class="flex items-center justify-between p-2 flex-col space-y-0" id="button-group">
 			<div class="flex items-center space-x-1">
 				<button
-					(click)="startLinkModeForSelectedString()"
-					[class.scale-125]="stringIsSelectedAndNotInLinkMode()"
-					[class.text-gray-700]="stringIsSelectedAndNotInLinkMode()"
-					[disabled]="!stringIsSelectedAndNotInLinkMode()"
-					class="p-2 text-gray-500 rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
+					(click)="toggleLinkModeForSelectedString()"
+					[isActive]="stringIsSelected()"
+					[ngClass]='{
+						"ring-2 ring-blue-500": stringIsSelected() && isInLinkMode(),
+					}'
+					appActionButton
+					class="p-2 text-gray-500 blue rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
 					menu-button-for="main-context-menu"
 					type="button"
 				>
@@ -21,10 +23,9 @@
 			</div>
 			<div class="flex items-center space-x-1">
 				<button
-					(click)="selectStringForSelectedPanel()"
-					[class.scale-125]="panelIsSelectedWithoutStringSelected()"
-					[class.text-gray-700]="panelIsSelectedWithoutStringSelected()"
-					[disabled]="!panelIsSelectedWithoutStringSelected()"
+					(click)="selectStringForSelectedPanelOrPanels()"
+					[isActive]="panelOrPanelsOfSameStringIsSelectedWithoutStringSelected()"
+					appActionButton
 					class="p-2 text-gray-500 rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
 					menu-button-for="main-context-menu"
 					type="button"
@@ -35,10 +36,22 @@
 			</div>
 			<div class="flex items-center space-x-1">
 				<button
+					(click)="createStringWithSelectedPanels()"
+					[isActive]="multiplePanelsAreSelectedWithoutStringSelected()"
+					appActionButton
+					class="p-2 text-gray-500 rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
+					menu-button-for="main-context-menu"
+					type="button"
+				>
+					<svg-input class="w-5 h-5" svgName="SvgFolderPlus" />
+					<span class="sr-only">Create String With Selected</span>
+				</button>
+			</div>
+			<div class="flex items-center space-x-1">
+				<button
 					(click)="clearSelectedInOrder()"
-					[class.scale-125]="isInSelectedState()"
-					[class.text-gray-700]="isInSelectedState()"
-					[disabled]="!isInSelectedState()"
+					[isActive]="isInSelectedState()"
+					appActionButton
 					class="p-2 text-gray-500 rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
 					menu-button-for="main-context-menu"
 					type="button"
@@ -50,8 +63,8 @@
 			<div class="flex items-center space-x-1">
 				<button
 					(click)="deleteSelected()"
-					[class.scale-125]="isInSelectedState()"
-					[class.text-gray-700]="isInSelectedState()"
+					[isActive]="isInSelectedState()"
+					appActionButton
 					class="p-2 text-gray-500 rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
 					menu-button-for="main-context-menu"
 					type="button"
@@ -60,17 +73,20 @@
 					<span class="sr-only">Delete Selected</span>
 				</button>
 			</div>
-			<!--
-						<div class="flex items-center space-x-1">
-							<button
-								class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
-								menu-button-for="main-context-menu"
-								type="button"
-							>
-								<svg-input class="w-5 h-5" svgName="SvgData" />
-								<span class="sr-only">Open Project Data</span>
-							</button>
-						</div>-->
 		</div>
 	</div>
 </div>
+
+<ng-template #actionButton let-action="action" let-icon="icon" let-isActive="isActive">
+	<button
+		(click)="action()"
+		[class.scale-125]="isActive"
+		[class.text-gray-700]="isActive"
+		class="p-2 text-gray-500 rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
+		menu-button-for="main-context-menu"
+		type="button"
+	>
+		<svg-input inputClass="w-5 h-5" svgName="SvgTrash" />
+		<span class="sr-only">Delete Selected</span>
+	</button>
+</ng-template>

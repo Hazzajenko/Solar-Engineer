@@ -588,7 +588,7 @@ export class DesignCanvasDirective implements OnInit {
 
 			if (mode === 'LinkMode') {
 				if (isPanel(entityUnderMouse)) {
-					this._panelLinks.handlePanelLinksClick(event, entityUnderMouse)
+					this._panelLinks.handlePanelLinksClick(entityUnderMouse, event.shiftKey)
 					return
 				}
 				this._appStore.dispatch.setModeState('SelectMode')
@@ -824,12 +824,14 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		const moveEntityState = this._positioningStore.state.moveEntityState
-		const pointer = singleTouchEventToPointLocation(event)
+		// const pointer = singleTouchEventToPointLocation(event)
 		const currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
 		// * Handle move multiple entities
+		const multipleSelectedPanelIds = this._selectedStore.select.multipleSelectedPanelIds()
 		if (
 			moveEntityState === 'MovingMultipleEntities' &&
-			this._selectedStore.select.isPointInsideSelectedPanelsBoxBounds(currentPoint)
+			this._selectedStore.select.isPointInsideSelectedPanelsBoxBounds(currentPoint) &&
+			multipleSelectedPanelIds.length > 1
 			// this.isPointInsideSelectedBox(pointer, currentPoint)
 		) {
 			this._objPositioning.multipleEntitiesToMoveMouseMove(event)
@@ -899,7 +901,7 @@ export class DesignCanvasDirective implements OnInit {
 			console.error('Gesture not ready for pinch to zoom')
 			return
 		}
-		const moveEntityState = this._positioningStore.state.moveEntityState
+		// const moveEntityState = this._positioningStore.state.moveEntityState
 		/*		// * Handle move multiple entities
 		 if (moveEntityState === 'MovingMultipleEntities') {
 		 this._objPositioning.multipleEntitiesToMoveMouseMove(event)
@@ -958,6 +960,7 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		const dragBox = this._appStore.select.dragBox()
+
 		// * Handle move single entity
 		const moveEntityState = this._positioningStore.state.moveEntityState
 
@@ -972,7 +975,10 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		if (this._selectedStore.select.isPointInsideSelectedPanelsBoxBounds(currentPoint)) {
+		if (
+			this._selectedStore.select.isPointInsideSelectedPanelsBoxBounds(currentPoint) &&
+			dragBox.state === 'NoDragBox'
+		) {
 			// if (this.isPointInsideSelectedBox(pointer, currentPoint)) {
 			this._objPositioning.setMultipleEntitiesToMoveTouchHold(
 				pointer,
@@ -1004,7 +1010,9 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		if (panelUnderMouse) {
+		const mode = this._appStore.select.mode()
+
+		if (panelUnderMouse && mode !== 'LinkMode') {
 			this._objPositioning.setSingleToMoveEntity(event, panelUnderMouse.id)
 			this._objPositioning.singleEntityToMoveMouseMove(event, currentPoint)
 			return
@@ -1039,12 +1047,29 @@ export class DesignCanvasDirective implements OnInit {
 			)
 			this.clearGesture()
 			this.touchHolding = false
+			// * Calculate the size of the drag box to see if it is a click
+			const dragBoxSize = getDistance([dragBox.start, currentPoint])
+			if (dragBoxSize < 10) {
+				return this.handleEndTouch(event)
+			}
 			return
 		}
 
 		// * Handle end move single entity
 		const moveEntityState = this._positioningStore.state.moveEntityState
 		if (moveEntityState === 'MovingSingleEntity') {
+			const singleToMoveStart = this._objPositioning.singleToMoveStart
+			if (!singleToMoveStart) {
+				console.error('No singleToMoveStart')
+				return
+			}
+			const distance = getDistance([singleToMoveStart, currentPoint])
+			if (distance < 10) {
+				this._objPositioning.cancelObjectPositioning()
+				this.touchHolding = false
+				this.clearGesture()
+				return this.handleEndTouch(event)
+			}
 			this._objPositioning.singleEntityToMoveMouseUp(event, currentPoint)
 			this.clearGesture()
 			this.touchHolding = false
@@ -1059,24 +1084,11 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
+		// const mode = this._appStore.select.mode()
+
 		// * If there is only one touch, handle as a click
 		if (this.gesture.pointers.size === 1) {
-			const entityUnderMouse = this.getPanelUnderMouse(this.currentPoint)
-			if (entityUnderMouse) {
-				const mode = this._appStore.select.mode()
-				if (mode === 'SelectMode') {
-					this._selected.handleEntityUnderTouch(event, entityUnderMouse)
-					this.clearGesture()
-					return
-				}
-				this._selected.handleNotClickedOnEntity()
-				if (this.anyEntitiesNearAreaOfTouch(event)) {
-					this.clearGesture()
-					return
-				}
-			}
-			this._entityFactory.createEntityFromTouch(event, this.currentPoint)
-			this.clearGesture()
+			return this.handleEndTouch(event)
 		}
 		this.clearGesture()
 	}
@@ -1084,6 +1096,27 @@ export class DesignCanvasDirective implements OnInit {
 	onTouchCancelHandler(event: TouchEvent) {
 		this.clearGesture()
 		console.log('touch cancel -- clear gesture', event)
+	}
+
+	private handleEndTouch(event: TouchEvent) {
+		const mode = this._appStore.select.mode()
+		const entityUnderMouse = this.getPanelUnderMouse(this.currentPoint)
+		if (entityUnderMouse) {
+			if (mode === 'LinkMode') {
+				this._panelLinks.handlePanelLinksClick(entityUnderMouse)
+				return
+			}
+			this._selected.handleEntityUnderTouch(event, entityUnderMouse)
+			this.clearGesture()
+			return
+		}
+		if (this.anyEntitiesNearAreaOfTouch(event)) {
+			this.clearGesture()
+			return
+		}
+		this._entityFactory.createEntityFromTouch(event, this.currentPoint)
+		this.clearGesture()
+		// this.touchHolding = false
 	}
 
 	private setupCanvas() {
@@ -1403,7 +1436,8 @@ export class DesignCanvasDirective implements OnInit {
 			height: size.height + midSpacing,
 		}
 
-		const center = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
+		const center = this._domPoint.getTransformedPointFromSingleTouchEndEvent(event)
+		// const center = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
 		const mouseBoxBounds = getBoundsFromCenterPoint(center, size)
 		const anyNearClick = !!this.allPanels.find((entity) =>
 			isEntityOverlappingWithBounds(entity, mouseBoxBounds),

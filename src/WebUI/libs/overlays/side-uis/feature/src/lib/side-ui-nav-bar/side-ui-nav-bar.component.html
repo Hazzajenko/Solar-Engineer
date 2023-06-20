@@ -151,25 +151,38 @@
 					</li>
 				</ul>
 			</li>
-			<li>
-				<a
-					(click)="changeView('settings')"
-					*ngrxLet="currentView() === 'settings' as isCurrentView"
-					[isSelected]="isCurrentView"
-					class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-					sideUiNavItem
-				>
-					<svg-input inputClass="w-5 h-5" svgName="SvgCog8Tooth" />
-				</a>
-			</li>
-			<li class="absolute bottom-5">
-				<a
-					(click)="toggle()"
-					class="flex items-center justify-end p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-				>
-					<svg-input inputClass="w-5 h-5" svgName="SvgChevronDoubleLeft" />
-				</a>
-			</li>
+			<!--			<li class="absolute bottom-10">
+							<a
+								(click)="changeView('settings')"
+								*ngrxLet="currentView() === 'settings' as isCurrentView"
+								[isSelected]="isCurrentView"
+								class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+								sideUiNavItem
+							>
+								<svg-input inputClass="w-5 h-5" svgName="SvgCog8Tooth" />
+							</a>
+						</li>-->
+			<ul class="absolute bottom-5 gap-y-10">
+				<li>
+					<a
+						(click)="changeView('settings')"
+						*ngrxLet="currentView() === 'settings' as isCurrentView"
+						[isSelected]="isCurrentView"
+						class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+						sideUiNavItem
+					>
+						<svg-input inputClass="w-5 h-5" svgName="SvgCog8Tooth" />
+					</a>
+				</li>
+				<li>
+					<a
+						(click)="toggle()"
+						class="flex items-center justify-end p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+					>
+						<svg-input inputClass="w-5 h-5" svgName="SvgChevronDoubleLeft" />
+					</a>
+				</li>
+			</ul>
 		</ul>
 	</div>
 

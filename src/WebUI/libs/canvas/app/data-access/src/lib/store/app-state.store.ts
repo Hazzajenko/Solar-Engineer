@@ -18,14 +18,14 @@ const appStoreInjector = createRootServiceInjector(appStoreFactory, {
 export type AppStateStore = ReturnType<typeof appStoreFactory>
 
 function appStoreFactory(store: Store) {
-	const appState = () => store.selectSignal(appStateFeature.selectAppStateState)()
-	const dragBox = () => store.selectSignal(appStateFeature.selectDragBox)()
-	const mode = () => store.selectSignal(appStateFeature.selectMode)()
-	const pointer = () => store.selectSignal(appStateFeature.selectPointer)()
-	const view = () => store.selectSignal(appStateFeature.selectView)()
-	const previewAxis = () => store.selectSignal(appStateFeature.selectPreviewAxis)()
+	const appState = store.selectSignal(appStateFeature.selectAppStateState)
+	const dragBox = store.selectSignal(appStateFeature.selectDragBox)
+	const mode = store.selectSignal(appStateFeature.selectMode)
+	const pointer = store.selectSignal(appStateFeature.selectPointer)
+	const view = store.selectSignal(appStateFeature.selectView)
+	const previewAxis = store.selectSignal(appStateFeature.selectPreviewAxis)
 
-	const stringColor = () => store.selectSignal(appStateFeature.selectStringColor)()
+	const stringColor = store.selectSignal(appStateFeature.selectStringColor)
 
 	const select = {
 		appState,

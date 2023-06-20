@@ -8,7 +8,7 @@ import { injectEntityStore } from '@entities/data-access'
 import { injectSelectedStore } from '@canvas/selected/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { UiStoreService } from '@overlays/ui-store/data-access'
-import { createStringWithPanelsV2 } from '@entities/utils'
+import { createStringWithPanels } from '@entities/utils'
 
 @Component({
 	selector: 'dialog-move-panels-to-string',
@@ -46,7 +46,7 @@ export class MovePanelsToStringDialogComponent {
 			throw new Error('multipleSelectedIds.length < 1')
 		}
 		const amountOfStrings = this._entities.strings.select.allStrings().length
-		const { string, panelUpdates } = createStringWithPanelsV2(multipleSelectedIds, amountOfStrings)
+		const { string, panelUpdates } = createStringWithPanels(multipleSelectedIds, amountOfStrings)
 		this._entities.strings.dispatch.addString(string)
 		this._entities.panels.dispatch.updateManyPanels(panelUpdates)
 		this._selectedStore.dispatch.selectStringId(string.id)

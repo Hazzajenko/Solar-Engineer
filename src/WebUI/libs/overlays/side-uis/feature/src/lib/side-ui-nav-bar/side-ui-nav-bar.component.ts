@@ -16,6 +16,7 @@ import { MouseOverRenderDirective } from '@canvas/rendering/data-access'
 import {
 	SelectedProjectView,
 	SelectedProjectViewStore,
+	SideUiDemoProjectViewComponent,
 	SideUiProjectsListViewComponent,
 	SideUiSelectedProjectViewComponent,
 } from '../projects'
@@ -29,7 +30,6 @@ import { LetDirective } from '@ngrx/component'
 import { injectProjectsStore } from '@entities/data-access'
 import { SideUiNavItemDirective } from './side-ui-nav-item.directive'
 import { SideUiNavBarStore } from './side-ui-nav-bar.store'
-import { SideUiDemoProjectViewComponent } from '../projects/side-ui-demo-project-view/side-ui-demo-project-view.component'
 import { SideUiSettingsViewComponent } from '../settings'
 
 export type SideUiNavBarView =

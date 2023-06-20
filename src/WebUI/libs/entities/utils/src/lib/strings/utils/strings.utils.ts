@@ -21,7 +21,7 @@ export const genStringNameV3 = (amountOfStrings: number): string => {
  return { string, panelUpdates }
  }*/
 
-export const createStringWithPanelsV2 = (selectedPanelIds: PanelId[], amountOfStrings: number) => {
+export const createStringWithPanels = (selectedPanelIds: PanelId[], amountOfStrings: number) => {
 	const name = genStringNameV3(amountOfStrings)
 	const string = createString(name)
 	const panelUpdates = selectedPanelIds.map((panelId) => ({
@@ -32,16 +32,18 @@ export const createStringWithPanelsV2 = (selectedPanelIds: PanelId[], amountOfSt
 	return { string, panelUpdates }
 }
 
-export const createStringWithPanelsV3 = (selectedPanelIds: string[], amountOfStrings: number) => {
-	const name = genStringNameV3(amountOfStrings)
-	const string = createString(name)
-	const panelUpdates = selectedPanelIds.map((panelId) => ({
-		id: panelId,
-		changes: { stringId: string.id },
-	}))
+/*
+ export const createStringWithPanelsV3 = (selectedPanelIds: string[], amountOfStrings: number) => {
+ const name = genStringNameV3(amountOfStrings)
+ const string = createString(name)
+ const panelUpdates = selectedPanelIds.map((panelId) => ({
+ id: panelId,
+ changes: { stringId: string.id },
+ }))
 
-	return { string, panelUpdates }
-}
+ return { string, panelUpdates }
+ }
+ */
 
 export const setPanelAsDisconnectionPointForString = (
 	string: StringModel,

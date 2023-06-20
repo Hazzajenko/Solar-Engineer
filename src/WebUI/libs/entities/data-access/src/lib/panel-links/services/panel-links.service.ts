@@ -98,7 +98,7 @@ export class PanelLinksService {
 	 }
 	 }*/
 
-	handlePanelLinksClick(event: PointerEvent, panel: PanelModel) {
+	handlePanelLinksClick(panel: PanelModel, shiftKey = false) {
 		if (!this._selectedStore.select.selectedStringId()) {
 			console.error('a string must be selected to link panels')
 			return
@@ -109,13 +109,13 @@ export class PanelLinksService {
 		}
 		const requestingLink = this._panelLinksStore.select.requestingLink()
 		if (requestingLink) {
-			this.endPanelLink(event, panel, requestingLink)
+			this.endPanelLink(panel, requestingLink, shiftKey)
 			return
 		}
-		this.startPanelLink(event, panel)
+		this.startPanelLink(panel)
 	}
 
-	startPanelLink(event: PointerEvent, panel: PanelModel) {
+	startPanelLink(panel: PanelModel) {
 		const polarity = getStarterPolarityFromDirection(this.polarityDirection)
 		if (this._panelLinksStore.select.isPanelLinkExisting(panel.id, polarity)) {
 			console.error('panel already has a positive link')
@@ -131,7 +131,7 @@ export class PanelLinksService {
 		// this._panelLinksStore.startPanelLink(panelLinkRequest)
 	}
 
-	endPanelLink(event: PointerEvent, panel: PanelModel, requestingLink: PanelLinkRequest) {
+	endPanelLink(panel: PanelModel, requestingLink: PanelLinkRequest, shiftKey = false) {
 		if (requestingLink.stringId !== panel.stringId) {
 			console.error(
 				'panels need to be in the same string to link them, requestingLink.stringId !== panel.stringId',
@@ -158,8 +158,8 @@ export class PanelLinksService {
 			linePoints: calculateLinkLinesBetweenTwoPanelCenters(requestingPanel, panel), // linePoints: calculateLinkLinesBetweenTwoPanels(requestingPanel, panel),
 		}
 		this._panelLinksStore.dispatch.addPanelLink(panelLink)
-		if (event.shiftKey) {
-			this.startPanelLink(event, panel)
+		if (shiftKey) {
+			this.startPanelLink(panel)
 		} else {
 			this._panelLinksStore.dispatch.endPanelLink()
 		}
@@ -221,7 +221,7 @@ export class PanelLinksService {
 					panelLinkRequest.panelId,
 				)
 			if (nearbyPanelToLinkLine) {
-				this.endPanelLink(event, nearbyPanelToLinkLine, panelLinkRequest)
+				this.endPanelLink(nearbyPanelToLinkLine, panelLinkRequest, event.shiftKey)
 				return
 			}
 		}
