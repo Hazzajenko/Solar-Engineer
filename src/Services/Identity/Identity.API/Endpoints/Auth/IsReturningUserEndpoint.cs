@@ -49,7 +49,6 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
     public override async Task HandleAsync(CancellationToken cT)
     {
         var appUser = await _userManager.GetUserAsync(User);
-        // var appUser = await _mediator.Send(new GetAppUserDtoQuery(User), cT);
         if (appUser is null)
         {
             Logger.LogError("Unable to find user {UserId}", User.GetUserId());

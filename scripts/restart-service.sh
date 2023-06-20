@@ -20,5 +20,5 @@ IFS=', ' read -r -a selection_array <<< "$selection"
 for index in "${selection_array[@]}"; do
     service=${options[$index]}
     echo "Restarting $service"
-    docker-compose restart "$service"
+    docker-compose up -d --no-deps --build "$service"
 done

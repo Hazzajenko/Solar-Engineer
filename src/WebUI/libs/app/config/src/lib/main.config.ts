@@ -3,6 +3,7 @@ import { bootstrapApplication, BrowserModule } from '@angular/platform-browser'
 import { environment } from '@shared/environment'
 import {
 	ApplicationConfig,
+	ErrorHandler,
 	importProvidersFrom,
 	makeEnvironmentProviders,
 	provideZoneChangeDetection,
@@ -22,6 +23,7 @@ import { DatePipe } from '@angular/common'
 import { JwtModule } from '@auth0/angular-jwt'
 import { jwtInterceptor } from './interceptors'
 import { onCLS, onFID, onLCP } from 'web-vitals'
+import { GlobalErrorHandler } from '@app/data-access/errors'
 
 if (!environment.production) {
 	onCLS(console.log)
@@ -75,5 +77,9 @@ function provideWebAppProviders() {
 				},
 			}),
 		),
+		{
+			provide: ErrorHandler,
+			useClass: GlobalErrorHandler,
+		},
 	])
 }

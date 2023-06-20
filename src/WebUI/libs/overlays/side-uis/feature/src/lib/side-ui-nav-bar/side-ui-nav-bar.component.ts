@@ -30,6 +30,7 @@ import { injectProjectsStore } from '@entities/data-access'
 import { SideUiNavItemDirective } from './side-ui-nav-item.directive'
 import { SideUiNavBarStore } from './side-ui-nav-bar.store'
 import { SideUiDemoProjectViewComponent } from '../projects/side-ui-demo-project-view/side-ui-demo-project-view.component'
+import { SideUiSettingsViewComponent } from '../settings'
 
 export type SideUiNavBarView =
 	| 'auth'
@@ -38,6 +39,7 @@ export type SideUiNavBarView =
 	| 'notifications'
 	| 'selected-project'
 	| 'demo-project'
+	| 'settings'
 	| 'none'
 export type SideUiNavBarViewComponent =
 	| typeof SideUiAuthViewComponent
@@ -46,6 +48,7 @@ export type SideUiNavBarViewComponent =
 	| typeof SideUiNotificationsViewComponent
 	| typeof SideUiSelectedProjectViewComponent
 	| typeof SideUiDemoProjectViewComponent
+	| typeof SideUiSettingsViewComponent
 	| null
 
 export const sideUiInjectionToken = new InjectionToken<SideUiNavBarView>('CurrentView')
@@ -96,6 +99,8 @@ export class SideUiNavBarComponent {
 				return SideUiSelectedProjectViewComponent
 			case 'demo-project':
 				return SideUiDemoProjectViewComponent
+			case 'settings':
+				return SideUiSettingsViewComponent
 			default:
 				return null
 		}

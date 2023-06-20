@@ -14,7 +14,7 @@ height: mobileToolbarHeight()
 	class="flex overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 rounded-lg z-30 absolute bottom-8 left-1/2 -translate-x-1/2"
 	id="mobile-toolbar"
 >
-	<ul
+	<!--<ul
 		#contextMenu
 		*ngIf="contextMenuOpen() === 'main-context-menu'"
 		@goTop
@@ -60,9 +60,9 @@ height: mobileToolbarHeight()
 				Option 3
 			</a>
 		</li>
-	</ul>
+	</ul>-->
 
-	<div
+	<!--<div
 		#contextMenu
 		*ngIf="contextMenuOpen() === 'color-picker-context-menu'"
 		@goTop
@@ -80,18 +80,18 @@ height: mobileToolbarHeight()
 				style="width: 25px; height: 25px; border-radius: 50%"
 			></div>
 		</div>
-	</div>
+	</div>-->
 
-	<div
+	<!--<div
 		#contextMenu
 		*ngIf="contextMenuOpen() === 'mode-picker-context-menu'"
 		@goTop
 		class="pt-4 pb-4 text-sm text-gray-700 dark:text-gray-200 absolute h-fit w-full divide-y divide-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none"
 		id="mode-picker-context-menu"
 	>
-		<!--		SelectMode-->
-		<!--		CreateMode-->
-		<!--		<div class="grid grid-cols-2 gap-4 justify-items-center">-->
+		&lt;!&ndash;		SelectMode&ndash;&gt;
+		&lt;!&ndash;		CreateMode&ndash;&gt;
+		&lt;!&ndash;		<div class="grid grid-cols-2 gap-4 justify-items-center">&ndash;&gt;
 		<div class="flex flex-row items-center justify-around">
 			<div>
 				<div
@@ -124,8 +124,8 @@ height: mobileToolbarHeight()
 				<span class="text-xs">CreateMode</span>
 			</div>
 		</div>
-		<!--		</div>-->
-	</div>
+		&lt;!&ndash;		</div>&ndash;&gt;
+	</div>-->
 
 	<div class="flex overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 rounded-lg">
 		<div class="flex items-end justify-between p-2 flex-row space-y-0 space-x-4" id="button-group">
@@ -136,21 +136,44 @@ height: mobileToolbarHeight()
 					menu-button-for="main-context-menu"
 					type="button"
 				>
-					<svg-input class="w-5 h-5" svgName="SvgBars3" />
+					<svg-input class="w-5 h-5" svgName="SvgChevronDoubleRight" />
+					<!--					<svg-input class="w-5 h-5" svgName="SvgBars3" />-->
 					<span class="sr-only">Open Side Menu</span>
 				</button>
 			</div>
 			<div class="flex items-center space-x-1">
 				<button
-					#menuButton
-					(touchstart)="toggleContextMenu($event, 'main-context-menu')"
+					(touchstart)="toggleSideUiNavWithPage('projects')"
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 					menu-button-for="main-context-menu"
 					type="button"
 				>
-					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/bars-arrow-up" />
-					<span class="sr-only">Menu Up</span>
+					<svg-input inputClass="w-5 h-5" svgName="SvgFolder" />
+					<span class="sr-only">Open Projects</span>
 				</button>
+			</div>
+
+			<div class="flex items-center space-x-1">
+				<button
+					(touchstart)="toggleSideUiNavWithProjectPage('data')"
+					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+					menu-button-for="main-context-menu"
+					type="button"
+				>
+					<svg-input class="w-5 h-5" svgName="SvgData" />
+					<!--					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/bars-arrow-up" />-->
+					<span class="sr-only">Open Project Data</span>
+				</button>
+				<!--				<button
+									#menuButton
+									(touchstart)="toggleContextMenu($event, 'main-context-menu')"
+									class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+									menu-button-for="main-context-menu"
+									type="button"
+								>
+									<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/bars-arrow-up" />
+									<span class="sr-only">Menu Up</span>
+								</button>-->
 			</div>
 			<!--			<div class="flex items-center space-x-1">
 							<button
@@ -172,32 +195,61 @@ height: mobileToolbarHeight()
 								<span class="sr-only">Redo</span>
 							</button>
 						</div>-->
-			<div class="flex items-center space-x-1">
-				<button
-					(touchstart)="toggleContextMenu($event, 'color-picker-context-menu')"
-					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
-					type="button"
-				>
-					<svg-input class="w-5 h-5" svgName="SvgPaintBrush" />
-					<!--					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/paint-brush" />-->
-					<span class="sr-only">Change Colour</span>
-				</button>
-			</div>
+			<!--			<div class="flex items-center space-x-1">
+				&lt;!&ndash;			<button
+								(touchstart)="toggleContextMenu($event, 'color-picker-context-menu')"
+								class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+								type="button"
+							>
+								<svg-input class="w-5 h-5" svgName="SvgPaintBrush" />
+								&lt;!&ndash;					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/paint-brush" />&ndash;&gt;
+								<span class="sr-only">Change Colour</span>
+							</button>&ndash;&gt;
+			&lt;!&ndash;				<button
+								(touchstart)="toggleContextMenu($event, 'color-picker-context-menu')"
+								class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+								type="button"
+							>
+								<svg-input class="w-5 h-5" svgName="SvgPaintBrush" />
+								&lt;!&ndash;					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/paint-brush" />&ndash;&gt;
+								<span class="sr-only">Change Colour</span>
+							</button>&ndash;&gt;
+						</div>-->
 			<div class="flex items-center space-x-1">
 				<button
 					#menuButton
-					(touchstart)="toggleContextMenu($event, 'mode-picker-context-menu')"
+					(touchstart)="toggleSideUiNavWithPage('notifications')"
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 					type="button"
 				>
-					<svg-input class="w-5 h-5" svgName="SvgWrench" />
+					<!--					<svg-input class="w-5 h-5" svgName="SvgWrench" />-->
+					<svg-input inputClass="w-5 h-5" svgName="SvgBell" />
 					<!--					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/wrench" />-->
-					<span class="sr-only">Change Mode</span>
+
+					<ng-container *ngrxLet="amountOfUnreadNotifications() as amountOfUnreadNotifications">
+						<div
+							*ngIf="amountOfUnreadNotifications && amountOfUnreadNotifications > 0"
+							class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2 dark:border-gray-900"
+						>
+							{{ amountOfUnreadNotifications }}
+						</div>
+					</ng-container>
+					<span class="sr-only">Open Notifications</span>
 				</button>
+				<!--				<button
+									#menuButton
+									(touchstart)="toggleContextMenu($event, 'mode-picker-context-menu')"
+									class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+									type="button"
+								>
+									<svg-input class="w-5 h-5" svgName="SvgWrench" />
+									&lt;!&ndash;					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/wrench" />&ndash;&gt;
+									<span class="sr-only">Change Mode</span>
+								</button>-->
 			</div>
 			<div class="flex-wrap items-center space-x-1">
 				<button
-					(click)="openSettingsDialog()"
+					(click)="toggleSideUiNavWithPage('settings')"
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 					type="button"
 				>

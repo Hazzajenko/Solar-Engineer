@@ -68,26 +68,11 @@
 				class="flex items-center py-1 justify-between relative transition duration-75 group font-medium cursor-pointer hover:bg-gray-200 dark:hover:bg-primary-700 dark:hover:text-primary-100"
 			>
 				<div class="flex justify-start">
-					<!--					(click)="selectProject(project)"-->
 					<app-project-list-item [isSelected]="projectVm.isSelected" [project]="project" />
 				</div>
-				<!--		<div
-							*ngIf="projectVm.isSelected"
-							class="absolute right-0 top-0 rounded-md mr-2 py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20"
-						>
-							Selected
-						</div>-->
-				<!--			<div class="justify-end absolute right-0 flex">
-								<btn-animated-down-up-arrow
-									(click)="toggleProjectView(project)"
-									[isOpen]="projectVm.isOpen"
-								/>
-								<btn-context-menu (click)="openProjectContextMenu($event, project)" hideMobile />
-							</div>-->
 			</div>
 			<ng-container *ngIf="projectVm.isOpen">
 				<div class="p-1 dark:bg-gray-800">
-					<!-- Modal header -->
 					<div class="flex justify-between items-center mb-4 sm:mb-5 dark:border-gray-600">
 						<div class="flex flex-col justify-start">
 							<h3 class="text-lg font-semibold text-gray-900 dark:text-white">

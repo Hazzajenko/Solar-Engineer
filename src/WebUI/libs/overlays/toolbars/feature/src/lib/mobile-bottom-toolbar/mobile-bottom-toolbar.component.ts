@@ -1,6 +1,7 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
+	computed,
 	ElementRef,
 	inject,
 	QueryList,
@@ -33,6 +34,15 @@ import { injectAppStateStore, ModeState } from '@canvas/app/data-access'
 import { MobileBottomToolbarDirective } from './mobile-bottom-toolbar.directive'
 import { StringColor, stringColors } from '@entities/shared'
 import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
+import { LetDirective } from '@ngrx/component'
+import { injectAppUser } from '@auth/data-access'
+import { injectNotificationsStore } from '@overlays/notifications/data-access'
+import { SideUiNavBarStore } from '../../../../../side-uis/feature/src/lib/side-ui-nav-bar/side-ui-nav-bar.store'
+import {
+	SelectedProjectView,
+	SelectedProjectViewStore,
+	SideUiNavBarView,
+} from '@overlays/side-uis/feature'
 
 @Component({
 	selector: 'overlay-mobile-bottom-toolbar',
@@ -54,6 +64,7 @@ import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 		MobileBottomToolbarDirective,
 		NgForOf,
 		InputSvgComponent,
+		LetDirective,
 	],
 	templateUrl: './mobile-bottom-toolbar.component.html',
 	styles: [],
@@ -63,14 +74,22 @@ import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 export class MobileBottomToolbarComponent {
 	private _uiStore = injectUiStore()
 	private _appStore = injectAppStateStore()
+	private _notificationsStore = injectNotificationsStore()
+	private _navBarStore = inject(SideUiNavBarStore)
+	private _selectedProjectStore = inject(SelectedProjectViewStore)
 	@ViewChild(MatMenuTrigger) trigger!: MatMenuTrigger
 	@ViewChildren('contextMenu') contextMenus!: QueryList<ElementRef<HTMLDivElement>>
 	@ViewChild('mobileToolbar') mobileToolbarRef!: ElementRef<HTMLDivElement>
 	menuTopLeftPosition = { x: '0', y: '0' }
 	contextMenuLocation = { x: 0, y: 0 } as Point
 	_renderer = inject(Renderer2)
+	user = injectAppUser()
 	contextMenuOpen = signal<string | undefined>(undefined)
 	currentContextMenuDiv = signal<ElementRef<HTMLDivElement> | undefined>(undefined)
+	amountOfUnreadNotifications = computed(() => {
+		if (!this.user()) return undefined
+		return this._notificationsStore.select.amountOfUnreadNotifications()
+	})
 
 	stringColors = stringColors as StringColor[]
 	selectedStringColor = this._appStore.select.stringColor
@@ -97,6 +116,17 @@ export class MobileBottomToolbarComponent {
 	toggleSideUiNav() {
 		// this._uiStore.dispatch.toggleSideUiMobileMenu()
 		this._uiStore.dispatch.toggleSideUiNav()
+	}
+
+	toggleSideUiNavWithPage(page: SideUiNavBarView) {
+		this._uiStore.dispatch.toggleSideUiNav()
+		this._navBarStore.changeView(page)
+	}
+
+	toggleSideUiNavWithProjectPage(page: SelectedProjectView) {
+		this._uiStore.dispatch.toggleSideUiNav()
+		this._navBarStore.changeView('selected-project')
+		this._selectedProjectStore.setSelectedProjectView(page)
 	}
 
 	setStringColor(color: StringColor) {

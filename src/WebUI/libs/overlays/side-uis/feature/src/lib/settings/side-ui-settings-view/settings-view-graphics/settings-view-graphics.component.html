@@ -1,0 +1,54 @@
+<ng-container *ngIf="graphicsState as state">
+	<div class="rounded p-2">
+		<div
+			(click)="option.toggle()"
+			*ngFor="let option of toggleOptions"
+			class="relative flex items-start p-2 hover:bg-gray-200"
+		>
+			<ng-container *ngrxLet="option.name | stringManipulate : 'kebab' as id">
+				<div class="flex h-6 items-center">
+					<input
+						[checked]="state | getOptionChecked : option.name"
+						[id]="id"
+						class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+						type="checkbox"
+					/>
+				</div>
+				<div class="pointer-events-none ml-3 text-sm leading-6">
+					<label [for]="id" class="font-medium text-gray-900">{{ option.label }}</label>
+				</div>
+			</ng-container>
+		</div>
+		<select
+			(change)="changeNearbyGraphics($event)"
+			[disabled]="state.nearbyLinesState === NEARBY_LINES_STATE.NEARBY_LINES_DISABLED"
+			class="mt-2 block text-sm w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+			id="nearby-graphics"
+			name="nearby-graphics"
+		>
+			<option
+				*ngFor="let option of nearbyGraphicsSelectMenuArray"
+				[selected]="state.nearbyLinesState === option.value"
+				[value]="option.value"
+			>
+				{{ option.label }}
+			</option>
+		</select>
+	</div>
+</ng-container>
+
+<ng-template #checkbox let-checked="checked" let-id="id" let-label="label" let-toggle="toggle">
+	<div (click)="toggleGraphics(toggle)" class="relative flex items-start p-2 hover:bg-gray-200">
+		<div class="flex h-6 items-center">
+			<input
+				[checked]="checked"
+				[id]="id"
+				class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+				type="checkbox"
+			/>
+		</div>
+		<div class="pointer-events-none ml-3 text-sm leading-6">
+			<label [for]="id" class="font-medium text-gray-900">{{ label }}</label>
+		</div>
+	</div>
+</ng-template>

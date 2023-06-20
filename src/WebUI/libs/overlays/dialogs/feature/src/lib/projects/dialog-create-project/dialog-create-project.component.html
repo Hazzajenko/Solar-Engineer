@@ -1,30 +1,4 @@
 <dialog-backdrop-template-component #dialog>
-	<!--<div
-		class="relative min-w-fit w-1/4 h-3/4 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 overflow-y-auto p-4"
-	>
-		<div class="relative bg-slate-100 rounded-lg shadow dark:bg-gray-700" id="dialog-content">
-			<button
-				(click)="dialog.closeDialog()"
-				class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-				data-modal-hide="crypto-modal"
-				type="button"
-			>
-				<svg
-					aria-hidden="true"
-					class="w-5 h-5"
-					fill="currentColor"
-					viewBox="0 0 20 20"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						clip-rule="evenodd"
-						d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-						fill-rule="evenodd"
-					></path>
-				</svg>
-				<span class="sr-only">Close modal</span>
-			</button>-->
-
 	<div class="p-8">
 		<h5
 			class="inline-flex items-center mb-6 text-sm font-semibold text-gray-500 uppercase dark:text-gray-400"
@@ -111,45 +85,9 @@
 											[ngClass]="{
 												'opacity-50': multiSelectedFriendIds().includes(friend.id)
 											}"
-											attr.data-type="notification-preview"
 											class="flex justify-between items-center"
 										>
 											<auth-web-user [avatarSize]="20" [user]="friend" />
-											<!--					<div class="flex items-center justify-start ml-4">
-																			<div class="flex relative items-center justify-end">
-																				<img
-																					[alt]="friend.userName + ' profile picture'"
-																					[ngSrc]="friend.photoUrl"
-																					class="h-6 w-6 flex-none rounded-full bg-gray-800"
-																					height="24"
-																					width="24"
-																				/>
-																				<span
-																					*ngIf="friend.isOnline"
-																					class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-green-400 ring-2 ring-white"
-																				></span>
-																			</div>
-																			<a
-																				class="flex items-center text-base rounded-lg transition duration-75 dark:text-white group"
-																			>
-																				<div class="ml-3">
-																					<span class="capitalize text-sm text-gray-900">{{
-																						friend.displayName | truncate : 20
-																					}}</span>
-																				</div>
-																			</a>
-																		</div>-->
-
-											<!--<div class="flex justify-end pr-1 absolute right-4">
-														<div class="justify-end">
-															<time
-																class="flex-none text-xs text-gray-700 dark:text-gray-300"
-																datetime="2023-01-23T11:00"
-															>
-																{{ getTimeDifferenceFromNow(friend.lastSeen) }}
-															</time>
-														</div>
-													</div>-->
 										</div>
 									</div>
 								</li>

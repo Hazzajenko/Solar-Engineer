@@ -138,6 +138,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		const deviceInfo = this._deviceService.getDeviceInfo()
 
 		console.log(deviceInfo)
+		// throw new Error('Method not implemented.')
 	}
 
 	ngAfterViewInit() {

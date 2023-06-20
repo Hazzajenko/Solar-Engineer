@@ -1,0 +1,31 @@
+<side-ui-base [view]="sideUiView">
+	<side-ui-view-heading heading="Settings" />
+	<ul class="divide-y divide-gray-200 space-y-1">
+		<ng-container *ngIf="!isMobile()">
+			<li>
+				<app-settings-view-section-preview
+					(click)="toggleSection('keyMap')"
+					[isOpen]="openedSettingsSections().has('keyMap')"
+					sectionTitle="KeyMap"
+				/>
+				<app-settings-view-keymap *ngIf="openedSettingsSections().has('keyMap')" />
+			</li>
+		</ng-container>
+		<li>
+			<app-settings-view-section-preview
+				(click)="toggleSection('display')"
+				[isOpen]="openedSettingsSections().has('display')"
+				sectionTitle="Display"
+			/>
+			<app-settings-view-display *ngIf="openedSettingsSections().has('display')" />
+		</li>
+		<li>
+			<app-settings-view-section-preview
+				(click)="toggleSection('graphics')"
+				[isOpen]="openedSettingsSections().has('graphics')"
+				sectionTitle="Graphics"
+			/>
+			<app-settings-view-graphics *ngIf="openedSettingsSections().has('graphics')" />
+		</li>
+	</ul>
+</side-ui-base>

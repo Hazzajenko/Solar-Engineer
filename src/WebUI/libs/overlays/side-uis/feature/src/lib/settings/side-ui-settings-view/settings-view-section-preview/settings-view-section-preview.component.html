@@ -1,0 +1,22 @@
+<div
+	*ngIf="sectionTitle"
+	class="flex justify-between px-2 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+>
+	<div class="flex justify-start">
+		<a
+			class="flex items-center text-base rounded-lg transition duration-75 hover:underline dark:text-white group"
+		>
+			<div class="ml-3">
+				<span *ngIf="sectionTitle" class="capitalize font-medium text-gray-900">{{
+					sectionTitle
+				}}</span>
+				<p *ngIf="sectionDescription" class="text-xs text-gray-500 group-hover:text-gray-700">
+					{{ sectionDescription }}
+				</p>
+			</div>
+		</a>
+	</div>
+	<div class="flex justify-end items-center">
+		<btn-animated-down-up-arrow [isOpen]="isOpen" />
+	</div>
+</div>

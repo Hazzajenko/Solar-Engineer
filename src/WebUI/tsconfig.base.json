@@ -25,6 +25,7 @@
 			"@app/app-component": ["libs/app/app-component/src/index.ts"],
 			"@app/config": ["libs/app/config/src/index.ts"],
 			"@app/data-access/connections": ["libs/app/data-access/connections/src/index.ts"],
+			"@app/data-access/errors": ["libs/app/data-access/errors/src/index.ts"],
 			"@app/data-access/friends": ["libs/app/data-access/friends/src/index.ts"],
 			"@app/data-access/images": ["libs/app/data-access/images/src/index.ts"],
 			"@app/data-access/messages": ["libs/app/data-access/messages/src/index.ts"],

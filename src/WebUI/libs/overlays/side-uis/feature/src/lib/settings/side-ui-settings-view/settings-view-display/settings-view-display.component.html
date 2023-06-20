@@ -1,0 +1,21 @@
+<div class="rounded p-2">
+	<div
+		(click)="option.toggle()"
+		*ngFor="let option of toggleOptions"
+		class="relative flex items-start p-2 hover:bg-gray-200"
+	>
+		<ng-container *ngrxLet="option.name | stringManipulate : 'kebab' as id">
+			<div class="flex h-6 items-center">
+				<input
+					[checked]="graphicsState | getOptionChecked : option.name"
+					[id]="id"
+					class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+					type="checkbox"
+				/>
+			</div>
+			<div class="pointer-events-none ml-3 text-sm leading-6">
+				<label [for]="id" class="font-medium text-gray-900">{{ option.label }}</label>
+			</div>
+		</ng-container>
+	</div>
+</div>
