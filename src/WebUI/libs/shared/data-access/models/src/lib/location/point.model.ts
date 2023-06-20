@@ -5,7 +5,7 @@ export type Point = {
 	y: number
 }
 
-export const Point = z.object({
+export const POINT = z.object({
 	x: z.number(),
 	y: z.number(),
 })

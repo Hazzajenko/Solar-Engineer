@@ -19,6 +19,8 @@ export type AppSvg =
   | 'chevron_up'
   | 'cog_6_tooth'
   | 'cog_8_tooth'
+  | 'cursor_arrow_rays'
+  | 'cursor_arrow_ripple'
   | 'data'
   | 'edit'
   | 'ellipsis_vertical'
@@ -37,12 +39,14 @@ export type AppSvg =
   | 'right'
   | 'save_outline'
   | 'share'
+  | 'sun'
   | 'trash'
   | 'user_circle'
   | 'user_minus'
   | 'user_plus'
   | 'users'
-  | 'wrench';
+  | 'wrench'
+  | 'x_mark';
 export interface AppSvgWrapper {
   name: AppSvg;
   data: string;
