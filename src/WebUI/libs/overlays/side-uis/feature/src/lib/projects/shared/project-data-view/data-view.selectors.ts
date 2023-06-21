@@ -4,6 +4,7 @@ import {
 	selectAllPanelsGroupedByStringId,
 	selectPanelConfigsEntities,
 	selectStringsEntities,
+	selectUndefinedString,
 } from '@entities/data-access'
 import { Dictionary } from '@ngrx/entity'
 import {
@@ -19,19 +20,27 @@ import { calculateStringStatsForSelectedString, mapPanelToPanelWithConfig } from
 
 export const selectPanelsGroupedWithStringsAndStats = createSelector(
 	selectStringsEntities,
+	selectUndefinedString,
 	selectPanelConfigsEntities,
 	selectAllPanelsGroupedByStringId,
 	selectAllPanelLinksGroupedByStringId,
 	(
 		strings: Dictionary<StringModel>,
+		undefinedString: StringModel | undefined,
 		panelConfigs: Dictionary<PanelConfigModel>,
 		panelsGroupedByStringId: Record<StringId, PanelModel[]>,
 		panelLinksGroupedByStringId: Record<StringId, PanelLinkModel[]>,
 	) => {
 		const entries = Object.entries(panelsGroupedByStringId)
 		return entries.map(([stringId, stringPanels]) => {
-			const string = strings[stringId]
-			assertNotNull(string)
+			let string = strings[stringId]
+			if (!string) {
+				assertNotNull(undefinedString, 'Undefined string not found')
+				if (stringId !== undefinedString.id) {
+					throw new Error(`String with id ${stringId} not found ${undefinedString.id}`)
+				}
+				string = undefinedString
+			}
 			const panelLinksForString = panelLinksGroupedByStringId[string.id] ?? []
 			const panelsWithSpecs = stringPanels.map((panel) => {
 				const panelConfig = panelConfigs[panel.panelConfigId]

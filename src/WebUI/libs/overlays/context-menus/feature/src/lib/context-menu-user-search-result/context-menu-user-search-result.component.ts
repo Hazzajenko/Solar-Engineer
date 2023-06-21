@@ -7,6 +7,7 @@ import { TruncatePipe } from '@shared/pipes'
 import { injectUsersStore } from '@auth/data-access'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuUserSearchResultMenu, injectUiStore } from '@overlays/ui-store/data-access'
+import { ContextMenuBaseComponent, ContextMenuItemComponent } from '../context-menu-builder'
 
 @Component({
 	selector: 'context-menu-user-search-result',
@@ -18,6 +19,8 @@ import { ContextMenuUserSearchResultMenu, injectUiStore } from '@overlays/ui-sto
 		NgIf,
 		NgOptimizedImage,
 		TruncatePipe,
+		ContextMenuBaseComponent,
+		ContextMenuItemComponent,
 	],
 	templateUrl: './context-menu-user-search-result.component.html',
 	styles: [],

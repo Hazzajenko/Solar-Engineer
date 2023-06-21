@@ -1,43 +1,10 @@
-<!--<app-context-menu-template [menuPos]='menuPosition'>-->
 <div [contextMenuInput]="contextMenu" appContextMenu class="absolute">
-	<ul
-		class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-	>
-		<ng-container *ngIf="panelIds && panelIds.length > 0">
-			<div class="px-4 py-3" role="none">
-				<p class="truncate text-sm font-medium text-gray-900" role="none">
-					Selected {{ panelIds.length }} Panels
-				</p>
-			</div>
-			<li>
-				<a
-					(click)="movePanelsToString()"
-					class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-					role="menuitem"
-					tabindex="-1"
-				>
-					<app-show-svg
-						class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-						svgPath="rotate"
-					/>
-					Move Selected To String
-				</a>
-			</li>
-			<li>
-				<a
-					(click)="deletePanels()"
-					class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-					role="menuitem"
-					tabindex="-1"
-				>
-					<app-show-svg
-						class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-						svgPath="bin"
-					/>
-					Delete Selected
-				</a>
-			</li>
-		</ng-container>
-	</ul>
+	<context-menu-base heading="{{ panelIds.length }} Panels Selected">
+		<context-menu-item
+			(click)="movePanelsToString()"
+			label="Move Selected To New String"
+			svgName="SvgPencilSquare"
+		/>
+		<context-menu-item (click)="deletePanels()" label="Delete Selected" svgName="SvgTrash" />
+	</context-menu-base>
 </div>
-enu-template>-->

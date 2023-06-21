@@ -6,17 +6,26 @@ import { RenderService } from '@canvas/rendering/data-access'
 import {
 	CONTEXT_MENU_COMPONENT,
 	ContextMenuStringMenu,
+	DIALOG_COMPONENT,
 	UiStoreService,
 } from '@overlays/ui-store/data-access'
 import { StringModel } from '@entities/shared'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuDirective } from '../directives'
 import { injectEntityStore } from '@entities/data-access'
+import { ContextMenuBaseComponent, ContextMenuItemComponent } from '../context-menu-builder'
 
 @Component({
 	selector: 'app-string-menu',
 	standalone: true,
-	imports: [NgIf, ShowSvgComponent, ContextMenuTemplateComponent, ContextMenuDirective],
+	imports: [
+		NgIf,
+		ShowSvgComponent,
+		ContextMenuTemplateComponent,
+		ContextMenuDirective,
+		ContextMenuBaseComponent,
+		ContextMenuItemComponent,
+	],
 	templateUrl: './string-menu.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,40 +56,23 @@ export class StringMenuComponent implements OnInit {
 			.map((panel) => panel.id)
 	}
 
-	// menuPosition!: Point
+	editString() {
+		console.log('edit string')
+	}
 
-	/*	@Input({ required: true }) set location(location: Point) {
-	 if (!location) {
-	 this._render.renderCanvasApp()
-	 this._uiStore.dispatch.closeContextMenu()
-	 console.error('no location')
-	 return
-	 }
-	 this.menuPosition = location
-	 }
-
-	 @Input({ required: true }) set data(data: { stringId: string }) {
-	 if (!data.stringId) {
-	 this._render.renderCanvasApp()
-	 this._uiStore.dispatch.closeContextMenu()
-	 console.error('String id not found')
-	 return
-	 }
-	 const string = this._entityStore.strings.select.getById(data.stringId)
-	 if (!string) {
-	 this._render.renderCanvasApp()
-	 this._uiStore.dispatch.closeContextMenu()
-	 console.error('String not found')
-	 return
-	 }
-	 const panelIds = this._entityStore.panels.select.getByStringId(string.id).map((panel) => panel.id)
-	 if (!panelIds.length) {
-	 this._render.renderCanvasApp()
-	 this._uiStore.dispatch.closeContextMenu()
-	 console.error('String has no panels')
-	 return
-	 }
-	 this.string = string
-	 this.panelIds = panelIds
-	 }*/
+	deleteString() {
+		const string = this.string
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.WARNING_TEMPLATE,
+			data: {
+				title: 'Delete String',
+				message: `Are you sure you want to delete string ${string.name}?`,
+				buttonText: 'Delete',
+				buttonAction: () => {
+					this._entityStore.strings.dispatch.deleteString(string.id)
+				},
+			},
+		})
+		this._uiStore.dispatch.closeContextMenu()
+	}
 }

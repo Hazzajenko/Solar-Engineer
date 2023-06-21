@@ -214,22 +214,29 @@ export const pushCustomPanelLinkPointV2 = (
 	}
 	const lastLink = links[links.length - 1]
 	if (nearbyPanelToLinkLine) {
-		const link: PanelLinkModel = {
-			id: 'custom' as PanelLinkId,
-			positivePanelId: panel.id,
-			negativePanelId: nearbyPanelToLinkLine.id,
-			linePoints: [getEntityCenter(panel), getEntityCenter(nearbyPanelToLinkLine)],
-			stringId: selectedStringId,
+		const isPanelAlreadyLinked = links.some(
+			(link) =>
+				link.negativePanelId === nearbyPanelToLinkLine.id && link.stringId === selectedStringId,
+		)
+		if (!isPanelAlreadyLinked) {
+			const link: PanelLinkModel = {
+				id: 'custom' as PanelLinkId,
+				positivePanelId: panel.id,
+				negativePanelId: nearbyPanelToLinkLine.id,
+				linePoints: [getEntityCenter(panel), getEntityCenter(nearbyPanelToLinkLine)],
+				stringId: selectedStringId,
+			}
+			links.push(link)
+			return links
 		}
-		links.push(link)
-		return links
 		// return [...links, link]
 	}
+	console.log('lastLink.negativePanelId', lastLink.negativePanelId)
 	const link: PanelLinkModel = {
 		id: 'custom' as PanelLinkId,
-		positivePanelId: lastLink.negativePanelId,
+		positivePanelId: panel.id, // positivePanelId: lastLink.negativePanelId,
 		negativePanelId: newGuid() as PanelId,
-		linePoints: [lastLink.linePoints[1], currentPoint],
+		linePoints: [panel.location, currentPoint],
 		stringId: lastLink.stringId,
 	}
 	links.push(link)

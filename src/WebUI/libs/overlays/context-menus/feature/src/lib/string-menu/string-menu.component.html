@@ -1,42 +1,47 @@
 <!--<app-context-menu-template [menuPos]='menuPosition'>-->
 <div [contextMenuInput]="contextMenu" appContextMenu class="absolute">
-	<ul
-		class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-	>
-		<ng-container *ngIf="string && panelIds">
-			<div class="px-4 py-3" role="none">
-				<p class="truncate text-sm font-medium text-gray-900" role="none">
-					String {{ string.name }}
-				</p>
-				<p>{{ panelIds.length }} Panels</p>
-			</div>
-			<li>
-				<a
-					class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-					role="menuitem"
-					tabindex="-1"
-				>
-					<app-show-svg
-						class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-						svgPath="editing"
-					/>
-					Edit String
-				</a>
-			</li>
-			<li>
-				<a
-					class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-					role="menuitem"
-					tabindex="-1"
-				>
-					<app-show-svg
-						class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-						svgPath="bin"
-					/>
-					Delete String
-				</a>
-			</li>
-		</ng-container>
-	</ul>
+	<context-menu-base heading="String {{ string.name }}">
+		<p>{{ panelIds.length }} Panels</p>
+		<context-menu-item (click)="editString()" label="Edit String" svgName="SvgEdit" />
+		<context-menu-item (click)="deleteString()" label="Delete String" svgName="SvgTrash" />
+		<!--	<ul
+				class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+			>
+				<ng-container *ngIf="string && panelIds">
+					<div class="px-4 py-3" role="none">
+						<p class="truncate text-sm font-medium text-gray-900" role="none">
+							String {{ string.name }}
+						</p>
+						<p>{{ panelIds.length }} Panels</p>
+					</div>
+					<li>
+						<a
+							class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+							role="menuitem"
+							tabindex="-1"
+						>
+							<app-show-svg
+								class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
+								svgPath="editing"
+							/>
+							Edit String
+						</a>
+					</li>
+					<li>
+						<a
+							class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+							role="menuitem"
+							tabindex="-1"
+						>
+							<app-show-svg
+								class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
+								svgPath="bin"
+							/>
+							Delete String
+						</a>
+					</li>
+				</ng-container>
+			</ul>-->
+	</context-menu-base>
 </div>
 <!--</app-context-menu-template>-->

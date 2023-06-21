@@ -1,7 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Injector } from '@angular/core'
-import { ContextMenuInput, ContextMenuProjectMenu, DIALOG_COMPONENT, injectUiStore, uiFeature } from '@overlays/ui-store/data-access'
+import {
+	ContextMenuInput,
+	ContextMenuProjectMenu,
+	DIALOG_COMPONENT,
+	injectUiStore,
+	uiFeature,
+} from '@overlays/ui-store/data-access'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
-import { injectProjectsStore, selectAllProjects, selectProjectById, selectProjectsEntities } from '@entities/data-access'
+import {
+	injectProjectsStore,
+	selectAllProjects,
+	selectProjectById,
+	selectProjectsEntities,
+} from '@entities/data-access'
 import { ProjectModel, ProjectWebModel, ProjectWebUserModel } from '@entities/shared'
 import { ChildContextMenuDirective, ContextMenuDirective } from '../directives'
 import { LetDirective } from '@ngrx/component'
@@ -15,19 +26,14 @@ import { TAILWIND_COLOUR_500_VALUES, TailwindColor500 } from '@shared/data-acces
 import { injectAppUser, selectAllFriends, selectUsersEntities } from '@auth/data-access'
 import { WebUserModel } from '@auth/shared'
 import { notification } from '@tauri-apps/api'
-import { ContextMenuBaseComponent, ContextMenuExpandComponent, ContextMenuHeadingComponent, ContextMenuItemComponent, ContextMenuSubHeadingComponent } from '../context-menu-builder'
+import {
+	ContextMenuBaseComponent,
+	ContextMenuExpandComponent,
+	ContextMenuHeadingComponent,
+	ContextMenuItemComponent,
+	ContextMenuSubHeadingComponent,
+} from '../context-menu-builder'
 
-/*export const selectProjectByContextMenuData = createSelector(
- uiFeature.selectCurrentContextMenu,
- selectProjectsEntities,
- (contextMenuInput: ContextMenuInput | undefined, projects: Dictionary<ProjectModel>) => {
- if (!contextMenuInput) return undefined
- if (!('projectId' in contextMenuInput.data)) return undefined
- return projects[contextMenuInput.data.projectId]
- },
- )*/
-
-// projectByIdWithProjectWebUsers
 @Component({
 	selector: 'context-menu-project',
 	standalone: true,

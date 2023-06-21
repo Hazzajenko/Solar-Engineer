@@ -29,15 +29,25 @@ export const selectStringsEntities = createSelector(selectStringsState, (state: 
 )
 
 export const selectStringById = (props: { id: string }) =>
-	createSelector(selectStringsEntities, (strings: Dictionary<StringModel>) => strings[props.id])
+	createSelector(selectStringsEntities, (strings: Dictionary<StringModel>) => {
+		const string = strings[props.id]
+		if (!string) return undefined
+		if (string.name === UNDEFINED_STRING_NAME) return undefined
+		return string
+	})
 
 export const selectStringByName = (props: { name: string }) =>
 	createSelector(selectAllStrings, (strings: StringModel[]) =>
 		strings.find((string) => string.name === props.name),
 	)
 
-export const selectUndefinedString = createSelector(selectAllStrings, (strings: StringModel[]) =>
-	strings.find((string) => string.name === UNDEFINED_STRING_NAME),
+export const selectUndefinedString = createSelector(
+	selectUndefinedStringId,
+	selectStringsEntities,
+	(undefinedStringId: StringId | undefined, strings: Dictionary<StringModel>) => {
+		if (!undefinedStringId) return undefined
+		return strings[undefinedStringId]
+	},
 )
 
 /*export const selectUndefinedStringId = createSelector(selectAllStrings, (strings: StringModel[]) =>

@@ -1,5 +1,5 @@
 import { CanvasElementService, injectAppStateStore, PointerState } from '@canvas/app/data-access'
-import { inject, Injectable, signal } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
 import { injectPanelLinksStore } from '../store'
 import {
 	getEnderPolarityFromDirection,
@@ -9,12 +9,11 @@ import {
 	PanelLinkRequest,
 	PanelModel,
 	PolarityDirection,
-	StringCircuitChains,
 	StringId,
 	UNDEFINED_STRING_ID,
 } from '@entities/shared'
-import { assertNotNull, newGuid, selectSignalFromStore } from '@shared/utils'
-import { injectSelectedStore, selectSelectedStringId } from '@canvas/selected/data-access'
+import { assertNotNull, newGuid } from '@shared/utils'
+import { injectSelectedStore } from '@canvas/selected/data-access'
 import { TransformedPoint } from '@shared/data-access/models'
 import { changeCanvasCursor, setCanvasCursorToAuto } from '@canvas/utils'
 import {
@@ -22,7 +21,6 @@ import {
 	getPanelLinkOrderSeparateChains,
 } from '@entities/utils'
 import { isPointOverCurvedLineNoCtx } from './utils'
-import { CurvedNumberLine } from '@canvas/shared'
 import { CanvasRenderOptions } from '@canvas/rendering/data-access'
 import { injectEntityStore } from '../../shared'
 
@@ -35,69 +33,8 @@ export class PanelLinksService {
 	private _panelLinksStore = injectPanelLinksStore()
 	private _selectedStore = injectSelectedStore()
 	private _canvasElementStore = inject(CanvasElementService)
-	// private _panelLinksStore =
-	private _selectedStringId = selectSignalFromStore(selectSelectedStringId)
-	private _selectedStringLinkPaths = signal<number[][]>([])
-	private _selectedStringLinkToLinesTuple = signal<[PanelLinkId, CurvedNumberLine][][]>([])
-	private _selectedStringPanelLinks = signal<PanelLinkModel[]>([])
-	private _selectedStringCircuitChains = signal<StringCircuitChains>({
-		openCircuitChains: [],
-		closedCircuitChains: [],
-	})
-	private _selectedStringLinkPathToPointMap = signal<Map<string, TransformedPoint>>(new Map())
 
 	polarityDirection: PolarityDirection = 'positive-to-negative'
-
-	/*	constructor() {
-	 /!*		effect(() => {
-	 const selectedStringId = this._selectedStringId()
-	 if (selectedStringId) {
-	 console.log('PanelLinksService: selectedStringId', selectedStringId)
-	 const panelLinks = this._panelLinksStore.select.getByStringId(selectedStringId)
-	 const curvedLines = preparePanelLinksForRender(panelLinks)
-	 console.log('PanelLinksService: curvedLines', curvedLines)
-	 this._selectedStringLinkLines = curvedLines
-	 // this._selectedStringLinkLines.set(curvedLines)
-	 }
-	 })*!/
-	 }*/
-
-	/*	updateSelectedStringLinkLines() {
-	 const selectedStringId = this._selectedStringId()
-	 if (!selectedStringId) {
-	 return
-	 }
-	 const panelLinks = this._panelLinksStore.select.getByStringId(selectedStringId)
-	 this._selectedStringPanelLinks.set(panelLinks)
-	 const stringCircuitChains = prepareStringPanelLinkCircuitChain(
-	 panelLinks,
-	 ) as StringCircuitChains
-	 this._selectedStringCircuitChains.set(stringCircuitChains)
-	 const stringCircuitChain = preparePanelLinksForRender(stringCircuitChains)
-	 this._selectedStringLinkToLinesTuple.set(stringCircuitChain)
-	 }*/
-
-	/*	getPanelLinkOrderIfStringIsSelected() {
-	 const stringId = this._selectedStore.select.selectedStringId()
-	 if (!stringId) {
-	 return {
-	 stringPanelLinks: [] as PanelLinkModel[],
-	 openCircuitChains: [] as OpenCircuitChain[],
-	 closedCircuitChains: [] as ClosedCircuitChain[],
-	 circuitLinkLineTuples: [] as [PanelLinkId, CurvedNumberLine][][],
-	 }
-	 }
-	 const stringPanelLinks = this._selectedStringPanelLinks()
-	 const { openCircuitChains, closedCircuitChains } = this._selectedStringCircuitChains()
-	 const circuitLinkLineTuples = this._selectedStringLinkToLinesTuple()
-	 // const circuitCurvedLines = this._selectedStringFlatLines()
-	 return {
-	 stringPanelLinks,
-	 openCircuitChains,
-	 closedCircuitChains, // circuitCurvedLines,
-	 circuitLinkLineTuples,
-	 }
-	 }*/
 
 	handlePanelLinksClick(panel: PanelModel, shiftKey = false) {
 		if (!this._selectedStore.select.selectedStringId()) {
@@ -129,7 +66,6 @@ export class PanelLinksService {
 			panelId: panel.id,
 		}
 		this._panelLinksStore.dispatch.startPanelLink(panelLinkRequest)
-		// this._panelLinksStore.startPanelLink(panelLinkRequest)
 	}
 
 	endPanelLink(panel: PanelModel, requestingLink: PanelLinkRequest, shiftKey = false) {
@@ -156,7 +92,7 @@ export class PanelLinksService {
 				requestingLink.direction === 'positive-to-negative' ? requestingLink.panelId : panel.id,
 			negativePanelId:
 				requestingLink.direction === 'positive-to-negative' ? panel.id : requestingLink.panelId,
-			linePoints: calculateLinkLinesBetweenTwoPanelCenters(requestingPanel, panel), // linePoints: calculateLinkLinesBetweenTwoPanels(requestingPanel, panel),
+			linePoints: calculateLinkLinesBetweenTwoPanelCenters(requestingPanel, panel),
 		}
 		this._panelLinksStore.dispatch.addPanelLink(panelLink)
 		if (shiftKey) {
@@ -166,16 +102,8 @@ export class PanelLinksService {
 		}
 	}
 
-	getPanelLinkOrderForSelectedString() {
-		const selectedStringId = this._selectedStore.select.selectedStringId()
-		if (!selectedStringId) return
-		const panelLinks = this._panelLinksStore.select.getByStringId(selectedStringId)
-		return getPanelLinkOrderSeparateChains(panelLinks)
-	}
-
 	getPanelLinkOrderForString(stringId: StringId) {
 		const panelLinks = this._panelLinksStore.select.getByStringId(stringId)
-		// const panelLinks = this._panelLinksStore.select.getByStringId(stringId)
 		return getPanelLinkOrderSeparateChains(panelLinks)
 	}
 

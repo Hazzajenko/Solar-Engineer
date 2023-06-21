@@ -6,6 +6,7 @@ import { RenderService } from '@canvas/rendering/data-access'
 import {
 	CONTEXT_MENU_COMPONENT,
 	ContextMenuSinglePanelMenu,
+	DIALOG_COMPONENT,
 	UiStoreService,
 } from '@overlays/ui-store/data-access'
 import { PanelLinkModel, PanelModel, StringModel } from '@entities/shared'
@@ -19,6 +20,7 @@ import { assertNotNull } from '@shared/utils'
 import { injectEntityStore } from '@entities/data-access'
 import { injectAppStateStore } from '@canvas/app/data-access'
 import { scaleAndOpacityAnimation } from '@shared/animations'
+import { ContextMenuBaseComponent, ContextMenuItemComponent } from '../context-menu-builder'
 
 @Component({
 	selector: 'app-single-panel-menu',
@@ -32,6 +34,8 @@ import { scaleAndOpacityAnimation } from '@shared/animations'
 		ShowSvgNoStylesComponent,
 		LetDirective,
 		NgIconComponent,
+		ContextMenuBaseComponent,
+		ContextMenuItemComponent,
 	],
 	providers: [provideIcons({ heroMinusCircle })],
 	templateUrl: './single-panel-menu.component.html',
@@ -80,7 +84,7 @@ export class SinglePanelMenuComponent implements OnInit {
 			return
 		}
 		this.panel = panel
-		this.string = this._entityStore.strings.select.getById(panel.stringId)
+		this.string = this._entityStore.strings.select.selectById(panel.stringId)()
 
 		const linkMode = this._appStore.select.mode() === 'LinkMode'
 		const isInSelectedString = this._selectedStore.select.selectedStringId() === this.panel.stringId
@@ -101,17 +105,21 @@ export class SinglePanelMenuComponent implements OnInit {
 				negativeToLink,
 				negativeToPanel,
 			})
-			/*	this.panelLinks.set({
-			 positiveToLink: this._appStore.state.positiveToLink,
-			 }*/
-			// return
 		}
 	}
 
 	deletePanel() {
 		this._entityStore.panels.dispatch.deletePanel(this.panel.id)
-		this._render.renderCanvasApp()
 		this._uiStore.dispatch.closeContextMenu()
+	}
+
+	addPanelToString() {
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.MOVE_PANELS_TO_STRING,
+			data: {
+				panelIds: [this.panel.id],
+			},
+		})
 	}
 
 	enterPolarityLink(
@@ -142,5 +150,18 @@ export class SinglePanelMenuComponent implements OnInit {
 			},
 		}
 		this._entityStore.strings.dispatch.updateString(update)
+	}
+
+	openStringEdit() {
+		console.log('openStringEdit')
+	}
+
+	removePanelFromString() {
+		this._entityStore.panels.dispatch.updatePanel({
+			id: this.panel.id,
+			changes: {
+				stringId: undefined,
+			},
+		})
 	}
 }

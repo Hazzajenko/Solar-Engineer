@@ -12,11 +12,19 @@ import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { NgIf } from '@angular/common'
 import { injectEntityStore } from '@entities/data-access'
 import { scaleAndOpacityAnimation } from '@shared/animations'
+import { ContextMenuBaseComponent, ContextMenuItemComponent } from '../context-menu-builder'
 
 @Component({
 	selector: 'app-panel-link-menu',
 	standalone: true,
-	imports: [ContextMenuDirective, ShowSvgComponent, NgIf, ShowSvgNoStylesComponent],
+	imports: [
+		ContextMenuDirective,
+		ShowSvgComponent,
+		NgIf,
+		ShowSvgNoStylesComponent,
+		ContextMenuBaseComponent,
+		ContextMenuItemComponent,
+	],
 	templateUrl: './panel-link-menu.component.html',
 	animations: [scaleAndOpacityAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,13 +53,11 @@ export class PanelLinkMenuComponent implements OnInit {
 	}
 
 	enterPolarityPanel(event: PointerEvent, panelId: PanelId) {
-		// this._appStore.dispatch.setHoveringOverEntityState(panelId)
 		this._entityStore.panelLinks.dispatch.setHoveringOverPanelInLinkMenuId(panelId)
 	}
 
 	leavePolarityPanel() {
 		this._entityStore.panelLinks.dispatch.clearHoveringOverPanelInLinkMenuId()
-		// this._appStore.dispatch.liftHoveringOverEntity()
 	}
 
 	deletePanelLink() {

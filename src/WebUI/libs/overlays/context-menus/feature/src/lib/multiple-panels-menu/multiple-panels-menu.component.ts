@@ -14,11 +14,19 @@ import { ContextMenuDirective } from '../directives'
 import { PanelId } from '@entities/shared'
 import { injectEntityStore } from '@entities/data-access'
 import { scaleAndOpacityAnimation } from '@shared/animations'
+import { ContextMenuBaseComponent, ContextMenuItemComponent } from '../context-menu-builder'
 
 @Component({
 	selector: 'app-multiple-panels-menu',
 	standalone: true,
-	imports: [NgIf, ShowSvgComponent, ContextMenuTemplateComponent, ContextMenuDirective],
+	imports: [
+		NgIf,
+		ShowSvgComponent,
+		ContextMenuTemplateComponent,
+		ContextMenuDirective,
+		ContextMenuBaseComponent,
+		ContextMenuItemComponent,
+	],
 	templateUrl: './multiple-panels-menu.component.html',
 	styles: [],
 	animations: [scaleAndOpacityAnimation],
@@ -47,42 +55,18 @@ export class MultiplePanelsMenuComponent implements OnInit {
 		this.panelIds = this.contextMenu.data.panelIds
 	}
 
-	// menuPosition!: Point
-
-	/*	@Input({ required: true }) set location(location: Point) {
-	 if (!location) {
-	 this._render.renderCanvasApp()
-	 this._uiStore.dispatch.closeContextMenu()
-	 console.error('no location')
-	 return
-	 }
-	 this.menuPosition = location
-	 }
-
-	 @Input({ required: true }) set data(data: { panelIds: string[] }) {
-	 if (data.panelIds.length < 1) {
-	 this._render.renderCanvasApp()
-	 this._uiStore.dispatch.closeContextMenu()
-	 return
-	 }
-	 this.panelIds = data.panelIds
-	 }*/
-
 	movePanelsToString() {
 		this._uiStore.dispatch.openDialog({
-			// component: DIALOG_COMPONENT_TYPE.MOVE_PANELS_TO_STRING,
 			component: DIALOG_COMPONENT.MOVE_PANELS_TO_STRING,
 			data: {
 				panelIds: this.panelIds,
 			},
 		})
-		this._render.renderCanvasApp()
 		this._uiStore.dispatch.closeContextMenu()
 	}
 
 	deletePanels() {
 		this._entityStore.panels.dispatch.deleteManyPanels(this.panelIds)
-		this._render.renderCanvasApp()
 		this._uiStore.dispatch.closeContextMenu()
 	}
 }

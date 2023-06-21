@@ -1,149 +1,45 @@
 <div *ngIf="panel" [contextMenuInput]="contextMenu" appContextMenu class="absolute">
-	<ul
-		@scaleAndOpacity
-		class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-	>
-		<div class="px-4 py-3" role="none">
-			<p class="truncate text-sm font-medium text-gray-900" role="none">Panel</p>
-		</div>
-		<ng-container *ngIf="inLinkMode() && panelLinks()">
-			<ng-container *ngrxLet="panelLinks() as panelLinks">
-				<li>
-					<a
-						(click)="setPanelAsDisconnectionPoint()"
-						class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-						role="menuitem"
-						tabindex="-1"
-					>
-						<app-show-svg
-							class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-							svgPath="editing"
-						/>
-						Set Panel as Disconnection Point
-					</a>
-				</li>
-				<li>
-					<a
-						class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-						role="menuitem"
-						tabindex="-1"
-					>
-						<app-show-svg
-							class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-							svgPath="editing"
-						/>
-						Edit Link
-					</a>
-				</li>
-				<li *ngIf="panelLinks.positiveToLink && panelLinks.positiveToPanel">
-					<a
-						(pointerenter)="
-							enterPolarityLink($event, panelLinks.positiveToLink, panelLinks.positiveToPanel)
-						"
-						(pointerleave)="leavePolarityPanel($event)"
-						class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-						role="menuitem"
-						tabindex="-1"
-					>
-						<app-show-svg
-							class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-							svgPath="hero-icons/outline/plus-circle"
-						/>
-						Positive Link
-					</a>
-				</li>
-				<li *ngIf="panelLinks.negativeToLink && panelLinks.negativeToPanel">
-					<a
-						(pointerenter)="
-							enterPolarityLink($event, panelLinks.negativeToLink, panelLinks.negativeToPanel)
-						"
-						(pointerleave)="leavePolarityPanel($event)"
-						class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-						role="menuitem"
-						tabindex="-1"
-					>
-						<!--				<ng-icon
-											class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-											name="heroMinusCircle"
-											size=""
-										/>-->
-						<app-show-svg
-							class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-							svgPath="hero-icons/outline/minus-circle"
-						/>
-						Negative Link
-					</a>
-				</li>
-			</ng-container>
+	<context-menu-base heading="Panel">
+		<ng-container *ngIf="panelLinks() as panelLinks">
+			<context-menu-item
+				(click)="setPanelAsDisconnectionPoint()"
+				label="Set as Disconnection Point"
+				svgName="SvgEdit"
+			/>
+			<context-menu-item
+				(pointerenter)="
+					enterPolarityLink($event, panelLinks.positiveToLink, panelLinks.positiveToPanel)
+				"
+				(pointerleave)="leavePolarityPanel($event)"
+				*ngIf="panelLinks.positiveToLink && panelLinks.positiveToPanel"
+				label="Positive Link"
+				svgName="SvgPlusCircle"
+			/>
+			<context-menu-item
+				(pointerenter)="
+					enterPolarityLink($event, panelLinks.negativeToLink, panelLinks.negativeToPanel)
+				"
+				(pointerleave)="leavePolarityPanel($event)"
+				*ngIf="panelLinks.negativeToLink && panelLinks.negativeToPanel"
+				label="Negative Link"
+				svgName="SvgMinusCircle"
+			/>
 		</ng-container>
-		<!--	  		<li>
-					<a
-						(click)='editPanel()'
-						role='menuitem'
-						tabindex='-1'
-						class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
-					>
-						<app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
-													svgPath='editing' />
-						Edit
-					</a>
-						</li>-->
-		<li>
-			<a
-				(click)="deletePanel()"
-				class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-				role="menuitem"
-				tabindex="-1"
-			>
-				<app-show-svg class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" svgPath="bin" />
-				Delete
-			</a>
-		</li>
 		<ng-container *ngIf="string; else noString">
-			<div class="px-4 py-3" role="none">
-				<p class="truncate text-sm font-medium text-gray-900" role="none">String</p>
-			</div>
-			<li>
-				<a
-					class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-					role="menuitem"
-					tabindex="-1"
-				>
-					<app-show-svg
-						class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-						svgPath="editing"
-					/>
-					Edit String
-				</a>
-			</li>
-			<li>
-				<a
-					class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-					role="menuitem"
-					tabindex="-1"
-				>
-					<app-show-svg
-						class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-						svgPath="apps-delete"
-					/>
-					Remove Panel From String
-				</a>
-			</li>
+			<context-menu-item (click)="openStringEdit()" label="Edit String" svgName="SvgEdit" />
+			<context-menu-item
+				(click)="removePanelFromString()"
+				label="Remove Panel From String"
+				svgName="SvgMinusCircle"
+			/>
 		</ng-container>
 		<ng-template #noString>
-			<li>
-				<a
-					class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-					role="menuitem"
-					tabindex="-1"
-				>
-					<app-show-svg
-						class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-						svgPath="add"
-					/>
-					Add To String
-				</a>
-			</li>
+			<context-menu-item
+				(click)="addPanelToString()"
+				label="Add Panel To String"
+				svgName="SvgPlusCircle"
+			/>
 		</ng-template>
-	</ul>
+		<context-menu-item (click)="deletePanel()" label="Delete Panel" svgName="SvgTrash" />
+	</context-menu-base>
 </div>

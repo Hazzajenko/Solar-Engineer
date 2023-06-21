@@ -34,7 +34,12 @@ import {
 	ObjectRotatingService,
 } from '@canvas/object-positioning/data-access'
 import { injectSelectedStore, SelectedService } from '@canvas/selected/data-access'
-import { EntityFactoryService, injectEntityStore, PanelLinksService } from '@entities/data-access'
+import {
+	EntityFactoryService,
+	injectEntityStore,
+	isPointOverCurvedLineNoCtx,
+	PanelLinksService,
+} from '@entities/data-access'
 import { ViewPositioningService } from '@canvas/view-positioning/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { CONTEXT_MENU_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
@@ -357,6 +362,30 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
+		const selectedStringId = this._selectedStore.select.selectedStringId()
+		if (selectedStringId) {
+			const panelLinkUnderMouse = this.isMouseOverLinkPath(currentPoint)
+			if (panelLinkUnderMouse) {
+				const existingPanelLinkUnderMouse =
+					this._entities.panelLinks.select.hoveringOverPanelLinkInApp()
+				if (
+					existingPanelLinkUnderMouse &&
+					existingPanelLinkUnderMouse.id === panelLinkUnderMouse.id
+				)
+					return
+				this._entities.panelLinks.dispatch.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
+				this._render.renderCanvasApp({
+					transformedPoint: currentPoint,
+				})
+				return
+			}
+			if (this._entities.panelLinks.select.hoveringOverPanelLinkInApp()) {
+				this._entities.panelLinks.dispatch.clearHoveringOverPanelLinkInApp()
+				this._render.renderCanvasApp()
+				return
+			}
+		}
+
 		if (pointer.hoverState === 'HoveringOverEntity') {
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 			this._appStore.dispatch.liftHoveringOverEntity()
@@ -592,6 +621,12 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
+		const hoveringOverPanelLinkInApp = this._entities.panelLinks.select.hoveringOverPanelLinkInApp()
+		if (hoveringOverPanelLinkInApp) {
+			this._selectedStore.dispatch.selectPanelLink(hoveringOverPanelLinkInApp.id)
+			return
+		}
+
 		// const selectedSnapshot = this._app.selectedSnapshot
 		this._selected.handleNotClickedOnEntity()
 		if (this.anyEntitiesNearAreaOfClick(event)) {
@@ -711,24 +746,24 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const { mode } = this._appStore.select.appState()
-		if (mode === 'LinkMode') {
-			const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
-			if (panelLinkUnderMouse) {
-				this._uiStore.dispatch.openContextMenu({
-					component: CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU,
-					location: {
-						x: event.offsetX,
-						y: event.offsetY,
-					},
-					data: {
-						panelLinkId: panelLinkUnderMouse.id,
-					},
-				})
-				this._selected.clearSingleOrMultipleSelected()
-				return
-			}
+		// const { mode } = this._appStore.select.appState()
+		// if (mode === 'LinkMode') {
+		const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
+		if (panelLinkUnderMouse) {
+			this._uiStore.dispatch.openContextMenu({
+				component: CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU,
+				location: {
+					x: event.offsetX,
+					y: event.offsetY,
+				},
+				data: {
+					panelLinkId: panelLinkUnderMouse.id,
+				},
+			})
+			this._selected.clearSingleOrMultipleSelected()
+			return
 		}
+		// }
 
 		const selectedStringId = this._selectedStore.select.selectedStringId()
 		if (selectedStringId) {
@@ -1340,6 +1375,37 @@ export class DesignCanvasDirective implements OnInit {
 		return this.allPanels.find((entity) => isPointInsideEntity(point, entity))
 		// const entitiesUnderMouse = this.allPanels.filter((entity) => isPointInsideEntity(point, entity))
 		// return entitiesUnderMouse[entitiesUnderMouse.length - 1] as CanvasEntity | undefined
+	}
+
+	private isMouseOverLinkPath(currentPoint: TransformedPoint) {
+		const selectedStringId = this._selectedStore.select.selectedStringId()
+		if (!selectedStringId) {
+			console.error('a string must be selected to be in link mode')
+			return
+		}
+
+		const panelLinks = this._entities.panelLinks.select.getByStringId(selectedStringId)
+		if (!panelLinks.length) {
+			return
+		}
+		const panelLinkIdPointsTuple = this._entities.panelLinks.select.selectedStringCircuitLinkLines()
+		assertNotNull(panelLinkIdPointsTuple)
+
+		const panelLinkIdForPoint = isPointOverCurvedLineNoCtx(panelLinkIdPointsTuple, currentPoint)
+
+		if (!panelLinkIdForPoint) {
+			// setCanvasCursorToAuto(this._canvasElementStore.canvas)
+			return
+		}
+
+		const panelLink = panelLinks.find((panelLink) => panelLink.id === panelLinkIdForPoint)
+		assertNotNull(panelLink)
+
+		/*		if (this._canvasEl.canvas.style.cursor !== 'pointer') {
+		 changeCanvasCursor(this._canvasEl.canvas, 'pointer')
+		 }*/
+
+		return panelLink
 	}
 
 	private getPanelSymbolUnderMouse(point: TransformedPoint) {

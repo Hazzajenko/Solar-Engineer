@@ -37,8 +37,12 @@ export const initialStringsState: StringsState = stringsAdapter.getInitialState(
 const reducer = createReducer(
 	initialStringsState,
 	on(StringsActions.loadStrings, (state, { strings }) => {
-		const newState = stringsAdapter.setMany(strings, state)
+		const newState = stringsAdapter.upsertMany(strings, state)
 		const undefinedStringId = strings.find((string) => string.name === UNDEFINED_STRING_NAME)?.id
+		if (!undefinedStringId) {
+			throw new Error('Undefined string not found')
+		}
+		// const removeOldUndefinedString = stringsAdapter.removeOne(undefinedStringId, newState)
 		return { ...newState, undefinedStringId, loaded: true }
 	}),
 	on(StringsActions.addString, (state, { string }) => stringsAdapter.addOne(string, state)),
