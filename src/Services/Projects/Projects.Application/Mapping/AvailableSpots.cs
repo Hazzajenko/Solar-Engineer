@@ -1,4 +1,5 @@
-﻿namespace Projects.Application.Mapping;
+﻿/*
+namespace Projects.Application.Mapping;
 
 public enum DiagonalDirection
 {
@@ -112,7 +113,7 @@ public class PanelClass
                     {
                         spot.Vacant = false;
                     }
-                }*/
+                }#1#
                 spots.Add(spot);
             }
         }
@@ -154,3 +155,4 @@ public class PanelClass
         // Implementation of IsEntityInsideTwoPoints goes here
     }
 }
+*/

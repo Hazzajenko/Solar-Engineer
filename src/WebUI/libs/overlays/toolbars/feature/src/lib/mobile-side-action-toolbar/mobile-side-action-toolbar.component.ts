@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core'
 import { goTop } from '@shared/animations'
 import { InputSvgComponent } from '@shared/ui'
 import { LetDirective } from '@ngrx/component'
@@ -6,7 +6,7 @@ import { MobileBottomToolbarDirective } from '../mobile-bottom-toolbar/mobile-bo
 import { NgClass, NgIf } from '@angular/common'
 import { injectSelectedStore } from '@canvas/selected/data-access'
 import { assertNotNull } from '@shared/utils'
-import { EntityFactoryService, injectEntityStore } from '@entities/data-access'
+import { injectEntityStore } from '@entities/data-access'
 import { injectAppStateStore, MODE_STATE } from '@canvas/app/data-access'
 import { injectAppUser } from '@auth/data-access'
 import { createStringWithPanels } from '@entities/utils'
@@ -32,7 +32,6 @@ export class MobileSideActionToolbarComponent {
 	private _selectedStore = injectSelectedStore()
 	private _entityStore = injectEntityStore()
 	private _appStore = injectAppStateStore()
-	private _entityFactory = inject(EntityFactoryService)
 	user = injectAppUser()
 	selectedState = this._selectedStore.select.selectedState
 	mode = this._appStore.select.mode

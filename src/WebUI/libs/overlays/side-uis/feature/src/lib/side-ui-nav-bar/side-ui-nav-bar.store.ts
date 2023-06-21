@@ -21,7 +21,7 @@ export class SideUiNavBarStore extends ComponentStore<SideUiNavBarStoreState> {
 
 	constructor() {
 		super({
-			currentView: 'auth',
+			currentView: 'none',
 		})
 	}
 }

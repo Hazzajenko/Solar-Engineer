@@ -1,6 +1,5 @@
 <div
 	#toolBar
-	*ngrxLet="vm() as vm"
 	@goBottom
 	class="bg-gray-100 shadow-md dark:bg-gray-800 md:rounded-lg z-30 absolute top-8 left-1/2 -translate-x-1/2"
 	id="overlay-toolbar"
@@ -9,83 +8,151 @@
 		<div class="flex items-center space-x-1">
 			<button
 				(click)="toggleSideUi()"
-				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				class="p-2 text-gray-500 blue rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
+				enableDefaultHoverEffects
+				matTooltip="{{ sideUiNavOpen() ? 'Close' : 'Open' }} Side Ui"
+				menu-button-for="main-context-menu"
 				type="button"
 			>
-				<app-toggle-svg-no-styles
-					[predicate]="vm.sideUiEnabled"
-					falseSvgPath="arrows/chevron-double-right"
-					inputClass="w-5 h-5"
-					trueSvgPath="arrows/chevron-double-left"
-				/>
-				<span class="sr-only">Toggle Side UI</span>
+				<svg-input class="w-5 h-5" svgName="SvgBars3BottomLeft" />
+				<!--				<span class="sr-only">Open sidebar</span>
+								<svg
+									aria-hidden="true"
+									class="w-6 h-6"
+									fill="currentColor"
+									viewBox="0 0 20 20"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path
+										clip-rule="evenodd"
+										d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
+										fill-rule="evenodd"
+									></path>
+								</svg>-->
+				<span class="sr-only">Open Side Ui</span>
 			</button>
 		</div>
-
-		<div class="flex items-center space-x-1">
+		<div
+			[matTooltipDisabled]="stringIsSelected()"
+			class="flex items-center space-x-1"
+			matTooltip="Select a String to Start Link Mode"
+		>
 			<button
-				(click)="undo()"
-				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				(click)="toggleLinkModeForSelectedString()"
+				[isActive]="stringIsSelected()"
+				[ngClass]='{
+						"ring-2 ring-blue-500": stringIsSelected() && isInLinkMode(),
+					}'
+				[scale]="110"
+				appActionButton
+				class="p-2 text-gray-500 blue rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
+				enableDefaultHoverEffects
+				matTooltip="{{ isInLinkMode() ? 'Exit' : 'Enter' }} Link Mode"
+				menu-button-for="main-context-menu"
 				type="button"
 			>
-				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/arrow-uturn-left" />
-				<span class="sr-only">Undo</span>
+				<svg-input class="w-5 h-5" svgName="SvgLink" />
+				<span class="sr-only">Start Link Mode</span>
 			</button>
 		</div>
-		<div class="flex items-center space-x-1">
+		<div
+			[matTooltipDisabled]="stringIsSelected()"
+			class="flex items-center space-x-1 relative"
+			matTooltip="A String Must Be Selected to Change Its Colour"
+		>
 			<button
-				(click)="redo()"
+				#changeColourButton
+				(click)="openColourPicker(changeColourButton, toolBar)"
+				[isActive]="stringIsSelected()"
+				[scale]="110"
+				appActionButton
 				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				id="change-colour-button"
+				matTooltip="Change String Colour"
 				type="button"
 			>
-				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/arrow-uturn-right" />
-				<span class="sr-only">Redo</span>
+				<svg-input inputClass="w-5 h-5" svgName="SvgPaintBrush" />
+				<span class="sr-only">Change String Colour</span>
 			</button>
 		</div>
-		<!--
-				<div class="flex items-center space-x-1 relative">
-					<button
-						#changeColourButton
-						(click)="openColourPicker(changeColourButton, toolBar)"
-						class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
-						type="button"
-					>
-						<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/paint-brush" />
-						<span class="sr-only">Change Colour</span>
-					</button>
-				</div>-->
-
-		<!--	<div class="flex items-center space-x-1">
-				<button
-					#modePickerButton
-					(click)="openModePicker(modePickerButton, toolBar)"
-					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
-					id="mode-picker-button"
-					type="button"
-				>
-					<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/wrench" />
-					<span class="sr-only">Change Mode</span>
-				</button>
-			</div>
-	-->
-		<div class="flex-wrap items-center space-x-1">
+		<div
+			[matTooltipDisabled]="panelOrPanelsOfSameStringIsSelectedWithoutStringSelected()"
+			class="flex items-center space-x-1"
+			matTooltip="A Panel With A String Must Be Selected to Select Its String"
+		>
 			<button
-				(click)="openSettingsDialog()"
-				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				(click)="selectStringForSelectedPanelOrPanels()"
+				[isActive]="panelOrPanelsOfSameStringIsSelectedWithoutStringSelected()"
+				[scale]="110"
+				appActionButton
+				class="p-2 text-gray-500 rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
+				enableDefaultHoverEffects
+				matTooltip="Select String"
+				menu-button-for="main-context-menu"
 				type="button"
 			>
-				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="toolbar/settings" />
-				<span class="sr-only">Settings</span>
+				<svg-input class="w-5 h-5" svgName="SvgCursorArrowRays" />
+				<span class="sr-only">Select String</span>
 			</button>
 		</div>
-		<div *ngIf="vm.user" class="flex-wrap items-center space-x-1">
+		<div
+			[matTooltipDisabled]="multiplePanelsAreSelectedWithoutStringSelected()"
+			class="flex items-center space-x-1"
+			matTooltip="Multiple Panels Must Be Selected to Create A String"
+		>
 			<button
-				(click)="openProfileDialog()"
-				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				(click)="createStringWithSelectedPanels()"
+				[isActive]="multiplePanelsAreSelectedWithoutStringSelected()"
+				[scale]="110"
+				appActionButton
+				class="p-2 text-gray-500 rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
+				enableDefaultHoverEffects
+				matTooltip="Create A String With Selected Panels"
+				menu-button-for="main-context-menu"
 				type="button"
 			>
-				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="profile/user-circle" />
-				<span class="sr-only">User Profile</span>
+				<svg-input class="w-5 h-5" svgName="SvgFolderPlus" />
+				<span class="sr-only">Create A String With Selected Panels</span>
+			</button>
+		</div>
+		<div
+			[matTooltipDisabled]="isInSelectedState()"
+			class="flex items-center space-x-1"
+			matTooltip="Select A Panel Or String to Clear Selection"
+		>
+			<button
+				(click)="clearSelectedInOrder()"
+				[isActive]="isInSelectedState()"
+				[scale]="110"
+				appActionButton
+				class="p-2 text-gray-500 rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
+				enableDefaultHoverEffects
+				matTooltip="Clear Selected"
+				menu-button-for="main-context-menu"
+				type="button"
+			>
+				<svg-input class="w-5 h-5" svgName="SvgXMark" />
+				<span class="sr-only">Cancel Selection</span>
+			</button>
+		</div>
+		<div
+			[matTooltipDisabled]="isInSelectedState()"
+			class="flex items-center space-x-1"
+			matTooltip="A Panel Or String Must Be Selected to Delete It"
+		>
+			<button
+				(click)="deleteSelected()"
+				[isActive]="isInSelectedState()"
+				[scale]="110"
+				appActionButton
+				class="p-2 text-gray-500 rounded cursor-pointer active:text-gray-900 active:bg-gray-100 dark:text-gray-400 dark:active:text-white dark:active:bg-gray-600"
+				enableDefaultHoverEffects
+				matTooltip="Delete Selected"
+				menu-button-for="main-context-menu"
+				type="button"
+			>
+				<svg-input inputClass="w-5 h-5" svgName="SvgTrash" />
+				<span class="sr-only">Delete Selected</span>
 			</button>
 		</div>
 	</div>

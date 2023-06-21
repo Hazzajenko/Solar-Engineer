@@ -2,7 +2,7 @@
 
 namespace Projects.Domain.Common;
 
-public class PanelProjectItemUpdate : ProjectItemUpdate<Panel, PanelChanges> { }
+// public class PanelProjectItemUpdate : ProjectItemUpdate<Panel, PanelChanges> { }
 
 public class PanelProjectItemUpdateDictionary
 {
@@ -10,15 +10,17 @@ public class PanelProjectItemUpdateDictionary
     public Dictionary<string, object?> Changes { get; set; } = default!;
 }
 
-public interface IPartialPanel : IProjectItemPartial<Panel>
+/*public interface IPartialPanel : IProjectItemPartial<Panel>
 {
     public Panel.Point? Location { get; init; }
     public string? StringId { get; set; }
     public string? PanelConfigId { get; init; }
     public double? Angle { get; init; }
-}
+}*/
 
-public class PanelChanges : IPartialPanel
+
+
+public class PanelChanges
 {
     public Panel.Point? Location { get; init; }
     public string? StringId { get; set; }

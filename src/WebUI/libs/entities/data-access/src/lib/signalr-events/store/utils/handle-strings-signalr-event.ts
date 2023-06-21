@@ -9,7 +9,7 @@ import { StringsActions } from '../../../strings'
 import { z } from 'zod'
 import { mapArrayToUpdateStr } from '@shared/utils'
 
-export function handleStringSignalrEvent(signalrEvent: SignalrEventRequest) {
+export function handleStringsSignalrEvent(signalrEvent: SignalrEventRequest) {
 	switch (signalrEvent.action) {
 		case SIGNALR_EVENT_ACTION.CREATE:
 			return handleCreateString(signalrEvent)
@@ -77,28 +77,13 @@ const parseStringArray = (data: string): StringModel[] => {
 }
 
 const parseStringId = (data: string): StringId => {
-	const parsed = z
-		.object({
-			id: z.string(),
-		})
-		.safeParse(JSON.parse(data))
+	const parsed = z.string().safeParse(JSON.parse(data))
 	if (!parsed.success) throw new Error(parsed.error.message)
-	const idWrapper = parsed.data as {
-		id: StringId
-	}
-	return idWrapper.id
+	return parsed.data as StringId
 }
 
 const parseStringIdArray = (data: string): StringId[] => {
-	const parsed = z
-		.object({
-			id: z.string(),
-		})
-		.array()
-		.safeParse(JSON.parse(data))
+	const parsed = z.string().array().safeParse(JSON.parse(data))
 	if (!parsed.success) throw new Error(parsed.error.message)
-	const idWrappers = parsed.data as {
-		id: StringId
-	}[]
-	return idWrappers.map((w) => w.id)
+	return parsed.data as StringId[]
 }

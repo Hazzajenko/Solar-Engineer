@@ -65,11 +65,6 @@ export class SelectedService {
 	}
 
 	clearSelectedInOrder() {
-		if (this._selectedStore.select.selectedStringId()) {
-			this._selectedStore.dispatch.clearSelectedString()
-			return
-		}
-
 		if (
 			this._selectedStore.select.entityState() === ENTITY_SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED
 		) {
@@ -79,6 +74,11 @@ export class SelectedService {
 
 		if (this._selectedStore.select.entityState() === ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED) {
 			this._selectedStore.dispatch.clearSingleSelected()
+			return
+		}
+
+		if (this._selectedStore.select.selectedStringId()) {
+			this._selectedStore.dispatch.clearSelectedString()
 			return
 		}
 	}

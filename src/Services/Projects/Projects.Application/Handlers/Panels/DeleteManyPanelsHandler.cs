@@ -39,7 +39,7 @@ public class DeleteManyPanelsHandler : ICommandHandler<DeleteManyPanelsCommand, 
             );
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
-        var panelIdGuids = command.Request.PanelIds.Select(x => x.PanelId.ToGuid()).ToList();
+        var panelIdGuids = command.Request.PanelIds.Select(x => x.ToGuid()).ToList();
 
         var panels = await _unitOfWork.PanelsRepository.GetManyPanelsAsync(projectId, panelIdGuids);
 

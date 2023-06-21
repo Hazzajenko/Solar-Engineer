@@ -141,10 +141,10 @@ public static class ProjectEventsMapper
     )
         where TEntity : IProjectItem
     {
-        var response = new { Id = entityId };
+        // var response = new { Id = entityId };
 
         var toJson = JsonSerializer.Serialize(
-            response,
+            entityId,
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
         );
         // var toJson = JsonSerializer.Serialize(response);
@@ -168,10 +168,10 @@ public static class ProjectEventsMapper
     )
         where TEntity : IProjectItem
     {
-        var response = entityIds.Select(id => new { Id = id });
+        // var response = entityIds.Select(id => new { Id = id });
 
         var toJson = JsonSerializer.Serialize(
-            response,
+            entityIds,
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
         );
         var projectEventResponse = new ProjectEventResponse

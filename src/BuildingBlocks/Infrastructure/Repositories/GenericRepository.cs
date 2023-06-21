@@ -102,6 +102,11 @@ public abstract class GenericRepository<TContext, TModel>
         return items;
     }
 
+    public async Task<int> ExecuteDeleteAsync(Expression<Func<TModel, bool>> predicate)
+    {
+        return await Queryable.Where(predicate).ExecuteDeleteAsync();
+    }
+
     protected async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;

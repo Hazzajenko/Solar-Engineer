@@ -35,6 +35,7 @@ export class PanelLinksService {
 	private _panelLinksStore = injectPanelLinksStore()
 	private _selectedStore = injectSelectedStore()
 	private _canvasElementStore = inject(CanvasElementService)
+	// private _panelLinksStore =
 	private _selectedStringId = selectSignalFromStore(selectSelectedStringId)
 	private _selectedStringLinkPaths = signal<number[][]>([])
 	private _selectedStringLinkToLinesTuple = signal<[PanelLinkId, CurvedNumberLine][][]>([])
@@ -193,7 +194,9 @@ export class PanelLinksService {
 		if (!panelLinks.length) {
 			return
 		}
-		const panelLinkIdPointsTuple = this._selectedStringLinkToLinesTuple()
+		const panelLinkIdPointsTuple = this._panelLinksStore.select.selectedStringCircuitLinkLines()
+		assertNotNull(panelLinkIdPointsTuple)
+
 		const panelLinkIdForPoint = isPointOverCurvedLineNoCtx(panelLinkIdPointsTuple, currentPoint)
 
 		if (!panelLinkIdForPoint) {
@@ -213,7 +216,6 @@ export class PanelLinksService {
 
 	handleLinkModeClickOnCanvas(event: PointerEvent, currentPoint: TransformedPoint) {
 		const panelLinkRequest = this._panelLinksStore.select.requestingLink()
-		// const panelLinkRequest = this._panelLinksStore.select.requestingLink()
 		if (panelLinkRequest) {
 			const nearbyPanelToLinkLine =
 				this._entities.panels.select.getNearbyPanelInLinkModeExcludingOne(
@@ -233,7 +235,6 @@ export class PanelLinksService {
 			}
 			if (this._selectedStore.select.selectedPanelLinkId()) {
 				this._selectedStore.dispatch.clearSelectedPanelLink()
-				// this._selectedStore.dispatch.clearSelectedPanelLink()
 			}
 			return
 		}
@@ -246,7 +247,7 @@ export class PanelLinksService {
 	handleLinkModeMouseMove(
 		event: PointerEvent,
 		currentPoint: TransformedPoint,
-		pointer: PointerState, // pointer,
+		pointer: PointerState,
 	): Partial<CanvasRenderOptions> | undefined {
 		const panelLinkRequest = this._panelLinksStore.select.requestingLink()
 		if (panelLinkRequest) {
@@ -265,8 +266,6 @@ export class PanelLinksService {
 					nearbyPanelToLinkLine,
 				},
 			}
-
-			// return
 		}
 
 		const panelUnderMouse = this._entities.panels.select.getPanelUnderMouse(currentPoint)
@@ -287,44 +286,30 @@ export class PanelLinksService {
 			if (existingPanelLinkUnderMouse && existingPanelLinkUnderMouse.id === panelLinkUnderMouse.id)
 				return
 			this._entities.panelLinks.dispatch.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
-			// this._entities.panelLinks.dispatch.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
 			return {
 				transformedPoint: currentPoint,
 			}
-			/*			this._render.renderCanvasApp({
-			 transformedPoint: currentPoint,
-			 })
-			 return*/
 		}
 
 		if (this._entities.panelLinks.select.hoveringOverPanelLinkInApp()) {
-			// if (this._entities.panelLinks.select.hoveringOverPanelLinkInApp()) {
 			this._entities.panelLinks.dispatch.clearHoveringOverPanelLinkInApp()
-			// this._entities.panelLinks.dispatch.clearHoveringOverPanelLinkInApp()
-			// this._render.renderCanvasApp()
 			return {}
 		}
 
 		const entityUnderMouse = this._entities.panels.select.getPanelUnderMouse(currentPoint)
 		if (entityUnderMouse) {
+			console.log('entity under mouse', entityUnderMouse)
 			const hoveringEntityId = pointer.hoveringOverPanelId
 			if (hoveringEntityId === entityUnderMouse.id) return
 			this._appStore.dispatch.setHoveringOverEntityState(entityUnderMouse.id)
 			return {
 				panelUnderMouse: entityUnderMouse as PanelModel,
 			}
-			/*			this._render.renderCanvasApp({
-			 panelUnderMouse: entityUnderMouse as PanelModel,
-			 })
-			 return*/
 		}
 
 		if (pointer.hoverState === 'HoveringOverEntity') {
-			// changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 			this._appStore.dispatch.liftHoveringOverEntity()
 			return {}
-			// this._render.renderCanvasApp()
-			// return
 		}
 
 		return

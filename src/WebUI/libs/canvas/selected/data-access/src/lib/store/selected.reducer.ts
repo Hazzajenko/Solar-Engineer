@@ -105,6 +105,8 @@ const reducer = createReducer(
 	on(SelectedActions.selectString, (state, { stringId }) => ({
 		...state,
 		selectedStringId: stringId,
+		multipleSelectedPanelIds: [],
+		singleSelectedPanelId: undefined,
 	})),
 
 	on(SelectedActions.setSelectedStringBoxBounds, (state, { bounds }) => ({

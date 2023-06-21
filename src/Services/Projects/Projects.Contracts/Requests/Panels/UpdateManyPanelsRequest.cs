@@ -3,7 +3,7 @@
 public class UpdateManyPanelsRequest : IProjectEventRequest
 {
     public required string ProjectId { get; init; }
-    public required IEnumerable<PanelProjectItemUpdate> Updates { get; init; }
+    public required IEnumerable<ProjectItemUpdateRequest<PanelChanges>> Updates { get; init; }
 }
 
 public class UpdateManyPanelsRequestValidator : AbstractValidator<UpdateManyPanelsRequest>

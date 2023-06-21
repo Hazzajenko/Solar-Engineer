@@ -26,6 +26,7 @@ public interface IGenericRepository<TModel>
     Task<bool> FindManyAndDeleteAsync(Expression<Func<TModel, bool>> where);
     object[] GetKeys(TModel entity);
 
+    Task<int> ExecuteDeleteAsync(Expression<Func<TModel, bool>> predicate);
     Task DeleteAsync(object key);
     // Task<bool> DeleteAsync(Guid id);
 }

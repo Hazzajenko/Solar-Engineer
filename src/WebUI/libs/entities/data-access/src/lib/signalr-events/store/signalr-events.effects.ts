@@ -5,10 +5,10 @@ import { map } from 'rxjs'
 import { SIGNALR_EVENT_MODEL } from '@entities/shared'
 import { SignalrEventsActions } from './signalr-events.actions'
 import {
-	handlePanelConfigSignalrEvent,
-	handlePanelLinkSignalrEvent,
+	handlePanelConfigsSignalrEvent,
+	handlePanelLinksSignalrEvent,
 	handlePanelsSignalrEvent,
-	handleStringSignalrEvent,
+	handleStringsSignalrEvent,
 } from './utils'
 
 export const addSignalrEvent$ = createEffect(
@@ -20,11 +20,11 @@ export const addSignalrEvent$ = createEffect(
 					case SIGNALR_EVENT_MODEL.PANEL:
 						return handlePanelsSignalrEvent(signalrEvent)
 					case SIGNALR_EVENT_MODEL.STRING:
-						return handleStringSignalrEvent(signalrEvent)
+						return handleStringsSignalrEvent(signalrEvent)
 					case SIGNALR_EVENT_MODEL.PANEL_LINK:
-						return handlePanelLinkSignalrEvent(signalrEvent)
+						return handlePanelLinksSignalrEvent(signalrEvent)
 					case SIGNALR_EVENT_MODEL.PANEL_CONFIG:
-						return handlePanelConfigSignalrEvent(signalrEvent)
+						return handlePanelConfigsSignalrEvent(signalrEvent)
 					default:
 						throw new Error('Invalid signalr event model')
 				}

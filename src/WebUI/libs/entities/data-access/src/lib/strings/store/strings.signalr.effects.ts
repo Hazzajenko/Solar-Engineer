@@ -74,7 +74,7 @@ export const deleteStringSignalr$ = createProjectSignalrEffect(
 		return {
 			requestId: newGuidT(),
 			projectId,
-			action: SIGNALR_EVENT_ACTION.CREATE,
+			action: SIGNALR_EVENT_ACTION.DELETE,
 			model: SIGNALR_EVENT_MODEL.STRING,
 			data: JSON.stringify(request),
 		} as Omit<SignalrEventRequest, 'timeStamp'>

@@ -36,6 +36,7 @@ public sealed class PanelLinksRepository
 
     public async Task<bool> DeletePanelLinkByProjectIdAndIdAsync(Guid projectId, Guid id)
     {
+        // Delete
         var panelLink = await Queryable.FirstOrDefaultAsync(
             x => x.ProjectId == projectId && x.Id == id
         );

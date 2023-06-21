@@ -7,6 +7,7 @@ import {
 	selectPanelLinksEntities,
 	selectRequestingLink,
 	selectSelectedStringCircuit,
+	selectSelectedStringCircuitLinkLines,
 } from './panel-links.selectors'
 import { createRootServiceInjector, isNotNull } from '@shared/utils'
 import { PanelLinksActions } from './panel-links.actions'
@@ -75,6 +76,7 @@ function panelLinksStoreFactory(store: Store) {
 		requestingLink,
 		selectedStringCircuit,
 		hoveringOverPanelLinkInApp,
+		selectedStringCircuitLinkLines: store.selectSignal(selectSelectedStringCircuitLinkLines),
 	}
 
 	const dispatch = {

@@ -1,4 +1,4 @@
 export * from './handle-panels-signalr-event'
-export * from './handle-string-signalr-event'
-export * from './handle-panel-link-signalr-event'
-export * from './handle-panel-config-signalr-event'
+export * from './handle-strings-signalr-event'
+export * from './handle-panel-links-signalr-event'
+export * from './handle-panel-configs-signalr-event'

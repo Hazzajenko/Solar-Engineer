@@ -1,4 +1,4 @@
-import { createString, createStringWithPanels, genStringNameV2 } from '@entities/utils'
+import { createStringWithPanels } from '@entities/utils'
 import { MOVE_ENTITY_STATE, ObjectPositioningService, ObjectPositioningStoreService, ObjectRotatingService, ROTATE_ENTITY_STATE } from '@canvas/object-positioning/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { injectSelectedStore, SelectedService } from '@canvas/selected/data-access'
@@ -8,14 +8,18 @@ import { Key, KEYS, Point, TransformedPoint } from '@shared/data-access/models'
 import { KeysStoreService } from '../store'
 import { KEY_MAP_ACTION } from '../types'
 import { toSignal } from '@angular/core/rxjs-interop'
-import { updateObjectByIdForStoreV3 } from '@canvas/utils'
-import { ENTITY_TYPE, PanelModel } from '@entities/shared'
 import { injectEntityStore } from '@entities/data-access'
 import { injectAppStateStore, MODE_STATE } from '@canvas/app/data-access'
+import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
+import { assertNotNull } from '@shared/utils'
 
 // const DEFAULT_UNCHANGEABLE_KEYS = [KEYS.ESCAPE, KEYS.SHIFT, KEYS.ALT, KEYS.CTRL_OR_CMD] as const
 const isDefaultUnchangeableKey = (key: KeyboardEvent['key']) =>
-	key === KEYS.ESCAPE || key === KEYS.SHIFT || key === KEYS.ALT || key === KEYS.CTRL_OR_CMD
+	key === KEYS.ESCAPE ||
+	key === KEYS.SHIFT ||
+	key === KEYS.ALT ||
+	key === KEYS.CTRL_OR_CMD ||
+	key === KEYS.DELETE
 
 // const isDefaultUnchangeableKey = (key: KeyboardEvent['key']) => DEFAULT_UNCHANGEABLE_KEYS.find(k => k === key)
 
@@ -26,6 +30,7 @@ export class KeyEventsService {
 	private _selected = inject(SelectedService)
 	private _selectedStore = injectSelectedStore()
 	// private _selectedStore = inject(SelectedStoreService)
+	private _uiStore = injectUiStore()
 	private _entities = injectEntityStore()
 	private _positioningStore = inject(ObjectPositioningStoreService)
 	private _objRotating = inject(ObjectRotatingService)
@@ -95,106 +100,35 @@ export class KeyEventsService {
 				}
 				break
 			}
-			case KEYS.CTRL_OR_CMD: {
-				const { moveEntityState, rotateEntityState } = this._positioningStore.state
-				if (moveEntityState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
-					this._objPositioning.stopMultipleEntitiesToMove(rawMousePos)
-				}
-				if (moveEntityState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
-					this._objPositioning.singleEntityToMoveMouseUp(event.altKey, currentPoint)
-				}
-
-				if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
-					this._objRotating.clearSingleToRotate()
-				}
-
-				if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
-					this._objRotating.clearMultipleToRotate()
-				}
-
-				if (this._appStore.select.view() === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
-					this._view.handleDragScreenMouseUp()
-				}
-				break
-			}
-		}
-	}
-
-	keyUpHandler(event: KeyboardEvent, rawMousePos: Point, currentPoint: TransformedPoint) {
-		switch (event.key) {
-			case KEYS.ESCAPE:
-				this._selected.clearSelectedInOrder()
-				this._render.renderCanvasApp()
-				break
-			case KEYS.X:
-				{
-					const multipleSelectedIds = this._selectedStore.select.multipleSelectedPanelIds()
-					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
-					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
-					if (multipleSelectedIds.length <= 1) return
-					const name = genStringNameV2(this._entities.strings.select.allStrings())
-					const string = createString(name)
-
-					const entities = this._entities.panels.select.getByIds(multipleSelectedIds)
-					const panels = entities.filter(
-						(entity) => entity.type === ENTITY_TYPE.PANEL,
-					) as PanelModel[]
-					/*				const panelUpdates = panels.map((panel) =>
-				 updateObjectByIdForStore<CanvasPanel>(panel.id, { stringId: string.id }),
-				 )*/
-					const panelUpdates = panels.map(
-						updateObjectByIdForStoreV3<PanelModel>({ stringId: string.id }),
-					)
-					this._entities.strings.dispatch.addString(string)
-					this._entities.panels.dispatch.updateManyPanels(panelUpdates)
-
-					this._selectedStore.dispatch.selectStringId(string.id)
+			case KEYS.DELETE: {
+				const selectedState = this._selectedStore.select.selectedState()
+				if (selectedState.multipleSelectedPanelIds.length) {
+					this._entities.panels.dispatch.deleteManyPanels(selectedState.multipleSelectedPanelIds)
 					this._render.renderCanvasApp()
-				}
-				break
-			case KEYS.R:
-				{
-					const rotateState = this._positioningStore.state.rotateEntityState
-					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
-						this._objRotating.clearSingleToRotate()
-						return
-					}
-					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
-						this._objRotating.clearMultipleToRotate()
-						return
-					}
-				}
-				break
-			case KEYS.C: {
-				const mode = this._appStore.select.mode()
-				const newMode =
-					mode === MODE_STATE.CREATE_MODE ? MODE_STATE.SELECT_MODE : MODE_STATE.CREATE_MODE
-				this._appStore.dispatch.setModeState(newMode)
-				return
-			}
-			case KEYS.M:
-				break
-			case KEYS.SHIFT: {
-				const moveState = this._positioningStore.state.moveEntityState
-				if (moveState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
-					this._objPositioning.stopMultipleEntitiesToMove(rawMousePos)
 					return
 				}
-				if (moveState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
-					this._objPositioning.singleEntityToMoveMouseUp(event.altKey, currentPoint)
-
+				if (selectedState.singleSelectedPanelId) {
+					this._entities.panels.dispatch.deletePanel(selectedState.singleSelectedPanelId)
+					this._render.renderCanvasApp()
 					return
 				}
-				break
-			}
-			case KEYS.ALT: {
-				const rotateState = this._positioningStore.state.rotateEntityState
-				if (rotateState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
-					this._objRotating.clearSingleToRotate()
-					return
-				}
-				if (rotateState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
-					this._objRotating.clearMultipleToRotate()
+				if (selectedState.selectedStringId) {
+					const string = this._entities.strings.select.getById(selectedState.selectedStringId)
+					assertNotNull(string, 'KeyEventsService: keyUpHandlerV3: string not found')
+					this._uiStore.dispatch.openDialog({
+						component: DIALOG_COMPONENT.WARNING_TEMPLATE,
+						data: {
+							title: 'Delete String',
+							message: `Are you sure you want to delete string ${string.name}?`,
+							buttonText: 'Delete',
+							buttonAction: () => {
+								if (!selectedState.selectedStringId)
+									throw new Error('KeyEventsService: keyUpHandlerV3: no selected string id')
+								this._entities.strings.dispatch.deleteString(selectedState.selectedStringId)
+								this._render.renderCanvasApp()
+							},
+						},
+					})
 					return
 				}
 				break
@@ -230,8 +164,6 @@ export class KeyEventsService {
 		const amountOfStrings = this._entities.strings.select.allStrings().length
 		const { string, panelUpdates } = createStringWithPanels(multipleSelectedIds, amountOfStrings)
 		this._entities.strings.dispatch.addStringWithPanels(string, panelUpdates)
-		// this._entities.strings.dispatch.addString(string)
-		// this._entities.panels.dispatch.updateManyPanels(panelUpdates)
 		this._selectedStore.dispatch.selectStringId(string.id)
 	}
 

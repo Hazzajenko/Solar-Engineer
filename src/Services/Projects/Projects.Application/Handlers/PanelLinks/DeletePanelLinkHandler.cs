@@ -42,12 +42,23 @@ public class DeletePanelLinkHandler : ICommandHandler<DeletePanelLinkCommand, bo
 
         var panelLinkId = command.Request.PanelLinkId.ToGuid();
         var deleteResult =
-            await _unitOfWork.PanelLinksRepository.DeletePanelLinkByProjectIdAndIdAsync(
-                projectId,
-                panelLinkId
+        /*await _unitOfWork.PanelLinksRepository.DeletePanelLinkByProjectIdAndIdAsync(
+            projectId,
+            panelLinkId
+        );*/
+        await _unitOfWork.PanelLinksRepository.ExecuteDeleteAsync(
+            x => x.ProjectId == projectId && x.Id == panelLinkId
+        );
+        if (deleteResult > 1)
+        {
+            _logger.LogWarning(
+                "User {User} deleted {DeleteResult} Panel Links in project {Project}",
+                appUserId.ToString(),
+                deleteResult.ToString(),
+                appUserProject.Project.Id.ToString()
             );
-        if (!deleteResult)
-            throw new HubException("PanelLink not found");
+            throw new HubException("Deleted more than one Panel Link");
+        }
 
         var panelLinkIdString = panelLinkId.ToString();
         var response = panelLinkIdString.ToProjectEventResponseFromId<PanelLink>(

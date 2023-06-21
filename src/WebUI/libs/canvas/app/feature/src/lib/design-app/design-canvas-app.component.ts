@@ -48,6 +48,7 @@ import { injectProjectsStore } from '@entities/data-access'
 import { injectAuthStore } from '@auth/data-access'
 import { LoadingProjectSpinnerComponent } from '../ui/loading-project-spinner/loading-project-spinner.component'
 import { DeviceDetectorService } from 'ngx-device-detector'
+import { DefaultHoverEffectsDirective } from '@shared/directives'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -73,6 +74,7 @@ import { DeviceDetectorService } from 'ngx-device-detector'
 		SideUiAuthViewComponent,
 		LoadingProjectSpinnerComponent,
 		MobileSideActionToolbarComponent,
+		DefaultHoverEffectsDirective,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,

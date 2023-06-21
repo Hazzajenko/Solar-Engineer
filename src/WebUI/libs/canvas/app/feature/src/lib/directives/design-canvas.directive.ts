@@ -296,20 +296,7 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		if (moveEntityState === 'MovingSingleEntity') {
-			// changeCanvasCursor(this.canvas, CURSOR_TYPE.NONE)
 			this._objPositioning.singleEntityToMoveMouseMove(event, currentPoint)
-			/*			this._renderer.removeStyle(this.canvas, 'cursor')
-			 this._renderer.setStyle(this.canvas, 'cursor', CURSOR_TYPE.GRABBING)
-			 // this._renderer.setStyle(document, 'cursor', CURSOR_TYPE.GRABBING)
-			 /!*			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-			 this.canvas.getBoundingClientRect()
-			 this.canvas.getBoundingClientRect()
-			 this.canvas.getBoundingClientRect()
-			 this.canvas.getBoundingClientRect()
-			 this.canvas.getBoundingClientRect()
-			 this.canvas.getBoundingClientRect()
-			 this.canvas.getBoundingClientRect()*!/
-			 // this.canvas.offsetWidth*/
 			return
 		}
 
@@ -320,7 +307,6 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		const { view, dragBox, mode, pointer } = this._appStore.select.appState()
-		// const appState = this._appStore.state
 
 		if (view === 'ViewDraggingInProgress') {
 			this._view.handleDragScreenMouseMove(event, currentPoint)
@@ -328,19 +314,17 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		if (dragBox.state === 'SelectionBoxInProgress') {
-			// this._drag.selectionBoxMouseMove(event, currentPoint)
 			const renderOptions = selectionBoxMouseMove(
 				event,
 				currentPoint,
 				dragBox.start,
-				this._appStore, // this._entities.panels.allPanels,
+				this._appStore,
 			)
 			if (renderOptions) this._render.renderCanvasApp(renderOptions)
 			return
 		}
 
 		if (dragBox.state === 'CreationBoxInProgress') {
-			// this._drag.creationBoxMouseMove(event, currentPoint)
 			const renderOptions = creationBoxMouseMove(
 				event,
 				currentPoint,
@@ -351,21 +335,6 @@ export class DesignCanvasDirective implements OnInit {
 			if (renderOptions) this._render.renderCanvasApp(renderOptions)
 			return
 		}
-
-		/*		if (appState.view === 'ViewDraggingInProgress') {
-		 this._view.handleDragScreenMouseMove(event, currentPoint)
-		 return
-		 }
-
-		 if (appState.dragBox === 'SelectionBoxInProgress') {
-		 this._drag.selectionBoxMouseMove(event, currentPoint)
-		 return
-		 }
-
-		 if (appState.dragBox === 'CreationBoxInProgress') {
-		 this._drag.creationBoxMouseMove(event, currentPoint)
-		 return
-		 }*/
 
 		// TODO - fix
 		/*		const dragBoxAxisLineStart = this._app.appCtx.dragBox.axisLineBoxStart
@@ -591,8 +560,8 @@ export class DesignCanvasDirective implements OnInit {
 					this._panelLinks.handlePanelLinksClick(entityUnderMouse, event.shiftKey)
 					return
 				}
-				this._appStore.dispatch.setModeState('SelectMode')
-				// this._panelLinks.clearPanelLinkRequest()
+				// this._appStore.dispatch.setModeState('SelectMode')
+				this._panelLinks.clearPanelLinkRequest()
 				return
 			}
 

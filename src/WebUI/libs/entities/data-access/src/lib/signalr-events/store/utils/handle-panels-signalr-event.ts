@@ -85,28 +85,13 @@ const parsePanelUpdateArray = (data: string): UpdateStr<PanelModel>[] => {
 }
 
 const parsePanelId = (data: string): PanelId => {
-	const parsed = z
-		.object({
-			id: z.string(),
-		})
-		.safeParse(JSON.parse(data))
+	const parsed = z.string().safeParse(JSON.parse(data))
 	if (!parsed.success) throw new Error(parsed.error.message)
-	const idWrapper = parsed.data as {
-		id: PanelId
-	}
-	return idWrapper.id
+	return parsed.data as PanelId
 }
 
 const parsePanelIdArray = (data: string): PanelId[] => {
-	const parsed = z
-		.object({
-			id: z.string(),
-		})
-		.array()
-		.safeParse(JSON.parse(data))
+	const parsed = z.string().array().safeParse(JSON.parse(data))
 	if (!parsed.success) throw new Error(parsed.error.message)
-	const idWrappers = parsed.data as {
-		id: PanelId
-	}[]
-	return idWrappers.map((w) => w.id)
+	return parsed.data as PanelId[]
 }

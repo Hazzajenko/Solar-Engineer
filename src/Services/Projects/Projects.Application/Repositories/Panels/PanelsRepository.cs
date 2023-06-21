@@ -77,13 +77,6 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
     public async Task<bool> DeletePanelByIdAndProjectIdAsync(Guid id, Guid projectId)
     {
         Expression<Func<Panel, bool>> where = x => x.Id == id && x.ProjectId == projectId;
-        var panel = await Queryable.SingleOrDefaultAsync(where);
-        if (panel is null)
-            return false;
-        var keys = GetKeys(panel);
-        if (keys.Any())
-            keys.DumpObjectJson();
-
         await Queryable.Where(where).ExecuteDeleteAsync();
         await SaveChangesAsync();
 

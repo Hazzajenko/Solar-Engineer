@@ -9,7 +9,7 @@ import { PanelConfigsActions } from '../../../panel-configs'
 import { z } from 'zod'
 import { mapArrayToUpdateStr } from '@shared/utils'
 
-export function handlePanelConfigSignalrEvent(signalrEvent: SignalrEventRequest) {
+export function handlePanelConfigsSignalrEvent(signalrEvent: SignalrEventRequest) {
 	switch (signalrEvent.action) {
 		case SIGNALR_EVENT_ACTION.CREATE:
 			return handleCreatePanelConfig(signalrEvent)

@@ -2,6 +2,7 @@
 
 namespace Projects.Domain.Common;
 
+/*
 public interface IProjectItemUpdate<T, TX>
     where T : IProjectItem
     where TX : IProjectItemPartial<T>
@@ -20,3 +21,4 @@ public abstract class ProjectItemUpdate<T, TX> : IProjectItemUpdate<T, TX>
 
 public interface IProjectItemPartial<T>
     where T : IProjectItem { }
+    */
