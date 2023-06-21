@@ -13,19 +13,19 @@ public class PanelLinksConfig : IEntityTypeConfiguration<PanelLink>
         builder.Property(x => x.Id).HasDefaultValueSql("uuid_generate_v4()");
 
         builder
-            .HasOne(x => x.PanelPositiveTo)
+            .HasOne(x => x.PositivePanel)
             .WithOne(x => x.LinkNegativeTo)
             .HasForeignKey<Panel>(x => x.LinkNegativeToId)
             .HasPrincipalKey<PanelLink>(x => x.Id)
             .OnDelete(DeleteBehavior.SetNull);
 
         builder
-            .HasOne(x => x.PanelNegativeTo)
+            .HasOne(x => x.NegativePanel)
             .WithOne(x => x.LinkPositiveTo)
             .HasForeignKey<Panel>(x => x.LinkPositiveToId)
             .HasPrincipalKey<PanelLink>(x => x.Id)
             .OnDelete(DeleteBehavior.SetNull);
 
-        builder.Property(x => x.Points).HasColumnType("jsonb");
+        builder.Property(x => x.LinePoints).HasColumnType("jsonb");
     }
 }

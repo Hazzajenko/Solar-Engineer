@@ -62,6 +62,24 @@ const reducer = createReducer(
 	on(PanelConfigsActions.deleteManyPanelConfigs, (state, { panelConfigIds }) =>
 		panelConfigsAdapter.removeMany(panelConfigIds, state),
 	),
+	on(PanelConfigsActions.addPanelConfigNoSignalr, (state, { panelConfig }) =>
+		panelConfigsAdapter.addOne(panelConfig, state),
+	),
+	on(PanelConfigsActions.addManyPanelConfigsNoSignalr, (state, { panelConfigs }) =>
+		panelConfigsAdapter.addMany(panelConfigs, state),
+	),
+	on(PanelConfigsActions.updatePanelConfigNoSignalr, (state, { update }) =>
+		panelConfigsAdapter.updateOne(update, state),
+	),
+	on(PanelConfigsActions.updateManyPanelConfigsNoSignalr, (state, { updates }) =>
+		panelConfigsAdapter.updateMany(updates, state),
+	),
+	on(PanelConfigsActions.deletePanelConfigNoSignalr, (state, { panelConfigId }) =>
+		panelConfigsAdapter.removeOne(panelConfigId, state),
+	),
+	on(PanelConfigsActions.deleteManyPanelConfigsNoSignalr, (state, { panelConfigIds }) =>
+		panelConfigsAdapter.removeMany(panelConfigIds, state),
+	),
 	on(PanelConfigsActions.clearPanelConfigsState, () => initialPanelConfigsState),
 )
 

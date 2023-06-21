@@ -78,6 +78,8 @@ function panelLinksStoreFactory(store: Store) {
 	}
 
 	const dispatch = {
+		loadPanelLinks: (panelLinks: PanelLinkModel[]) =>
+			store.dispatch(PanelLinksActions.loadPanelLinks({ panelLinks })),
 		startPanelLink: (panelLinkRequest: PanelLinkRequest) =>
 			store.dispatch(PanelLinksActions.startPanelLink({ panelLinkRequest })),
 		endPanelLink: () => store.dispatch(PanelLinksActions.endPanelLink()),

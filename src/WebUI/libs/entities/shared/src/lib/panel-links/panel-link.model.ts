@@ -2,6 +2,7 @@ import { Point } from '@shared/data-access/models'
 import { PanelId } from '../panels'
 import { CurvedNumberLine } from '@canvas/shared'
 import { BackendDataModel } from '../backend-data/backend-data.model'
+import { z } from 'zod'
 
 export type PanelLinkBackendModel = PanelLinkModel & BackendDataModel
 
@@ -15,6 +16,20 @@ export type PanelLinkModel = {
 	positivePanelId: PanelId
 	linePoints: Point[]
 }
+
+// public required string panelPositiveToId { get; init; }
+// public required string PanelPositiveToId { get; init; }
+// public required string PanelNegativeToId { get; init; }
+// public required string PanelNegativeToId { get; init; }
+// public required IEnumerable<PanelLink.Point> Points { get; init; }
+
+export const PANEL_LINK_MODEL = z.object({
+	id: z.string(),
+	stringId: z.string(),
+	negativePanelId: z.string(),
+	positivePanelId: z.string(),
+	linePoints: z.array(z.object({ x: z.number(), y: z.number() })),
+})
 
 // export type PanelLinkStringIdDictionary = Dictionary<PanelLinkModel[]>
 

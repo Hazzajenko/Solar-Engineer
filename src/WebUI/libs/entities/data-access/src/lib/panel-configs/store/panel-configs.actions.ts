@@ -26,6 +26,24 @@ export const PanelConfigsActions = createActionGroup({
 		'Delete Many PanelConfigs': props<{
 			panelConfigIds: PanelConfigId[]
 		}>(),
+		'Add PanelConfig No Signalr': props<{
+			panelConfig: PanelConfigModel
+		}>(),
+		'Add Many PanelConfigs No Signalr': props<{
+			panelConfigs: PanelConfigModel[]
+		}>(),
+		'Update PanelConfig No Signalr': props<{
+			update: UpdateStr<PanelConfigModel>
+		}>(),
+		'Update Many PanelConfigs No Signalr': props<{
+			updates: UpdateStr<PanelConfigModel>[]
+		}>(),
+		'Delete PanelConfig No Signalr': props<{
+			panelConfigId: PanelConfigId
+		}>(),
+		'Delete Many PanelConfigs No Signalr': props<{
+			panelConfigIds: PanelConfigId[]
+		}>(),
 		'Clear PanelConfigs State': emptyProps(),
 	},
 })

@@ -60,7 +60,7 @@ public class String : IEntity, IProjectItem, IUserObject
     public Guid CreatedById { get; set; }
 
     public static String Create(
-        (string Id, string Name, string Color) request,
+        (string Id, string Name, string Colour) request,
         Guid projectId,
         Guid appUserId
     )
@@ -70,7 +70,7 @@ public class String : IEntity, IProjectItem, IUserObject
             projectId,
             appUserId,
             request.Name,
-            request.Color,
+            request.Colour,
             false
         );
     }

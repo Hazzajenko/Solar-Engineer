@@ -1,9 +1,11 @@
 ﻿using Infrastructure.Exceptions;
 using Infrastructure.Extensions;
+using Infrastructure.Logging;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Responses;
 using Projects.Domain.Common;
 using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Strings;
@@ -48,9 +50,9 @@ public class CreateStringHandler : ICommandHandler<CreateStringCommand, bool>
         if (panelIds.Any())
             panelIdGuids = panelIds.Select(x => x.Id.ToGuid());
         IEnumerable<Panel>? panels = null;
-
+        command.Request.DumpObjectJson();
         var @string = String.Create(
-            (command.Request.String.Id, command.Request.String.Name, command.Request.String.Color),
+            (command.Request.String.Id, command.Request.String.Name, command.Request.String.Colour),
             projectId,
             appUserId
         );
@@ -72,13 +74,15 @@ public class CreateStringHandler : ICommandHandler<CreateStringCommand, bool>
             );
 
         var stringResponse = @string.ToProjectEventResponseFromEntity(command, ActionType.Create);
+
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(stringResponse);
 
         if (panels is not null && panels.Any())
         {
             var panelsResponse = panels.ToProjectEventResponseFromEntityList(
                 command,
-                ActionType.UpdateMany
+                ActionType.UpdateMany,
+                appending: true
             );
             await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(panelsResponse);
         }

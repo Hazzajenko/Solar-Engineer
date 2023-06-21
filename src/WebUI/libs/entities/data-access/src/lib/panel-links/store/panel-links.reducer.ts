@@ -78,6 +78,24 @@ const reducer = createReducer(
 	on(PanelLinksActions.deleteManyPanelLinks, (state, { panelLinkIds }) =>
 		panelLinksAdapter.removeMany(panelLinkIds, state),
 	),
+	on(PanelLinksActions.addPanelLinkNoSignalr, (state, { panelLink }) =>
+		panelLinksAdapter.addOne(panelLink, state),
+	),
+	on(PanelLinksActions.addManyPanelLinksNoSignalr, (state, { panelLinks }) =>
+		panelLinksAdapter.addMany(panelLinks, state),
+	),
+	on(PanelLinksActions.updatePanelLinkNoSignalr, (state, { update }) =>
+		panelLinksAdapter.updateOne(update, state),
+	),
+	on(PanelLinksActions.updateManyPanelLinksNoSignalr, (state, { updates }) =>
+		panelLinksAdapter.updateMany(updates, state),
+	),
+	on(PanelLinksActions.deletePanelLinkNoSignalr, (state, { panelLinkId }) =>
+		panelLinksAdapter.removeOne(panelLinkId, state),
+	),
+	on(PanelLinksActions.deleteManyPanelLinksNoSignalr, (state, { panelLinkIds }) =>
+		panelLinksAdapter.removeMany(panelLinkIds, state),
+	),
 	on(PanelLinksActions.setHoveringOverPanelInLinkMenuId, (state, { panelId }) => ({
 		...state,
 		hoveringOverPanelInLinkMenuId: panelId,

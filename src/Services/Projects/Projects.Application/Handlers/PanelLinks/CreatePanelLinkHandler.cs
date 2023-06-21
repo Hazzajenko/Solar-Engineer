@@ -6,6 +6,7 @@ using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
 using Projects.Domain.Common;
 using Projects.Domain.Entities;
+using Projects.SignalR.Commands.PanelLinks;
 using Projects.SignalR.Commands.Panels;
 using Projects.SignalR.Hubs;
 
@@ -40,8 +41,8 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
         var panelLinkIdGuid = command.Request.PanelLink.Id.ToGuid();
-        var positiveToIdGuid = command.Request.PanelLink.PanelPositiveToId.ToGuid();
-        var negativeToIdGuid = command.Request.PanelLink.PanelNegativeToId.ToGuid();
+        var positiveToIdGuid = command.Request.PanelLink.PositivePanelId.ToGuid();
+        var negativeToIdGuid = command.Request.PanelLink.NegativePanelId.ToGuid();
         var stringIdGuid = command.Request.PanelLink.StringId.ToGuid();
 
         var positiveToPanel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
@@ -62,12 +63,15 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
         );
         existingStringId.ThrowExceptionIfNull(new HubException("String does not exist"));
 
+        var linePoints = command.Request.PanelLink.LinePoints;
+
         var panelLink = PanelLink.Create(
             panelLinkIdGuid,
             projectIdGuid,
             stringIdGuid,
             positiveToIdGuid,
             negativeToIdGuid,
+            linePoints,
             appUserIdGuid
         );
 

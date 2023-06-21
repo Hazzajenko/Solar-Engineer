@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Projects.Application.Data;
@@ -10,12 +11,14 @@ using Projects.Domain.Entities;
 
 #nullable disable
 
-namespace Projects.API.Data.Migrations
+namespace Projects.Application.Data.Migrations
 {
     [DbContext(typeof(ProjectsContext))]
-    partial class ProjectsContextModelSnapshot : ModelSnapshot
+    [Migration("20230621010144_UpdatePanelLinksAddPointsJson")]
+    partial class UpdatePanelLinksAddPointsJson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -199,15 +202,15 @@ namespace Projects.API.Data.Migrations
                     b.Property<DateTime>("LastModifiedTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<IEnumerable<PanelLink.LinePoint>>("LinePoints")
+                    b.Property<Guid>("PanelNegativeToId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PanelPositiveToId")
+                        .HasColumnType("uuid");
+
+                    b.Property<IEnumerable<PanelLink.LinePoint>>("Points")
                         .IsRequired()
                         .HasColumnType("jsonb");
-
-                    b.Property<Guid>("NegativePanelId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PositivePanelId")
-                        .HasColumnType("uuid");
 
                     b.Property<Guid>("StringId")
                         .HasColumnType("uuid");
@@ -306,13 +309,13 @@ namespace Projects.API.Data.Migrations
             modelBuilder.Entity("Projects.Domain.Entities.Panel", b =>
                 {
                     b.HasOne("Projects.Domain.Entities.PanelLink", "LinkNegativeTo")
-                        .WithOne("PositivePanel")
+                        .WithOne("PanelPositiveTo")
                         .HasForeignKey("Projects.Domain.Entities.Panel", "LinkNegativeToId")
                         .HasPrincipalKey("Projects.Domain.Entities.PanelLink", "Id")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Projects.Domain.Entities.PanelLink", "LinkPositiveTo")
-                        .WithOne("NegativePanel")
+                        .WithOne("PanelNegativeTo")
                         .HasForeignKey("Projects.Domain.Entities.Panel", "LinkPositiveToId")
                         .HasPrincipalKey("Projects.Domain.Entities.PanelLink", "Id")
                         .OnDelete(DeleteBehavior.SetNull);
@@ -410,10 +413,10 @@ namespace Projects.API.Data.Migrations
 
             modelBuilder.Entity("Projects.Domain.Entities.PanelLink", b =>
                 {
-                    b.Navigation("NegativePanel")
+                    b.Navigation("PanelNegativeTo")
                         .IsRequired();
 
-                    b.Navigation("PositivePanel")
+                    b.Navigation("PanelPositiveTo")
                         .IsRequired();
                 });
 

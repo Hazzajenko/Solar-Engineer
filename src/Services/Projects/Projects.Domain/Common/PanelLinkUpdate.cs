@@ -12,5 +12,5 @@ public class PanelLinkChanges
 {
     public string? PanelPositiveToId { get; init; }
     public string? PanelNegativeToId { get; init; }
-    public IEnumerable<PanelLink.Point>? Points { get; init; }
+    public IEnumerable<PanelLink.LinePoint>? LinePoints { get; init; }
 }

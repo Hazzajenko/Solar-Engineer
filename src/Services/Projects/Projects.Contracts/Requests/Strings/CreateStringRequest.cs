@@ -10,7 +10,7 @@ public class CreateStringRequest : IProjectEventRequest
     {
         public required string Id { get; init; }
         public required string Name { get; init; }
-        public string Color { get; init; } = "blue";
+        public required string Colour { get; init; }
         public bool Parallel { get; set; } = false;
     }
 }

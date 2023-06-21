@@ -12,9 +12,9 @@ public class PanelLinkObject
 {
     public required string Id { get; init; }
     public required string StringId { get; init; }
-    public required string PanelPositiveToId { get; init; }
-    public required string PanelNegativeToId { get; init; }
-    public required IEnumerable<PanelLink.Point> Points { get; init; }
+    public required string PositivePanelId { get; init; }
+    public required string NegativePanelId { get; init; }
+    public required IEnumerable<PanelLink.LinePoint> LinePoints { get; init; }
 }
 
 public class CreatePanelLinkRequestValidator : AbstractValidator<CreatePanelLinkRequest>
@@ -47,7 +47,7 @@ public class CreatePanelLinkRequestValidator : AbstractValidator<CreatePanelLink
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("StringId must be a valid Guid");
 
-        RuleFor(v => v.PanelLink.PanelPositiveToId)
+        RuleFor(v => v.PanelLink.PositivePanelId)
             .NotNull()
             .WithMessage("PositiveToId cannot be null")
             .NotEmpty()
@@ -55,7 +55,7 @@ public class CreatePanelLinkRequestValidator : AbstractValidator<CreatePanelLink
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("PositiveToId must be a valid Guid");
 
-        RuleFor(v => v.PanelLink.PanelNegativeToId)
+        RuleFor(v => v.PanelLink.NegativePanelId)
             .NotNull()
             .WithMessage("NegativeToId cannot be null")
             .NotEmpty()

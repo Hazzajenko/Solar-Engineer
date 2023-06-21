@@ -56,6 +56,24 @@ const reducer = createReducer(
 	on(StringsActions.deleteManyStrings, (state, { stringIds }) =>
 		stringsAdapter.removeMany(stringIds, state),
 	),
+	on(StringsActions.addStringNoSignalr, (state, { string }) =>
+		stringsAdapter.addOne(string, state),
+	),
+	on(StringsActions.addManyStringsNoSignalr, (state, { strings }) =>
+		stringsAdapter.addMany(strings, state),
+	),
+	on(StringsActions.updateStringNoSignalr, (state, { update }) =>
+		stringsAdapter.updateOne(update, state),
+	),
+	on(StringsActions.updateManyStringsNoSignalr, (state, { updates }) =>
+		stringsAdapter.updateMany(updates, state),
+	),
+	on(StringsActions.deleteStringNoSignalr, (state, { stringId }) =>
+		stringsAdapter.removeOne(stringId, state),
+	),
+	on(StringsActions.deleteManyStringsNoSignalr, (state, { stringIds }) =>
+		stringsAdapter.removeMany(stringIds, state),
+	),
 	on(StringsActions.clearStringsState, () => initialStringsState),
 )
 

@@ -66,11 +66,25 @@ export const PanelLinksActions = createActionGroup({
 		'Set Drawing Panel Polarity Symbol Line': props<{
 			panelSymbol: PanelSymbol
 		}>(),
-		'Clear Drawing Panel Polarity Symbol Line':
-			emptyProps() /*		'Set Selected Link Mode Panel Id': props<{
-		 panelId: PanelId
-		 }>(),
-		 'Clear Selected Link Mode Panel Id': emptyProps(),*/,
+		'Clear Drawing Panel Polarity Symbol Line': emptyProps(),
+		'Add Panel Link No Signalr': props<{
+			panelLink: PanelLinkModel
+		}>(),
+		'Add Many Panel Links No Signalr': props<{
+			panelLinks: PanelLinkModel[]
+		}>(),
+		'Update Panel Link No Signalr': props<{
+			update: UpdateStr<PanelLinkModel>
+		}>(),
+		'Update Many Panel Links No Signalr': props<{
+			updates: UpdateStr<PanelLinkModel>[]
+		}>(),
+		'Delete Panel Link No Signalr': props<{
+			panelLinkId: PanelLinkId
+		}>(),
+		'Delete Many Panel Links No Signalr': props<{
+			panelLinkIds: PanelLinkId[]
+		}>(),
 		'Clear Panel Links State': emptyProps(),
 		Noop: emptyProps(),
 	},

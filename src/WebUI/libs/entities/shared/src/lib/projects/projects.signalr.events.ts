@@ -22,6 +22,7 @@ export const PROJECTS_SIGNALR_EVENT = {
 	PROJECT_UPDATED: 'ProjectUpdated',
 	PROJECT_DELETED: 'ProjectDeleted',
 	RECEIVE_PROJECT_EVENT: 'ReceiveProjectEvent',
+	RECEIVE_COMBINED_PROJECT_EVENT: 'ReceiveCombinedProjectEvent',
 	INVITED_TO_PROJECT: 'InvitedToProject',
 	USERS_SENT_INVITE_TO_PROJECT: 'UsersSentInviteToProject',
 	USER_ACCEPTED_INVITE_TO_PROJECT: 'UserAcceptedInviteToProject',
@@ -43,6 +44,28 @@ export type SignalrEventRequest = {
 }
 
 export type SignalrEventResponse = SignalrEventRequest & {
+	byAppUserId: string
+	isSuccess: boolean
+	error?: string
+	timeStamp: string
+	serverTime: string
+	timeDiff: number
+	appending: boolean
+}
+
+export type CombinedProjectEvent = {
+	requestId: RequestId
+	projectId: ProjectId
+	actionOne: SignalrEventAction
+	modelOne: SignalrEventModel
+	dataOne: string
+	actionTwo: SignalrEventAction
+	modelTwo: SignalrEventModel
+	dataTwo: string
+	timeStamp: string
+}
+
+export type CombinedProjectEventResponse = CombinedProjectEvent & {
 	byAppUserId: string
 	isSuccess: boolean
 	error?: string

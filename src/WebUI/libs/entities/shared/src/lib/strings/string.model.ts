@@ -2,6 +2,7 @@ import { PanelId, PanelModel } from '../panels'
 import { BackendDataModel } from '../backend-data/backend-data.model'
 import { ENTITY_TYPE } from '../common'
 import { StringStatStringsWithPanelLinkStats } from '@entities/data-access'
+import { z } from 'zod'
 
 export type StringBackendModel = StringModel & BackendDataModel
 
@@ -13,6 +14,15 @@ export type StringModel = {
 	disconnectionPointId: PanelId | undefined
 	type: typeof ENTITY_TYPE.STRING
 }
+
+export const STRING_MODEL = z.object({
+	id: z.string(),
+	colour: z.string(),
+	name: z.string(),
+	parallel: z.boolean(),
+	disconnectionPointId: z.string().optional(),
+	type: z.literal(ENTITY_TYPE.STRING),
+})
 
 export type StringId = string & {
 	readonly _type: 'stringId'

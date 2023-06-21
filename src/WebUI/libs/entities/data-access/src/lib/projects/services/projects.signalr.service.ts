@@ -72,12 +72,14 @@ export class ProjectsSignalrService {
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED, (response: ProjectUpdatedResponse) => {
 			console.log(PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED, response)
-			const changes: Record<string, any> = {}
+			const changes: Partial<ProjectModel> = {}
 			if (response.changes.name) {
-				changes['name'] = response.changes.name
+				// changes['name'] = response.changes.name
+				changes.name = response.changes.name
 			}
 			if (response.changes.colour) {
-				changes['colour'] = response.changes.colour
+				// changes['colour'] = response.changes.colour
+				changes.colour = response.changes.colour
 			}
 			this._projectsStore.dispatch.updateProjectNoSignalr({
 				id: response.projectId,
@@ -93,13 +95,21 @@ export class ProjectsSignalrService {
 			console.log(PROJECTS_SIGNALR_EVENT.RECEIVE_PROJECT_EVENT, response)
 			this.receiveProjectEvent(response)
 		})
+		/*
+		 this.onHub(
+		 PROJECTS_SIGNALR_EVENT.RECEIVE_COMBINED_PROJECT_EVENT,
+		 (response: CombinedProjectEventResponse) => {
+		 console.log(PROJECTS_SIGNALR_EVENT.RECEIVE_COMBINED_PROJECT_EVENT, response)
+		 this.receiveProjectEvent(response)
+		 },
+		 )*/
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.GET_PROJECT, (response: GetProjectDataResponse) => {
 			console.log(PROJECTS_SIGNALR_EVENT.GET_PROJECT, response)
 			this._entitiesStore.panels.dispatch.loadPanels(response.panels)
 			this._entitiesStore.strings.dispatch.loadStrings(response.strings)
 			this._entitiesStore.panelConfigs.dispatch.loadPanelConfigs(response.panelConfigs)
-			// this._entitiesStore.panelLinks.addManyPanelLinks(response.panelLinks)
+			this._entitiesStore.panelLinks.dispatch.loadPanelLinks(response.panelLinks)
 		})
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.INVITED_TO_PROJECT, (response: InvitedToProjectResponse) => {
@@ -195,6 +205,16 @@ export class ProjectsSignalrService {
 			new Date(event.serverTime).getTime() - new Date(existingEvent.timeStamp).getTime()
 
 		console.log('timeDiff', timeDiff)
+
+		if (event.appending) {
+			const appendedUpdate = {
+				...event,
+				id: `${event.requestId}_appended`,
+				timeDiff,
+			}
+			this._signalrEventsStore.dispatch.addSignalrEvent(appendedUpdate)
+			return
+		}
 
 		const update: UpdateStr<SignalrEventResponse> = {
 			id: event.requestId,

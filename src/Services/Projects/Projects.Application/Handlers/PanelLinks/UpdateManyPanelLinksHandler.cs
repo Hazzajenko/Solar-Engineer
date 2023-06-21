@@ -58,7 +58,7 @@ public class UpdateManyPanelLinksHandler : ICommandHandler<UpdateManyPanelLinksC
                     changes.PanelNegativeToId.ToGuid()
                 );
                 negativePanel.ThrowExceptionIfNull(new HubException("Panel not found"));
-                panel.PanelNegativeToId = negativePanel.Id;
+                panel.NegativePanelId = negativePanel.Id;
             }
 
             if (changes.PanelPositiveToId is not null)
@@ -67,12 +67,12 @@ public class UpdateManyPanelLinksHandler : ICommandHandler<UpdateManyPanelLinksC
                     changes.PanelPositiveToId.ToGuid()
                 );
                 positivePanel.ThrowExceptionIfNull(new HubException("Panel not found"));
-                panel.PanelPositiveToId = positivePanel.Id;
+                panel.PositivePanelId = positivePanel.Id;
             }
 
-            if (changes.Points is not null)
+            if (changes.LinePoints is not null)
             {
-                panel.Points = changes.Points;
+                panel.LinePoints = changes.LinePoints;
             }
         }
 

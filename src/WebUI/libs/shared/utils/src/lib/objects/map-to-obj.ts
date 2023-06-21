@@ -10,8 +10,21 @@
  );
 
  */
-import { Dictionary } from '@ngrx/entity';
+import { Dictionary } from '@ngrx/entity'
+import { UpdateStr } from '@ngrx/entity/src/models'
 
+export const mapArrayToUpdateStr = <
+	T extends {
+		id: string
+	},
+>(
+	array: T[],
+): UpdateStr<T>[] => {
+	return array.map((item) => ({
+		id: item['id'],
+		changes: item,
+	}))
+}
 
 export const mapToObject = <
 	T extends {

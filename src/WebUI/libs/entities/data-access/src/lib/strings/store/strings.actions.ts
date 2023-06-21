@@ -1,6 +1,7 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { PanelModel, StringId, StringModel } from '@entities/shared'
 import { EntityUpdate } from '@shared/data-access/models'
+import { UpdateStr } from '@ngrx/entity/src/models'
 
 export const StringsActions = createActionGroup({
 	source: 'Strings Store',
@@ -31,6 +32,24 @@ export const StringsActions = createActionGroup({
 			stringId: StringId
 		}>(),
 		'Delete Many Strings': props<{
+			stringIds: StringId[]
+		}>(),
+		'Add String No Signalr': props<{
+			string: StringModel
+		}>(),
+		'Add Many Strings No Signalr': props<{
+			strings: StringModel[]
+		}>(),
+		'Update String No Signalr': props<{
+			update: UpdateStr<StringModel>
+		}>(),
+		'Update Many Strings No Signalr': props<{
+			updates: UpdateStr<StringModel>[]
+		}>(),
+		'Delete String No Signalr': props<{
+			stringId: StringId
+		}>(),
+		'Delete Many Strings No Signalr': props<{
 			stringIds: StringId[]
 		}>(),
 		'Clear Strings State': emptyProps(),

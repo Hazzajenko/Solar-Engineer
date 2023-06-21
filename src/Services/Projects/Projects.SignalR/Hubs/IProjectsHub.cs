@@ -28,6 +28,7 @@ public interface IProjectsHub
     Task NewProjectEvents(IEnumerable<ProjectEventResponse> projectEvents);
     Task ReceiveProjectEvents(IEnumerable<ProjectEventResponse> projectEvents);
     Task ReceiveProjectEvent(ProjectEventResponse projectEvent);
+    Task ReceiveCombinedProjectEvent(CombinedProjectEventResponse projectEvent);
 
     // Task PanelsCreated(IEnumerable<PanelDto> panels);
     Task PanelsUpdated(IEnumerable<PanelDto> panels);
