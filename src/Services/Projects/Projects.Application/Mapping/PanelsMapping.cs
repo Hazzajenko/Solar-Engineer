@@ -1,4 +1,7 @@
-﻿using Projects.Contracts.Data;
+﻿using System.Linq.Expressions;
+using Infrastructure.Extensions;
+using Projects.Contracts.Data;
+using Projects.Domain.Common;
 using Projects.Domain.Entities;
 
 namespace Projects.Application.Mapping;
@@ -19,6 +22,66 @@ public static class PanelsMapping
             ProjectId = projectId
         };#1#
     }*/
+
+    public static IEnumerable<ProjectItemUpdate> ToUpdatedStringResponse(
+        this IEnumerable<Panel> panels
+    )
+    {
+        return panels.Select(
+            x =>
+                new ProjectItemUpdate
+                {
+                    Id = x.Id.ToString(),
+                    Changes = new()
+                    {
+                        { nameof(Panel.StringId).ToCamelCase(), x.StringId.ToString() }
+                    }
+                }
+        );
+    }
+
+    public static PanelProjectItemUpdateDictionary ToUpdateDictionary2(
+        this Panel updatedPanel,
+        params Expression<Func<Panel, object>>[] propertySelectors
+    )
+    {
+        var dictionary = new PanelProjectItemUpdateDictionary { Id = updatedPanel.Id.ToString() };
+
+        foreach (var selector in propertySelectors)
+        {
+            var propertyName = ((MemberExpression)selector.Body).Member.Name;
+            var propertyValue = selector.Compile().Invoke(updatedPanel);
+            dictionary.Changes.Add(propertyName, propertyValue);
+        }
+
+        return dictionary;
+    }
+
+    public static PanelProjectItemUpdateDictionary ToUpdateDictionary(
+        this Panel updatedPanel,
+        Panel originalPanel
+    )
+    {
+        var changesDictionary = new PanelProjectItemUpdateDictionary
+        {
+            Id = originalPanel.Id.ToString()
+        };
+
+        foreach (var propertyInfo in typeof(Panel).GetProperties())
+        {
+            var originalPanelProp = originalPanel.GetType().GetProperty(propertyInfo.Name);
+            var updatedPanelProp = updatedPanel.GetType().GetProperty(propertyInfo.Name);
+            if (originalPanelProp is null && updatedPanelProp is null)
+            {
+                continue;
+            }
+            if (originalPanelProp == updatedPanelProp)
+                continue;
+            changesDictionary.Changes.Add(nameof(updatedPanelProp), updatedPanelProp);
+        }
+
+        return changesDictionary;
+    }
 
     public static PanelDto ToDto(this Panel panel)
     {

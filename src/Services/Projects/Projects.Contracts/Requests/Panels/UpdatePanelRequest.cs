@@ -4,14 +4,14 @@ public class UpdatePanelRequest : IProjectEventRequest
 {
     public required string ProjectId { get; init; }
 
-    public required PanelUpdate Update { get; init; }
+    public required PanelProjectItemUpdate ProjectItemUpdate { get; init; }
 }
 
 public class UpdatePanelRequestValidator : AbstractValidator<UpdatePanelRequest>
 {
     public UpdatePanelRequestValidator()
     {
-        RuleFor(v => v.Update.Id)
+        RuleFor(v => v.ProjectItemUpdate.Id)
             .NotNull()
             .WithMessage("Id cannot be null")
             .NotEmpty()
@@ -27,7 +27,7 @@ public class UpdatePanelRequestValidator : AbstractValidator<UpdatePanelRequest>
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("ProjectId must be a valid Guid");
 
-        RuleFor(v => v.Update.Changes)
+        RuleFor(v => v.ProjectItemUpdate.Changes)
             .NotNull()
             .WithMessage("Changes cannot be null")
             .NotEmpty()

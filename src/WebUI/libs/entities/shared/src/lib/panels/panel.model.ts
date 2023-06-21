@@ -22,6 +22,11 @@ export const PANEL_MODEL = z.object({
 	type: z.string().includes(ENTITY_TYPE.PANEL),
 })
 
+export const PANEL_MODEL_UPDATE = z.object({
+	id: z.string(),
+	changes: z.object(PANEL_MODEL.shape).partial(),
+})
+
 // azureApplicationInsightsConnectionString
 
 // PANEL_MODEL.array()

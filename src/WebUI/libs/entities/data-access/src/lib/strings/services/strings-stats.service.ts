@@ -24,6 +24,19 @@ export class StringsStatsService {
 		assertNotNull(selectedStringId)
 		const stringPanels = this._panelsStore.select.getByStringId(selectedStringId)
 
+		if (stringPanels.length === 0) {
+			return {
+				totalVoc: 'VOC: 0 V',
+				totalVmp: 'VMP: 0 V',
+				totalIsc: 'ISC: 0 A',
+				totalImp: 'IMP: 0 A',
+				totalPmax: 'PMAX: 0 W',
+				amountOfChains: 'Chains: 0',
+				amountOfLinks: 'Links: 0',
+				panelsWithoutLinks: 'Panels without links: 0',
+			}
+		}
+
 		const panelsWithSpecs = stringPanels.map((panel) => {
 			const panelConfig = this._panelConfigsStore.select.getById(panel.panelConfigId)
 			assertNotNull(panelConfig)

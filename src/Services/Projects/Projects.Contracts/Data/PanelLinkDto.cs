@@ -1,14 +1,15 @@
-﻿namespace Projects.Contracts.Data;
+﻿using Projects.Domain.Entities;
+
+namespace Projects.Contracts.Data;
 
 public class PanelLinkDto : IProjectItemDto
 {
     public string Type { get; set; } = EntityType.PanelLink;
-    public string PanelPositiveToId { get; set; } = default!;
+    public string StringId { get; set; } = default!;
+    public string PositivePanelId { get; set; } = default!;
+    public string NegativePanelId { get; set; } = default!;
 
-    public string PanelNegativeToId { get; set; } = default!;
-
-    // public Guid PanelPositiveToId { get; set; }
-    // public Guid PanelNegativeToId { get; set; }
+    public IEnumerable<PanelLink.LinePoint> LinePoints { get; set; } = default!;
     public string ProjectId { get; set; } = default!;
     public string Id { get; set; } = default!;
     public DateTime CreatedTime { get; set; }

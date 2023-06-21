@@ -16,7 +16,7 @@ export const addStringSignalr$ = createProjectSignalrEffect(
 		const request: CreateStringSignalrRequest = {
 			projectId,
 			string,
-			panelUpdates: [],
+			panelIds: [], // panelUpdates: [],
 		}
 		return {
 			requestId: newGuidT(),
@@ -31,10 +31,11 @@ export const addStringSignalr$ = createProjectSignalrEffect(
 export const addStringWithPanelsSignalr$ = createProjectSignalrEffect(
 	StringsActions.addStringWithPanels,
 	({ string, panelUpdates }, projectId) => {
+		const panelIds = panelUpdates.map((p) => p.id)
 		const request: CreateStringSignalrRequest = {
 			projectId,
 			string,
-			panelUpdates,
+			panelIds,
 		}
 		return {
 			requestId: newGuidT(),

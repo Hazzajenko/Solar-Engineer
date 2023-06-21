@@ -38,7 +38,7 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
             );
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
-        var panelId = command.Request.Update.Id.ToGuid();
+        var panelId = command.Request.ProjectItemUpdate.Id.ToGuid();
 
         var panel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
             panelId,
@@ -46,7 +46,7 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
         );
         panel.ThrowExceptionIfNull(new HubException("Panel not found"));
 
-        var changes = command.Request.Update.Changes;
+        var changes = command.Request.ProjectItemUpdate.Changes;
 
         _unitOfWork.Attach(panel);
         if (changes.Location is not null)

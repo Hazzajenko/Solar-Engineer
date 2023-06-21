@@ -4,7 +4,9 @@ public class CreateStringRequest : IProjectEventRequest
 {
     public required string ProjectId { get; init; }
     public required StringModel String { get; init; } = default!;
-    public IEnumerable<PanelUpdate> PanelUpdates { get; init; } = default!;
+    public IEnumerable<string> PanelIds { get; init; } = default!;
+
+    // public IEnumerable<PanelUpdate> PanelUpdates { get; init; } = default!;
 
     public class StringModel
     {
@@ -41,20 +43,18 @@ public class CreateStringRequestValidator : AbstractValidator<CreateStringReques
             .NotEmpty()
             .WithMessage("Name cannot be empty");
 
-        RuleFor(v => v.PanelUpdates)
+        /*RuleFor(v => v.PanelIds)
             .NotNull()
             .WithMessage("PanelIds cannot be null")
             .NotEmpty()
-            .WithMessage("PanelIds cannot be empty");
+            .WithMessage("PanelIds cannot be empty");*/
 
-        RuleForEach(v => v.PanelUpdates)
+        RuleForEach(v => v.PanelIds)
             .NotNull()
-            .WithMessage("Panel cannot be null")
+            .WithMessage("PanelId cannot be null")
             .NotEmpty()
-            .WithMessage("Panel cannot be empty")
-            .Must(x => x.Changes.StringId is not null)
-            .WithMessage("Panel must have the a StringId in Changes")
-            .Must(x => Guid.TryParse(x.Id, out _))
+            .WithMessage("PanelId cannot be empty")
+            .Must(x => Guid.TryParse(x, out _))
             .WithMessage("PanelId must be a valid Guid");
     }
 }

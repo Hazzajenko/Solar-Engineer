@@ -45,11 +45,11 @@ public class CreateStringHandler : ICommandHandler<CreateStringCommand, bool>
         if (stringId == "undefined")
             throw new HubException("String Id is undefined");
 
-        var panelIds = command.Request.PanelUpdates;
+        var panelIds = command.Request.PanelIds;
         IEnumerable<Guid> panelIdGuids = new List<Guid>();
         if (panelIds.Any())
-            panelIdGuids = panelIds.Select(x => x.Id.ToGuid());
-        IEnumerable<Panel>? panels = null;
+            panelIdGuids = panelIds.Select(Guid.Parse);
+        // IEnumerable<Panel>? panels = null;
         command.Request.DumpObjectJson();
         var @string = String.Create(
             (command.Request.String.Id, command.Request.String.Name, command.Request.String.Colour),
@@ -59,14 +59,30 @@ public class CreateStringHandler : ICommandHandler<CreateStringCommand, bool>
 
         @string = await _unitOfWork.StringsRepository.AddAndSaveChangesAsync(@string);
 
-        if (panelIdGuids.Any())
+        /*if (panelIdGuids.Any())
         {
-            panels = await _unitOfWork.PanelsRepository.GetManyPanelsAsync(projectId, panelIdGuids);
+            /*panels = await _unitOfWork.PanelsRepository.GetManyPanelsAsync(projectId, panelIdGuids);
+            if (panels.Count() != panelIdGuids.Count())
+            {
+                _logger.LogError(
+                    "One or more panels not found. ProjectId: {ProjectId}, PanelIdCount: {PanelIdCount} - PanelIdGuidCount: {PanelIdGuidCount}",
+                    projectId,
+                    panels.Count(),
+                    panelIdGuids.Count()
+                );
+                throw new HubException("One or more panels not found");
+            }#1#
+
+            /*panels = await _unitOfWork.PanelsRepository.GetManyPanelsAsync(projectId, panelIdGuids);
             if (panels.Count() != panelIdGuids.Count())
                 throw new HubException("One or more panels not found");
             panels = panels.Select(x => Panel.AddStringId(x, @string.Id));
-            await _unitOfWork.PanelsRepository.UpdateManyAndSaveChangesAsync(panels);
-        }
+            await _unitOfWork.PanelsRepository.UpdateManyAndSaveChangesAsync(panels);#1#
+            await _unitOfWork.PanelsRepository.ExecuteUpdateAsync(
+                panel => panelIdGuids.Contains(panel.Id),
+                panel => panel.SetProperty(x => x.StringId, x => @string.Id)
+            );
+        }*/
 
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
@@ -77,22 +93,53 @@ public class CreateStringHandler : ICommandHandler<CreateStringCommand, bool>
 
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(stringResponse);
 
-        if (panels is not null && panels.Any())
-        {
-            var panelsResponse = panels.ToProjectEventResponseFromEntityList(
-                command,
-                ActionType.UpdateMany,
-                appending: true
-            );
-            await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(panelsResponse);
-        }
-
         _logger.LogInformation(
             "User {User} created string {String} in project {Project}",
             appUserId.ToString(),
             @string.Id.ToString(),
             appUserProject.Project.Id
         );
+
+        if (panelIdGuids.Any())
+        {
+            await _unitOfWork.PanelsRepository.ExecuteUpdateAsync(
+                panel => panelIdGuids.Contains(panel.Id),
+                panel => panel.SetProperty(x => x.StringId, x => @string.Id)
+            );
+            var panels = await _unitOfWork.PanelsRepository.GetManyPanelsAsync(
+                projectId,
+                panelIdGuids
+            );
+
+            var panelChanges = panels.ToUpdatedStringResponse();
+            var json = panelChanges.ToJson();
+
+            // var newRes = new Dictionary<string, object>();
+            // newRes.Add("Action", "");
+            // newRes.Add("panels", json);
+
+            var response = new ProjectEventResponse
+            {
+                RequestId = command.RequestId,
+                ProjectId = projectId.ToString(),
+                Action = ActionType.UpdateMany,
+                Model = nameof(Panel),
+                ByAppUserId = appUserId.ToString(),
+                Appending = true,
+                IsSuccess = true,
+                Data = json
+            };
+
+            await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
+
+            _logger.LogInformation(
+                "User {User} updated {PanelsAmount} panels with string {String} in project {Project}",
+                appUserId.ToString(),
+                panelIdGuids.Count(),
+                @string.Id.ToString(),
+                appUserProject.Project.Id
+            );
+        }
 
         return true;
     }

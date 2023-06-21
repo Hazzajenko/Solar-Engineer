@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Repositories;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Projects.Application.Data;
 using Projects.Application.Mapping;
@@ -18,7 +19,8 @@ public sealed class PanelLinksRepository
     {
         return await Queryable
             .Where(x => x.ProjectId == projectId)
-            .Select(x => x.ToDto())
+            .ProjectToType<PanelLinkDto>()
+            // .Select(x => x.ToDto())
             .ToListAsync();
     }
 

@@ -3,6 +3,7 @@ using Infrastructure.Logging;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Contracts.Responses;
 using Projects.Domain.Common;
+using Projects.Domain.Entities;
 
 namespace Projects.Application.Mapping;
 
@@ -34,6 +35,35 @@ public static class ProjectEventsMapper
         projectEventResponse.DumpObjectJson();
         return projectEventResponse;
     }
+
+    /*public static ProjectEventResponse ToOptimisedUpdateManyProjectEventResponseFromEntity<
+        TEntityUpdate,
+        TEntity,
+        TProjectCommand
+    >(this IEnumerable<TEntityUpdate> entities, TProjectCommand command, string action, string model, bool appending = false)
+        where TEntity : IProjectItem
+        where TEntityUpdate : IProjectItemUpdate<TEntity, IProjectItemPartial<TEntity>>
+        where TProjectCommand : IProjectCommand
+    {
+        var dtoObject = entities.ToDtoObject();
+
+        var toJson = JsonSerializer.Serialize(
+            dtoObject,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+        );
+        var projectEventResponse = new ProjectEventResponse
+        {
+            RequestId = command.RequestId,
+            ProjectId = command.ProjectId,
+            ByAppUserId = command.User.Id.ToString(),
+            Action = action,
+            Model = model,
+            Data = toJson,
+            Appending = appending
+        };
+        projectEventResponse.DumpObjectJson();
+        return projectEventResponse;
+    }*/
 
     public static CombinedProjectEventResponse ToCombinedProjectEventResponse(
         this ProjectEventResponse response1,
@@ -75,7 +105,12 @@ public static class ProjectEventsMapper
     public static ProjectEventResponse ToProjectEventResponseFromEntityList<
         TEntity,
         TProjectCommand
-    >(this IEnumerable<TEntity> entities, TProjectCommand command, string action, bool appending = false)
+    >(
+        this IEnumerable<TEntity> entities,
+        TProjectCommand command,
+        string action,
+        bool appending = false
+    )
         where TEntity : IProjectItem
         where TProjectCommand : IProjectCommand
     {

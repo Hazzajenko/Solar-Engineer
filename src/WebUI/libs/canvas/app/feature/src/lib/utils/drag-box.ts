@@ -150,6 +150,13 @@ export const creationBoxMouseUp = (
 	if (takenSpots.length) {
 		return
 	}
+	if (spots.length > 30) {
+		console.error('Too many spots selected, max 30')
+		_appStore.dispatch.setDragBoxState({
+			state: 'NoDragBox',
+		})
+		return
+	}
 	const newPanels = spots.map((spot) => createPanel({ x: spot.x, y: spot.y }))
 	_panelsStore.dispatch.addManyPanels(newPanels)
 	_appStore.dispatch.setDragBoxState({

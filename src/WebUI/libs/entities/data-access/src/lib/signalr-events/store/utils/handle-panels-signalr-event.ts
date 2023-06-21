@@ -1,5 +1,6 @@
 import {
 	PANEL_MODEL,
+	PANEL_MODEL_UPDATE,
 	PanelId,
 	PanelModel,
 	SIGNALR_EVENT_ACTION,
@@ -7,9 +8,9 @@ import {
 } from '@entities/shared'
 import { PanelsActions } from '../../../panels'
 import { z } from 'zod'
-import { mapArrayToUpdateStr } from '@shared/utils'
+import { UpdateStr } from '@ngrx/entity/src/models'
 
-export function handlePanelSignalrEvent(signalrEvent: SignalrEventRequest) {
+export function handlePanelsSignalrEvent(signalrEvent: SignalrEventRequest) {
 	switch (signalrEvent.action) {
 		case SIGNALR_EVENT_ACTION.CREATE:
 			return handleCreatePanel(signalrEvent)
@@ -49,8 +50,9 @@ function handleUpdatePanel(signalrEvent: SignalrEventRequest) {
 }
 
 function handleUpdateManyPanels(signalrEvent: SignalrEventRequest) {
-	const panels = parsePanelArray(signalrEvent.data)
-	const updates = mapArrayToUpdateStr(panels)
+	// const panels = parsePanelArray(signalrEvent.data)
+	// const updates = mapArrayToUpdateStr(panels)
+	const updates = parsePanelUpdateArray(signalrEvent.data)
 	return PanelsActions.updateManyPanelsNoSignalr({ updates })
 }
 
@@ -74,6 +76,12 @@ const parsePanelArray = (data: string): PanelModel[] => {
 	const parsed = PANEL_MODEL.array().safeParse(JSON.parse(data))
 	if (!parsed.success) throw new Error(parsed.error.message)
 	return parsed.data as PanelModel[]
+}
+
+const parsePanelUpdateArray = (data: string): UpdateStr<PanelModel>[] => {
+	const parsed = PANEL_MODEL_UPDATE.array().safeParse(JSON.parse(data))
+	if (!parsed.success) throw new Error(parsed.error.message)
+	return parsed.data as UpdateStr<PanelModel>[]
 }
 
 const parsePanelId = (data: string): PanelId => {

@@ -7,7 +7,7 @@ import { SignalrEventsActions } from './signalr-events.actions'
 import {
 	handlePanelConfigSignalrEvent,
 	handlePanelLinkSignalrEvent,
-	handlePanelSignalrEvent,
+	handlePanelsSignalrEvent,
 	handleStringSignalrEvent,
 } from './utils'
 
@@ -18,7 +18,7 @@ export const addSignalrEvent$ = createEffect(
 			map(({ signalrEvent }) => {
 				switch (signalrEvent.model) {
 					case SIGNALR_EVENT_MODEL.PANEL:
-						return handlePanelSignalrEvent(signalrEvent)
+						return handlePanelsSignalrEvent(signalrEvent)
 					case SIGNALR_EVENT_MODEL.STRING:
 						return handleStringSignalrEvent(signalrEvent)
 					case SIGNALR_EVENT_MODEL.PANEL_LINK:
