@@ -21,9 +21,9 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { DatePipe } from '@angular/common'
 import { JwtModule } from '@auth0/angular-jwt'
-import { jwtInterceptor } from './interceptors'
 import { onCLS, onFID, onLCP } from 'web-vitals'
 import { GlobalErrorHandler } from '@app/data-access/errors'
+import { jwtInterceptor } from './interceptors'
 
 if (!environment.production) {
 	onCLS(console.log)
@@ -60,10 +60,16 @@ function provideWebAppProviders() {
 	return makeEnvironmentProviders([
 		provideZoneChangeDetection({ eventCoalescing: true }),
 		provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
-		provideNgrx(),
+		provideNgrx(), // provideHttpClient(),
+		// provideHttpClient(withInterceptors([authHttpInterceptorFn])),
 		provideHttpClient(withInterceptors([jwtInterceptor()])),
 		provideAnimations(),
-		provideNoopAnimations(),
+		provideNoopAnimations() /*		provideAuth0({
+		 ...environment.auth0Config,
+		 httpInterceptor: {
+		 ...environment.httpInterceptor,
+		 },
+		 }),*/,
 		importProvidersFrom(
 			BrowserAnimationsModule,
 			BrowserModule,

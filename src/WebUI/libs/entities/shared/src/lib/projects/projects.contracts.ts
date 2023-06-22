@@ -1,4 +1,4 @@
-import { ProjectId, ProjectModel } from './project.model'
+import { ProjectId, ProjectModel, ProjectUserModel } from './project.model'
 
 /**
  * * Requests
@@ -22,6 +22,10 @@ export type DeleteProjectRequest = {
 export type InviteToProjectRequest = {
 	projectId: ProjectId
 	invites: ProjectInvite[]
+}
+
+export type LeaveProjectRequest = {
+	projectId: ProjectId
 }
 
 export type ProjectInvite = {
@@ -71,7 +75,7 @@ export type InvitedToProjectResponse = {
 
 export type AcceptInviteToProjectResponse = {
 	projectId: ProjectId
-	userId: string
+	member: ProjectUserModel
 }
 
 export type RejectInviteToProjectResponse = {
@@ -82,6 +86,20 @@ export type RejectInviteToProjectResponse = {
 export type ProjectUpdatedResponse = {
 	projectId: ProjectId
 	changes: Partial<ProjectModel>
+}
+
+export type UserLeftProjectResponse = {
+	projectId: ProjectId
+	userId: string
+}
+
+export type UserKickedFromProjectResponse = {
+	projectId: ProjectId
+	userId: string
+}
+
+export type LeftProjectResponse = {
+	projectId: ProjectId
 }
 
 export type ProjectDeletedResponse = {

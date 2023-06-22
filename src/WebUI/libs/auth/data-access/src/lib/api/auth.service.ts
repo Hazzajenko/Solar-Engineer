@@ -4,6 +4,7 @@ import { GetTokenResponse } from '../contracts/get-token.response'
 import { GetUserResponse } from '../contracts/get-user.response'
 import { JwtHelperService } from '@auth0/angular-jwt'
 import { AuthorizeResponse } from '../contracts'
+import { CookieService } from 'ngx-cookie-service'
 
 @Injectable({
 	providedIn: 'root',
@@ -11,6 +12,7 @@ import { AuthorizeResponse } from '../contracts'
 export class AuthService {
 	private http = inject(HttpClient)
 	private jwtHelperService = inject(JwtHelperService)
+	cookieService = inject(CookieService)
 
 	// protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined
 
@@ -43,6 +45,14 @@ export class AuthService {
 
 	getToken() {
 		return this.http.get<GetTokenResponse>('/auth/token', { withCredentials: true })
+	}
+
+	getTokenFromCookie() {
+		return this.cookieService.get('token')
+	}
+
+	clearCookie() {
+		this.cookieService.delete('token')
 	}
 
 	getAuthorizationHeader(token: string) {

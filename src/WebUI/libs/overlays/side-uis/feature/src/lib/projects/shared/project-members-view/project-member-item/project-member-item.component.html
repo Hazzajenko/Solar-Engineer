@@ -1,0 +1,96 @@
+<div class="pb-4">
+	<div class="flex flex-col items-center pb-6 mt-4">
+		<div class="relative">
+			<img
+				[ngSrc]="member.photoUrl"
+				alt="{{ member.displayName }} profile picture"
+				class="w-24 h-24 mb-3 rounded-full shadow-lg"
+				height="100"
+				width="100"
+			/>
+			<span
+				*ngIf="member.isOnline"
+				class="absolute right-0 top-0 block h-1.5 w-1.5 rounded-full bg-green-400 ring-2 ring-white"
+			></span>
+		</div>
+
+		<h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+			{{ member.displayName }}
+			<span *ngIf="memberIsCurrentUser"> (You)</span>
+		</h5>
+		<span class="text-sm text-gray-500 dark:text-gray-400">
+			Last Active:
+			{{ member.lastActiveTime | timeDifferenceFromNow }}</span
+		>
+		<div *ngIf="!memberIsCurrentUser" class="flex mt-4 space-x-3 md:mt-6">
+			<button
+				(click)="openMemberOptionsDialog()"
+				class="group inline-flex items-center gap-x-1.5 rounded-md px-2.5 py-1.5 text-sm bg-white font-semibold text-gray-600 hover:text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+				type="button"
+			>
+				<svg-input class="group-hover:text-gray-700" inputClass="h-5 w-5" svgName="SvgCog8Tooth" />
+			</button>
+			<button
+				class="group inline-flex items-center gap-x-1.5 rounded-md px-2.5 py-1.5 text-sm bg-white font-semibold text-gray-600 hover:text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+				type="button"
+			>
+				<svg-input
+					class="group-hover:text-gray-700"
+					inputClass="h-5 w-5"
+					svgName="SvgChatBubbleLeft"
+				/>
+				Message
+			</button>
+		</div>
+	</div>
+	<dl class="-my-3 divide-y divide-gray-200 px-2 py-4 text-sm leading-6 space-y-2 mb-2">
+		<div class="flex flex-col">
+			<h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ member.displayName }}</h3>
+			<p class="text-xs text-gray-600 dark:text-gray-500">{{ member.userName }}</p>
+		</div>
+		<div class="flex flex-col text-gray-500">
+			<h6 class="text-gray-700 font-medium">Member Since</h6>
+			<p class="text-xs">{{ member.joinedAtTime | standaloneDate }}</p>
+			<p class="text-xs">{{ member.joinedAtTime | timeDifferenceFromNow }}</p>
+		</div>
+		<div class="flex flex-col text-gray-500">
+			<h6 class="text-gray-700 font-medium">Permissions</h6>
+			<p class="text-xs">
+				Role: <span class="font-medium">{{ member.role }}</span>
+			</p>
+			<div class="flex flex-row items-center justify-between">
+				<p class="text-xs">Can Create:</p>
+				<ng-container *ngTemplateOutlet="tickOnTrue; context: { bool: member.canCreate }" />
+			</div>
+			<div class="flex flex-row items-center justify-between">
+				<p class="text-xs">Can Invite:</p>
+				<ng-container *ngTemplateOutlet="tickOnTrue; context: { bool: member.canInvite }" />
+			</div>
+			<div class="flex flex-row items-center justify-between">
+				<p class="text-xs">Can Kick:</p>
+				<ng-container *ngTemplateOutlet="tickOnTrue; context: { bool: member.canKick }" />
+			</div>
+			<div class="flex flex-row items-center justify-between">
+				<p class="text-xs">Can Delete:</p>
+				<ng-container *ngTemplateOutlet="tickOnTrue; context: { bool: member.canDelete }" />
+			</div>
+		</div>
+	</dl>
+</div>
+
+<ng-template #tickOnTrue let-bool="bool">
+	<div class="ml-2">
+		<svg-input
+			*ngIf="bool"
+			class="h-5 w-5 text-green-500"
+			inputClass="h-5 w-5 text-green-500"
+			svgName="SvgCheckCircle"
+		/>
+		<svg-input
+			*ngIf="!bool"
+			class="h-5 w-5 text-green-500"
+			inputClass="h-5 w-5 text-green-500"
+			svgName="SvgXCircle"
+		/>
+	</div>
+</ng-template>

@@ -15,8 +15,6 @@ public static class AppUserMapper
     {
         var name = user.FindFirst(ClaimTypes.Name)?.Value;
         ArgumentNullException.ThrowIfNull(name);
-        var photoUrl = user.FindFirst(CustomClaims.Picture)?.Value;
-        ArgumentNullException.ThrowIfNull(photoUrl);
 
         if (externalLoginInfo.LoginProvider == "google")
         {
@@ -27,6 +25,8 @@ public static class AppUserMapper
             var email = user.FindFirst(ClaimTypes.Email)?.Value;
             ArgumentNullException.ThrowIfNull(email);
             var userName = Strings.Split(email, "@")[0];
+            var photoUrl = user.FindFirst(CustomClaims.Picture)?.Value;
+            ArgumentNullException.ThrowIfNull(photoUrl);
             return new AppUser
             {
                 FirstName = firstName,
@@ -48,6 +48,31 @@ public static class AppUserMapper
             ArgumentNullException.ThrowIfNull(userName);
             userName = userName.Replace(" ", "");
             userName = userName.ToLowerInvariant();
+            var photoUrl = user.FindFirst(CustomClaims.Picture)?.Value;
+            ArgumentNullException.ThrowIfNull(photoUrl);
+            return new AppUser
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                UserName = userName,
+                DisplayName = $"{firstName} {lastName}",
+                PhotoUrl = photoUrl
+            };
+        }
+
+        if (externalLoginInfo.LoginProvider == "microsoft")
+        {
+            var firstName = user.FindFirst(ClaimTypes.GivenName)?.Value;
+            ArgumentNullException.ThrowIfNull(firstName);
+            var lastName = user.FindFirst(ClaimTypes.Surname)?.Value;
+            ArgumentNullException.ThrowIfNull(lastName);
+            var email = user.FindFirst(ClaimTypes.Email)?.Value;
+            ArgumentNullException.ThrowIfNull(email);
+            var userName = Strings.Split(email, "@")[0];
+
+            var photoUrl = "https://robohash.org/user1.png?size=30x30";
+
             return new AppUser
             {
                 FirstName = firstName,

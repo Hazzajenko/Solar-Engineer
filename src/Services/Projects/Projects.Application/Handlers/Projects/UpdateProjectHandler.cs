@@ -63,7 +63,7 @@ public class UpdateProjectHandler : ICommandHandler<UpdateProjectCommand, bool>
         var projectMemberIds =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(projectId);
 
-        var response = new UpdateProjectResponse
+        var response = new ProjectUpdatedResponse
         {
             ProjectId = projectId.ToString(),
             Changes = projectChanges

@@ -38,8 +38,8 @@
 			</div>
 		</form>
 		<div *ngIf="userSearchResults().length" class="pt-2">
-			<ul>
-				<li *ngFor="let userResult of userSearchResults()">
+			<ul class="space-y-1">
+				<li *ngFor="let userResult of userSearchResults(); trackBy: webUserModelTrackByFn">
 					<app-users-view-user-preview
 						(userContextMenuOpen)="openUserContextMenu($event, userResult)"
 						(userViewToggle)="toggleUserView(userResult.id)"
@@ -78,8 +78,8 @@
 </ng-template>
 
 <ng-template #friendsList>
-	<ul>
-		<li *ngFor="let friend of friends()">
+	<ul class="space-y-1">
+		<li *ngFor="let friend of friendsSorted(); trackBy: webUserModelTrackByFn">
 			<app-users-view-user-preview
 				(userContextMenuOpen)="openUserContextMenu($event, friend)"
 				(userViewToggle)="toggleUserView(friend.id)"

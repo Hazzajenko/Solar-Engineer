@@ -20,10 +20,8 @@
 			{{ friend.lastActiveTime | timeDifferenceFromNow }}</span
 		>
 		<div class="flex mt-4 space-x-3 md:mt-6">
-			<ng-container
-				*ngIf="friend.isFriend; then notFriendsTemplate; else friendsTemplate"
-			></ng-container>
-			<ng-template #notFriendsTemplate>
+			<ng-container *ngIf="friend.isFriend; then friendsTemplate; else notFriendsTemplate" />
+			<ng-template #friendsTemplate>
 				<button
 					(click)="openUserOptionsDialog($event)"
 					class="group inline-flex items-center gap-x-1.5 rounded-md px-2.5 py-1.5 text-sm bg-white font-semibold text-gray-600 hover:text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -34,10 +32,9 @@
 						inputClass="h-5 w-5"
 						svgName="SvgCog8Tooth"
 					/>
-					Options
 				</button>
 			</ng-template>
-			<ng-template #friendsTemplate>
+			<ng-template #notFriendsTemplate>
 				<button
 					class="bg-blue-500 hover:bg-blue-600 text-white inline-flex items-center justify-center font-medium rounded-lg text-sm px-5 py-2.5 text-center focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 					type="submit"
@@ -46,6 +43,7 @@
 					Add friend
 				</button>
 			</ng-template>
+
 			<button
 				class="group inline-flex items-center gap-x-1.5 rounded-md px-2.5 py-1.5 text-sm bg-white font-semibold text-gray-600 hover:text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 				type="button"

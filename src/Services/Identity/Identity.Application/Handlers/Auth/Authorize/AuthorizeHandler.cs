@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Identity.Application.Exceptions;
 using Identity.Application.Extensions;
+using Identity.Application.Handlers.Auth.CreateInitialDp;
 using Identity.Application.Handlers.Images.CreateDpImage;
 using Identity.Application.Mapping;
 using Identity.Domain;
@@ -17,6 +18,8 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
     private readonly IMediator _mediator;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly UserManager<AppUser> _userManager;
+
+    // private readonly IImagesService _imagesService;
 
     public AuthorizeHandler(
         UserManager<AppUser> userManager,
@@ -139,10 +142,10 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
             throw new UnauthorizedException();
         }
 
-        // var initials = appUser.GetInitials();
-        // var imageResponse = await _mediator.Send(new CreateDpImageCommand(initials));
-        // appUser.PhotoUrl = imageResponse.ImageUrl;
-        // await _userManager.UpdateAsync(appUser);
+        var response = await _mediator.Send(new CreateInitialDpCommand(appUser));
+
+        appUser.PhotoUrl = response.PhotoUrl;
+        await _userManager.UpdateAsync(appUser);
         return new() { AppUser = appUser, LoginProvider = externalLogin.LoginProvider };
     }
 }

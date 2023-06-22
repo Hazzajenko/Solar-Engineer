@@ -1,9 +1,7 @@
 import { PROJECTS_FEATURE_KEY, projectsAdapter, ProjectsState } from './projects.reducer'
-import { ProjectModel, ProjectWebModel } from '@entities/shared'
+import { ProjectModel } from '@entities/shared'
 import { Dictionary } from '@ngrx/entity'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import { selectUserById } from '@auth/data-access'
-import { WebUserModel } from '@auth/shared'
 
 export const selectProjectsState = createFeatureSelector<ProjectsState>(PROJECTS_FEATURE_KEY)
 
@@ -53,17 +51,6 @@ export const selectProjectReadyForReset = createSelector(
 		state.storesToClear.panelLinks &&
 		state.storesToClear.panelConfigs,
 )
-
-export const selectProjectByIdWithProjectWebUsers = (props: { id: string }) =>
-	createSelector(
-		selectProjectById({ id: props.id }),
-		selectUserById({ id: props.id }),
-		(project: ProjectModel | undefined, user: WebUserModel | undefined) => {
-			if (!project || !user) return undefined
-			const members = project.members.map((m) => ({ ...m, ...user }))
-			return { ...project, members } as ProjectWebModel
-		},
-	)
 
 // s1: Selector<T, R>,     projector: (s1: R) => R):    MemoizedSelector<T, R, (s1: R) => R>
 /*

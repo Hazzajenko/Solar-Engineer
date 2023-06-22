@@ -1,6 +1,10 @@
-﻿namespace Identity.Application.Services.Images;
+﻿using Identity.Domain;
+
+namespace Identity.Application.Services.Images;
 
 public interface IImagesService
 {
-    Task<string> DownloadImageAsync(string imageUrl);
+    byte[] CreateDpImageToByteArray(AppUser appUser);
+    byte[] CreateDpImageFromInitialsToByteArray(string initials);
+    // Task<string> DownloadImageAsync(string imageUrl);
 }

@@ -26,13 +26,26 @@ public class ReceiveNotificationHandler : ICommandHandler<ReceiveNotificationCom
 
     public async ValueTask<bool> Handle(ReceiveNotificationCommand command, CancellationToken cT)
     {
-        var appUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(command.AuthUser.Id);
-        appUser.ThrowHubExceptionIfNull();
+        // var appUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(command.AuthUser.Id);
+        // appUser.ThrowHubExceptionIfNull();
+        var appUserId = command.AuthUser.Id;
 
         var notificationId = command.NotificationId.ToGuid();
 
-        var notification = await _unitOfWork.NotificationsRepository.GetByIdAsync(notificationId);
+        var notification = await _unitOfWork.NotificationsRepository.GetByIdStandaloneAsync(
+            notificationId
+        );
         notification.ThrowHubExceptionIfNull();
+
+        if (notification.AppUserId != appUserId)
+        {
+            _logger.LogError(
+                "Notification {NotificationId} not received by {AppUserId} - {AppUserUserName}",
+                notification.Id.ToString(),
+                appUserId.ToString(),
+                command.AuthUser.UserName
+            );
+        }
 
         notification.SetReceivedByAppUser();
         await _unitOfWork.NotificationsRepository.UpdateAsync(notification);
@@ -40,8 +53,8 @@ public class ReceiveNotificationHandler : ICommandHandler<ReceiveNotificationCom
 
         _logger.LogInformation(
             "Notification received by {AppUserId} - {AppUserUserName}",
-            appUser.Id.ToString(),
-            appUser.UserName
+            appUserId.ToString(),
+            command.AuthUser.UserName
         );
 
         return true;

@@ -23,6 +23,7 @@ export const selectAllUsersMappedWithConnections = createSelector(
 			}
 			return {
 				...user,
+				isFriend: user.isFriend,
 				isOnline: !!connection,
 				lastActiveTime: connection.lastActiveTime,
 			}

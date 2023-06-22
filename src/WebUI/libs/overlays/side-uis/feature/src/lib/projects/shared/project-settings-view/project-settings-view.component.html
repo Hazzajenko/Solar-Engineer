@@ -1,1 +1,28 @@
 <side-ui-view-heading heading="{{ project.name }} Settings" />
+<div class="flex flex-col space-y-2">
+	<button
+		(click)="leaveProject()"
+		class="group w-full justify-center inline-flex items-center rounded-md px-2.5 py-1.5 text-sm bg-white font-semibold text-gray-600 hover:text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+		type="button"
+	>
+		<svg-input class="mr-2" svgName="SvgUserMinus" />
+		Leave Project
+	</button>
+	<button
+		(click)="deleteProject()"
+		[disabled]="!canDeleteProject()"
+		[ngClass]="{
+			'opacity-50 cursor-not-allowed': !canDeleteProject(),
+			'hover:bg-red-600 hover:text-white': canDeleteProject()
+		}"
+		class="w-full bg-red-500 hover:bg-red-600 text-white inline-flex items-center justify-center font-medium rounded-md text-sm px-2.5 py-1.5 text-center focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+		type="submit"
+	>
+		<svg-input class="mr-2" svgName="SvgTrash" />
+
+		Delete Project
+	</button>
+	<p *ngIf="!canDeleteProject()" class="font-medium text-red-500 text-xs mt-1 ml-1">
+		You must be the owner of the project to delete.
+	</p>
+</div>

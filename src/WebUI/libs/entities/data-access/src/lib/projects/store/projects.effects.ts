@@ -1,11 +1,12 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
-import { map, tap } from 'rxjs'
+import { catchError, map, of, tap } from 'rxjs'
 import { ProjectsSignalrService } from '../services'
 import { ProjectsActions } from './projects.actions'
-import { injectEntityStore } from '@entities/data-access'
+import { injectEntityStore, selectProjectById } from '@entities/data-access'
 import { AuthActions } from '@auth/data-access'
 import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
+import { Store } from '@ngrx/store'
 
 export const createProjectSignalr$ = createEffect(
 	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
@@ -52,6 +53,65 @@ export const deleteProjectSignalr$ = createEffect(
 		)
 	},
 	{ functional: true, dispatch: false },
+)
+
+export const userAcceptedInviteToProject$ = createEffect(
+	(actions$ = inject(Actions), store = inject(Store)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.userAcceptedInviteToProject),
+			map(({ response }) => {
+				const projectToUpdate = store.selectSignal(selectProjectById({ id: response.projectId }))()
+				if (!projectToUpdate) {
+					throw new Error(`Project not found, ${response.projectId}`)
+				}
+				const memberIds = projectToUpdate.memberIds.concat(response.member.id)
+				const members = projectToUpdate.members.concat(response.member)
+				return ProjectsActions.updateProjectNoSignalr({
+					update: { id: projectToUpdate.id, changes: { memberIds, members } },
+				})
+			}),
+			catchError((error) => {
+				console.error(error)
+				return of(ProjectsActions.getProjectFailure({ error }))
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+export const leaveProject$ = createEffect(
+	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.leaveProject),
+			tap(({ projectId }) => projectsSignalr.leaveProject({ projectId })),
+		)
+	},
+	{ functional: true, dispatch: false },
+)
+
+export const userLeftProject$ = createEffect(
+	(actions$ = inject(Actions), store = inject(Store)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.userLeftProject),
+			map(({ response }) => {
+				const { projectId, userId } = response
+				const projectToUpdate = store.selectSignal(selectProjectById({ id: projectId }))()
+				if (!projectToUpdate) {
+					throw new Error(`Project not found, ${projectId}`)
+				}
+				const memberIds = projectToUpdate.memberIds.filter((id) => id !== userId)
+				const members = projectToUpdate.members.filter((member) => member.id !== userId)
+				return ProjectsActions.updateProjectNoSignalr({
+					update: { id: projectToUpdate.id, changes: { memberIds, members } },
+				})
+			}),
+			catchError((error) => {
+				console.error(error)
+				return of(ProjectsActions.getProjectFailure({ error }))
+			}),
+		)
+	},
+	{ functional: true },
 )
 
 /*

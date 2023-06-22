@@ -1,12 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, Input, signal } from '@angular/core'
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
+import { ChangeDetectionStrategy, Component, computed, inject, Input } from '@angular/core'
+import { ReactiveFormsModule } from '@angular/forms'
 import { ProjectWebModel } from '@entities/shared'
 import { injectAppUser } from '@auth/data-access'
-import {
-	TAILWIND_COLOUR_500,
-	TAILWIND_COLOUR_500_VALUES,
-	TailwindColor500,
-} from '@shared/data-access/models'
 import { AuthWebUserAvatarComponent } from '@auth/ui'
 import { LetDirective } from '@ngrx/component'
 import { NgClass, NgForOf, NgIf, NgStyle } from '@angular/common'
@@ -14,7 +9,12 @@ import { TruncatePipe } from '@shared/pipes'
 import { SideUiViewHeadingComponent } from '../../../shared'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
-import { InputSvgComponent } from '@shared/ui'
+import { InputSvgComponent, SpinnerComponent } from '@shared/ui'
+import { MatButtonModule } from '@angular/material/button'
+import { MatTooltipModule } from '@angular/material/tooltip'
+import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
+import { injectProjectsStore } from '@entities/data-access'
+import { SideUiNavBarStore } from '../../../side-ui-nav-bar/side-ui-nav-bar.store'
 
 @Component({
 	selector: 'app-project-settings-view',
@@ -32,79 +32,67 @@ import { InputSvgComponent } from '@shared/ui'
 		MatInputModule,
 		ReactiveFormsModule,
 		InputSvgComponent,
+		SpinnerComponent,
+		MatButtonModule,
+		MatTooltipModule,
 	],
 	templateUrl: './project-settings-view.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectSettingsViewComponent {
-	private _fb = inject(FormBuilder)
-	private _project!: ProjectWebModel
+	private _uiStore = injectUiStore()
+	private _projectsStore = injectProjectsStore()
+	private _navBarStore = inject(SideUiNavBarStore)
 	user = injectAppUser()
-	updateProjectForm = this._fb.group({
-		name: ['', [Validators.required, Validators.minLength(4)]],
-		colour: [TAILWIND_COLOUR_500.blue as string, [Validators.required]],
+	@Input({ required: true }) project!: ProjectWebModel
+
+	currentMember = computed(() => {
+		const user = this.user()
+		if (!user) return
+		return this.project.members.find((m) => m.id === user.id)
 	})
-	updateProjectNameForm = this._fb.group({
-		name: ['', [Validators.required, Validators.minLength(4)]],
+
+	canDeleteProject = computed(() => {
+		const currentMember = this.currentMember()
+		if (!currentMember) return false
+		return currentMember.role === 'Owner'
 	})
-	loading = signal(false)
-	editingProjectName = signal(false)
-	protected readonly TAILWIND_COLOUR_500_VALUES = TAILWIND_COLOUR_500_VALUES
 
-	get project() {
-		return this._project
-	}
-
-	@Input({ required: true }) set project(value: ProjectWebModel) {
-		this._project = value
-		this.updateProjectNameForm.patchValue({
-			name: value.name,
-		})
-		this.updateProjectForm.patchValue({
-			name: value.name,
-			colour: value.colour,
+	leaveProject() {
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.WARNING_TEMPLATE,
+			data: {
+				title: `Leave Project ${this.project.name}`,
+				message: 'Are you sure you want to leave this project?',
+				buttonText: 'Leave',
+				buttonAction: () => {
+					this._projectsStore.dispatch.leaveProject(this.project.id)
+					this._navBarStore.changeView('projects')
+				},
+			},
 		})
 	}
 
-	setColour(colour: TailwindColor500) {
-		this.updateProjectForm.get('colour')?.setValue(colour)
-	}
-
-	updateProject() {
-		if (!this.updateProjectForm.valid) {
-			console.error('Invalid Form')
-			return
+	deleteProject() {
+		if (!this.canDeleteProject()) {
+			throw new Error('Cannot delete project')
 		}
-
-		const name = this.updateProjectForm.get('name')?.value
-		const colour = this.updateProjectForm.get('colour')?.value
-
-		if (!name || !colour) {
-			throw new Error('Name or colour is undefined')
-		}
-
-		this.loading.set(true)
-		setTimeout(() => {
-			console.log('Updating project')
-		}, 100)
-	}
-
-	inputChange() {
-		const name = this.updateProjectForm.get('name')?.value
-		if (!name) {
-			return
-		}
-
-		if (name.length < 4) {
-			return
-		}
-
-		this.updateProjectForm.controls.name.markAsTouched()
-		this.updateProjectForm.controls.name.updateValueAndValidity()
-	}
-
-	startEditingProjectName() {
-		this.editingProjectName.set(true)
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.WARNING_TEMPLATE,
+			data: {
+				title: `Delete Project ${this.project.name}`,
+				message: 'Are you sure you want to delete this project?',
+				buttonText: 'Delete',
+				buttonAction: () => {
+					this._projectsStore.dispatch.deleteProject(this.project.id)
+					this._navBarStore.changeView('projects')
+				},
+			},
+		})
+		/*		this._uiStore.dispatch.openDialog({
+		 component: DIALOG_COMPONENT.DELETE_PROJECT_WARNING,
+		 data: { projectId: this.project.id },
+		 })*/
 	}
 }

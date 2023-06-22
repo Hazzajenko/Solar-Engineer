@@ -2,7 +2,6 @@ import { Store } from '@ngrx/store'
 import {
 	selectAllProjects,
 	selectProjectById,
-	selectProjectByIdWithProjectWebUsers,
 	selectProjectReadyForReset,
 	selectProjectReadyToRender,
 	selectProjectsEntities,
@@ -12,12 +11,14 @@ import {
 import { ProjectsActions } from './projects.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import {
+	AcceptInviteToProjectResponse,
 	AcceptProjectInviteRequest,
 	CreateProjectRequest,
 	InviteToProjectRequest,
 	ProjectId,
 	ProjectModel,
 	RejectProjectInviteRequest,
+	UserLeftProjectResponse,
 } from '@entities/shared'
 import { createRootServiceInjector } from '@shared/utils'
 import { EntityUpdate } from '@shared/data-access/models'
@@ -43,8 +44,6 @@ export function projectsStoreFactory(store: Store) {
 		selectById: (id: ProjectId) => store.selectSignal(selectProjectById({ id })),
 		projectReadyToRender: store.selectSignal(selectProjectReadyToRender),
 		projectReadyForReset: store.selectSignal(selectProjectReadyForReset), // allWebProjects: store.selectSignal(selectAllWebProjects),
-		projectByIdWithProjectWebUsers: (id: ProjectId) =>
-			store.selectSignal(selectProjectByIdWithProjectWebUsers({ id })),
 	}
 
 	const dispatch = {
@@ -61,6 +60,10 @@ export function projectsStoreFactory(store: Store) {
 			store.dispatch(ProjectsActions.acceptProjectInvite({ request })),
 		rejectProjectInvite: (request: RejectProjectInviteRequest) =>
 			store.dispatch(ProjectsActions.rejectProjectInvite({ request })),
+		userAcceptedInviteToProject: (response: AcceptInviteToProjectResponse) =>
+			store.dispatch(ProjectsActions.userAcceptedInviteToProject({ response })),
+		userLeftProject: (response: UserLeftProjectResponse) =>
+			store.dispatch(ProjectsActions.userLeftProject({ response })),
 		addProject: (project: ProjectModel) => store.dispatch(ProjectsActions.addProject({ project })),
 		addManyProjects: (projects: ProjectModel[]) =>
 			store.dispatch(ProjectsActions.addManyProjects({ projects })),
@@ -72,8 +75,12 @@ export function projectsStoreFactory(store: Store) {
 			store.dispatch(ProjectsActions.updateManyProjects({ updates })),
 		deleteProject: (projectId: ProjectId) =>
 			store.dispatch(ProjectsActions.deleteProject({ projectId })),
+		deleteProjectNoSignalr: (projectId: ProjectId) =>
+			store.dispatch(ProjectsActions.deleteProjectNoSignalr({ projectId })),
 		deleteManyProjects: (projectIds: ProjectId[]) =>
 			store.dispatch(ProjectsActions.deleteManyProjects({ projectIds })),
+		leaveProject: (projectId: ProjectId) =>
+			store.dispatch(ProjectsActions.leaveProject({ projectId })),
 		clearProjectsState: () => store.dispatch(ProjectsActions.clearProjectsState()),
 	}
 

@@ -4,7 +4,6 @@ import {
 	computed,
 	inject,
 	Injector,
-	Signal,
 	signal,
 } from '@angular/core'
 import {
@@ -23,7 +22,7 @@ import {
 	injectUiStore,
 } from '@overlays/ui-store/data-access'
 import { TruncatePipe } from '@shared/pipes'
-import { isWebUser, minimalToWebUser, WebUserModel } from '@auth/shared'
+import { minimalToWebUser, WebUserModel } from '@auth/shared'
 import { notification } from '@tauri-apps/api'
 import { LetDirective } from '@ngrx/component'
 import { SideUiBaseComponent } from '../side-ui-base/side-ui-base.component'
@@ -75,19 +74,52 @@ export class SideUiUsersViewComponent {
 		const filteredNotAuthUser = results.filter((r) => r.id !== this.user()?.id)
 		return filteredNotAuthUser.map(minimalToWebUser)
 	})
-
 	/*	friends = computed(() => {
 	 const friends = this._usersStore.select.allFriends()
 	 const fakeData = GenerateFriendData(10)
 	 return friends.concat(fakeData)
 	 })*/
-	friends = this._usersStore.select.allFriends as Signal<WebUserModel[]>
+	friends = this._usersStore.select.allFriends
+	webUserSorter = signal<keyof WebUserModel | undefined>('lastActiveTime')
+	friendsSorted = computed(() => {
+		const friends = this.friends()
+		const sorter = this.webUserSorter()
+		if (!sorter) return friends
+		if (
+			sorter === 'lastActiveTime' ||
+			sorter === 'registeredAtTime' ||
+			sorter === 'becameFriendsTime'
+		) {
+			return friends.sort((a, b) => {
+				const aKey = a[sorter]
+				const bKey = b[sorter]
+				if (!aKey || !bKey) return 0
+				const aTime = new Date(aKey).getTime()
+				const bTime = new Date(bKey).getTime()
+				if (aTime < bTime) return 1
+				if (aTime > bTime) return -1
+				return 0
+			})
+		}
+		if (sorter === 'isOnline') {
+			return friends.sort((a, b) => {
+				const aKey = a[sorter]
+				const bKey = b[sorter]
+				if (aKey && !bKey) return -1
+				if (!aKey && bKey) return 1
+				return 0
+			})
+		}
+		return friends
+	})
 
 	openedUsers = signal<Set<string>>(new Set())
-	// openedUsers = signal<Map<string, boolean>>(new Map())
 	selectedUserId = signal<string | undefined>(undefined)
-	protected readonly isWebUser = isWebUser
 	protected readonly notification = notification
+
+	webUserModelTrackByFn(index: number, item: WebUserModel) {
+		return item.id || index
+	}
 
 	selectUser(userId: string) {
 		if (this.selectedUserId() === userId) return

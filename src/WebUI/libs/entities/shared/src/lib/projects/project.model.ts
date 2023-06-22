@@ -40,7 +40,7 @@ export type ProjectUserId = string & {
 	readonly _type: 'projectUserId'
 }
 
-export type ProjectUserRole = 'owner' | 'admin' | 'member'
+export type ProjectUserRole = 'Owner' | 'Admin' | 'Member'
 
 export type GetProjectDataResponse = {
 	id: string

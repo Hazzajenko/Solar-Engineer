@@ -7,6 +7,7 @@ namespace Identity.Application.Repositories.Notifications;
 public interface INotificationsRepository : IGenericRepository<Notification>
 {
     new Task<Notification?> GetByIdAsync(Guid id);
+    Task<Notification?> GetByIdStandaloneAsync(Guid id);
     Task<IEnumerable<Notification>> GetManyNotificationsByIdsAsync(IEnumerable<Guid> ids);
 
     Task<Notification?> GetNotificationByAppUserIdAndProjectIdAndTypeAsync(

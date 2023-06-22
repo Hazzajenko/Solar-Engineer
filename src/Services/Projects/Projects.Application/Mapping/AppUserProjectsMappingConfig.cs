@@ -26,6 +26,7 @@ public class AppUserProjectsMappingConfig : IRegister
                 dest => dest.MemberIds,
                 src => src.Project.AppUserProjects.Select(z => z.AppUserId.ToString())
             )
+            .Map(dest => dest.UndefinedStringId, src => src.Project.UndefinedStringId.ToString())
             .Map(
                 dest => dest.Members,
                 src =>
@@ -43,6 +44,16 @@ public class AppUserProjectsMappingConfig : IRegister
                             }
                     )
             );
+
+        config
+            .NewConfig<AppUserProject, ProjectUserDto>()
+            .Map(dest => dest.Id, src => src.AppUserId.ToString())
+            .Map(dest => dest.Role, src => src.Role)
+            .Map(dest => dest.CanCreate, src => src.CanCreate)
+            .Map(dest => dest.CanDelete, src => src.CanDelete)
+            .Map(dest => dest.CanInvite, src => src.CanInvite)
+            .Map(dest => dest.CanKick, src => src.CanKick)
+            .Map(dest => dest.JoinedAtTime, src => src.CreatedTime);
     }
 }
 //

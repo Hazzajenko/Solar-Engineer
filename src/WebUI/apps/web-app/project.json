@@ -67,6 +67,10 @@
 						{
 							"replace": "libs/shared/environment/src/lib/environment.ts",
 							"with": "libs/shared/environment/src/lib/environment.prod.ts"
+						},
+						{
+							"replace": "libs/shared/environment/src/lib/auth0.ts",
+							"with": "libs/shared/environment/src/lib/auth0.prod.ts"
 						}
 					]
 				},

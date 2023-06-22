@@ -45,9 +45,10 @@
 			</div>
 		</div>
 	</div>
-	<ng-container *ngFor="let project of projects">
+	<ng-container *ngFor="let project of projects(); trackBy: projectTrackByFn">
 		<li
 			(click)="selectProject(project)"
+			(contextmenu)="openProjectContextMenu($event, project)"
 			*ngrxLet="{
 				isSelected: selectedProject()?.id === project.id,
 				isOpen: openedProjectId() === project.id

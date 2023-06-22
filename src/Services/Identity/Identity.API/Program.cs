@@ -33,9 +33,16 @@ builder.Services.InitOpenTelemetry(config, environment);
 
 builder.Services.InitHealthChecks(config, environment);
 var jwtSettings = await config.GetJwtSettings(environment);
+
+/*builder.Services.AddJsonOptions(options =>
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);*/
+
 builder.Services.AddApplicationServices(config, environment, jwtSettings);
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddIdentityServices(config);
+
+// builder.Services.InitAuthenticationAuth0();
+
 builder.Services.InitAuthentication(config, environment, jwtSettings);
 builder.Services.InitAuthorization(config);
 builder.Services.AddScoped<ApiKeyAuthFilter>();
@@ -138,6 +145,21 @@ loginEndpoints.MapGet(
         );
         properties.AllowRefresh = true;
         return Results.Challenge(properties, new List<string> { "google" });
+    }
+);
+
+loginEndpoints.MapGet(
+    "/microsoft",
+    (SignInManager<AppUser> signInManager) =>
+    {
+        var provider = "microsoft";
+        var redirectUrl = "/?authorize=true";
+        var properties = signInManager.ConfigureExternalAuthenticationProperties(
+            provider,
+            redirectUrl
+        );
+        properties.AllowRefresh = true;
+        return Results.Challenge(properties, new List<string> { "microsoft" });
     }
 );
 

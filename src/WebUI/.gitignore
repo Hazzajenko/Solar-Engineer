@@ -7,6 +7,14 @@ supabase.ts
 supabase.js
 supabase.d.ts
 
+auth0.ts
+auth0.js
+auth0.d.ts
+
+auth0.prod.ts
+auth0.prod.js
+auth0.prod.d.ts
+
 sentry.ts
 sentry.js
 sentry.d.ts

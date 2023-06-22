@@ -3,11 +3,13 @@ using FluentValidation.Results;
 using Infrastructure.Events;
 using Infrastructure.Extensions;
 using Infrastructure.Mapping;
+using Mapster;
 using MassTransit;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Data;
 using Projects.Contracts.Responses.Projects;
 using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Projects;
@@ -86,20 +88,22 @@ public class AcceptProjectInviteHandler : ICommandHandler<AcceptProjectInviteCom
                 projectIdGuid
             );
 
-        var acceptInviteToProjectResponse = new AcceptInviteToProjectResponse
+        var projectUser = appUserProject.Adapt<ProjectUserDto>();
+
+        var acceptInviteToProjectResponse = new UserAcceptedInviteToProjectResponse
         {
             ProjectId = command.Request.ProjectId,
-            UserId = appUser.Id.ToString(),
+            Member = projectUser
         };
 
-        var projectDto = appUserProject.Project.ToDto();
+        var projectDto = appUserProject.Adapt<ProjectDto>();
+        // var projectDto = appUserProject.Project.ToDto();
 
-        var invitedToProjectResponse = new InvitedToProjectResponse
-        {
-            Project = projectDto
-        };
+        var invitedToProjectResponse = new InvitedToProjectResponse { Project = projectDto };
 
-        await _hubContext.Clients.User(appUser.Id.ToString()).InvitedToProject(invitedToProjectResponse);
+        await _hubContext.Clients
+            .User(appUser.Id.ToString())
+            .InvitedToProject(invitedToProjectResponse);
         await _hubContext.Clients
             .Users(projectMemberIds)
             .UserAcceptedInviteToProject(acceptInviteToProjectResponse);

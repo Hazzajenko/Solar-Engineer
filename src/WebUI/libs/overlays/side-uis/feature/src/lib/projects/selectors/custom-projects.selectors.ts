@@ -11,6 +11,7 @@ export const selectAllWebProjects = createSelector(
 		projects.map((project) => {
 			const projectWebUsers = project.members.map((member) => {
 				const webUser = users.find((user) => user.id === member.id)
+				// console.log(webUser)
 				if (!webUser) {
 					console.error(`Web user with id ${member.id} not found`)
 					throw new Error(`Web user with id ${member.id} not found`)

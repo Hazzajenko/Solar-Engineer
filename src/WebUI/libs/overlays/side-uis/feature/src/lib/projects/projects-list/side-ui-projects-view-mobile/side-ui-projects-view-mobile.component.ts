@@ -5,7 +5,6 @@ import {
 	effect,
 	inject,
 	Injector,
-	Input,
 	signal,
 } from '@angular/core'
 import {
@@ -29,7 +28,12 @@ import { ContextMenuModule } from 'primeng/contextmenu'
 import { AccordionModule } from 'primeng/accordion'
 import { LetDirective } from '@ngrx/component'
 import { SideUiBaseComponent } from '../../../side-ui-base/side-ui-base.component'
-import { getTimeDifferenceFromNow, pluralize, PluralizePipe } from '@shared/utils'
+import {
+	getTimeDifferenceFromNow,
+	pluralize,
+	PluralizePipe,
+	selectSignalFromStore,
+} from '@shared/utils'
 import {
 	ProjectDetailsViewComponent,
 	ProjectListItemComponent,
@@ -55,6 +59,7 @@ import {
 	SideUiNavBarView,
 } from '../../../side-ui-nav-bar/side-ui-nav-bar.component'
 import { TAILWIND_COLOUR_500_VALUES } from '@shared/data-access/models'
+import { selectAllWebProjects } from '../../selectors/custom-projects.selectors'
 
 @Component({
 	selector: 'side-ui-projects-view-mobile',
@@ -110,7 +115,9 @@ export class SideUiProjectsViewMobileComponent {
 	hideProjectsList = signal(false)
 	showProjectView = signal(false)
 	user = this._auth.select.user
-	@Input({ required: true }) projects: ProjectWebModel[] = []
+
+	projects = selectSignalFromStore(selectAllWebProjects)
+	// @Input({ required: true }) projects: ProjectWebModel[] = []
 	selectedProject = this._projects.select.selectedProject
 	// openedProjects = signal<Map<ProjectId, boolean>>(new Map())
 	openedProjectId = signal<ProjectWebModel['id'] | undefined>(undefined)
@@ -135,14 +142,12 @@ export class SideUiProjectsViewMobileComponent {
 		const openedProjectId = this.openedProjectId()
 		if (!openedProjectId) return undefined
 		if (!this.showProjectView()) return undefined
-		return this.projects.find((project) => project.id === openedProjectId)
+		return this.projects().find((project) => project.id === openedProjectId)
 	})
-
 	routingToProjectView = signal(false)
 	sideUiView = inject(Injector).get(sideUiInjectionToken) as SideUiNavBarView
-
 	vm = computed(() => {
-		const projects = this.projects.sort(
+		const projects = this.projects().sort(
 			(a, b) => new Date(b.lastModifiedTime).getTime() - new Date(a.lastModifiedTime).getTime(),
 		)
 		return {
@@ -154,6 +159,10 @@ export class SideUiProjectsViewMobileComponent {
 	protected readonly pluralize = pluralize
 	protected readonly getTimeDifferenceFromNow = getTimeDifferenceFromNow
 	protected readonly TAILWIND_COLOUR_500_VALUES = TAILWIND_COLOUR_500_VALUES
+
+	projectTrackByFn(index: number, item: ProjectWebModel) {
+		return item.id || index
+	}
 
 	selectProject(project: ProjectModel) {
 		if (this.selectedProject()?.id === project.id) return
