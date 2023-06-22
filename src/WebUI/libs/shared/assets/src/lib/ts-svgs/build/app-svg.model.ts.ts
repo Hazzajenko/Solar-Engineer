@@ -11,6 +11,7 @@ export type AppSvg =
   | 'bell_slash'
   | 'bell'
   | 'chat_bubble_left'
+  | 'check_circle'
   | 'chevron_double_down'
   | 'chevron_double_left'
   | 'chevron_double_right'
@@ -29,8 +30,11 @@ export type AppSvg =
   | 'folder_open'
   | 'folder_plus'
   | 'folder'
+  | 'github'
+  | 'google'
   | 'inbox'
   | 'link'
+  | 'microsoft'
   | 'minus_circle'
   | 'move'
   | 'paint_brush'
@@ -49,6 +53,7 @@ export type AppSvg =
   | 'user_plus'
   | 'users'
   | 'wrench'
+  | 'x_circle'
   | 'x_mark';
 export interface AppSvgWrapper {
   name: AppSvg;

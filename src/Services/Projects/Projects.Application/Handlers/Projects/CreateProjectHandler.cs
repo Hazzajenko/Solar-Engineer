@@ -1,11 +1,13 @@
 ﻿using Infrastructure.Contracts.Events;
 using Infrastructure.Events;
 using Infrastructure.Exceptions;
+using Mapster;
 using MassTransit;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Data;
 using Projects.Contracts.Events;
 using Projects.Contracts.Responses.Projects;
 using Projects.Domain.Entities;
@@ -56,7 +58,8 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
         await _unitOfWork.StringsRepository.AddAsync(undefinedString);
         await _unitOfWork.SaveChangesAsync();
 
-        var projectDto = appUserProject.Project.ToDto();
+        var projectDto = appUserProject.Adapt<ProjectDto>();
+        // var projectDto = appUserProject.Project.ToDto();
         var projectCreatedResponse = new ProjectCreatedResponse { Project = projectDto };
 
         await _hubContext.Clients.User(appUserId.ToString()).ProjectCreated(projectCreatedResponse);

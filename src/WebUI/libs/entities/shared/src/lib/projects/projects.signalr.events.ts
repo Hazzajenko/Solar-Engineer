@@ -11,6 +11,7 @@ export const PROJECTS_SIGNALR_METHOD = {
 	INVITE_USERS_TO_PROJECT: 'InviteUsersToProject',
 	ACCEPT_PROJECT_INVITE: 'AcceptProjectInvite',
 	REJECT_PROJECT_INVITE: 'RejectProjectInvite',
+	LEAVE_PROJECT: 'LeaveProject',
 } as const
 export type ProjectsSignalrMethod =
 	(typeof PROJECTS_SIGNALR_METHOD)[keyof typeof PROJECTS_SIGNALR_METHOD]
@@ -27,6 +28,8 @@ export const PROJECTS_SIGNALR_EVENT = {
 	USERS_SENT_INVITE_TO_PROJECT: 'UsersSentInviteToProject',
 	USER_ACCEPTED_INVITE_TO_PROJECT: 'UserAcceptedInviteToProject',
 	USER_REJECTED_INVITE_TO_PROJECT: 'UserRejectedInviteToProject',
+	USER_LEFT_PROJECT: 'UserLeftProject',
+	LEFT_PROJECT: 'LeftProject',
 } as const
 
 export type ProjectSignalrEvent =

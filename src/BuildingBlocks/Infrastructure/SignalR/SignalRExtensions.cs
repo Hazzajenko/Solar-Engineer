@@ -94,6 +94,11 @@ public static class SignalRExtensions
         return AuthUser.Create(userId, userName, context.ConnectionId);
     }
 
+    public static string GetLoggingString(this AuthUser user)
+    {
+        return $"User: {user.UserName} ({user.Id})";
+    }
+
     public static T ThrowHubExceptionIfNull<T>([NotNull] this T? item, string? message = null)
     {
         if (item is not null)

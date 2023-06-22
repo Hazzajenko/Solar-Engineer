@@ -5,12 +5,8 @@
 	<ng-template #loggedIn>
 		<ng-container *ngIf="projects().length > 0; then hasProjects; else noProjects" />
 		<ng-template #hasProjects>
-			<side-ui-projects-view-desktop
-				*ngIf="!isMobile()"
-				[projects]="projects()"
-				class="hidden md:block"
-			/>
-			<side-ui-projects-view-mobile *ngIf="isMobile()" [projects]="projects()" class="md:hidden" />
+			<side-ui-projects-view-desktop *ngIf="!isMobile()" class="hidden md:block" />
+			<side-ui-projects-view-mobile *ngIf="isMobile()" class="md:hidden" />
 		</ng-template>
 	</ng-template>
 </side-ui-base>

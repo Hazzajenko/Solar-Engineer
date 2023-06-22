@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core'
 import { WebUserModel } from '@auth/shared'
 import { NgClass, NgIf, NgOptimizedImage } from '@angular/common'
-import { TruncatePipe } from '@shared/pipes'
+import { TimeDifferenceFromNowPipe, TruncatePipe } from '@shared/pipes'
 import {
 	ButtonAnimatedDownUpArrowComponent,
 	ButtonContextMenuComponent,
@@ -19,6 +19,7 @@ import {
 		InputSvgComponent,
 		ButtonAnimatedDownUpArrowComponent,
 		ButtonContextMenuComponent,
+		TimeDifferenceFromNowPipe,
 	],
 	templateUrl: './users-view-user-preview.component.html',
 	styles: [],

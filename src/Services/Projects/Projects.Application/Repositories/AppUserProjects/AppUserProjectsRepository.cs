@@ -76,34 +76,6 @@ public sealed class AppUserProjectsRepository
             .Include(x => x.Project)
             .ThenInclude(x => x.AppUserProjects)
             .ProjectToType<ProjectDto>()
-            // .Select(
-            //     x =>
-            //         new ProjectDto
-            //         {
-            //             Id = x.Project.Id.ToString(),
-            //             Name = x.Project.Name,
-            //             Colour = x.Project.Colour,
-            //             CreatedTime = x.Project.CreatedTime,
-            //             LastModifiedTime = x.Project.LastModifiedTime,
-            //             CreatedById = x.Project.CreatedById.ToString(),
-            //             MemberIds = x.Project.AppUserProjects
-            //                 .Where(c => c.AppUserId != appUserId)
-            //                 .Select(z => z.AppUserId.ToString()),
-            //             Members = x.Project.AppUserProjects.Select(
-            //                 z =>
-            //                     new ProjectUserDto
-            //                     {
-            //                         Id = z.AppUserId.ToString(),
-            //                         Role = z.Role,
-            //                         CanCreate = z.CanCreate,
-            //                         CanDelete = z.CanDelete,
-            //                         CanInvite = z.CanInvite,
-            //                         CanKick = z.CanKick,
-            //                         JoinedAtTime = z.CreatedTime
-            //                     }
-            //             )
-            //         }
-            // )
             .ToListAsync();
     }
 }

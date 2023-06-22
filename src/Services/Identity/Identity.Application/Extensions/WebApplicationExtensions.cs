@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using FastEndpoints;
 using Identity.Application.Data.Seed;
@@ -9,6 +10,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 namespace Identity.Application.Extensions;
@@ -23,6 +26,8 @@ public static partial class WebApplicationExtensions
         {
             options.Errors.StatusCode = StatusCodes.Status422UnprocessableEntity;
             options.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            // options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+            // options.Serializer.Options.ReferenceHandler = ReferenceHandler.Preserve;
             options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             options.Endpoints.Filter = ep => ep.EndpointTags?.Contains("Deprecated") is not true;
             options.Errors.ResponseBuilder = (failures, ctx, statusCode) =>
@@ -50,6 +55,7 @@ public static partial class WebApplicationExtensions
             {
                 x.ServerUrl = "https://localhost:5001";
             });
+            IdentityModelEventSource.ShowPII = true;
         }
 
         app.UseSerilogRequestLogging();

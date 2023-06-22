@@ -9,7 +9,12 @@ import {
 import { Component, effect, inject } from '@angular/core'
 import { LetDirective } from '@ngrx/component'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
-import { ShowSvgComponent, ShowSvgNoStylesComponent, ToggleSvgNoStylesComponent } from '@shared/ui'
+import {
+	InputSvgComponent,
+	ShowSvgComponent,
+	ShowSvgNoStylesComponent,
+	ToggleSvgNoStylesComponent,
+} from '@shared/ui'
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
 import { RadiansToDegreesPipe, TruncatePipe } from '@shared/pipes'
 import { UiStoreService } from '@overlays/ui-store/data-access'
@@ -37,6 +42,7 @@ import { injectAuthStore } from '@auth/data-access'
 		NgTemplateOutlet,
 		ToggleSvgNoStylesComponent,
 		NgOptimizedImage,
+		InputSvgComponent,
 	],
 })
 export class SignInDialogComponent {
@@ -71,5 +77,9 @@ export class SignInDialogComponent {
 	signInAsGuest() {
 		this._auth.dispatch.signInAsGuest()
 		this.closeDialog()
+	}
+
+	signInWithMicrosoft() {
+		this._auth.dispatch.signInWithMicrosoft()
 	}
 }

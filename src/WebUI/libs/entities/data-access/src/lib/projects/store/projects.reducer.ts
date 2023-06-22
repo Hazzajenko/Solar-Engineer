@@ -81,12 +81,29 @@ const reducer = createReducer(
 	on(ProjectsActions.updateManyProjects, (state, { updates }) =>
 		projectsAdapter.updateMany(updates, state),
 	),
-	on(ProjectsActions.deleteProject, (state, { projectId }) =>
-		projectsAdapter.removeOne(projectId, state),
-	),
+	on(ProjectsActions.deleteProject, (state, { projectId }) => {
+		const newState = projectsAdapter.removeOne(projectId, state)
+		if (projectId === state.selectedProjectId) {
+			return {
+				...newState,
+				selectedProjectId: undefined,
+			}
+		}
+		return newState
+	}),
 	on(ProjectsActions.deleteManyProjects, (state, { projectIds }) =>
 		projectsAdapter.removeMany(projectIds, state),
 	),
+	on(ProjectsActions.deleteProjectNoSignalr, (state, { projectId }) => {
+		const newState = projectsAdapter.removeOne(projectId, state)
+		if (projectId === state.selectedProjectId) {
+			return {
+				...newState,
+				selectedProjectId: undefined,
+			}
+		}
+		return newState
+	}),
 	on(ProjectsActions.clearProjectsState, () => initialProjectsState),
 )
 

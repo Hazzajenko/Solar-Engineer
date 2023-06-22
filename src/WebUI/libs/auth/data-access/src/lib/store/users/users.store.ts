@@ -14,7 +14,6 @@ import { createRootServiceInjector, isNotNull } from '@shared/utils'
 import { UsersActions } from './users.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { MinimalWebUser, WebUserModel } from '@auth/shared'
-import { Signal } from '@angular/core'
 
 export function injectUsersStore(): UsersStore {
 	return usersStoreInjector()
@@ -38,7 +37,7 @@ function usersStoreFactory(store: Store) {
 		getByIds: (ids: WebUserModel['id'][]) => ids.map((id) => entities()[id]).filter(isNotNull),
 		userSearchResults: store.selectSignal(selectUserSearchResults),
 		userSearchResultById: (id: string) => store.selectSignal(selectUserSearchResultById({ id })),
-		allFriends: store.selectSignal(selectAllFriends) as Signal<WebUserModel[]>,
+		allFriends: store.selectSignal(selectAllFriends),
 		fourMostRecentFriends: store.selectSignal(selectFourMostRecentFriends),
 		allFriendsGroupedByFirstLetter: store.selectSignal(selectAllFriendsGroupedByFirstLetter),
 		allUsersMappedWithConnections: store.selectSignal(selectAllUsersMappedWithConnections),

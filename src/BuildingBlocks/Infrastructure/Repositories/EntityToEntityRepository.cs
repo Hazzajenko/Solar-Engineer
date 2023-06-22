@@ -32,7 +32,9 @@ public abstract class EntityToEntityRepository<TContext, TEntityToEntity>
         return model;
     }
 
-    public async Task<IEnumerable<TEntityToEntity>> AddManyAndSaveChangesAsync(IEnumerable<TEntityToEntity> items)
+    public async Task<IEnumerable<TEntityToEntity>> AddManyAndSaveChangesAsync(
+        IEnumerable<TEntityToEntity> items
+    )
     {
         await AddRangeAsync(items);
         await SaveChangesAsync();
@@ -66,12 +68,19 @@ public abstract class EntityToEntityRepository<TContext, TEntityToEntity>
         return await SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<TEntityToEntity>> UpdateManyAndSaveChangesAsync(IEnumerable<TEntityToEntity> items)
+    public async Task<IEnumerable<TEntityToEntity>> UpdateManyAndSaveChangesAsync(
+        IEnumerable<TEntityToEntity> items
+    )
     {
         _context.Set<TEntityToEntity>().UpdateRange(items);
         // await UpdateRangeAsync(items);
         await SaveChangesAsync();
         return items;
+    }
+
+    public async Task<int> ExecuteDeleteAsync(Expression<Func<TEntityToEntity, bool>> predicate)
+    {
+        return await Queryable.Where(predicate).ExecuteDeleteAsync();
     }
 
     protected async Task<bool> SaveChangesAsync()

@@ -1,6 +1,6 @@
 ﻿namespace Projects.Contracts.Responses.Projects;
 
-public class RejectInviteToProjectResponse
+public class UserRejectedInviteToProjectResponse
 {
     public string ProjectId { get; set; } = default!;
     public string UserId { get; set; } = default!;

@@ -21,9 +21,23 @@
 				></span>
 			</span>
 			<div class="ml-3">
-				<span class="capitalize text-sm text-gray-900">{{ user.displayName | truncate : 10 }}</span>
-				<p class="text-xs font-medium text-gray-500 group-hover:text-gray-700">
-					{{ user.userName | truncate : 15 }}
+				<p class="capitalize leading-none text-sm text-gray-900">
+					{{ user.displayName | truncate : 10 }}
+					<!--					<span
+											*ngIf="user.lastActiveTime"
+											class="text-xs font-medium truncate text-gray-500 group-hover:text-gray-700"
+										>
+											{{ user.lastActiveTime | timeDifferenceFromNow }} ago</span
+										>-->
+				</p>
+				<!--			<p class="text-xs font-medium text-gray-500 group-hover:text-gray-700">
+								{{ user.userName | truncate : 15 }}
+							</p>-->
+				<p
+					*ngIf="user.lastActiveTime"
+					class="text-xs font-medium truncate text-gray-500 group-hover:text-gray-700"
+				>
+					{{ user.lastActiveTime | timeDifferenceFromNow }} ago
 				</p>
 			</div>
 		</a>

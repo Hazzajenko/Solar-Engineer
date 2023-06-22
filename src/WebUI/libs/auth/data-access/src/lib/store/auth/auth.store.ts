@@ -45,6 +45,7 @@ function authStoreFactory(store: Store) {
 		signInAsGuest: () => store.dispatch(AuthActions.signInAsGuest()),
 		signInWithGithub: () => store.dispatch(AuthActions.signInWithGithub()),
 		signInWithGoogle: () => store.dispatch(AuthActions.signInWithGoogle()),
+		signInWithMicrosoft: () => store.dispatch(AuthActions.signInWithMicrosoft()),
 		isReturningUser: () => store.dispatch(AuthActions.isReturningUser()),
 		signOut: () => store.dispatch(AuthActions.signOut()),
 	}

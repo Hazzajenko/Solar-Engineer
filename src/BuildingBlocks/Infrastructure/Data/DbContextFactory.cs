@@ -28,8 +28,8 @@ public static class DbContextFactory
     /// </summary>
     public static IServiceCollection InitDbContext<T>(
         this IServiceCollection services,
-        IConfiguration? config = null,
-        IWebHostEnvironment? env = null,
+        IConfiguration config,
+        IWebHostEnvironment env,
         string? migrationsAssembly = null,
         string? inputConnectionString = null
     )
@@ -46,6 +46,11 @@ public static class DbContextFactory
 
             ArgumentNullException.ThrowIfNull(config);
             ArgumentNullException.ThrowIfNull(env);
+
+            if (env.IsDevelopment())
+            {
+                options.EnableSensitiveDataLogging();
+            }
 
             var connectionString = GetConnectionString(config, env);
 
@@ -102,7 +107,7 @@ public static class DbContextFactory
             return BuildPostgresConnectionString();
 
         return config.GetConnectionString("PostgresConnection")
-               ?? throw new ArgumentNullException(nameof(GetConnectionString));
+            ?? throw new ArgumentNullException(nameof(GetConnectionString));
     }
 
     /// <summary>
@@ -132,6 +137,6 @@ public static class DbContextFactory
     private static string GetEnvironmentVariable(string name)
     {
         return Environment.GetEnvironmentVariable(name)
-               ?? throw new ArgumentNullException(nameof(name));
+            ?? throw new ArgumentNullException(nameof(name));
     }
 }

@@ -1,10 +1,13 @@
 ﻿using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Repositories.AppUsers;
 using Identity.Application.Repositories.Notifications;
+using Identity.Application.Services.AzureStorage;
 using Identity.Application.Services.Connections;
 using Identity.Application.Services.DockerHub;
+using Identity.Application.Services.Images;
 using Identity.Application.Services.Jwt;
 using Identity.Application.Settings;
+using Infrastructure.Behaviours;
 using Infrastructure.Services;
 using Infrastructure.Settings;
 using Microsoft.AspNetCore.Hosting;
@@ -25,11 +28,12 @@ public static class ServiceExtensions
     {
         services.AddSingleton<IConnectionsService, ConnectionsService>();
         services.AddScoped<IIdentityUnitOfWork, IdentityUnitOfWork>();
+        services.AddScoped<IAzureStorage, AzureStorage>();
         services.AddScoped<IAppUsersRepository, AppUsersRepository>();
         services.AddScoped<INotificationsRepository, NotificationsRepository>();
         services.AddScoped<IDockerHubService, DockerHubService>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        // services.AddScoped<IImagesService, ImagesService>();
+        services.AddScoped<IImagesService, ImagesService>();
 
         if (environment.IsDevelopment())
         {
@@ -67,6 +71,7 @@ public static class ServiceExtensions
         {
             options.ServiceLifetime = ServiceLifetime.Transient;
         });
+        services.InitLoggingBehavior();
         services.InitMassTransit(environment);
         return services;
     }

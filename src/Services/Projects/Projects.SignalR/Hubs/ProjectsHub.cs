@@ -64,6 +64,12 @@ public class ProjectsHub : Hub<IProjectsHub>
         await _mediator.Send(command);
     }
 
+    public async Task LeaveProject(LeaveProjectRequest request)
+    {
+        var command = new LeaveProjectCommand(Context.ToAuthUser(), request);
+        await _mediator.Send(command);
+    }
+
     public async Task GetUserProjects()
     {
         await _mediator.Send(new GetUserProjectsQuery(Context.ToAuthUser()));

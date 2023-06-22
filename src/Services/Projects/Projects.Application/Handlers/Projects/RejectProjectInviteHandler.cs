@@ -55,7 +55,7 @@ public class RejectProjectInviteHandler : ICommandHandler<RejectProjectInviteCom
                 projectIdGuid
             );
 
-        var rejectInviteToProjectResponse = new RejectInviteToProjectResponse
+        var rejectInviteToProjectResponse = new UserRejectedInviteToProjectResponse
         {
             ProjectId = command.Request.ProjectId,
             UserId = appUser.Id.ToString(),

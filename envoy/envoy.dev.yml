@@ -66,6 +66,10 @@ static_resources:
                 route:
                   cluster: identity-api
               - match:
+                  prefix: "/signin-microsoft"
+                route:
+                  cluster: identity-api
+              - match:
                   prefix: "/oauth/github-cb"
                 route:
                   cluster: identity-api

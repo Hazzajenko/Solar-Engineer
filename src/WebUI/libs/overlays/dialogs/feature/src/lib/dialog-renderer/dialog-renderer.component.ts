@@ -24,6 +24,7 @@ import { handleAllSwitchCases } from '@shared/utils'
 import { DialogInviteToProjectConfirmComponent } from '../projects/dialog-invite-to-project-confirm/dialog-invite-to-project-confirm.component'
 import { DialogUserOptionsComponent } from '../users'
 import { DialogWarningTemplateComponent } from '../shared'
+import { DialogProjectMemberOptionsComponent } from '../projects/dialog-project-member-options/dialog-project-member-options.component'
 
 export const dialogInputInjectionToken = new InjectionToken<DialogInput>('')
 
@@ -103,6 +104,8 @@ export class DialogRendererComponent implements OnDestroy {
 				return DialogUserOptionsComponent
 			case DIALOG_COMPONENT.WARNING_TEMPLATE:
 				return DialogWarningTemplateComponent
+			case DIALOG_COMPONENT.PROJECT_MEMBER_OPTIONS:
+				return DialogProjectMemberOptionsComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

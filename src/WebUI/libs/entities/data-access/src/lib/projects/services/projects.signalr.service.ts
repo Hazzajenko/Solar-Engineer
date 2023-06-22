@@ -9,6 +9,8 @@ import {
 	GetProjectDataResponse,
 	InvitedToProjectResponse,
 	InviteToProjectRequest,
+	LeaveProjectRequest,
+	LeftProjectResponse,
 	ProjectCreatedResponse,
 	ProjectDeletedResponse,
 	ProjectId,
@@ -21,6 +23,7 @@ import {
 	RejectProjectInviteRequest,
 	SignalrEventRequest,
 	SignalrEventResponse,
+	UserLeftProjectResponse,
 	UsersSentInviteToProjectResponse,
 } from '@entities/shared'
 import { injectProjectsStore } from '../store'
@@ -89,6 +92,7 @@ export class ProjectsSignalrService {
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.PROJECT_DELETED, (response: ProjectDeletedResponse) => {
 			console.log(PROJECTS_SIGNALR_EVENT.PROJECT_DELETED, response)
+			this._projectsStore.dispatch.deleteProjectNoSignalr(response.projectId)
 		})
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.RECEIVE_PROJECT_EVENT, (response: SignalrEventResponse) => {
@@ -128,6 +132,7 @@ export class ProjectsSignalrService {
 			PROJECTS_SIGNALR_EVENT.USER_ACCEPTED_INVITE_TO_PROJECT,
 			(response: AcceptInviteToProjectResponse) => {
 				console.log(PROJECTS_SIGNALR_EVENT.USER_ACCEPTED_INVITE_TO_PROJECT, response)
+				this._projectsStore.dispatch.userAcceptedInviteToProject(response)
 			},
 		)
 
@@ -137,6 +142,16 @@ export class ProjectsSignalrService {
 				console.log(PROJECTS_SIGNALR_EVENT.USER_REJECTED_INVITE_TO_PROJECT, response)
 			},
 		)
+
+		this.onHub(PROJECTS_SIGNALR_EVENT.USER_LEFT_PROJECT, (response: UserLeftProjectResponse) => {
+			console.log(PROJECTS_SIGNALR_EVENT.USER_LEFT_PROJECT, response)
+			this._projectsStore.dispatch.userLeftProject(response)
+		})
+
+		this.onHub(PROJECTS_SIGNALR_EVENT.LEFT_PROJECT, (response: LeftProjectResponse) => {
+			console.log(PROJECTS_SIGNALR_EVENT.LEFT_PROJECT, response)
+			this._projectsStore.dispatch.deleteProjectNoSignalr(response.projectId)
+		})
 
 		return this.hubConnection
 	}
@@ -162,6 +177,10 @@ export class ProjectsSignalrService {
 			projectId: update.id,
 			changes: update.changes,
 		})
+	}
+
+	leaveProject(request: LeaveProjectRequest) {
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.LEAVE_PROJECT, request)
 	}
 
 	inviteUsersToProject(request: InviteToProjectRequest) {

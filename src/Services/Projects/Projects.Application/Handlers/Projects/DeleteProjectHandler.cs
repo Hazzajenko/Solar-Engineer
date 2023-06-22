@@ -77,7 +77,7 @@ public class DeleteProjectHandler : ICommandHandler<DeleteProjectCommand, bool>
         await _unitOfWork.ProjectsRepository.DeleteAsync(projectId);
         await _unitOfWork.SaveChangesAsync();
 
-        var response = new DeleteProjectResponse { Id = projectId.ToString() };
+        var response = new ProjectDeletedResponse { ProjectId = projectId.ToString() };
 
         await _hubContext.Clients.Users(projectMembers).ProjectDeleted(response);
         _logger.LogInformation("User {User} deleted project {Project}", appUserId, projectId);

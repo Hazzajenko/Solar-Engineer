@@ -54,7 +54,7 @@
 			</div>
 
 			<div>
-				<li *ngFor="let project of projects">
+				<li *ngFor="let project of projects(); trackBy: projectTrackByFn">
 					<div
 						*ngrxLet="selectedProject()?.id === project.id as isSelected"
 						[ngClass]="{

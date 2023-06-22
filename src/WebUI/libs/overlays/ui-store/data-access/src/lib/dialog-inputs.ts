@@ -1,4 +1,4 @@
-import { ProjectId, StringId } from '@entities/shared'
+import { ProjectId, ProjectWebModel, ProjectWebUserModel, StringId } from '@entities/shared'
 import { WebUserModel } from '@auth/shared'
 
 export type DialogInputTemplate = {
@@ -18,6 +18,7 @@ export const DIALOG_COMPONENT = {
 	SELECT_PROJECT_VIEW: 'DialogSelectProjectViewComponent',
 	USER_OPTIONS: 'DialogUserOptionsComponent',
 	WARNING_TEMPLATE: 'DialogWarningTemplateComponent',
+	PROJECT_MEMBER_OPTIONS: 'DialogProjectMemberOptionsComponent',
 } as const
 
 export type DialogComponent = (typeof DIALOG_COMPONENT)[keyof typeof DIALOG_COMPONENT]
@@ -95,6 +96,15 @@ export type DialogInputWarningTemplate = DialogInputTemplate & {
 	}
 }
 
+export type DialogInputProjectMemberOptions = DialogInputTemplate & {
+	component: typeof DIALOG_COMPONENT.PROJECT_MEMBER_OPTIONS
+	data: {
+		project: ProjectWebModel
+		member: ProjectWebUserModel
+		currentUserMember: ProjectWebUserModel
+	}
+}
+
 export type DialogInput =
 	| DialogInputMovePanelsToString
 	| DialogInputAppSettings
@@ -108,3 +118,4 @@ export type DialogInput =
 	| DialogInputSelectProjectView
 	| DialogInputUserOptions
 	| DialogInputWarningTemplate
+	| DialogInputProjectMemberOptions

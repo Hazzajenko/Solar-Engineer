@@ -42,7 +42,6 @@ const reducer = createReducer(
 		if (!undefinedStringId) {
 			throw new Error('Undefined string not found')
 		}
-		// const removeOldUndefinedString = stringsAdapter.removeOne(undefinedStringId, newState)
 		return { ...newState, undefinedStringId, loaded: true }
 	}),
 	on(StringsActions.addString, (state, { string }) => stringsAdapter.addOne(string, state)),

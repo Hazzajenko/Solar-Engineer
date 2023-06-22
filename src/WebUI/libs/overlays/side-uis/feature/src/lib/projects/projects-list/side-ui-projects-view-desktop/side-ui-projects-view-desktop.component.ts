@@ -4,7 +4,6 @@ import {
 	computed,
 	inject,
 	Injector,
-	Input,
 	signal,
 } from '@angular/core'
 import { injectAuthStore } from '@auth/data-access'
@@ -14,7 +13,7 @@ import {
 	DIALOG_COMPONENT,
 	injectUiStore,
 } from '@overlays/ui-store/data-access'
-import { PluralizePipe } from '@shared/utils'
+import { PluralizePipe, selectSignalFromStore } from '@shared/utils'
 import { ProjectId, ProjectModel, ProjectWebModel } from '@entities/shared'
 
 import { heightInOutWithConfig } from '@shared/animations'
@@ -41,7 +40,7 @@ import {
 } from '../../../side-ui-nav-bar/side-ui-nav-bar.component'
 import { ProjectDetailsViewComponent, ProjectListItemComponent } from '../../shared'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { SideUiNavBarStore } from '../../../side-ui-nav-bar/side-ui-nav-bar.store'
+import { selectAllWebProjects } from '../../selectors/custom-projects.selectors'
 
 @Component({
 	selector: 'side-ui-projects-view-desktop',
@@ -100,27 +99,26 @@ export class SideUiProjectsViewDesktopComponent {
 	private _auth = injectAuthStore()
 	private _projects = injectProjectsStore()
 	private _uiStore = injectUiStore()
-	private _sideUiNavBarStore = inject(SideUiNavBarStore)
 	user = this._auth.select.user
-	@Input({ required: true }) projects: ProjectWebModel[] = []
-	// selectedProject = this._projects.select.selectedProject
+
+	projects = selectSignalFromStore(selectAllWebProjects)
+
 	selectedProject = computed(() => {
 		const id = this._projects.select.selectedProjectId()
 		if (!id) return undefined
-		return this.projects.find((p) => p.id === id)
+		return this.projects().find((p) => p.id === id)
 	})
 	openedProjectId = signal<ProjectId | undefined>(undefined)
 	openedProject = computed(() => {
 		const id = this.openedProjectId()
 		if (!id) return undefined
-		return this.projects.find((p) => p.id === id)
+		return this.projects().find((p) => p.id === id)
 	})
-	// openedProjects = signal<Map<ProjectId, boolean>>(new Map())
 
 	sideUiView = inject(Injector).get(sideUiInjectionToken) as SideUiNavBarView
 
 	vm = computed(() => {
-		const projects = this.projects.sort(
+		const projects = this.projects().sort(
 			(a, b) => new Date(b.lastModifiedTime).getTime() - new Date(a.lastModifiedTime).getTime(),
 		)
 		return {
@@ -131,10 +129,13 @@ export class SideUiProjectsViewDesktopComponent {
 	})
 	protected readonly TAILWIND_COLOUR_500_VALUES = TAILWIND_COLOUR_500_VALUES
 
+	projectTrackByFn(index: number, item: ProjectWebModel) {
+		return item.id || index
+	}
+
 	selectProject(project: ProjectModel) {
 		if (this.selectedProject()?.id === project.id) return
 		this._projects.dispatch.selectProject(project.id)
-		// this._sideUiNavBarStore.changeView('selected-project')
 	}
 
 	createProject() {
@@ -143,26 +144,13 @@ export class SideUiProjectsViewDesktopComponent {
 		})
 	}
 
-	toggleProjectView(project: ProjectModel) {
-		const id = project.id
-		if (this.openedProjectId() === id) {
-			this.openedProjectId.set(undefined)
-			return
-		}
-		this.openedProjectId.set(id)
-	}
-
 	openProjectContextMenu(event: MouseEvent, project: ProjectModel) {
+		event.stopPropagation()
+		event.preventDefault()
 		this._uiStore.dispatch.openContextMenu({
 			component: CONTEXT_MENU_COMPONENT.PROJECT_MENU,
 			data: { projectId: project.id },
 			location: { x: event.clientX, y: event.clientY },
-		})
-	}
-
-	openSignInDialog() {
-		this._uiStore.dispatch.openDialog({
-			component: DIALOG_COMPONENT.SIGN_IN,
 		})
 	}
 

@@ -10,7 +10,6 @@ import {
 	computed,
 	ElementRef,
 	inject,
-	OnInit,
 	Renderer2,
 	Signal,
 	signal,
@@ -21,6 +20,7 @@ import { LetDirective } from '@ngrx/component'
 import {
 	ActionsNotificationComponent,
 	ButtonBuilderComponent,
+	InputSvgComponent,
 	ShowSvgComponent,
 	UndoActionNotificationComponent,
 } from '@shared/ui'
@@ -49,6 +49,7 @@ import { injectAuthStore } from '@auth/data-access'
 import { LoadingProjectSpinnerComponent } from '../ui/loading-project-spinner/loading-project-spinner.component'
 import { DeviceDetectorService } from 'ngx-device-detector'
 import { DefaultHoverEffectsDirective } from '@shared/directives'
+import { HttpClient } from '@angular/common/http'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,13 +76,15 @@ import { DefaultHoverEffectsDirective } from '@shared/directives'
 		LoadingProjectSpinnerComponent,
 		MobileSideActionToolbarComponent,
 		DefaultHoverEffectsDirective,
+		InputSvgComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
 	styles: [],
 	templateUrl: './design-canvas-app.component.html',
 })
-export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
+export class DesignCanvasAppComponent implements AfterViewInit {
+	private _http = inject(HttpClient)
 	private _deviceService = inject(DeviceDetectorService)
 	private _projectsStore = injectProjectsStore()
 	private _authStore = injectAuthStore()
@@ -91,6 +94,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _uiStore = injectUiStore()
 	private _graphicsStore = inject(GraphicsStoreService)
 	private _objectPositioningStore = injectObjectPositioningStore()
+
 	user = this._authStore.select.user
 	sideUiMobileMenuOpen = this._uiStore.select.sideUiMobileMenuOpen as Signal<boolean>
 	sideUiNavBarOpen = this._uiStore.select.sideUiNavOpen as Signal<boolean>
@@ -101,7 +105,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		return !this.isProjectReadyToRender() && !!this.user() && this.userProjects().length > 0
 	})
 
-	version = signal('1.0.6')
+	version = signal('1.0.7')
 	showFpsState = toSignal(this._graphicsStore.state$.pipe(map((state) => state.showFps)), {
 		initialValue: this._graphicsStore.state.showFps,
 	})
@@ -135,13 +139,6 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 
 	constructor() {
 		this.waitForElements()
-	}
-
-	ngOnInit() {
-		console.log(this.constructor.name, 'ngOnInit')
-		const deviceInfo = this._deviceService.getDeviceInfo()
-
-		console.log(deviceInfo)
 	}
 
 	ngAfterViewInit() {

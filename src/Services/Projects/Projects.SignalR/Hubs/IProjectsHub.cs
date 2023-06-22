@@ -15,12 +15,14 @@ public interface IProjectsHub
     // Task UpdateProject(ProjectDto project);
     // Task ProjectUpdated(ProjectDto project);
     Task UsersSentInviteToProject(UsersSentInviteToProjectResponse response);
-    Task UserAcceptedInviteToProject(AcceptInviteToProjectResponse response);
-    Task UserRejectedInviteToProject(RejectInviteToProjectResponse response);
-    Task ProjectDeleted(DeleteProjectResponse response);
+    Task UserAcceptedInviteToProject(UserAcceptedInviteToProjectResponse response);
+    Task UserRejectedInviteToProject(UserRejectedInviteToProjectResponse response);
+    Task UserLeftProject(UserLeftProjectResponse response);
+    Task LeftProject(LeftProjectResponse response);
+    Task ProjectDeleted(ProjectDeletedResponse deletedResponse);
     Task InvitedToProject(InvitedToProjectResponse response);
 
-    Task ProjectUpdated(UpdateProjectResponse response);
+    Task ProjectUpdated(ProjectUpdatedResponse updatedResponse);
 
     // Task UpdateProject(ProjectChanges projectChanges);
 

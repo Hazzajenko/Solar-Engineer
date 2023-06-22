@@ -23,6 +23,11 @@ public sealed class NotificationsRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<Notification?> GetByIdStandaloneAsync(Guid id)
+    {
+        return await Queryable.Where(x => x.Id == id).FirstOrDefaultAsync();
+    }
+
     public async Task<Notification?> GetNotificationFromSenderToAppUserByTypeAsync(
         Guid senderAppUserId,
         Guid appUserId,

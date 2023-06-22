@@ -6,7 +6,7 @@ import { catchError, map, of, switchMap, tap } from 'rxjs'
 import { Location } from '@angular/common'
 import { UsersSignalrService } from '../../signalr'
 import { DeviceDetectorService } from 'ngx-device-detector'
-import { UiActions } from '@overlays/ui-store/data-access'
+import { DIALOG_COMPONENT, UiActions } from '@overlays/ui-store/data-access'
 
 export const getRedirectForGoogleSignIn$ = createEffect(
 	(actions$ = inject(Actions)) => {
@@ -26,6 +26,18 @@ export const getRedirectForGithubSignIn$ = createEffect(
 			ofType(AuthActions.signInWithGithub),
 			map(() => {
 				window.location.href = '/auth/login/github'
+			}),
+		)
+	},
+	{ functional: true, dispatch: false },
+)
+
+export const getRedirectForMicrosoftSignIn$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(AuthActions.signInWithMicrosoft),
+			map(() => {
+				window.location.href = '/auth/login/microsoft'
 			}),
 		)
 	},
@@ -75,6 +87,25 @@ export const signInSuccess$ = createEffect(
 					screenSize: {
 						width: window.innerWidth,
 						height: window.innerHeight,
+					},
+				})
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+export const signInError$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(AuthActions.signInError),
+			tap(() => {
+				localStorage.removeItem('token')
+			}),
+			map(() => {
+				return UiActions.openDialog({
+					dialog: {
+						component: DIALOG_COMPONENT.SIGN_IN,
 					},
 				})
 			}),

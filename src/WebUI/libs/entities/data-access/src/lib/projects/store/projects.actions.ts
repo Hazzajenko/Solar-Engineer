@@ -1,12 +1,14 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import {
+	AcceptInviteToProjectResponse,
 	AcceptProjectInviteRequest,
 	CreateProjectRequest,
 	InviteToProjectRequest,
 	ProjectId,
 	ProjectModel,
 	RejectProjectInviteRequest,
+	UserLeftProjectResponse,
 } from '@entities/shared'
 import { ProjectEntityStore } from './projects.reducer'
 import { EntityUpdate } from '@shared/data-access/models'
@@ -26,6 +28,9 @@ export const ProjectsActions = createActionGroup({
 		'Select Project': props<{
 			projectId: ProjectId
 		}>(),
+		'Get Project Failure': props<{
+			error: string | null
+		}>(),
 		'Select Project Initial': props<{
 			projectId: ProjectId
 		}>(),
@@ -39,6 +44,9 @@ export const ProjectsActions = createActionGroup({
 		'User Projects Empty': emptyProps(),
 		'Invite Users To Project': props<{
 			request: InviteToProjectRequest
+		}>(),
+		'User Accepted Invite To Project': props<{
+			response: AcceptInviteToProjectResponse
 		}>(),
 		'Accept Project Invite': props<{
 			request: AcceptProjectInviteRequest
@@ -64,8 +72,17 @@ export const ProjectsActions = createActionGroup({
 		'Delete Project': props<{
 			projectId: ProjectId
 		}>(),
+		'Delete Project No Signalr': props<{
+			projectId: ProjectId
+		}>(),
 		'Delete Many Projects': props<{
 			projectIds: ProjectId[]
+		}>(),
+		'User Left Project': props<{
+			response: UserLeftProjectResponse
+		}>(),
+		'Leave Project': props<{
+			projectId: ProjectId
 		}>(),
 		'Clear Projects State': emptyProps(),
 	},

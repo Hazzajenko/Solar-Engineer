@@ -1,0 +1,25 @@
+<div
+	(click)="toggleMemberView()"
+	*ngIf="member"
+	class="flex justify-between px-2 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+>
+	<div class="flex items-center justify-start">
+		<auth-web-user-avatar [avatarSize]="24" [user]="member" />
+		<div class="flex flex-col items-center justify-center">
+			<a
+				class="flex items-center px-4 py-2 text-sm text-gray-700 group-hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white"
+				role="menuitem"
+				tabindex="-1"
+			>
+				<span class="text-xs font-semibold">
+					{{ member.displayName | truncate : 10 }}
+				</span>
+				<span *ngIf="memberIsCurrentUser" class="text-xs font-semibold ml-1"> (You) </span>
+			</a>
+		</div>
+	</div>
+	<div class="flex justify-center items-center">
+		<btn-animated-down-up-arrow [isOpen]="isOpen" />
+		<btn-context-menu (click)="openMemberContextMenu($event)" hideMobile />
+	</div>
+</div>
