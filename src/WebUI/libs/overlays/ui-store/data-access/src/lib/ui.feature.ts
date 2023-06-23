@@ -19,7 +19,11 @@ export const uiFeature = createFeature({
 		selectSideUiNavOpen,
 		selectSideUiMobileMenuOpen,
 		selectScreenSize,
-		selectIsMobile: createSelector(selectScreenSize, (screenSize) => screenSize?.width < 768),
+		selectIsMobile: createSelector(selectScreenSize, (screenSize) => screenSize?.width < 640),
+		selectIsTablet: createSelector(
+			selectScreenSize,
+			(screenSize) => screenSize?.width >= 640 && screenSize?.width < 768,
+		),
 	}),
 })
 

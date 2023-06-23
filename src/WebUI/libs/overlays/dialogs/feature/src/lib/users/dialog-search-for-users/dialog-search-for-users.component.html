@@ -40,7 +40,7 @@
 			/>
 			<ng-template #resultState>
 				<div class="flex md:flex-row md:divide-x md:divide-y-0 divide-gray-100 flex-col divide-y">
-					<div class="max-h-96 min-w-0 flex-auto scroll-py-4 overflow-y-auto px-6 py-4 sm:h-96">
+					<div class="max-h-96 min-w-0 flex-auto scroll-py-4 overflow-y-auto px-6 py-4">
 						<ng-container
 							*ngIf="!isUserInSearch(); then defaultState; else userSearchResultsTemplate"
 						/>
@@ -54,12 +54,12 @@
 					</div>
 
 					<div
-						class="hidden h-96 w-1/2 flex-none flex-col divide-y divide-gray-100 overflow-y-auto sm:flex"
+						class="hidden h-96 w-1/2 flex-none flex-col divide-y divide-gray-100 overflow-y-auto md:flex"
 					>
 						<ng-container *ngIf="isAUserSelected(); then sideResultPanel; else noUserSelected" />
 					</div>
 
-					<div *ngIf="isAUserSelected() && isMobile()">
+					<div *ngIf="isAUserSelected()" class="flex md:hidden items-center justify-center">
 						<ng-container *ngTemplateOutlet="sideResultPanel" />
 					</div>
 				</div>
@@ -157,7 +157,11 @@
 </ng-template>
 
 <ng-template #sideResultPanel>
-	<ng-container *ngIf="selectedUserSearchResult() as selectedUser">
+	<app-search-result-user
+		*ngIf="selectedUserSearchResult() as selectedUser"
+		[user]="selectedUser"
+	/>
+	<!--<ng-container *ngIf="selectedUserSearchResult() as selectedUser">
 		<div class="flex-none p-6 text-center">
 			<span class="relative inline-block">
 				<img
@@ -188,14 +192,37 @@
 					<a class="underline">{{ selectedUser.userName }}</a>
 				</dd>
 			</dl>
-			<button
-				class="mt-6 w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-				type="button"
-			>
-				Send message
-			</button>
+			<ng-container *ngIf="selectedUser.isFriend; then friends; else notFriends" />
+			<ng-template #notFriends>
+				<button
+					class="mt-6 w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+					type="button"
+				>
+					Send Friend Request
+				</button>
+			</ng-template>
+			<ng-template #friends>
+				<div class="flex space-x-2 mt-6">
+					<button
+						class="group inline-flex items-center rounded-md px-3 py-2 text-sm bg-white font-semibold text-gray-600 hover:text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+						type="button"
+					>
+						<svg-input
+							class="group-hover:text-gray-700"
+							inputClass="h-5 w-5"
+							svgName="SvgCog8Tooth"
+						/>
+					</button>
+					<button
+						class="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+						type="button"
+					>
+						Send message
+					</button>
+				</div>
+			</ng-template>
 		</div>
-	</ng-container>
+	</ng-container>-->
 </ng-template>
 
 <ng-template #noUserSelected>

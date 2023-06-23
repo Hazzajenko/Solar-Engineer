@@ -112,6 +112,7 @@ function uiStoreFactory(store: Store) {
 		sideUiMobileMenuOpen: store.selectSignal(feature.selectSideUiMobileMenuOpen),
 		screenSize: store.selectSignal(feature.selectScreenSize),
 		isMobile: store.selectSignal(feature.selectIsMobile),
+		isTablet: store.selectSignal(feature.selectIsTablet),
 	}
 
 	const dispatch = {

@@ -14,7 +14,7 @@ import {
 	NgStyle,
 	NgTemplateOutlet,
 } from '@angular/common'
-import { ShowSvgNoStylesComponent } from '@shared/ui'
+import { InputSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { injectAuthStore, injectUsersStore } from '@auth/data-access'
 import {
 	CONTEXT_MENU_COMPONENT,
@@ -52,6 +52,7 @@ import { UsersViewWebUserItemComponent } from './users-view-web-user-item/users-
 		UsersViewWebUserItemComponent,
 		UsersViewUserPreviewComponent,
 		UsersViewWebUserItemComponent,
+		InputSvgComponent,
 	],
 	templateUrl: './side-ui-users-view.component.html',
 	styles: [],

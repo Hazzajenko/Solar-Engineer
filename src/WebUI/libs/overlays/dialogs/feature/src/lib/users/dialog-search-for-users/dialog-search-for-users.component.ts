@@ -20,7 +20,8 @@ import { DialogBackdropTemplateDirective } from '../../dialog-backdrop-template/
 import { DialogHandleBackdropDirective } from '../../dialog-backdrop-template/dialog-handle-backdrop.directive'
 import { WebUserModel } from '@auth/shared'
 import { StandaloneDatePipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
-import { SpinnerComponent } from '@shared/ui'
+import { InputSvgComponent, SpinnerComponent } from '@shared/ui'
+import { SearchResultUserComponent } from './search-result-user/search-result-user.component'
 
 @Component({
 	selector: 'dialog-search-for-users',
@@ -37,6 +38,8 @@ import { SpinnerComponent } from '@shared/ui'
 		TimeDifferenceFromNowPipe,
 		StandaloneDatePipe,
 		SpinnerComponent,
+		InputSvgComponent,
+		SearchResultUserComponent,
 	],
 	templateUrl: './dialog-search-for-users.component.html',
 	styles: [],
@@ -58,6 +61,7 @@ export class DialogSearchForUsersComponent {
 	private _usersStore = injectUsersStore()
 	user = injectAppUser()
 	isMobile = this._uiStore.select.isMobile
+	isTablet = this._uiStore.select.isTablet
 	userSearchResults = this._usersStore.select.userSearchResults
 	fourMostRecentFriends = this._usersStore.select.fourMostRecentFriends
 	isUserInSearch = signal(false)
