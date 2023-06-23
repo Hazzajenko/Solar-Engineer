@@ -1,11 +1,13 @@
 import {
 	AfterViewInit,
+	booleanAttribute,
 	Component,
 	ElementRef,
 	EventEmitter,
 	inject,
 	Input,
 	NgZone,
+	OnDestroy,
 	Output,
 	Renderer2,
 	ViewChild,
@@ -19,7 +21,6 @@ import { NgIf } from '@angular/common'
 	standalone: true,
 	template: `
 		<div
-			(click)="closeDialog()"
 			*ngIf="currentDialog()"
 			class="z-[45] fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-50"
 			id="backdrop"
@@ -67,13 +68,14 @@ import { NgIf } from '@angular/common'
 	animations: [scaleAndOpacityAnimation],
 	imports: [NgIf],
 })
-export class DialogBackdropTemplateComponent implements AfterViewInit {
+export class DialogBackdropTemplateComponent implements AfterViewInit, OnDestroy {
 	private _renderer = inject(Renderer2)
 	private _ngZone = inject(NgZone)
 	private _uiStore = injectUiStore()
 	private _dispose: ReturnType<typeof this._renderer.listen> | undefined = undefined
 	currentDialog = this._uiStore.select.currentDialog
 	@Input() height = ''
+	@Input({ transform: booleanAttribute }) disableCloseDialog = false
 	@ViewChild('backdrop') backdrop!: ElementRef<HTMLDivElement>
 	@Output() backdropClick = new EventEmitter<void>()
 
@@ -94,15 +96,21 @@ export class DialogBackdropTemplateComponent implements AfterViewInit {
 					const target = event.target as HTMLElement
 					if (dialogContentElement?.contains(target)) return
 					this.backdropClick.emit()
-					this.closeDialog()
+					this.ngOnDestroy()
 				},
 			)
 		})
 	}
 
 	closeDialog() {
-		console.log('closeDialog')
+		this.backdropClick.emit()
+		if (this.disableCloseDialog) return
+		this._uiStore.dispatch.closeDialog()
+	}
+
+	ngOnDestroy() {
 		this._dispose?.()
+		if (this.disableCloseDialog) return
 		this._uiStore.dispatch.closeDialog()
 	}
 }
