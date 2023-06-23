@@ -58,11 +58,13 @@ export class UsersSignalrService {
 		})
 
 		this.onHub(USERS_SIGNALR_EVENT.GET_USER_FRIENDS, (response: GetUserFriendsResponse) => {
-			if (Array.isArray(response.friends)) {
-				this._usersStore.dispatch.addManyUsers(response.friends)
-			} else {
-				this._usersStore.dispatch.addUser(response.friends)
-			}
+			console.log(USERS_SIGNALR_EVENT.GET_USER_FRIENDS, response)
+			this._usersStore.dispatch.addManyUsers(response.friends)
+			/*			if (Array.isArray(response.friends)) {
+			 this._usersStore.dispatch.addManyUsers(response.friends)
+			 } else {
+			 this._usersStore.dispatch.addUser(response.friends)
+			 }*/
 		})
 
 		this.onHub(USERS_SIGNALR_EVENT.RECEIVE_FRIEND, (response: ReceiveFriendResponse) => {

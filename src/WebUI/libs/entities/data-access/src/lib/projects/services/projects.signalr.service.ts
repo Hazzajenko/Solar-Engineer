@@ -9,11 +9,15 @@ import {
 	GetProjectDataResponse,
 	InvitedToProjectResponse,
 	InviteToProjectRequest,
+	KickedFromProjectResponse,
+	KickProjectMemberRequest,
 	LeaveProjectRequest,
 	LeftProjectResponse,
 	ProjectCreatedResponse,
 	ProjectDeletedResponse,
 	ProjectId,
+	ProjectMemberKickedResponse,
+	ProjectMemberUpdatedResponse,
 	ProjectModel,
 	PROJECTS_SIGNALR_EVENT,
 	PROJECTS_SIGNALR_METHOD,
@@ -23,6 +27,7 @@ import {
 	RejectProjectInviteRequest,
 	SignalrEventRequest,
 	SignalrEventResponse,
+	UpdateProjectMemberRequest,
 	UserLeftProjectResponse,
 	UsersSentInviteToProjectResponse,
 } from '@entities/shared'
@@ -77,11 +82,9 @@ export class ProjectsSignalrService {
 			console.log(PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED, response)
 			const changes: Partial<ProjectModel> = {}
 			if (response.changes.name) {
-				// changes['name'] = response.changes.name
 				changes.name = response.changes.name
 			}
 			if (response.changes.colour) {
-				// changes['colour'] = response.changes.colour
 				changes.colour = response.changes.colour
 			}
 			this._projectsStore.dispatch.updateProjectNoSignalr({
@@ -153,6 +156,30 @@ export class ProjectsSignalrService {
 			this._projectsStore.dispatch.deleteProjectNoSignalr(response.projectId)
 		})
 
+		this.onHub(
+			PROJECTS_SIGNALR_EVENT.PROJECT_MEMBER_UPDATED,
+			(response: ProjectMemberUpdatedResponse) => {
+				console.log(PROJECTS_SIGNALR_EVENT.PROJECT_MEMBER_UPDATED, response)
+				this._projectsStore.dispatch.updateProjectMemberNoSignalr(response)
+			},
+		)
+
+		this.onHub(
+			PROJECTS_SIGNALR_EVENT.PROJECT_MEMBER_KICKED,
+			(response: ProjectMemberKickedResponse) => {
+				console.log(PROJECTS_SIGNALR_EVENT.PROJECT_MEMBER_KICKED, response)
+				this._projectsStore.dispatch.projectMemberKicked(response)
+			},
+		)
+
+		this.onHub(
+			PROJECTS_SIGNALR_EVENT.KICKED_FROM_PROJECT,
+			(response: KickedFromProjectResponse) => {
+				console.log(PROJECTS_SIGNALR_EVENT.KICKED_FROM_PROJECT, response)
+				this._projectsStore.dispatch.deleteProjectNoSignalr(response.projectId)
+			},
+		)
+
 		return this.hubConnection
 	}
 
@@ -177,6 +204,16 @@ export class ProjectsSignalrService {
 			projectId: update.id,
 			changes: update.changes,
 		})
+	}
+
+	updateProjectMember(request: UpdateProjectMemberRequest) {
+		console.log(PROJECTS_SIGNALR_METHOD.UPDATE_PROJECT_MEMBER, request)
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.UPDATE_PROJECT_MEMBER, request)
+	}
+
+	kickProjectMember(request: KickProjectMemberRequest) {
+		console.log(PROJECTS_SIGNALR_METHOD.KICK_PROJECT_MEMBER, request)
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.KICK_PROJECT_MEMBER, request)
 	}
 
 	leaveProject(request: LeaveProjectRequest) {

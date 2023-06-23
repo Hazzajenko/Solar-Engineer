@@ -23,6 +23,9 @@ public interface IProjectsHub
     Task InvitedToProject(InvitedToProjectResponse response);
 
     Task ProjectUpdated(ProjectUpdatedResponse updatedResponse);
+    Task ProjectMemberUpdated(ProjectMemberUpdatedResponse updatedResponse);
+    Task ProjectMemberKicked(ProjectMemberKickedResponse kickedResponse);
+    Task KickedFromProject(KickedFromProjectResponse kickedResponse);
 
     // Task UpdateProject(ProjectChanges projectChanges);
 

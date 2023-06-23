@@ -79,6 +79,82 @@ export const userAcceptedInviteToProject$ = createEffect(
 	{ functional: true },
 )
 
+export const updateProjectMember$ = createEffect(
+	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.updateProjectMember),
+			tap(({ request }) => projectsSignalr.updateProjectMember(request)),
+		)
+	},
+	{ functional: true, dispatch: false },
+)
+
+export const projectMemberUpdated$ = createEffect(
+	(actions$ = inject(Actions), store = inject(Store)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.updateProjectMemberNoSignalr),
+			map(({ response }) => {
+				const projectToUpdate = store.selectSignal(selectProjectById({ id: response.projectId }))()
+				if (!projectToUpdate) {
+					throw new Error(`Project not found, ${response.projectId}`)
+				}
+				const memberChanges = response.changes
+				const members = projectToUpdate.members.map((member) => {
+					if (member.id === response.memberId) {
+						return {
+							...member,
+							...memberChanges,
+						}
+					}
+					return member
+				})
+				return ProjectsActions.updateProjectNoSignalr({
+					update: { id: projectToUpdate.id, changes: { members } },
+				})
+			}),
+			catchError((error) => {
+				console.error(error)
+				return of(ProjectsActions.getProjectFailure({ error }))
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+export const kickProjectMember$ = createEffect(
+	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.kickProjectMember),
+			tap(({ request }) => projectsSignalr.kickProjectMember(request)),
+		)
+	},
+	{ functional: true, dispatch: false },
+)
+
+export const projectMemberKicked$ = createEffect(
+	(actions$ = inject(Actions), store = inject(Store)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.projectMemberKicked),
+			map(({ response }) => {
+				const projectToUpdate = store.selectSignal(selectProjectById({ id: response.projectId }))()
+				if (!projectToUpdate) {
+					throw new Error(`Project not found, ${response.projectId}`)
+				}
+				const memberIds = projectToUpdate.memberIds.filter((id) => id !== response.memberId)
+				const members = projectToUpdate.members.filter((member) => member.id !== response.memberId)
+				return ProjectsActions.updateProjectNoSignalr({
+					update: { id: projectToUpdate.id, changes: { memberIds, members } },
+				})
+			}),
+			catchError((error) => {
+				console.error(error)
+				return of(ProjectsActions.getProjectFailure({ error }))
+			}),
+		)
+	},
+	{ functional: true },
+)
+
 export const leaveProject$ = createEffect(
 	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
 		return actions$.pipe(

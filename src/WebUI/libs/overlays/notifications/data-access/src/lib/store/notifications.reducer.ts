@@ -55,7 +55,7 @@ const reducer = createReducer(
 	),
 	on(NotificationsActions.addLocalNotification, (state, { localNotification }) => ({
 		...state,
-		localNotifications: [...state.localNotifications, localNotification],
+		localNotifications: handleLocalNotifications(state, localNotification),
 	})),
 	on(NotificationsActions.deleteLocalNotification, (state, { localNotificationId }) => ({
 		...state,
@@ -89,4 +89,19 @@ const reducer = createReducer(
 
 export function notificationsReducer(state: NotificationsState | undefined, action: Action) {
 	return reducer(state, action)
+}
+
+const handleLocalNotifications = (
+	state: NotificationsState,
+	localNotification: LocalNotificationModel,
+) => {
+	const isExisting = state.localNotifications.some(
+		(localNotificationItem) =>
+			localNotificationItem.notificationType === localNotification.notificationType &&
+			localNotificationItem.senderAppUserId === localNotification.senderAppUserId,
+	)
+	if (!isExisting) {
+		return [...state.localNotifications, localNotification]
+	}
+	return state.localNotifications
 }

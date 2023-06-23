@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -66,10 +67,12 @@ public class ApiWebFactory : WebApplicationFactory<IIdentityApiAssemblyMarker>, 
                         $"Server=localhost;Port=5555;Database=mydb;User ID=course;Password=changeme;")
                 })
                 .Build();*/
-            // var config = new IConfiguration
-            services.InitDbContext<IdentityContext>(
-                inputConnectionString: "Server=localhost;Port=5555;Database=mydb;User ID=course;Password=changeme;"
-            );
+            // var config = new IConfiguration()
+            // TODO - Add configuration
+            /*services.InitDbContext<IdentityContext>(
+                inputConnectionString: "Server=localhost;Port=5555;Database=mydb;User ID=course;Password=changeme;",
+                
+            );*/
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 

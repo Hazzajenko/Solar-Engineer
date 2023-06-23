@@ -2,6 +2,7 @@ import { ProjectId } from './project.model'
 import { CustomIdType } from '@shared/utils'
 
 export const PROJECTS_SIGNALR_METHOD = {
+	SELECT_PROJECT: 'SelectProject',
 	CREATE_PROJECT: 'CreateProject',
 	UPDATE_PROJECT: 'UpdateProject',
 	DELETE_PROJECT: 'DeleteProject',
@@ -12,6 +13,8 @@ export const PROJECTS_SIGNALR_METHOD = {
 	ACCEPT_PROJECT_INVITE: 'AcceptProjectInvite',
 	REJECT_PROJECT_INVITE: 'RejectProjectInvite',
 	LEAVE_PROJECT: 'LeaveProject',
+	UPDATE_PROJECT_MEMBER: 'UpdateProjectMember',
+	KICK_PROJECT_MEMBER: 'KickProjectMember',
 } as const
 export type ProjectsSignalrMethod =
 	(typeof PROJECTS_SIGNALR_METHOD)[keyof typeof PROJECTS_SIGNALR_METHOD]
@@ -30,6 +33,9 @@ export const PROJECTS_SIGNALR_EVENT = {
 	USER_REJECTED_INVITE_TO_PROJECT: 'UserRejectedInviteToProject',
 	USER_LEFT_PROJECT: 'UserLeftProject',
 	LEFT_PROJECT: 'LeftProject',
+	PROJECT_MEMBER_UPDATED: 'ProjectMemberUpdated',
+	PROJECT_MEMBER_KICKED: 'ProjectMemberKicked',
+	KICKED_FROM_PROJECT: 'KickedFromProject',
 } as const
 
 export type ProjectSignalrEvent =

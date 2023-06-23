@@ -5,9 +5,13 @@ import {
 	AcceptProjectInviteRequest,
 	CreateProjectRequest,
 	InviteToProjectRequest,
+	KickProjectMemberRequest,
 	ProjectId,
+	ProjectMemberKickedResponse,
+	ProjectMemberUpdatedResponse,
 	ProjectModel,
 	RejectProjectInviteRequest,
+	UpdateProjectMemberRequest,
 	UserLeftProjectResponse,
 } from '@entities/shared'
 import { ProjectEntityStore } from './projects.reducer'
@@ -53,6 +57,18 @@ export const ProjectsActions = createActionGroup({
 		}>(),
 		'Reject Project Invite': props<{
 			request: RejectProjectInviteRequest
+		}>(),
+		'Update Project Member': props<{
+			request: UpdateProjectMemberRequest
+		}>(),
+		'Update Project Member No Signalr': props<{
+			response: ProjectMemberUpdatedResponse
+		}>(),
+		'Kick Project Member': props<{
+			request: KickProjectMemberRequest
+		}>(),
+		'Project Member Kicked': props<{
+			response: ProjectMemberKickedResponse
 		}>(),
 		'Add Project': props<{
 			project: ProjectModel

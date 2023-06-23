@@ -15,9 +15,13 @@ import {
 	AcceptProjectInviteRequest,
 	CreateProjectRequest,
 	InviteToProjectRequest,
+	KickProjectMemberRequest,
 	ProjectId,
+	ProjectMemberKickedResponse,
+	ProjectMemberUpdatedResponse,
 	ProjectModel,
 	RejectProjectInviteRequest,
+	UpdateProjectMemberRequest,
 	UserLeftProjectResponse,
 } from '@entities/shared'
 import { createRootServiceInjector } from '@shared/utils'
@@ -64,6 +68,14 @@ export function projectsStoreFactory(store: Store) {
 			store.dispatch(ProjectsActions.userAcceptedInviteToProject({ response })),
 		userLeftProject: (response: UserLeftProjectResponse) =>
 			store.dispatch(ProjectsActions.userLeftProject({ response })),
+		updateProjectMember: (request: UpdateProjectMemberRequest) =>
+			store.dispatch(ProjectsActions.updateProjectMember({ request })),
+		updateProjectMemberNoSignalr: (response: ProjectMemberUpdatedResponse) =>
+			store.dispatch(ProjectsActions.updateProjectMemberNoSignalr({ response })),
+		kickProjectMember: (request: KickProjectMemberRequest) =>
+			store.dispatch(ProjectsActions.kickProjectMember({ request })),
+		projectMemberKicked: (response: ProjectMemberKickedResponse) =>
+			store.dispatch(ProjectsActions.projectMemberKicked({ response })),
 		addProject: (project: ProjectModel) => store.dispatch(ProjectsActions.addProject({ project })),
 		addManyProjects: (projects: ProjectModel[]) =>
 			store.dispatch(ProjectsActions.addManyProjects({ projects })),

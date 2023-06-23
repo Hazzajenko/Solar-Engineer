@@ -113,6 +113,8 @@ builder.Services.InitSwaggerDocs(
 );
 
 var app = builder.Build();
+
+// MethodTimeLogger.Logger = app.Logger;
 app.ConfigurePipeline();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 

@@ -23,6 +23,8 @@ public sealed class AppUserLinksRepository
                     (m.AppUserRequestedId == appUserId && m.AppUserReceivedId == recipientId)
                     || (m.AppUserRequestedId == recipientId && m.AppUserReceivedId == appUserId)
             )
+            .Include(x => x.AppUserReceived)
+            .Include(x => x.AppUserRequested)
             .SingleOrDefaultAsync();
     }
 
@@ -68,6 +70,19 @@ public sealed class AppUserLinksRepository
             .SingleOrDefaultAsync();
     }
 
+    public async Task<IEnumerable<AppUserLink>> GetUserFriendsAsync(Guid appUserId)
+    {
+        return await Queryable
+            .Where(
+                x =>
+                    (x.AppUserReceivedId == appUserId || x.AppUserRequestedId == appUserId)
+                    && x.Friends
+            )
+            .Include(x => x.AppUserReceived)
+            .Include(x => x.AppUserRequested)
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<FriendDto>> GetUserFriendsDtosAsync(Guid appUserId)
     {
         return await Queryable
@@ -90,6 +105,35 @@ public sealed class AppUserLinksRepository
                     (x.AppUserReceivedId == appUserId || x.AppUserRequestedId == appUserId)
                     && x.Friends
             )
+            .Include(x => x.AppUserReceived)
+            .Include(x => x.AppUserRequested)
+            .Select(x => x.ToWebUserDto(appUserId))
+            .ToListAsync();
+    }
+
+    /*public async Task<IEnumerable<WebUserDto>> GetManyWebUserDtosByIdsAsync(
+        Guid appUserId,
+        IEnumerable<Guid> webUserIds
+    )
+    {
+        return await Queryable
+            .Where(
+                x =>
+                    ((x.AppUserReceivedId == appUserId  && x.AppUserRequestedId) || x.AppUserRequestedId == appUserId)
+            )
+            .Include(x => x.AppUserReceived)
+            .Include(x => x.AppUserRequested)
+            .Select(x => x.ToWebUserDto(appUserId))
+            .ToListAsync();
+    }*/
+
+    public async Task<IEnumerable<WebUserDto>> GetManyWebUserDtosByIdsCreateIfNullAsync(
+        Guid appUserId,
+        IEnumerable<Guid> webUserIds
+    )
+    {
+        return await Queryable
+            .Where(x => webUserIds.Contains(x.AppUserReceivedId))
             .Include(x => x.AppUserReceived)
             .Include(x => x.AppUserRequested)
             .Select(x => x.ToWebUserDto(appUserId))

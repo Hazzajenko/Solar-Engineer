@@ -87,6 +87,21 @@ public static class AppUserMapper
         throw new ArgumentException("Invalid login provider");
     }
 
+    /*public static WebUserDto ToWebUserDto(this AppUserDto request)
+    {
+        return new WebUserDto
+        {
+            Id = request.Id,
+            DisplayName = request.DisplayName,
+            UserName = request.UserName,
+            PhotoUrl = request.PhotoUrl,
+            IsFriend = false,
+            IsOnline = false,
+            BecameFriendsTime = 
+            
+        }
+    }*/
+
     public static CurrentUserDto ToCurrentUserDto(this AppUser request)
     {
         return new CurrentUserDto
@@ -116,5 +131,17 @@ public class AppUserMappingConfig : IRegister
             .Map(dest => dest.PhotoUrl, src => src.PhotoUrl)
             .Map(dest => dest.CreatedTime, src => src.CreatedTime)
             .Map(dest => dest.LastModifiedTime, src => src.LastModifiedTime);
+
+        config
+            .NewConfig<AppUser, WebUserDto>()
+            .Map(dest => dest.Id, src => src.Id.ToString())
+            .Map(dest => dest.DisplayName, src => src.DisplayName)
+            .Map(dest => dest.UserName, src => src.UserName)
+            .Map(dest => dest.PhotoUrl, src => src.PhotoUrl)
+            .Map(dest => dest.IsFriend, src => false)
+            .Map(dest => dest.IsOnline, src => false)
+            .Map(dest => dest.RegisteredAtTime, src => src.CreatedTime)
+            // .Map(dest => dest.BecameFriendsTime, src => DateTime.N)
+            .Map(dest => dest.LastActiveTime, src => src.LastModifiedTime);
     }
 }

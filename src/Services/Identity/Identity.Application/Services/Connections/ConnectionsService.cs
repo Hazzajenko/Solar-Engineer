@@ -87,6 +87,22 @@ public class ConnectionsService : IConnectionsService
         return false;
     }
 
+    public bool IsUserOnline(Guid appUserId)
+    {
+        var appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
+        return appUserConnection is not null;
+    }
+
+    public DateTime GetLastActiveTime(Guid appUserId)
+    {
+        var appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
+        if (appUserConnection is not null)
+            return appUserConnection.LastActiveTime;
+
+        Log.Logger.Error("UserConnection is null, AppUserId: {AppUserId}", appUserId);
+        return DateTime.MinValue;
+    }
+
     public IEnumerable<string> GetConnections(Guid key)
     {
         if (_connections.TryGetValue(key, out var userConnection))

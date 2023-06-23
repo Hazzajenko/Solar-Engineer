@@ -34,7 +34,7 @@ public class UsersHub : Hub<IUsersHub>
         var authUser = Context.ToAuthUser();
         await _mediator.Send(new OnConnectedCommand(authUser));
         await _mediator.Send(new GetUserFriendsCommand(authUser));
-        await _mediator.Send(new GetOnlineFriendsQuery(authUser));
+        // await _mediator.Send(new GetOnlineFriendsQuery(authUser));
         await _mediator.Send(new GetUserNotificationsCommand(authUser));
         await Clients.Caller.AppUserIsConnected();
         await base.OnConnectedAsync();

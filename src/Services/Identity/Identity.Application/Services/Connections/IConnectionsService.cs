@@ -14,6 +14,8 @@ public interface IConnectionsService
         string connectionId,
         DeviceInfoDto deviceInfo
     );
+    bool IsUserOnline(Guid appUserId);
+    DateTime GetLastActiveTime(Guid appUserId);
 
     IEnumerable<string> GetConnections(Guid key);
     IEnumerable<Guid> GetAllConnectedUserIds();

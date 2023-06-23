@@ -2,10 +2,12 @@
 using Identity.Application.Handlers.AppUsers.GetAppUser;
 using Identity.Application.Handlers.AppUsers.GetAppUserDto;
 using Identity.Application.Mapping;
+using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses;
 using Infrastructure.Extensions;
 using Mediator;
+using MethodTimer;
 
 namespace Identity.API.Endpoints.Users;
 
@@ -16,7 +18,7 @@ public class GetManyUsersByIdsRequest
 
 public class GetManyUsersByIdsResponse
 {
-    public IEnumerable<AppUserDto> AppUsers { get; set; } = new List<AppUserDto>();
+    public IEnumerable<WebUserDto> AppUsers { get; set; } = new List<WebUserDto>();
 }
 
 public class GetManyUsersByIdsEndpoint
@@ -31,10 +33,11 @@ public class GetManyUsersByIdsEndpoint
 
     public override void Configure()
     {
-        Get("/users");
+        Post("/users");
         AuthSchemes("bearer");
     }
 
+    [Time]
     public override async Task HandleAsync(GetManyUsersByIdsRequest request, CancellationToken cT)
     {
         var appUser = await _mediator.Send(new GetAppUserQuery(User), cT);
@@ -46,8 +49,10 @@ public class GetManyUsersByIdsEndpoint
         }
 
         var queryUserIds = request.AppUserIds.Select(Guid.Parse);
-
-        var userByQuery = await _mediator.Send(new GetManyAppUserDtosByIdsQuery(queryUserIds), cT);
+        var userByQuery = await _mediator.Send(
+            new GetManyWebUserDtosByIdsQuery(appUser, queryUserIds),
+            cT
+        );
 
         Response.AppUsers = userByQuery;
         await SendOkAsync(Response, cT);

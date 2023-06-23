@@ -25,7 +25,7 @@ import { SideUiAuthViewComponent } from '../side-ui-auth-view/side-ui-auth-view.
 import { SideUiUsersViewComponent } from '../side-ui-users-view/side-ui-users-view.component'
 import { SideUiNotificationsViewComponent } from '../side-ui-notifications-view/side-ui-notifications-view.component'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
-import { injectAuthStore } from '@auth/data-access'
+import { injectAuthStore, injectUsersStore } from '@auth/data-access'
 import { LetDirective } from '@ngrx/component'
 import { injectProjectsStore } from '@entities/data-access'
 import { SideUiNavItemDirective } from './side-ui-nav-item.directive'
@@ -79,6 +79,7 @@ export const sideUiInjectionToken = new InjectionToken<SideUiNavBarView>('Curren
 })
 export class SideUiNavBarComponent {
 	private _authStore = injectAuthStore()
+	private _usersStore = injectUsersStore()
 	private _uiStore = injectUiStore()
 	private _notificationsStore = injectNotificationsStore()
 	private _projectsStore = injectProjectsStore()
@@ -112,6 +113,10 @@ export class SideUiNavBarComponent {
 	amountOfUnreadNotifications = computed(() => {
 		if (!this._authStore.select.user()) return undefined
 		return this._notificationsStore.select.amountOfUnreadNotifications()
+	})
+	amountOfOnlineFriends = computed(() => {
+		if (!this._authStore.select.user()) return undefined
+		return this._usersStore.select.amountOfOnlineFriends()
 	})
 	currentView = this._sideUiNavBarStore.currentView
 	// currentView = signal<SideUiNavBarView>('auth')

@@ -47,6 +47,23 @@ export type RejectProjectInviteRequest = {
 	notificationId: string
 }
 
+export type UpdateProjectMemberRequest = {
+	projectId: ProjectId
+	memberId: string
+	changes: Partial<{
+		role: string
+		canCreate: boolean
+		canDelete: boolean
+		canInvite: boolean
+		canKick: boolean
+	}>
+}
+
+export type KickProjectMemberRequest = {
+	projectId: ProjectId
+	memberId: string
+}
+
 /**
  * * Responses
  */
@@ -104,4 +121,19 @@ export type LeftProjectResponse = {
 
 export type ProjectDeletedResponse = {
 	projectId: ProjectId
+}
+
+export type KickedFromProjectResponse = {
+	projectId: ProjectId
+}
+
+export type ProjectMemberKickedResponse = {
+	projectId: ProjectId
+	memberId: string
+}
+
+export type ProjectMemberUpdatedResponse = {
+	projectId: ProjectId
+	memberId: string
+	changes: Partial<ProjectUserModel>
 }

@@ -1,8 +1,25 @@
 <side-ui-base [view]="sideUiView">
 	<side-ui-view-heading heading="Friends" />
-
 	<ng-container *ngIf="user() as user; then loggedIn; else notLoggedIn" />
 	<ng-template #loggedIn>
+		<p class="text-xs ml-2 font-medium text-gray-900 dark:text-white">
+			{{ amountOfFriendsOnline() }} Online
+		</p>
+		<!--
+				<p
+					*ngIf="!userSearchResults().length"
+					class="mb-2 text-sm font-medium text-gray-900 dark:text-white"
+				>
+					Your Friends
+				</p>-->
+
+		<p
+			*ngIf="userSearchResults().length"
+			class="mb-2 text-sm font-medium text-gray-900 dark:text-white"
+		>
+			Search Results
+		</p>
+
 		<form class="mb-2">
 			<label
 				class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"

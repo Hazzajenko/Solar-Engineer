@@ -23,10 +23,10 @@
 						(click)="editingPermissions.set(!editingPermissions())"
 						[disabled]="!userCanEditPermissions"
 						[ngClass]="{
-			'opacity-50 cursor-not-allowed': !userCanEditPermissions,
-						'text-gray-900': userCanEditPermissions,
+							'opacity-50 cursor-not-allowed': !userCanEditPermissions,
+							'text-gray-900': userCanEditPermissions,
 							'text-gray-500': !userCanEditPermissions,
-		}"
+						}"
 						class="cursor-default flex relative hover:bg-gray-200 my-1 py-1 rounded-md w-full items-center justify-between"
 						matRipple
 						type="button"
@@ -35,16 +35,17 @@
 						<label class="select-none ml-1 font-medium">Edit Permissions</label>
 					</button>
 					<ng-container *ngIf="editingPermissions()">
-						<form
-							(ngSubmit)="savePermissions(permissionsForm)"
-							[formGroup]="permissionsForm"
-							class="w-full"
-						>
+						<div class="w-full">
+							<ng-container *ngTemplateOutlet="rolesSelect" />
 							<div
 								*ngFor="let permission of permissions"
 								class="group hover:bg-gray-100 flex items-center justify-between"
 							>
-								<mat-slide-toggle [formControlName]="permission.value" color="primary" />
+								<mat-slide-toggle
+									(change)="togglePermission(permission.value)"
+									[checked]="currentPermissions()[permission.value]"
+									color="primary"
+								/>
 								<div class="group flex items-center justify-center">
 									<a
 										class="flex items-center py-2 text-sm text-gray-700 group-hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white"
@@ -64,23 +65,23 @@
 									Cancel
 								</button>
 								<button
-									[disabled]="permissionsForm.pristine"
+									(click)="savePermissions()"
+									[disabled]="!permissionsValueHasBeenChanged() && !roleValueHasBeenChanged()"
 									class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm disabled:opacity-50 disabled:cursor-default hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-									type="submit"
 								>
 									Save
 								</button>
 							</div>
-						</form>
+						</div>
 					</ng-container>
 					<button
 						(click)="openKickFromProjectDialog()"
 						[disabled]="!userCanKick"
 						[ngClass]="{
-			'opacity-50 cursor-not-allowed': !userCanKick,
-						'text-gray-900': userCanKick,
+							'opacity-50 cursor-not-allowed': !userCanKick,
+							'text-gray-900': userCanKick,
 							'text-gray-500': !userCanKick,
-		}"
+						}"
 						class="cursor-default flex relative hover:bg-gray-200 my-1 py-1 rounded-md w-full items-center justify-between"
 						matRipple
 						type="button"
@@ -112,3 +113,100 @@
 		</div>
 	</div>
 </dialog-backdrop-template-component>
+
+<ng-template #rolesSelect>
+	<div *ngrxLet="currentRoleValue() as selectedRole">
+		<label class="block text-sm font-medium leading-6 text-gray-900" id="listbox-label"
+			>Assigned to</label
+		>
+		<div class="relative mt-2">
+			<button
+				(click)="selectingRole.set(!selectingRole())"
+				aria-expanded="true"
+				aria-haspopup="listbox"
+				aria-labelledby="listbox-label"
+				class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+				type="button"
+			>
+				<span class="block truncate">{{ selectedRole }}</span>
+				<span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+					<svg
+						aria-hidden="true"
+						class="h-5 w-5 text-gray-400"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+					>
+						<path
+							clip-rule="evenodd"
+							d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z"
+							fill-rule="evenodd"
+						/>
+					</svg>
+				</span>
+			</button>
+			<ul
+				*ngIf="selectingRole()"
+				@opacityInOut
+				aria-labelledby="listbox-label"
+				class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+				role="listbox"
+				tabindex="-1"
+			>
+				<li
+					(click)="setRoleValue('Admin')"
+					class="text-gray-900 relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-indigo-500 hover:text-white"
+					id="listbox-option-0"
+					role="option"
+				>
+					<span
+						[ngClass]="{
+							'font-semibold': selectedRole === 'Admin',
+							'font-normal': selectedRole !== 'Admin'
+						}"
+						class="block truncate"
+						>Admin</span
+					>
+					<span
+						*ngIf="selectedRole === 'Admin'"
+						class="text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4"
+					>
+						<svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+							<path
+								clip-rule="evenodd"
+								d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+								fill-rule="evenodd"
+							/>
+						</svg>
+					</span>
+				</li>
+				<li
+					(click)="setRoleValue('Member')"
+					class="text-gray-900 relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-indigo-500 hover:text-white"
+					id="listbox-option-1"
+					role="option"
+				>
+					<span
+						[ngClass]="{
+							'font-semibold': selectedRole === 'Member',
+							'font-normal': selectedRole !== 'Member'
+						}"
+						class="block truncate"
+						>Member</span
+					>
+					<span
+						*ngIf="selectedRole === 'Member'"
+						class="text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4"
+					>
+						<svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+							<path
+								clip-rule="evenodd"
+								d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+								fill-rule="evenodd"
+							/>
+						</svg>
+					</span>
+				</li>
+			</ul>
+		</div>
+	</div>
+</ng-template>

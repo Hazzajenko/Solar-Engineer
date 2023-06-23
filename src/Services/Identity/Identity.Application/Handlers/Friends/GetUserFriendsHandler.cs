@@ -1,9 +1,12 @@
 ﻿using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
+using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Friends;
 using Identity.SignalR.Commands.Friends;
 using Identity.SignalR.Hubs;
+using Infrastructure.Extensions;
 using Infrastructure.Logging;
+using Infrastructure.SignalR;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -37,24 +40,36 @@ public class GetUserFriendsHandler : ICommandHandler<GetUserFriendsCommand, GetU
     {
         var authUser = command.AuthUser;
 
-        /*var userFriends = await _unitOfWork.AppUserLinksRepository.GetUserFriendsDtosAsync(
-            authUser.Id
-        );*/
-
         var userFriends = await _unitOfWork.AppUserLinksRepository.GetUserFriendsAsWebUserDtoAsync(
             authUser.Id
         );
 
-        GetUserFriendsResponse response = new() { Friends = userFriends };
+        if (!userFriends.Any())
+        {
+            var noFriendsResponse = new GetUserFriendsResponse { Friends = new List<WebUserDto>() };
+            await _hubContext.Clients
+                .User(authUser.Id.ToString())
+                .GetUserFriends(noFriendsResponse);
+            return noFriendsResponse;
+        }
 
-        // response.DumpObjectJson();
+        var userFriendIds = userFriends.Select(f => f.Id.ToGuid()).ToList();
+        var onlineFriendConnections = _connections.GetUserConnectionsByIds(userFriendIds);
+
+        foreach (var friend in userFriends)
+        {
+            friend.IsOnline = onlineFriendConnections.Any(c => c.AppUserId.ToString() == friend.Id);
+        }
+
+        GetUserFriendsResponse response = new() { Friends = userFriends };
 
         await _hubContext.Clients.User(authUser.Id.ToString()).GetUserFriends(response);
 
         _logger.LogInformation(
-            "User {UserId}-{UserName} get online friends",
-            authUser.Id.ToString(),
-            authUser.UserName
+            "User {User} get {Friends} friends, {OnlineFriends} online",
+            authUser.GetLoggingString(),
+            response.Friends.Count(),
+            response.Friends.Count(f => f.IsOnline)
         );
 
         return response;

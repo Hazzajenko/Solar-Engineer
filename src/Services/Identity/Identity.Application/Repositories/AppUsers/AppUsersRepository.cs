@@ -41,6 +41,16 @@ public sealed class AppUsersRepository
             .ToListAsync();
     }
 
+    /*public async Task<IEnumerable<WebUserDto>> GetManyWebUserDtosByIdsAsync(
+        IEnumerable<Guid> webUserIds
+    )
+    {
+        return await Queryable
+            .Where(x => webUserIds.Contains(x.Id))
+            .Select(x => x.ToWebUserDto(appUserId))
+            .ToListAsync();
+    }*/
+
     public async Task<AppUserDto?> GetAppUserDtoByIdAsync(Guid id)
     {
         return await Queryable

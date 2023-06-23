@@ -12,7 +12,13 @@ import { selectUserById, UsersActions } from '../users'
 export const userIsOnlineDispatchNotification$ = createEffect(
 	(actions$ = inject(Actions), http = inject(HttpClient), store = inject(Store)) => {
 		return actions$.pipe(
-			ofType(ConnectionsActions.addConnection),
+			ofType(ConnectionsActions.addConnection) /*			map(({ connection }) => {
+		 const user = store.selectSignal(selectUserById({ id: connection.appUserId }))()
+		 if (!user) throw new Error('User not found')
+		 }),
+		 retry({
+
+		 }),*/,
 			switchMap(({ connection }) => {
 				return store
 					.select(selectUserById({ id: connection.appUserId }))
@@ -21,7 +27,7 @@ export const userIsOnlineDispatchNotification$ = createEffect(
 							if (user) return of(user)
 							return http.get<WebUserModel>(`/api/user/${connection.appUserId}`).pipe(
 								map((user) => {
-									if (user) return UsersActions.addAppUser({ user })
+									if (user) return UsersActions.addUser({ user })
 									throw new Error('User not found')
 								}),
 							)
@@ -47,3 +53,41 @@ export const userIsOnlineDispatchNotification$ = createEffect(
 	},
 	{ functional: true },
 )
+/*export const userIsOnlineDispatchNotification$ = createEffect(
+ (actions$ = inject(Actions), http = inject(HttpClient), store = inject(Store)) => {
+ return actions$.pipe(
+ ofType(ConnectionsActions.addConnection),
+ switchMap(({ connection }) => {
+ return store
+ .select(selectUserById({ id: connection.appUserId }))
+ .pipe(
+ switchMap((user) => {
+ if (user) return of(user)
+ return http.get<WebUserModel>(`/api/user/${connection.appUserId}`).pipe(
+ map((user) => {
+ if (user) return UsersActions.addUser({ user })
+ throw new Error('User not found')
+ }),
+ )
+ }),
+ )
+ .pipe(
+ map((userOrAction) => {
+ const user = 'type' in userOrAction ? userOrAction.user : userOrAction
+ const localNotification: LocalNotificationModel = {
+ id: newGuid(),
+ notificationType: 'UserIsOnline',
+ completed: true,
+ senderAppUserId: user.id,
+ senderAppUserUserName: user.userName,
+ senderAppUserDisplayName: user.displayName,
+ senderAppUserPhotoUrl: user.photoUrl,
+ }
+ return NotificationsActions.addLocalNotification({ localNotification })
+ }),
+ )
+ }),
+ )
+ },
+ { functional: true },
+ )*/

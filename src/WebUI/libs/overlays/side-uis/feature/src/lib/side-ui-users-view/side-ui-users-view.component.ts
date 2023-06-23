@@ -74,12 +74,19 @@ export class SideUiUsersViewComponent {
 		const filteredNotAuthUser = results.filter((r) => r.id !== this.user()?.id)
 		return filteredNotAuthUser.map(minimalToWebUser)
 	})
+
+	friends = this._usersStore.select.allFriends
+	amountOfFriendsOnline = computed(() => {
+		const friends = this.friends()
+		const onlineFriends = friends.filter((f) => f.isOnline)
+		return onlineFriends.length
+	})
 	/*	friends = computed(() => {
 	 const friends = this._usersStore.select.allFriends()
 	 const fakeData = GenerateFriendData(10)
 	 return friends.concat(fakeData)
 	 })*/
-	friends = this._usersStore.select.allFriends
+
 	webUserSorter = signal<keyof WebUserModel | undefined>('lastActiveTime')
 	friendsSorted = computed(() => {
 		const friends = this.friends()

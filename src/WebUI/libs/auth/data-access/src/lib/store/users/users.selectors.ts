@@ -57,6 +57,15 @@ export const selectAllFriends = createSelector(
 	(users: WebUserModel[]) => users.filter((user) => user.isFriend),
 )
 
+export const selectAllOnlineFriends = createSelector(selectAllFriends, (users: WebUserModel[]) =>
+	users.filter((user) => user.isOnline),
+)
+
+export const selectAmountOfOnlineFriends = createSelector(
+	selectAllOnlineFriends,
+	(users: WebUserModel[]) => users.length,
+)
+
 /*export const selectAllFriends = createSelector(
  selectAllUsers, (users: WebUserModel[]) =>
  users.filter((user) => user.isFriend),

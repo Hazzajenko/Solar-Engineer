@@ -7,6 +7,8 @@ import { ProjectsActions } from '@entities/data-access'
 import { HttpClient } from '@angular/common/http'
 import { WebUserModel } from '@auth/shared'
 import { AuthActions } from '../auth'
+import { injectUsersStore } from './users.store'
+import { ConnectionsActions } from '../connections'
 
 /*export const initializeUsersHub$ = createEffect(
  (actions$ = inject(Actions), usersSignalr = inject(UsersSignalrService)) => {
@@ -98,23 +100,67 @@ export const removeFriend$ = createEffect(
 )
 
 export const fetchWebUsersForProjectMembers$ = createEffect(
-	(actions$ = inject(Actions), http = inject(HttpClient)) => {
+	(actions$ = inject(Actions), http = inject(HttpClient), usersStore = injectUsersStore()) => {
 		return actions$.pipe(
 			ofType(ProjectsActions.loadUserProjectsSuccess),
 			map(({ projects }) => {
 				const projectMemberIds = projects.map((project) => project.memberIds).flat()
-				return [...new Set(projectMemberIds)]
+				const allUserIds = usersStore.select.allUsers().map((user) => user.id)
+				const appUserIds = projectMemberIds.filter((id) => !allUserIds.includes(id))
+				return [...new Set(appUserIds)]
 			}),
-			switchMap((projectMemberIds) => {
+			switchMap((appUserIds) => {
 				return http
-					.get<{
+					.post<{
 						appUsers: WebUserModel[]
-					}>('/auth/users', { params: { appUserIds: projectMemberIds } })
+					}>('/auth/users', { appUserIds })
 					.pipe(
+						tap(({ appUsers }) => {
+							console.log('fetchWebUsersForProjectMembers$ appUsers', appUsers)
+						}),
 						map(({ appUsers }) => {
 							return UsersActions.addManyUsers({ users: appUsers })
 						}),
 					)
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+export const userIsOnline$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(ConnectionsActions.addConnection),
+			map(({ connection }) => {
+				const userId = connection.appUserId
+				return UsersActions.updateUser({
+					update: {
+						id: userId,
+						changes: {
+							isOnline: true,
+						},
+					},
+				})
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+export const userIsOffline$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(ConnectionsActions.deleteConnection),
+			map(({ appUserId }) => {
+				return UsersActions.updateUser({
+					update: {
+						id: appUserId,
+						changes: {
+							isOnline: false,
+						},
+					},
+				})
 			}),
 		)
 	},

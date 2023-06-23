@@ -30,6 +30,13 @@ export type ProjectUserModel = {
 	joinedAtTime: string
 }
 
+export type ProjectMemberPermissions = {
+	canCreate: boolean
+	canInvite: boolean
+	canKick: boolean
+	canDelete: boolean
+}
+
 export type ProjectWebModel = Omit<ProjectModel, 'members'> & {
 	members: ProjectWebUserModel[]
 }
