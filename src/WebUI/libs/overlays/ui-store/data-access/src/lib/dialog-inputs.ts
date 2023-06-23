@@ -19,6 +19,7 @@ export const DIALOG_COMPONENT = {
 	USER_OPTIONS: 'DialogUserOptionsComponent',
 	WARNING_TEMPLATE: 'DialogWarningTemplateComponent',
 	PROJECT_MEMBER_OPTIONS: 'DialogProjectMemberOptionsComponent',
+	SEARCH_FOR_USERS: 'DialogSearchForUsersComponent',
 } as const
 
 export type DialogComponent = (typeof DIALOG_COMPONENT)[keyof typeof DIALOG_COMPONENT]
@@ -105,6 +106,10 @@ export type DialogInputProjectMemberOptions = DialogInputTemplate & {
 	}
 }
 
+export type DialogInputSearchForUsers = DialogInputTemplate & {
+	component: typeof DIALOG_COMPONENT.SEARCH_FOR_USERS
+}
+
 export type DialogInput =
 	| DialogInputMovePanelsToString
 	| DialogInputAppSettings
@@ -119,3 +124,4 @@ export type DialogInput =
 	| DialogInputUserOptions
 	| DialogInputWarningTemplate
 	| DialogInputProjectMemberOptions
+	| DialogInputSearchForUsers

@@ -13,6 +13,12 @@
 					Your Friends
 				</p>-->
 
+		<button
+			(click)="openSearchForUsersDialog()"
+			class="mb-2 text-sm font-medium text-gray-900 dark:text-white"
+		>
+			Show Dialog
+		</button>
 		<p
 			*ngIf="userSearchResults().length"
 			class="mb-2 text-sm font-medium text-gray-900 dark:text-white"

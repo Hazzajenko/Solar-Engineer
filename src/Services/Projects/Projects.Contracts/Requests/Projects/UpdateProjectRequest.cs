@@ -6,8 +6,6 @@ public class UpdateProjectRequest
     public required ProjectChanges Changes { get; set; }
 }
 
-// publ
-
 public class ProjectChanges
 {
     public string? Name { get; set; } = default!;

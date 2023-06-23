@@ -10,6 +10,7 @@ export const USERS_SIGNALR_METHOD = {
 	COMPLETE_MANY_NOTIFICATIONS: 'CompleteManyNotifications',
 	DELETE_NOTIFICATION: 'DeleteNotification',
 	RECEIVE_NOTIFICATION: 'ReceiveNotification',
+	SEARCH_FOR_APP_USER: 'SearchForAppUser',
 } as const
 
 export type UsersSignalrMethods = (typeof USERS_SIGNALR_METHOD)[keyof typeof USERS_SIGNALR_METHOD]

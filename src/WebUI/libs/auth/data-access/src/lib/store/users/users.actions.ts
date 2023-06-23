@@ -1,6 +1,12 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { FriendRequestResponse, MinimalWebUser, WebUserModel } from '@auth/shared'
+import {
+	FriendRequestResponse,
+	MinimalWebUser,
+	SearchForAppUserRequest,
+	SearchForAppUserResponse,
+	WebUserModel,
+} from '@auth/shared'
 import { EntityUpdate } from '@shared/data-access/models'
 
 export const UsersActions = createActionGroup({
@@ -25,9 +31,16 @@ export const UsersActions = createActionGroup({
 		'Search For App User By User Name': props<{
 			query: string
 		}>(),
+		'Search For App User': props<{
+			request: SearchForAppUserRequest
+		}>(),
 		'Receive Users From Search': props<{
 			users: MinimalWebUser[]
 		}>(),
+		'Receive Search Results For App User': props<{
+			response: SearchForAppUserResponse
+		}>(),
+		'Clear App User Search Results': emptyProps(),
 		'Clear User Search Results': emptyProps(),
 		'Load Users': props<{
 			users: WebUserModel[]

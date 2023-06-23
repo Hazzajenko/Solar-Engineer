@@ -24,3 +24,32 @@ export const opacityInOutAnimation = trigger('opacityInOut', [
 		),
 	]),
 ])
+
+export const opacityInOutAnimationWithConfig = (config: {
+	enterSeconds: number
+	leaveSeconds: number
+}) =>
+	trigger('opacityInOut', [
+		transition(':enter', [
+			style({
+				opacity: 0,
+			}),
+			animate(
+				`${config.enterSeconds}s ease-in`,
+				style({
+					opacity: 1,
+				}),
+			),
+		]),
+		transition(':leave', [
+			style({
+				opacity: 1,
+			}),
+			animate(
+				`${config.leaveSeconds}s ease-in`,
+				style({
+					opacity: 0,
+				}),
+			),
+		]),
+	])

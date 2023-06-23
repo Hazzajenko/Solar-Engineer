@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import { FriendRequestResponse, GetOnlineFriendsResponse, GetOnlineUsersResponse, GetUserFriendsResponse, NotificationUpdatedResponse, ReceiveAppUserNotificationsResponse, ReceiveFriendResponse, ReceiveNotificationResponse, SearchForUserResponse, UpdateNotificationResponse, UserIsOfflineResponse, UserIsOnlineResponse, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD, UsersSignalrEvent } from '@auth/shared'
+import { FriendRequestResponse, GetOnlineFriendsResponse, GetOnlineUsersResponse, GetUserFriendsResponse, NotificationUpdatedResponse, ReceiveAppUserNotificationsResponse, ReceiveFriendResponse, ReceiveNotificationResponse, SearchForAppUserRequest, SearchForAppUserResponse, SearchForUserResponse, UpdateNotificationResponse, UserIsOfflineResponse, UserIsOnlineResponse, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD, UsersSignalrEvent } from '@auth/shared'
 import { injectConnectionsStore, injectUsersStore } from '../store'
 import { HubConnection } from '@microsoft/signalr'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
@@ -82,6 +82,14 @@ export class UsersSignalrService {
 		)
 
 		this.onHub(
+			USERS_SIGNALR_EVENT.RECEIVE_SEARCH_RESULTS_FOR_APP_USER,
+			(response: SearchForAppUserResponse) => {
+				console.log(USERS_SIGNALR_EVENT.RECEIVE_SEARCH_RESULTS_FOR_APP_USER, response)
+				this._usersStore.dispatch.receiveSearchResultsForAppUser(response)
+			},
+		)
+
+		this.onHub(
 			USERS_SIGNALR_EVENT.RECEIVE_FRIEND_REQUEST_EVENT,
 			(response: FriendRequestResponse) => {
 				console.log(USERS_SIGNALR_EVENT.RECEIVE_FRIEND_REQUEST_EVENT, response)
@@ -126,6 +134,10 @@ export class UsersSignalrService {
 
 	searchForAppUserByUserName(userName: string) {
 		this.invokeHub(USERS_SIGNALR_METHOD.SEARCH_FOR_APP_USER_BY_USER_NAME, userName)
+	}
+
+	searchForAppUser(request: SearchForAppUserRequest) {
+		this.invokeHub(USERS_SIGNALR_METHOD.SEARCH_FOR_APP_USER, request)
 	}
 
 	sendFriendRequest(appUserId: string) {

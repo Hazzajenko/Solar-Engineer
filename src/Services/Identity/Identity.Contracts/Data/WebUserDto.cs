@@ -12,3 +12,15 @@ public class WebUserDto
     public DateTime RegisteredAtTime { get; set; }
     public DateTime LastActiveTime { get; set; }
 }
+
+/*public class MinimalWebUserDto
+{
+    public string Id { get; set; } = default!;
+    public string DisplayName { get; set; } = default!;
+    public string PhotoUrl { get; set; } = default!;
+    public string UserName { get; set; } = default!;
+    public bool IsFriend { get; set; } = false;
+    public bool IsOnline { get; set; }
+    public DateTime RegisteredAtTime { get; set; }
+    public DateTime LastActiveTime { get; set; }
+}*/

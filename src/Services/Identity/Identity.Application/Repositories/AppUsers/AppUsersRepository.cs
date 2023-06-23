@@ -59,6 +59,22 @@ public sealed class AppUsersRepository
             .SingleOrDefaultAsync();
     }
 
+    public async Task<IEnumerable<WebUserDto>> SearchForUsersExcludingIdsAsync(
+        string searchQuery,
+        IEnumerable<Guid> ids
+    )
+    {
+        return await Queryable
+            .Where(
+                x =>
+                    (x.UserName.Contains(searchQuery) || x.DisplayName.Contains(searchQuery))
+                    && !ids.Contains(x.Id)
+            )
+            .Select(x => x.ToWebUserDto())
+            // .ProjectToType<WebUserDto>()
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<MinimalAppUserDto>> SearchForAppUserByUserNameAsync(
         string userName
     )

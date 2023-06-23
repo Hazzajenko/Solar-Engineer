@@ -1,14 +1,16 @@
 import { UsersActions } from './users.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { MinimalWebUser, WebUserModel } from '@auth/shared'
+import { WebUserModel } from '@auth/shared'
 
 export const USERS_FEATURE_KEY = 'users'
 
 export interface UsersState extends EntityState<WebUserModel> {
 	currentAppUserId: string | undefined
 	isSearching: boolean
-	userSearchResults: MinimalWebUser[]
+	userSearchResults: WebUserModel[]
+	cachedSearchResultIds: WebUserModel['id'][]
+	cachedSearchResultEntities: WebUserModel[]
 	// friendRequestEvents: FriendRequestResponse[]
 	loaded: boolean
 	error?: string | null
@@ -30,6 +32,8 @@ export const initialUsersState: UsersState = usersAdapter.getInitialState({
 	loaded: false,
 	isSearching: false,
 	userSearchResults: [],
+	cachedSearchResultIds: [],
+	cachedSearchResultEntities: [],
 })
 
 const reducer = createReducer(
@@ -43,10 +47,32 @@ const reducer = createReducer(
 		userSearchResults: [],
 		isSearching: false,
 	})),
-	on(UsersActions.receiveUsersFromSearch, (state, { users }) => ({
-		...state,
-		userSearchResults: users,
-	})),
+	/*	on(UsersActions.receiveUsersFromSearch, (state, { users }) => ({
+	 ...state,
+	 userSearchResults: users,
+	 })),*/
+	/*	on(UsersActions.receiveSearchResultsForAppUser, (state, { response }) => ({
+	 ...state,
+	 userSearchResults: response.users,
+	 })),*/
+	on(UsersActions.receiveSearchResultsForAppUser, (state, { response }) => {
+		const { users } = response
+		const cachedSearchResultIds = [...state.cachedSearchResultIds]
+		const cachedSearchResultEntities = [...state.cachedSearchResultEntities]
+		users.forEach((user) => {
+			if (!cachedSearchResultIds.includes(user.id)) {
+				cachedSearchResultIds.push(user.id)
+				cachedSearchResultEntities.push(user)
+			}
+		})
+		const newState = usersAdapter.addMany(users, state)
+		return {
+			...newState,
+			userSearchResults: users,
+			cachedSearchResultIds,
+			cachedSearchResultEntities,
+		}
+	}),
 	on(UsersActions.loadUsers, (state, { users }) => usersAdapter.setMany(users, state)),
 	on(UsersActions.addAppUser, (state, { user }) => {
 		return {

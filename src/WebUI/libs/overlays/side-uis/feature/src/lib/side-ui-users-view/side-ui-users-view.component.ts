@@ -191,6 +191,12 @@ export class SideUiUsersViewComponent {
 		})
 	}
 
+	openSearchForUsersDialog() {
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.SEARCH_FOR_USERS,
+		})
+	}
+
 	private querySearchBox(value: string) {
 		if (Date.now() - this.lastKeyUpTime < 500) {
 			return
@@ -200,8 +206,8 @@ export class SideUiUsersViewComponent {
 			this._usersStore.dispatch.clearUserSearchResults()
 			return
 		}
-		// this._usersSignalr.searchForAppUserByUserName(value)
-		this._usersStore.dispatch.searchForAppUserByUserName(value)
-		// this._uiStore.dispatch.searchUsers(value)
+		this._usersStore.dispatch.searchForAppUser({
+			searchQuery: value,
+		})
 	}
 }

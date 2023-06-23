@@ -22,7 +22,7 @@ import { ProfileSettingsDialogComponent } from '../profile-settings-dialog/profi
 import { SignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.component'
 import { handleAllSwitchCases } from '@shared/utils'
 import { DialogInviteToProjectConfirmComponent } from '../projects/dialog-invite-to-project-confirm/dialog-invite-to-project-confirm.component'
-import { DialogUserOptionsComponent } from '../users'
+import { DialogSearchForUsersComponent, DialogUserOptionsComponent } from '../users'
 import { DialogWarningTemplateComponent } from '../shared'
 import { DialogProjectMemberOptionsComponent } from '../projects/dialog-project-member-options/dialog-project-member-options.component'
 
@@ -106,6 +106,8 @@ export class DialogRendererComponent implements OnDestroy {
 				return DialogWarningTemplateComponent
 			case DIALOG_COMPONENT.PROJECT_MEMBER_OPTIONS:
 				return DialogProjectMemberOptionsComponent
+			case DIALOG_COMPONENT.SEARCH_FOR_USERS:
+				return DialogSearchForUsersComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

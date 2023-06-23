@@ -15,7 +15,12 @@ import {
 import { createRootServiceInjector, isNotNull } from '@shared/utils'
 import { UsersActions } from './users.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { MinimalWebUser, WebUserModel } from '@auth/shared'
+import {
+	MinimalWebUser,
+	SearchForAppUserRequest,
+	SearchForAppUserResponse,
+	WebUserModel,
+} from '@auth/shared'
 
 export function injectUsersStore(): UsersStore {
 	return usersStoreInjector()
@@ -56,8 +61,12 @@ function usersStoreFactory(store: Store) {
 			store.dispatch(UsersActions.sendFriendRequest({ userId })),
 		searchForAppUserByUserName: (query: string) =>
 			store.dispatch(UsersActions.searchForAppUserByUserName({ query })),
+		searchForAppUser: (request: SearchForAppUserRequest) =>
+			store.dispatch(UsersActions.searchForAppUser({ request })),
 		receiveUsersFromSearch: (users: MinimalWebUser[]) =>
 			store.dispatch(UsersActions.receiveUsersFromSearch({ users })),
+		receiveSearchResultsForAppUser: (response: SearchForAppUserResponse) =>
+			store.dispatch(UsersActions.receiveSearchResultsForAppUser({ response })),
 		clearUserSearchResults: () => store.dispatch(UsersActions.clearUserSearchResults()),
 		loadUsers: (users: WebUserModel[]) => store.dispatch(UsersActions.loadUsers({ users })),
 		addUser: (user: WebUserModel) => store.dispatch(UsersActions.addUser({ user })),

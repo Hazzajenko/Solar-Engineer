@@ -12,4 +12,8 @@ public interface IAppUsersRepository : IGenericRepository<AppUser>
     Task<IEnumerable<AppUser>> GetManyAppUsersByIdsAsync(IEnumerable<Guid> ids);
     Task<IEnumerable<AppUserDto>> GetManyAppUserDtosByIdsAsync(IEnumerable<Guid> ids);
     Task<IEnumerable<MinimalAppUserDto>> SearchForAppUserByUserNameAsync(string userName);
+    Task<IEnumerable<WebUserDto>> SearchForUsersExcludingIdsAsync(
+        string searchQuery,
+        IEnumerable<Guid> ids
+    );
 }

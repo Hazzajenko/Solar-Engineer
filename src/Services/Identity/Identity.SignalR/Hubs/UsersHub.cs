@@ -1,10 +1,12 @@
 ﻿using Identity.Contracts.Data;
+using Identity.Contracts.Requests.Users;
 using Identity.Contracts.Responses.Friends;
 using Identity.Domain;
 using Identity.SignalR.Commands.AppUsers;
 using Identity.SignalR.Commands.Connections;
 using Identity.SignalR.Commands.Friends;
 using Identity.SignalR.Commands.Notifications;
+using Identity.SignalR.Queries;
 using Infrastructure.SignalR;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
@@ -47,7 +49,7 @@ public class UsersHub : Hub<IUsersHub>
 
         await base.OnDisconnectedAsync(exception);
     }
-    
+
     public async Task SendDeviceInfo(DeviceInfoDto deviceInfo)
     {
         await _mediator.Send(new SendDeviceInfoCommand(Context.ToAuthUser(), deviceInfo));
@@ -61,6 +63,16 @@ public class UsersHub : Hub<IUsersHub>
     public async Task SearchForAppUserByUserName(string userName)
     {
         await _mediator.Send(new SearchForAppUserByUserNameQuery(Context.ToAuthUser(), userName));
+    }
+
+    public async Task SearchForAppUser(SearchForAppUserRequest request)
+    {
+        await _mediator.Send(
+            new SearchForAppUserQuery(
+                Context.ToAuthUser(),
+                request
+            )
+        );
     }
 
     public async Task SendFriendRequest(string recipientUserId)

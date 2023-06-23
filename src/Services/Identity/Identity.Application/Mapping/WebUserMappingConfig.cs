@@ -6,23 +6,6 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Identity.Application.Mapping;
 
-public class WebUserMappingConfig : IRegister
-{
-    public void Register(TypeAdapterConfig config)
-    {
-        config
-            .NewConfig<AppUser, WebUserDto>()
-            .Map(dest => dest.Id, src => src.Id.ToString())
-            .Map(dest => dest.DisplayName, src => src.DisplayName)
-            .Map(dest => dest.PhotoUrl, src => src.PhotoUrl)
-            .Map(dest => dest.UserName, src => src.UserName)
-            .Map(dest => dest.IsFriend, src => false)
-            .Map(dest => dest.BecameFriendsTime, src => (DateTime?)null)
-            .Map(dest => dest.RegisteredAtTime, src => src.CreatedTime)
-            .Map(dest => dest.LastActiveTime, src => src.LastActiveTime);
-    }
-}
-
 public static class WebUserMapping
 {
     public static WebUserDto ToWebUserDto(this AppUserLink appUserLink, Guid currentAppUserId)
@@ -53,5 +36,21 @@ public static class WebUserMapping
     )
     {
         return new List<WebUserDto> { appUserLink.ToWebUserDto(currentAppUserId) };
+    }
+
+    public static WebUserDto ToWebUserDto(this AppUser appUser)
+    {
+        return new WebUserDto
+        {
+            Id = appUser.Id.ToString(),
+            DisplayName = appUser.DisplayName,
+            PhotoUrl = appUser.PhotoUrl,
+            UserName = appUser.UserName,
+            IsFriend = false,
+            IsOnline = false,
+            BecameFriendsTime = null,
+            LastActiveTime = appUser.LastActiveTime,
+            RegisteredAtTime = appUser.CreatedTime
+        };
     }
 }

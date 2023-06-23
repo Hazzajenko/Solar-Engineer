@@ -39,17 +39,31 @@ export const addAppUserToUsersStore$ = createEffect(
 	{ functional: true },
 )
 
-export const searchForUsers$ = createEffect(
+export const searchForAppUsers$ = createEffect(
 	(actions$ = inject(Actions), usersSignalr = inject(UsersSignalrService)) => {
 		return actions$.pipe(
-			ofType(UsersActions.searchForAppUserByUserName),
-			tap(({ query }) => {
-				usersSignalr.searchForAppUserByUserName(query)
+			ofType(UsersActions.searchForAppUser),
+			tap(({ request }) => {
+				usersSignalr.searchForAppUser(request)
 			}),
 		)
 	},
 	{ functional: true, dispatch: false },
 )
+/*
+
+ export const searchForUsers$ = createEffect(
+ (actions$ = inject(Actions), usersSignalr = inject(UsersSignalrService)) => {
+ return actions$.pipe(
+ ofType(UsersActions.searchForAppUserByUserName),
+ tap(({ query }) => {
+ usersSignalr.searchForAppUserByUserName(query)
+ }),
+ )
+ },
+ { functional: true, dispatch: false },
+ )
+ */
 
 export const sendFriendRequest$ = createEffect(
 	(actions$ = inject(Actions), usersSignalr = inject(UsersSignalrService)) => {

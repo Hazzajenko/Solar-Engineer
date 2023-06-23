@@ -44,17 +44,14 @@ public class AppUserProject : IEntityToEntity, IProjectItem
         CanKick = canKick;
     }
 
-    public AppUserProject()
-    {
-    }
+    public AppUserProject() { }
 
     // public Guid AppUserId { get; set; }
     public string Role { get; set; } = "Member";
-    public bool CanCreate { get; set; }
-    public bool CanDelete { get; set; }
-    public bool CanInvite { get; set; }
-
-    public bool CanKick { get; set; }
+    public bool CanCreate { get; set; } = true;
+    public bool CanDelete { get; set; } = true;
+    public bool CanInvite { get; set; } = true;
+    public bool CanKick { get; set; } = true;
 
     public Guid AppUserId { get; set; }
 
@@ -68,10 +65,10 @@ public class AppUserProject : IEntityToEntity, IProjectItem
         Guid projectId,
         Guid projectUserId,
         string role,
-        bool canCreate = false,
-        bool canDelete = false,
-        bool canInvite = false,
-        bool canKick = false
+        bool canCreate = true,
+        bool canDelete = true,
+        bool canInvite = true,
+        bool canKick = true
     )
     {
         return new AppUserProject(

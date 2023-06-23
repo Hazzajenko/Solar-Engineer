@@ -12,6 +12,7 @@ export const USERS_SIGNALR_EVENT = {
 	RECEIVE_NOTIFICATION: 'ReceiveNotification',
 	UPDATE_NOTIFICATION: 'UpdateNotification',
 	RECEIVE_APP_USER_NOTIFICATIONS: 'ReceiveAppUserNotifications',
+	RECEIVE_SEARCH_RESULTS_FOR_APP_USER: 'ReceiveSearchResultsForAppUser',
 } as const
 
 export type UsersSignalrEvent = (typeof USERS_SIGNALR_EVENT)[keyof typeof USERS_SIGNALR_EVENT]
