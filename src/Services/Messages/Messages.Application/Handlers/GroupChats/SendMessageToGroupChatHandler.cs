@@ -1,13 +1,12 @@
 ﻿using Infrastructure.Extensions;
 using Mediator;
-using Messages.Application.Data;
 using Messages.Application.Data.UnitOfWork;
 using Messages.Application.Mapping;
 using Messages.SignalR.Commands.GroupChats;
 using Messages.SignalR.Hubs;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Messages.Application.Handlers.SignalR;
+namespace Messages.Application.Handlers.GroupChats;
 
 public class SendMessageToGroupChatHandler : IQueryHandler<SendMessageToGroupChatCommand, bool>
 {

@@ -2,13 +2,12 @@
 
 using Infrastructure.Extensions;
 using Mediator;
-using Messages.Application.Data;
 using Messages.Application.Data.UnitOfWork;
 using Messages.SignalR.Hubs;
 using Messages.SignalR.Queries.GroupChats;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Messages.Application.Handlers.SignalR;
+namespace Messages.Application.Handlers.Messages;
 
 
 public class GetMessagesWithUserHandler

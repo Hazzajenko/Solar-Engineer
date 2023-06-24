@@ -8,11 +8,8 @@ namespace Projects.Application.Data;
 public class ProjectsContext : DbContext, IDataContext
 {
     public ProjectsContext(DbContextOptions<ProjectsContext> options)
-        : base(options)
-    {
-    }
+        : base(options) { }
 
-    // public DbSet<ProjectUser> ProjectUsers { get; set; } = default!;
     public DbSet<Project> Projects { get; set; } = default!;
     public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
     public DbSet<String> Strings { get; set; } = default!;
@@ -20,9 +17,7 @@ public class ProjectsContext : DbContext, IDataContext
     public DbSet<PanelLink> PanelLinks { get; set; } = default!;
     public DbSet<PanelConfig> PanelConfigs { get; set; } = default!;
 
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-    {
-    }
+    protected override void OnConfiguring(DbContextOptionsBuilder options) { }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

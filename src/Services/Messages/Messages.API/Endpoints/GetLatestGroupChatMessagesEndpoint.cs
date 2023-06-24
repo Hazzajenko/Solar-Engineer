@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
 using Mediator;
-using Messages.Application.Handlers.Http;
 using Messages.Contracts.Responses;
+using Messages.SignalR.Queries.GroupChats;
 
 namespace Messages.API.Endpoints;
 
@@ -22,7 +22,7 @@ public class GetLatestGroupChatMessagesEndpoint
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        Response.GroupChats = await _mediator.Send(new GetLatestGroupChatMessagesQuery(User), ct);
+        // Response.GroupChats = await _mediator.Send(new GetLatestGroupChatMessagesQuery(User), ct);
         await SendOkAsync(Response, ct);
     }
 }

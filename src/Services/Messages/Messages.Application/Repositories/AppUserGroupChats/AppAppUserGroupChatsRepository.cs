@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 // using AppUser = Users.API.Entities.AppUser;
 
-namespace Messages.Application.Repositories.UserGroupChats;
+namespace Messages.Application.Repositories.AppUserGroupChats;
 
 public sealed class AppAppUserGroupChatsRepository : EntityToEntityRepository<MessagesContext, AppUserGroupChat>,
     IAppUserGroupChatsRepository
@@ -36,14 +36,14 @@ public sealed class AppAppUserGroupChatsRepository : EntityToEntityRepository<Me
             .ThenInclude(x => x.MessageReadTimes)
             .AsSplitQuery()
             .Include(x => x.GroupChat)
-            .ThenInclude(x => x.UserGroupChats)
+            .ThenInclude(x => x.AppUserGroupChats)
             .AsSplitQuery()
             .Select(x => new GroupChatDto
             {
                 Id = x.GroupChat.Id.ToString(),
                 Name = x.GroupChat.Name,
                 PhotoUrl = x.GroupChat.PhotoUrl,
-                Members = x.GroupChat.UserGroupChats
+                Members = x.GroupChat.AppUserGroupChats
                     .OrderBy(c => c.CreatedTime)
                     .Select(c => c.ToInitialMemberDto()),
                 LatestMessage = x.GroupChat.GroupChatMessages

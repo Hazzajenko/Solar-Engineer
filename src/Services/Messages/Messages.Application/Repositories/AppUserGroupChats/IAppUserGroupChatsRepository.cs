@@ -2,7 +2,7 @@
 using Messages.Contracts.Data;
 using Messages.Domain.Entities;
 
-namespace Messages.Application.Repositories.UserGroupChats;
+namespace Messages.Application.Repositories.AppUserGroupChats;
 
 public interface IAppUserGroupChatsRepository : IEntityToEntityRepository<AppUserGroupChat>
 {

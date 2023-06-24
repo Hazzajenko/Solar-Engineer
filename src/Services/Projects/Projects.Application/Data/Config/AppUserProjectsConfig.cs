@@ -8,7 +8,7 @@ public class AppUserProjectsConfig : IEntityTypeConfiguration<AppUserProject>
 {
     public void Configure(EntityTypeBuilder<AppUserProject> builder)
     {
-        builder.HasKey(x => new { ProjectUserId = x.AppUserId, x.ProjectId });
+        builder.HasKey(x => new { x.AppUserId, x.ProjectId });
 
         builder.Property(x => x.CreatedTime).IsRequired().HasDefaultValueSql("now()");
         builder.Property(x => x.LastModifiedTime).IsRequired().HasDefaultValueSql("now()");

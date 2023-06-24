@@ -1,6 +1,5 @@
 ﻿using FastEndpoints;
 using Mediator;
-using Messages.Application.Handlers.Http;
 using Messages.Contracts.Responses;
 
 namespace Messages.API.Endpoints;
@@ -21,7 +20,7 @@ public class GetLatestUserMessagesEndpoint : EndpointWithoutRequest<LatestUserMe
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        Response.Messages = await _mediator.Send(new GetLatestUserMessagesQuery(User), ct);
+        // Response.Messages = await _mediator.Send(new GetLatestUserMessagesQuery(User), ct);
         await SendOkAsync(Response, ct);
     }
 }

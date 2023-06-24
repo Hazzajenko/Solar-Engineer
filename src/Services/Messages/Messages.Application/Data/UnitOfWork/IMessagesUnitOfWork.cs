@@ -1,9 +1,9 @@
 ﻿using Infrastructure.Data;
+using Messages.Application.Repositories.AppUserGroupChats;
 using Messages.Application.Repositories.GroupChatMessages;
 using Messages.Application.Repositories.GroupChats;
 using Messages.Application.Repositories.GroupChatServerMessages;
 using Messages.Application.Repositories.Messages;
-using Messages.Application.Repositories.UserGroupChats;
 
 namespace Messages.Application.Data.UnitOfWork;
 
@@ -13,5 +13,5 @@ public interface IMessagesUnitOfWork : IUnitOfWorkFactory
     IMessagesRepository MessagesRepository { get; }
     IGroupChatsRepository GroupChatsRepository { get; }
     IGroupChatMessagesRepository GroupChatMessagesRepository { get; }
-    IGroupChatServerMessagesRepository GroupChatServerMessagesRepository { get; }
+    // IGroupChatServerMessagesRepository GroupChatServerMessagesRepository { get; }
 }

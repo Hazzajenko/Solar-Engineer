@@ -8,14 +8,12 @@ public class MessagesConfig : IEntityTypeConfiguration<Message>
 {
     public void Configure(EntityTypeBuilder<Message> builder)
     {
-        /*builder
-            .HasOne(u => u.Recipient)
-            .WithMany(m => m.MessagesReceived)
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.Property(x => x.Id).IsRequired();
 
-        builder
-            .HasOne(u => u.Sender)
-            .WithMany(m => m.MessagesSent)
-            .OnDelete(DeleteBehavior.Restrict);*/
+        builder.Property(x => x.Content).IsRequired();
+        builder.Property(x => x.CreatedTime).IsRequired().HasDefaultValueSql("now()");
+        builder.Property(x => x.LastModifiedTime).IsRequired().HasDefaultValueSql("now()");
+        builder.Property(x => x.RecipientId).IsRequired();
+        builder.Property(x => x.SenderId).IsRequired();
     }
 }

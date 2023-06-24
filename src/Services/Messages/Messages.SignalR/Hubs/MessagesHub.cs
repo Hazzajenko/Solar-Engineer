@@ -3,17 +3,47 @@ using Mediator;
 using Messages.Contracts.Requests;
 using Messages.SignalR.Commands.GroupChats;
 using Messages.SignalR.Queries.GroupChats;
+using Messages.SignalR.Queries.Messages;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 
 namespace Messages.SignalR.Hubs;
 
 public class MessagesHub : Hub<IMessagesHub>
 {
     private readonly IMediator _mediator;
+    private readonly ILogger<MessagesHub> _logger;
 
-    public MessagesHub(IMediator mediator)
+    public MessagesHub(IMediator mediator, ILogger<MessagesHub> logger)
     {
         _mediator = mediator;
+        _logger = logger;
+    }
+
+    public override async Task OnConnectedAsync()
+    {
+        var user = Context.ToAuthUser();
+        _logger.LogInformation(
+            "Connected: {ConnectionId} - {UserId} - {UserName}",
+            Context.ConnectionId,
+            user.Id,
+            user.UserName
+        );
+        await _mediator.Send(new GetLatestUserMessagesQuery(user));
+        await _mediator.Send(new GetLatestGroupChatMessagesQuery(user));
+        await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        var user = Context.ToAuthUser();
+        _logger.LogInformation(
+            "Disconnected: {ConnectionId} - {UserId} - {UserName}",
+            Context.ConnectionId,
+            user.Id,
+            user.UserName
+        );
+        await base.OnDisconnectedAsync(exception);
     }
 
     public async Task RemoveUsersFromGroupChat(RemoveUsersFromGroupChatRequest request)

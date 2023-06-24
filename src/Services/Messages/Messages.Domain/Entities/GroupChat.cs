@@ -1,5 +1,3 @@
-
-
 // using Infrastructure.Entities.Identity;
 
 using Infrastructure.Common;
@@ -13,9 +11,10 @@ public class GroupChat : IEntity
     public DateTime Created { get; set; }
     public string PhotoUrl { get; set; } = default!;
 
-    public ICollection<AppUserGroupChat> UserGroupChats { get; set; } = default!;
+    public ICollection<AppUserGroupChat> AppUserGroupChats { get; set; } = default!;
 
     public ICollection<GroupChatMessage> GroupChatMessages { get; set; } = default!;
+
     // public ICollection<GroupChatServerMessage> GroupChatServerMessages { get; set; } = default!;
     public DateTime CreatedTime { get; set; }
     public DateTime LastModifiedTime { get; set; }

@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 using Mediator;
-using Messages.Application.Handlers.Http;
+using Messages.Application.Handlers.GroupChats;
 using Messages.Contracts.Requests;
 
 namespace Messages.API.Endpoints;

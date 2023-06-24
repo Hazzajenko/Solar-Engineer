@@ -7,11 +7,11 @@ using Mapster;
 using MapsterMapper;
 using Messages.Application.Data;
 using Messages.Application.Data.UnitOfWork;
+using Messages.Application.Repositories.AppUserGroupChats;
 using Messages.Application.Repositories.GroupChatMessages;
 using Messages.Application.Repositories.GroupChats;
 using Messages.Application.Repositories.GroupChatServerMessages;
 using Messages.Application.Repositories.Messages;
-using Messages.Application.Repositories.UserGroupChats;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
