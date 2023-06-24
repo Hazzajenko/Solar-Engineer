@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using ApplicationCore.Extensions;
+using FluentValidation;
 using Infrastructure.Extensions;
 using Infrastructure.Mapping;
 using Mediator;
@@ -77,7 +78,7 @@ public class LeaveProjectHandler : ICommandHandler<LeaveProjectCommand, bool>
                 .ProjectDeleted(projectDeletedResponse);
             _logger.LogInformation(
                 "{User} deleted {Project}",
-                command.User.GetLoggingString(),
+                command.User.ToAuthUserLog(),
                 project.GetProjectLoggingString()
             );
             return true;
@@ -104,7 +105,7 @@ public class LeaveProjectHandler : ICommandHandler<LeaveProjectCommand, bool>
             .UserLeftProject(userLeftProjectResponse);
         _logger.LogInformation(
             "{User} left {Project}",
-            command.User.GetLoggingString(),
+            command.User.ToAuthUserLog(),
             project.GetProjectLoggingString()
         );
 

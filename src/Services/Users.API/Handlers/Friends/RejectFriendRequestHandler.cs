@@ -1,11 +1,8 @@
-﻿// using Infrastructure.Entities.Identity;
-
+﻿
 using Mediator;
 using Users.API.Data;
 using Users.API.Entities;
 using Users.API.Models;
-
-// using AppUser = Users.API.Entities.AppUser;
 
 namespace Users.API.Handlers.Friends;
 
@@ -30,7 +27,7 @@ public class RejectFriendRequestHandler
         CancellationToken cT
     )
     {
-        var userLink = request.UserLink;
+        /*var userLink = request.UserLink;
         _unitOfWork.Attach(userLink);
         var isAppUserRequested = userLink.AppUserRequestedId == request.User.Id;
         if (isAppUserRequested)
@@ -42,7 +39,7 @@ public class RejectFriendRequestHandler
         {
             userLink.AppUserRequestedStatusEvent = UserStatus.FriendRequestReceived.Rejected;
             userLink.AppUserReceivedStatusEvent = UserStatus.FriendRequestSent.Rejected;
-        }
+        }*/
 
         return await _unitOfWork.SaveChangesAsync();
     }

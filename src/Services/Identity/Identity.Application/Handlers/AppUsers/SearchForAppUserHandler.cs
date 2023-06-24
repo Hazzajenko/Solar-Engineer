@@ -1,4 +1,5 @@
-﻿using Identity.Application.Data.UnitOfWork;
+﻿using ApplicationCore.Extensions;
+using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
 using Identity.Contracts.Responses.Users;
 using Identity.SignalR.Commands.AppUsers;
@@ -69,7 +70,7 @@ public class SearchForAppUserHandler
 
         _logger.LogInformation(
             "{User} searched for {UserName}, {Count} results",
-            authUser.GetLoggingString(),
+            authUser.ToAuthUserLog(),
             query.Request.SearchQuery,
             userSearchResults.Count()
         );

@@ -1,6 +1,8 @@
-﻿using FluentValidation;
+﻿using ApplicationCore.Events;
+using ApplicationCore.Events.Projects;
+using ApplicationCore.Extensions;
+using FluentValidation;
 using FluentValidation.Results;
-using Infrastructure.Events;
 using Infrastructure.Extensions;
 using Infrastructure.Mapping;
 using MassTransit;

@@ -1,4 +1,5 @@
-﻿using Infrastructure.Events;
+﻿using ApplicationCore.Events;
+using ApplicationCore.Events.Projects;
 using Infrastructure.Logging;
 using MassTransit;
 using Mediator;

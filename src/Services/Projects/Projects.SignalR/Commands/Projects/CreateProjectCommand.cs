@@ -1,4 +1,5 @@
-﻿using Infrastructure.Authentication;
+﻿using ApplicationCore.Entities;
+using Infrastructure.Authentication;
 using Projects.Contracts.Requests.Projects;
 
 namespace Projects.SignalR.Commands.Projects;

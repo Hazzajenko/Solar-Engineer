@@ -1,10 +1,9 @@
-﻿using Infrastructure.Common;
-using Infrastructure.Common.User;
+﻿using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace Identity.Domain;
 
-public class AppUser : IdentityUser<Guid>, IUser, IEntity
+public class AppUser : IdentityUser<Guid>, IAppUser, IEntity
 {
     public AppUser()
     {

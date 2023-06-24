@@ -1,6 +1,5 @@
-﻿using Infrastructure.Contracts.Events;
-using Infrastructure.Events;
-using Infrastructure.Exceptions;
+﻿using ApplicationCore.Events;
+using ApplicationCore.Events.Projects;
 using Mapster;
 using MassTransit;
 using Mediator;

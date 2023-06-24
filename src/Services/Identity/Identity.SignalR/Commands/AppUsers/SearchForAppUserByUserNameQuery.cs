@@ -1,4 +1,5 @@
-﻿using Identity.Contracts.Data;
+﻿using ApplicationCore.Entities;
+using Identity.Contracts.Data;
 using Infrastructure.Authentication;
 using Mediator;
 

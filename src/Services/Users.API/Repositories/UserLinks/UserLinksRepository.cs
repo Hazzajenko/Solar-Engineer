@@ -17,13 +17,14 @@ public sealed class UserLinksRepository : GenericRepository<UsersContext, UserLi
 
     public Task<UserLink?> GetByBothUsersAsync(User appUser, User recipient)
     {
-        return Queryable
+        return null!;
+        /*return Queryable
             .Where(m => (m.AppUserRequestedId == appUser.Id
                          && m.AppUserReceivedId ==
                          recipient.Id)
                         || (m.AppUserRequestedId == recipient.Id
                             && m.AppUserReceivedId == appUser.Id)
             )
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync();*/
     }
 }

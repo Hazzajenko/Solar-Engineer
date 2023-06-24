@@ -1,5 +1,5 @@
-﻿using Infrastructure.Common;
-using Infrastructure.Extensions;
+﻿using ApplicationCore.Extensions;
+using ApplicationCore.Interfaces;
 using Projects.Domain.Common;
 
 namespace Projects.Domain.Entities;

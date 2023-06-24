@@ -1,6 +1,5 @@
 ﻿using Identity.Contracts.Data;
 using Identity.Domain;
-using Infrastructure.SignalR;
 using Mapster;
 using Microsoft.AspNetCore.SignalR;
 

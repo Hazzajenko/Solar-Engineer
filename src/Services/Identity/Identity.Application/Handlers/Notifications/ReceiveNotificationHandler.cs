@@ -1,4 +1,5 @@
-﻿using Identity.Application.Data.UnitOfWork;
+﻿using ApplicationCore.Extensions;
+using Identity.Application.Data.UnitOfWork;
 using Identity.Contracts.Responses.Notifications;
 using Identity.SignalR.Commands.Notifications;
 using Identity.SignalR.Hubs;

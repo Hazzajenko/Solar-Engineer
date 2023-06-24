@@ -1,4 +1,4 @@
-using Infrastructure.Common;
+using ApplicationCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 

@@ -1,7 +1,9 @@
-﻿using Infrastructure.Extensions;
+﻿using ApplicationCore.Extensions;
+using Infrastructure.Extensions;
 using Mediator;
 using Messages.Application.Data.UnitOfWork;
 using Messages.Application.Mapping;
+using Messages.Contracts.Responses;
 using Messages.SignalR.Commands.GroupChats;
 using Messages.SignalR.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -35,12 +37,17 @@ public class SendMessageToUserHandler : IQueryHandler<SendMessageToUserCommand, 
         await _unitOfWork.MessagesRepository.AddAsync(message);
         await _unitOfWork.SaveChangesAsync();
 
-        var appUserResult = message.ToDtoList(appUserId);
-        var recipientUserResult = message.ToDtoList(recipientUserId);
+        // var appUserResult = message.ToDtoList(appUserId);
+        // var recipientUserResult = message.ToDtoList(recipientUserId);
+        var appUserResult = message.ToDto(appUserId);
+        var recipientUserResult = message.ToDto(recipientUserId);
+        await _hubContext.Clients
+            .User(appUserId.ToString())
+            .ReceiveMessage(new ReceiveMessageResponse { Message = appUserResult });
 
-        await _hubContext.Clients.User(appUserId.ToString()).GetMessages(appUserResult);
-
-        await _hubContext.Clients.User(recipientUserId.ToString()).GetMessages(recipientUserResult);
+        await _hubContext.Clients
+            .User(recipientUserId.ToString())
+            .ReceiveMessage(new ReceiveMessageResponse { Message = recipientUserResult });
 
         _logger.LogInformation("{User} Sent a Message to {Recipient}", appUserId, recipientUserId);
 

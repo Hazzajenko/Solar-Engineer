@@ -1,4 +1,4 @@
-﻿using Infrastructure.Common;
+﻿using ApplicationCore.Interfaces;
 
 // using Infrastructure.Entities.Identity;
 
@@ -9,17 +9,15 @@ public class UserLink : Entity
     public UserLink(User appUser, User recipient)
     {
         AppUserRequested = appUser;
-        AppUserRequestedId = appUser.Id;
+        /*AppUserRequestedId = appUser.Id;
         AppUserRequestedDisplayName = appUser.DisplayName;
         AppUserReceived = recipient;
         AppUserReceivedId = recipient.Id;
-        AppUserReceivedDisplayName = recipient.DisplayName;
+        AppUserReceivedDisplayName = recipient.DisplayName;*/
         CreatedTime = DateTime.UtcNow;
     }
 
-    public UserLink()
-    {
-    }
+    public UserLink() { }
 
     public User AppUserRequested { get; set; } = default!;
     public Guid AppUserRequestedId { get; set; }

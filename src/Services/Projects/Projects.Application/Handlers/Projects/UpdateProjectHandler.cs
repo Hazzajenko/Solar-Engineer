@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using ApplicationCore.Extensions;
+using FluentValidation;
 using Infrastructure.Extensions;
 using Infrastructure.Mapping;
 using Mediator;

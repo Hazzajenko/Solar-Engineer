@@ -10,8 +10,9 @@ public class UserConfig : IEntityTypeConfiguration<User>
     {
         // builder.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid ()").IsRequired();
 
+        /*
         builder
-            .HasKey(x => x.Id);
+            .HasKey(x => x.Id);*/
 
         builder
             .HasMany(ur => ur.AppUserLinksRequested)

@@ -1,6 +1,5 @@
-﻿using Ardalis.SmartEnum;
-using Infrastructure.Common;
-using Microsoft.EntityFrameworkCore;
+﻿using ApplicationCore.Interfaces;
+using Ardalis.SmartEnum;
 
 namespace Identity.Domain;
 

@@ -1,5 +1,5 @@
-﻿using Infrastructure.Common.User;
-using Infrastructure.Contracts.Data;
+﻿using ApplicationCore.Contracts.Data;
+using ApplicationCore.Interfaces;
 
 // using Infrastructure.Entities.Identity;
 
@@ -10,7 +10,7 @@ namespace Infrastructure.Mapping;
 public static class UserMapper
 {
     public static T ToEntity<T>(this UserDto request)
-        where T : IUser, new()
+        where T : IAppUser, new()
     {
         return new T
         {
@@ -25,7 +25,7 @@ public static class UserMapper
     }
 
     public static UserDto ToDto<T>(this T request)
-        where T : IUser
+        where T : IAppUser
     {
         return new UserDto
         {

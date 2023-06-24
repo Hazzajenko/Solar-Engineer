@@ -1,4 +1,5 @@
-﻿using Identity.Application.Data.UnitOfWork;
+﻿using ApplicationCore.Extensions;
+using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Handlers.Notifications;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Friends;

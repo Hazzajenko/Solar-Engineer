@@ -1,5 +1,5 @@
-﻿using EventBus.Common;
-using Infrastructure.Contracts.Data;
+﻿using ApplicationCore.Contracts.Data;
+using EventBus.Common;
 
 // using Infrastructure.Entities.Identity;
 

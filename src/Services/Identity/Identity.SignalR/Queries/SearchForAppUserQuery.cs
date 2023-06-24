@@ -1,4 +1,5 @@
-﻿using Identity.Contracts.Data;
+﻿using ApplicationCore.Entities;
+using Identity.Contracts.Data;
 using Identity.Contracts.Requests.Users;
 using Identity.Contracts.Responses.Users;
 using Infrastructure.Authentication;

@@ -1,5 +1,4 @@
-﻿using Infrastructure.Common;
-using Infrastructure.Repositories;
+﻿using Infrastructure.Repositories;
 using Projects.Contracts.Data;
 using Projects.Domain.Entities;
 
@@ -17,6 +16,6 @@ public interface IPanelsRepository : IGenericRepository<Panel>
     Task<bool> DeletePanelByIdAndProjectIdAsync(Guid id, Guid projectId);
     Task<bool> DeleteManyPanelsAsync(Guid projectId, IEnumerable<Guid> panelIds);
 
-    Task<TPanelResponse> CreatePanelAndSaveChangesAsync<TPanelResponse>(Panel panel)
-        where TPanelResponse : IMappable<Panel>;
+    /*Task<TPanelResponse> CreatePanelAndSaveChangesAsync<TPanelResponse>(Panel panel)
+        where TPanelResponse : IMappable<Panel>;*/
 }

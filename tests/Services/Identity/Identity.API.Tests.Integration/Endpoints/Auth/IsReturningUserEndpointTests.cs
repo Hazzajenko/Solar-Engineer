@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using ApplicationCore.Extensions;
 using Bogus;
 using FastEndpoints;
 using FluentAssertions;

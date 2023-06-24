@@ -1,7 +1,9 @@
-﻿using Infrastructure.Extensions;
+﻿using ApplicationCore.Extensions;
+using Infrastructure.Extensions;
 using Mediator;
 using Messages.Application.Data.UnitOfWork;
 using Messages.Application.Mapping;
+using Messages.Contracts.Responses;
 using Messages.SignalR.Commands.GroupChats;
 using Messages.SignalR.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -51,8 +53,16 @@ public class SendMessageToGroupChatHandler : IQueryHandler<SendMessageToGroupCha
                 appUserId
             );
 
-        await _hubContext.Clients.User(appUserId.ToString()).GetGroupChatMessages(appUserMessage);
-        await _hubContext.Clients.Users(groupChatMemberIds).GetGroupChatMessages(otherUsersMessage);
+        await _hubContext.Clients
+            .User(appUserId.ToString())
+            .GetGroupChatMessages(
+                new GetGroupChatMessagesResponse { GroupChatMessages = appUserMessage }
+            );
+        await _hubContext.Clients
+            .Users(groupChatMemberIds)
+            .GetGroupChatMessages(
+                new GetGroupChatMessagesResponse { GroupChatMessages = otherUsersMessage }
+            );
 
         _logger.LogInformation("{User} Sent a Message To Group {Group}", appUserId, groupChat.Id);
 

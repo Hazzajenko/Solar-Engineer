@@ -1,4 +1,4 @@
-﻿using Infrastructure.Common;
+﻿using ApplicationCore.Interfaces;
 using Projects.Domain.Common;
 
 namespace Projects.Domain.Entities;
@@ -41,9 +41,7 @@ public class Panel : IEntity, IProjectItem, IUserObject
         CreatedById = createdById;
     }
 
-    public Panel()
-    {
-    }
+    public Panel() { }
 
     public String String { get; set; } = default!;
     public Guid StringId { get; set; }

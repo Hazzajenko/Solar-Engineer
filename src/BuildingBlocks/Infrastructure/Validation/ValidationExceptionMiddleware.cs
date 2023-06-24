@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using Infrastructure.Contracts.Responses;
+﻿using ApplicationCore.Contracts.Responses;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
 namespace Infrastructure.Validation;

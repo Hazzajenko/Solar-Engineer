@@ -1,4 +1,5 @@
-﻿using Infrastructure.Exceptions;
+﻿using ApplicationCore.Exceptions;
+using ApplicationCore.Extensions;
 using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
@@ -57,13 +58,15 @@ public class UpdateManyPanelsHandler : ICommandHandler<UpdateManyPanelsCommand, 
 
             if (changes.PanelConfigId is not null)
             {
-                var panelConfig = await _unitOfWork.PanelConfigsRepository.GetByIdNotNullAsync(
+                var panelConfig = await _unitOfWork.PanelConfigsRepository.GetByIdAsync(
                     changes.PanelConfigId.ToGuid()
                 );
+                panelConfig.ThrowHubExceptionIfNull();
                 panel.PanelConfigId = panelConfig.Id;
             }
 
-            if (changes.StringId is null) continue;
+            if (changes.StringId is null)
+                continue;
             var stringId = changes.StringId.ToGuid();
             var getFromHashset = panelStringIds.Contains(changes.StringId);
             if (getFromHashset)
@@ -87,10 +90,7 @@ public class UpdateManyPanelsHandler : ICommandHandler<UpdateManyPanelsCommand, 
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
                 appUserProject.ProjectId
             );
-        var response = panels.ToProjectEventResponseFromEntityList(
-            command,
-            ActionType.UpdateMany
-        );
+        var response = panels.ToProjectEventResponseFromEntityList(command, ActionType.UpdateMany);
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(

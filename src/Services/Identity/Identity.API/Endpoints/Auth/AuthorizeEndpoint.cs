@@ -1,4 +1,5 @@
-﻿using FastEndpoints;
+﻿using ApplicationCore.Extensions;
+using FastEndpoints;
 using Identity.Application.Commands;
 using Identity.Application.Queries.AppUsers;
 using Identity.Application.Services.Jwt;

@@ -1,4 +1,5 @@
-﻿using Identity.Application.Queries.AppUsers;
+﻿using ApplicationCore.Extensions;
+using Identity.Application.Queries.AppUsers;
 using Identity.Application.Repositories.AppUsers;
 using Identity.Domain;
 using Infrastructure.Extensions;

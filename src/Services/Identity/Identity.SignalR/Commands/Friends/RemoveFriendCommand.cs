@@ -1,4 +1,5 @@
-﻿using Identity.Domain;
+﻿using ApplicationCore.Entities;
+using Identity.Domain;
 using Infrastructure.Authentication;
 using Mediator;
 

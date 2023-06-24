@@ -1,7 +1,9 @@
-﻿using Infrastructure.Extensions;
+﻿using ApplicationCore.Extensions;
+using Infrastructure.Extensions;
 using Mediator;
 using Messages.Application.Data.UnitOfWork;
 using Messages.Application.Mapping;
+using Messages.Contracts.Responses;
 using Messages.Domain.Entities;
 using Messages.SignalR.Commands.GroupChats;
 using Messages.SignalR.Hubs;
@@ -95,9 +97,20 @@ public class InviteUsersToGroupChatHandler : IQueryHandler<InviteUsersToGroupCha
 
         await _hubContext.Clients
             .Users(existingMemberIds)
-            .GetGroupChatMessages(groupChatServerMessages);
+            .GetGroupChatMessages(
+                new GetGroupChatMessagesResponse { GroupChatMessages = groupChatServerMessages }
+            );
 
-        await _hubContext.Clients.Users(existingMemberIds).AddGroupChatMembers(newMembers);
+        await _hubContext.Clients
+            .Users(existingMemberIds)
+            .GroupChatMembersAdded(
+                new GroupChatMembersAddedResponse
+                {
+                    GroupChatId = groupChatId.ToString(),
+                    InvitedByUserId = appUserId.ToString(),
+                    Members = newMembers
+                }
+            );
 
         _logger.LogInformation(
             "User {User} invited {InvitesLength} users to group chat {GroupChat}",

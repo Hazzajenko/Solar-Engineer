@@ -42,32 +42,4 @@ public class HubLoggerFilter : IHubFilter
             throw;
         }
     }
-
-    /*
-    public Task OnConnectedAsync(HubLifetimeContext context, Func<HubLifetimeContext, Task> next)
-    {
-        var userId = context.Context.GetGuidUserId();
-        // invocationContext.Context.Features.Get<IUserIdProvider>();
-        // invocationContext.HubMethodArguments.;
-        Log.Logger.Information(
-            "User {UserId} connected",
-            userId
-            // context.Context.
-        );
-
-        return next(context);
-    }
-
-    /#1#/ Optional method
-    public Task OnConnectedAsync(HubLifetimeContext context, Func<HubLifetimeContext, Task> next)
-    {
-        return next(context);
-    }
-
-    // Optional method
-    public Task OnDisconnectedAsync(
-        HubLifetimeContext context, Exception exception, Func<HubLifetimeContext, Exception, Task> next)
-    {
-        return next(context, exception);
-    }#1#*/
 }

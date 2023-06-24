@@ -1,4 +1,5 @@
-﻿using Infrastructure.Authentication;
+﻿using ApplicationCore.Entities;
+using Infrastructure.Authentication;
 
 namespace Projects.Domain.Common;
 

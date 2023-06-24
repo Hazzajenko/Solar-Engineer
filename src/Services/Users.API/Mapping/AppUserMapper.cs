@@ -12,6 +12,7 @@ public static class AppUserMapper
     {
         return new User
         {
+            /*
             Id = Guid.Parse(grpcRequest.Id),
             // CreatedTime = grpcRequest.CreatedTime,
             // LastModifiedTime = grpcRequest.LastModifiedTime,
@@ -20,6 +21,7 @@ public static class AppUserMapper
             DisplayName = grpcRequest.FirstName,
             PhotoUrl = grpcRequest.PhotoUrl
             // LastActiveTime = grpcRequest.LastActiveTime,
+        */
         };
     }
 }

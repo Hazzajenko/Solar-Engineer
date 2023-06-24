@@ -1,4 +1,5 @@
-﻿using Infrastructure.Extensions;
+﻿using ApplicationCore.Extensions;
+using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Users.API.Data;

@@ -1,6 +1,6 @@
-﻿using Identity.Application.Repositories.AppUsers;
-using Infrastructure.Contracts.Data;
-using Infrastructure.Contracts.Events;
+﻿using ApplicationCore.Contracts.Data;
+using ApplicationCore.Events.AppUsers;
+using Identity.Application.Repositories.AppUsers;
 using Infrastructure.Logging;
 using MassTransit;
 using Microsoft.Extensions.Logging;

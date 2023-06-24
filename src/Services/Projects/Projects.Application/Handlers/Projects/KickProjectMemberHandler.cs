@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using ApplicationCore.Extensions;
+using FluentValidation;
 using Infrastructure.Extensions;
 using Infrastructure.Mapping;
 using Mediator;
@@ -42,7 +43,7 @@ public class KickProjectMemberHandler : ICommandHandler<KickProjectMemberCommand
         {
             _logger.LogError(
                 "{User}  tried to kick member from project {Project} without a App User Project Link",
-                command.User.GetLoggingString(),
+                command.User.ToAuthUserLog(),
                 projectId
             );
             var message = "You are not a member of this project";
@@ -53,7 +54,7 @@ public class KickProjectMemberHandler : ICommandHandler<KickProjectMemberCommand
         {
             _logger.LogError(
                 "{User} tried to kick member from {Project} without permission",
-                command.User.GetLoggingString(),
+                command.User.ToAuthUserLog(),
                 appUserProject.Project.GetProjectLoggingString()
             );
             var message = "You do not have permission to delete this project";
@@ -71,7 +72,7 @@ public class KickProjectMemberHandler : ICommandHandler<KickProjectMemberCommand
         {
             _logger.LogError(
                 "{User} tried to kick member {Member} from {Project} without a App User Project Link",
-                command.User.GetLoggingString(),
+                command.User.ToAuthUserLog(),
                 recipientId,
                 appUserProject.Project.GetProjectLoggingString()
             );
@@ -108,7 +109,7 @@ public class KickProjectMemberHandler : ICommandHandler<KickProjectMemberCommand
             .ProjectMemberKicked(memberKickedResponse);
         _logger.LogInformation(
             "{User} kicked Member {Member} from project {Project}",
-            command.User.GetLoggingString(),
+            command.User.ToAuthUserLog(),
             command.Request.MemberId,
             appUserProject.Project.GetProjectLoggingString()
         );

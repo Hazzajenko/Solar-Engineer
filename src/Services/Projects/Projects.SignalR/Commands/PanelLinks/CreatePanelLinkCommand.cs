@@ -1,4 +1,5 @@
-﻿using Infrastructure.Authentication;
+﻿using ApplicationCore.Entities;
+using Infrastructure.Authentication;
 using Projects.Contracts.Requests.PanelLinks;
 using Projects.Domain.Common;
 

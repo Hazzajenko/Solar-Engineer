@@ -1,4 +1,4 @@
-﻿using Infrastructure.Common;
+﻿using ApplicationCore.Interfaces;
 using Projects.Domain.Common;
 
 namespace Projects.Domain.Entities;

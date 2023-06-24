@@ -1,5 +1,4 @@
-﻿using Infrastructure.SignalR;
-using Mapster;
+﻿using Mapster;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Contracts.Data;
 using Projects.Domain.Entities;

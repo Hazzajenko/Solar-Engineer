@@ -1,5 +1,6 @@
-﻿using Infrastructure.Authentication;
-using Infrastructure.SignalR.Common;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
+using Infrastructure.Authentication;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 

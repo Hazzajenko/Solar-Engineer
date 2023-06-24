@@ -73,7 +73,7 @@ public class PanelsMappingConfig : IRegister
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                     )
             )
-            .Map(dest => dest.User, src => src.Context.ToHubAppUser())
+            .Map(dest => dest.User, src => src.Context.ToAuthUser())
             .Map(dest => dest.RequestId, src => src.Request.RequestId);
 
         config
@@ -86,7 +86,7 @@ public class PanelsMappingConfig : IRegister
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                     )
             )
-            .Map(dest => dest.User, src => src.Context.ToHubAppUser())
+            .Map(dest => dest.User, src => src.Context.ToAuthUser())
             .Map(dest => dest.RequestId, src => src.ProjectEvent.RequestId);
 
 

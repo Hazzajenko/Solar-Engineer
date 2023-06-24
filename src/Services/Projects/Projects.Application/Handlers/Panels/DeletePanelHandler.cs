@@ -1,4 +1,5 @@
-﻿using Infrastructure.Exceptions;
+﻿using ApplicationCore.Exceptions;
+using ApplicationCore.Extensions;
 using Infrastructure.Extensions;
 using MapsterMapper;
 using Mediator;

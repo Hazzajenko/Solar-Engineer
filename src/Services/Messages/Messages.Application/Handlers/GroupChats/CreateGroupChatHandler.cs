@@ -1,9 +1,11 @@
 ﻿using System.Security.Claims;
+using ApplicationCore.Extensions;
 using Infrastructure.Extensions;
 using Mediator;
 using Messages.Application.Data.UnitOfWork;
 using Messages.Application.Mapping;
 using Messages.Contracts.Requests;
+using Messages.Contracts.Responses;
 using Messages.Domain.Entities;
 using Messages.SignalR.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -87,9 +89,13 @@ public class CreateGroupChatHandler : IRequestHandler<CreateGroupChatCommand, bo
                 Content = $"{appUserId} created {appUserGroupChat.GroupChat.Name}"
             };
 
-            var serverMessages = groupChatServerMessage.ToCombinedDtoList();
+            var groupChatMessages = groupChatServerMessage.ToCombinedDtoList();
 
-            await _hubContext.Clients.Users(existingMemberIds).GetGroupChatMessages(serverMessages);
+            await _hubContext.Clients
+                .Users(existingMemberIds)
+                .GetGroupChatMessages(
+                    new GetGroupChatMessagesResponse { GroupChatMessages = groupChatMessages }
+                );
         }
 
         return true;

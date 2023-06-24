@@ -1,4 +1,5 @@
-﻿using Infrastructure.Extensions;
+﻿using ApplicationCore.Extensions;
+using Infrastructure.Extensions;
 
 namespace Projects.Contracts.Requests.Projects;
 

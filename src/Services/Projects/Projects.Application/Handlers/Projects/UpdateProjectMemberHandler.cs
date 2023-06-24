@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using ApplicationCore.Extensions;
+using FluentValidation;
 using Infrastructure.Extensions;
 using Infrastructure.Mapping;
 using Mediator;
@@ -157,7 +158,7 @@ public class UpdateProjectMemberHandler : ICommandHandler<UpdateProjectMemberCom
 
         _logger.LogInformation(
             "{User} updated a Project Member in {Project}",
-            command.User.GetLoggingString(),
+            command.User.ToAuthUserLog(),
             appUserProject.Project.GetProjectLoggingString()
         );
 

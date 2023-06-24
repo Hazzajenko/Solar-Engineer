@@ -1,23 +1,18 @@
 ﻿using Messages.Contracts.Data;
+using Messages.Contracts.Responses;
 
 namespace Messages.SignalR.Hubs;
 
 public interface IMessagesHub
 {
-    Task GetMessages(IEnumerable<MessageDto> messages);
-    Task GetLatestMessages(IEnumerable<LatestUserMessageDto> messages);
-    Task GetLatestGroupChatMessages(IEnumerable<GroupChatDto> groupChatMessages);
+    Task ReceiveMessage(ReceiveMessageResponse response);
+    Task GetMessagesWithUser(GetMessagesWithUserResponse response);
+    Task GetLatestMessages(GetLatestMessagesResponse response);
+    Task GetLatestGroupChatMessages(GetLatestGroupChatMessagesResponse response);
 
-    Task GetGroupChatMessages(IEnumerable<GroupChatCombinedMessageDto> groupChatMessages);
+    Task GetGroupChatMessages(GetGroupChatMessagesResponse response);
 
-    /*
-    Task GetGroupChatServerMessages(
-        IEnumerable<GroupChatServerMessageDto> serverMessages
-    );*/
+    Task GroupChatMembersAdded(GroupChatMembersAddedResponse response);
 
-    Task UpdateGroupChatMessages(IEnumerable<GroupChatMessageUpdateDto> groupChatMessageUpdates);
-
-    Task AddGroupChatMembers(IEnumerable<InitialGroupChatMemberDto> groupChatMembers);
-
-    Task RemoveGroupChatMembers(IEnumerable<string> groupChatMemberIds);
+    Task GroupChatMembersRemoved(GroupChatMembersRemovedResponse response);
 }

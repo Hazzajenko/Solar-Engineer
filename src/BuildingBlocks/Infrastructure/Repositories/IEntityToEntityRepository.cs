@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Infrastructure.Common;
+using ApplicationCore.Interfaces;
 
 namespace Infrastructure.Repositories;
 

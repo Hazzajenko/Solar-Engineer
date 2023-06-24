@@ -1,4 +1,5 @@
-﻿using FastEndpoints;
+﻿using ApplicationCore.Extensions;
+using FastEndpoints;
 using Infrastructure.Extensions;
 using Mapster;
 using Mediator;

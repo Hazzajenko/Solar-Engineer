@@ -1,4 +1,4 @@
-using Infrastructure.Common;
+using ApplicationCore.Interfaces;
 
 namespace Messages.Domain.Entities;
 

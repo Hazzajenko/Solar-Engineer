@@ -1,4 +1,5 @@
-﻿using Identity.Application.Data.UnitOfWork;
+﻿using ApplicationCore.Extensions;
+using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Friends;
@@ -67,7 +68,7 @@ public class GetUserFriendsHandler : ICommandHandler<GetUserFriendsCommand, GetU
 
         _logger.LogInformation(
             "User {User} get {Friends} friends, {OnlineFriends} online",
-            authUser.GetLoggingString(),
+            authUser.ToAuthUserLog(),
             response.Friends.Count(),
             response.Friends.Count(f => f.IsOnline)
         );

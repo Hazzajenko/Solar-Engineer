@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using ApplicationCore.Extensions;
 using Identity.Application.Data.UnitOfWork;
 using Infrastructure.Extensions;
 using JasperFx.CodeGeneration.Frames;

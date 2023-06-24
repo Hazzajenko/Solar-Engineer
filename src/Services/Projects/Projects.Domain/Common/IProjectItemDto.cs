@@ -1,7 +1,5 @@
-﻿using Infrastructure.Common;
+﻿using ApplicationCore.Interfaces;
 
 namespace Projects.Domain.Common;
 
-public interface IProjectItemDto : IEntityDto, IUserObjectDto
-{
-}
+public interface IProjectItemDto : IEntityDto, IUserObjectDto { }

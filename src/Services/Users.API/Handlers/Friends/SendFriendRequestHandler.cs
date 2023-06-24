@@ -26,7 +26,7 @@ public class SendFriendRequestHandler
         CancellationToken cT
     )
     {
-        var userLink = request.UserLink;
+        /*var userLink = request.UserLink;
         _unitOfWork.Attach(userLink);
         var isAppUserRequested = userLink.AppUserRequestedId == request.User.Id;
         if (isAppUserRequested)
@@ -38,7 +38,7 @@ public class SendFriendRequestHandler
         {
             userLink.AppUserRequestedStatusEvent = UserStatus.FriendRequestReceived.Pending;
             userLink.AppUserReceivedStatusEvent = UserStatus.FriendRequestSent.Pending;
-        }
+        }*/
 
         return await _unitOfWork.SaveChangesAsync();
     }

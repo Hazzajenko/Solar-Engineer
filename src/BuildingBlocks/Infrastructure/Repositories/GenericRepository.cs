@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
+using ApplicationCore.Interfaces;
 using DotNetCore.EntityFrameworkCore;
-using Infrastructure.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
@@ -24,6 +24,7 @@ public abstract class GenericRepository<TContext, TModel>
     {
         // Queryable.Find
         // base.Find(id);
+        // base.De
         return Queryable.SingleOrDefaultAsync(user => user.Id == id);
     }
 

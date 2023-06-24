@@ -1,6 +1,8 @@
-﻿using Infrastructure.Extensions;
+﻿using ApplicationCore.Extensions;
+using Infrastructure.Extensions;
 using Mediator;
 using Messages.Application.Data.UnitOfWork;
+using Messages.Contracts.Responses;
 using Messages.SignalR.Commands.GroupChats;
 using Messages.SignalR.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -78,7 +80,14 @@ public class RemoveUsersFromGroupChatHandler : IQueryHandler<RemoveUsersFromGrou
 
         await _hubContext.Clients
             .Users(existingMemberIds)
-            .RemoveGroupChatMembers(command.RemoveRequest.UserIds);
+            .GroupChatMembersRemoved(
+                new GroupChatMembersRemovedResponse
+                {
+                    GroupChatId = groupChatId.ToString(),
+                    RemovedByUserId = appUserId.ToString(),
+                    MemberIds = command.RemoveRequest.UserIds
+                }
+            );
 
         return true;
     }

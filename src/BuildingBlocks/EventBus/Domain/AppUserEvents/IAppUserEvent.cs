@@ -1,4 +1,4 @@
-﻿using Infrastructure.Contracts.Data;
+﻿using ApplicationCore.Contracts.Data;
 
 namespace EventBus.Domain.AppUserEvents;
 

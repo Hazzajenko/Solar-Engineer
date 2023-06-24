@@ -1,10 +1,10 @@
-﻿using Identity.Application.Data.UnitOfWork;
+﻿using ApplicationCore.Events;
+using ApplicationCore.Events.Projects;
+using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Handlers.Notifications;
 using Identity.Application.Repositories.AppUsers;
 using Identity.Domain;
 using Identity.SignalR.Commands.Notifications;
-using Infrastructure.Contracts.Events;
-using Infrastructure.Events;
 using Infrastructure.Logging;
 using MassTransit;
 using Mediator;

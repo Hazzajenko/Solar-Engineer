@@ -1,4 +1,5 @@
-﻿using Infrastructure.Authentication;
+﻿using ApplicationCore.Entities;
+using Infrastructure.Authentication;
 using Mediator;
 
 namespace Identity.SignalR.Commands.Connections;

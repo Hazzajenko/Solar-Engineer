@@ -1,6 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Infrastructure.Common;
-using Infrastructure.Logging;
 using Infrastructure.Repositories;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -66,13 +64,13 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
             .AnyAsync();
     }*/
 
-    public async Task<TPanelResponse> CreatePanelAndSaveChangesAsync<TPanelResponse>(Panel panel)
-        where TPanelResponse : IMappable<Panel>
+    /*public async Task<TPanelResponse> CreatePanelAndSaveChangesAsync<TPanelResponse>(Panel panel)
+        where TPanelResponse
     {
         await AddAsync(panel);
         await SaveChangesAsync();
         return panel.Adapt<TPanelResponse>();
-    }
+    }*/
 
     public async Task<bool> DeletePanelByIdAndProjectIdAsync(Guid id, Guid projectId)
     {

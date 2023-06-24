@@ -7,6 +7,7 @@ using Infrastructure.OpenTelemetry;
 using Infrastructure.Swagger;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
+using Projects.Application.Configuration;
 using Projects.Application.Data;
 using Projects.Application.Extensions;
 
@@ -22,7 +23,9 @@ var environment = builder.Environment;
 builder.Services.InitOpenTelemetry(config, environment);
 
 builder.Services.InitHealthChecks(config, environment);
-builder.Services.AddApplicationServices(config, environment);
+builder.Services.AddCoreServices(environment);
+
+// builder.Services.AddApplicationServices(config, environment);
 
 // var jwtKey = await environment.GetSymmetricSecurityKey(config);
 var jwtSettings = await config.GetJwtSettings(environment);

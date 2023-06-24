@@ -1,5 +1,5 @@
-﻿using Infrastructure.Common.User;
-using Infrastructure.Contracts.Data;
+﻿using ApplicationCore.Contracts.Data;
+using ApplicationCore.Interfaces;
 using Infrastructure.Mapping;
 
 // using Infrastructure.Entities.Identity;
@@ -8,7 +8,7 @@ namespace EventBus.Domain.AppUserEvents;
 
 public class AppUserEventFactory : EventBase
 {
-    public AppUserEventFactory(IUser appUser)
+    public AppUserEventFactory(IAppUser appUser)
     {
         UserDto = appUser.ToDto();
         Queues = new List<string> { "messages", "projects" };

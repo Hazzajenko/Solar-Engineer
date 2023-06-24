@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
+using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using Infrastructure.Authentication;
-using Infrastructure.SignalR.Common;
 using Mediator;
 using Messages.Contracts.Data;
 

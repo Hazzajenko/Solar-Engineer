@@ -1,5 +1,6 @@
-﻿using EventBus.Domain.AppUserEvents;
-using Infrastructure.Common.User;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
+using EventBus.Domain.AppUserEvents;
 
 namespace Users.API.Mapping;
 
@@ -21,7 +22,7 @@ public static class UserMapper
     }
 
     public static T ToCustomUser<T>(this IAppUserEvent request)
-        where T : IUser, new()
+        where T : IAppUser, new()
     {
         return new T
         {

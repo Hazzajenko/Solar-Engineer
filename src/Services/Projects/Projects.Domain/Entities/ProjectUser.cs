@@ -1,9 +1,8 @@
-﻿using Infrastructure.Common;
-using Infrastructure.Common.User;
+﻿using ApplicationCore.Interfaces;
 
 namespace Projects.Domain.Entities;
 
-public class ProjectUser : IEntity, IMinimalUser
+public class ProjectUser : IEntity
 {
     public ProjectUser(Guid id, string userName, string displayName, string photoUrl)
     {
@@ -15,9 +14,7 @@ public class ProjectUser : IEntity, IMinimalUser
         LastModifiedTime = DateTime.UtcNow;
     }
 
-    public ProjectUser()
-    {
-    }
+    public ProjectUser() { }
 
     public ICollection<AppUserProject> AppUserProjects { get; set; } = default!;
 
@@ -44,8 +41,8 @@ public class ProjectUser : IEntity, IMinimalUser
 
     public bool IsChanges(ProjectUser projectUser)
     {
-        return UserName != projectUser.UserName ||
-               DisplayName != projectUser.DisplayName ||
-               PhotoUrl != projectUser.PhotoUrl;
+        return UserName != projectUser.UserName
+            || DisplayName != projectUser.DisplayName
+            || PhotoUrl != projectUser.PhotoUrl;
     }
 }

@@ -1,9 +1,10 @@
-﻿using FastEndpoints;
+﻿using ApplicationCore.Events.AppUsers;
+using ApplicationCore.Extensions;
+using FastEndpoints;
 using Identity.Application.Services.Jwt;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses;
 using Identity.Domain;
-using Infrastructure.Contracts.Events;
 using Infrastructure.Extensions;
 using Mapster;
 using MassTransit;

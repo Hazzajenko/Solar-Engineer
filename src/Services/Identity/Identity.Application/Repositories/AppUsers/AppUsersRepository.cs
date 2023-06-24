@@ -73,6 +73,23 @@ public sealed class AppUsersRepository
             .Select(x => x.ToWebUserDto())
             .ToListAsync();
     }
+    
+    public async Task<IEnumerable<WebUserDto>> SearchForUsersExcludingIdsBestMatchAsync(
+        string searchQuery,
+        IEnumerable<Guid> ids
+    )
+    {
+        return await Queryable
+            .Where(
+                x =>
+                    (x.UserName.Contains(searchQuery) || x.DisplayName.Contains(searchQuery))
+                    && !ids.Contains(x.Id)
+            )
+            .OrderBy(u => u.UserName.IndexOf(searchQuery, StringComparison.Ordinal))
+            .ThenBy(u => u.DisplayName.IndexOf(searchQuery, StringComparison.Ordinal))
+            .Select(x => x.ToWebUserDto())
+            .ToListAsync();
+    }
 
     public async Task<IEnumerable<MinimalAppUserDto>> SearchForAppUserByUserNameAsync(
         string userName

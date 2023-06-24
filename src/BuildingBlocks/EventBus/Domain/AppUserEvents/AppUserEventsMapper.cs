@@ -1,11 +1,11 @@
-﻿using Infrastructure.Common.User;
+﻿using ApplicationCore.Interfaces;
 
 namespace EventBus.Domain.AppUserEvents;
 
 public static class AppUserEventsMapper
 {
     public static T ToUser<T>(this IAppUserEvent request)
-        where T : IUser, new()
+        where T : IAppUser, new()
     {
         return new T
         {

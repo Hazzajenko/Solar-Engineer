@@ -1,8 +1,6 @@
-﻿using Ardalis.SmartEnum;
-using FluentValidation;
-using Infrastructure.Common;
+﻿using ApplicationCore.Interfaces;
+using Ardalis.SmartEnum;
 
-// using Infrastructure.Entities.Identity;
 
 namespace Identity.Domain;
 

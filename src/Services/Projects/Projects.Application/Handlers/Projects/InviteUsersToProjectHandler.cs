@@ -1,7 +1,9 @@
-﻿using EventBus.Domain.ProjectsEvents;
+﻿using ApplicationCore.Events;
+using ApplicationCore.Events.Projects;
+using ApplicationCore.Extensions;
+using EventBus.Domain.ProjectsEvents;
 using FluentValidation;
 using FluentValidation.Results;
-using Infrastructure.Events;
 using Infrastructure.Extensions;
 using Infrastructure.Logging;
 using Infrastructure.Mapping;

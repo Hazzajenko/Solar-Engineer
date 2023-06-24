@@ -1,4 +1,5 @@
-﻿using FastEndpoints;
+﻿using ApplicationCore.Extensions;
+using FastEndpoints;
 using Identity.Application.Mapping;
 using Identity.Application.Queries.AppUsers;
 using Identity.Contracts.Data;

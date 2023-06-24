@@ -1,4 +1,5 @@
-﻿using Infrastructure.Exceptions;
+﻿using ApplicationCore.Exceptions;
+using ApplicationCore.Extensions;
 using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
@@ -57,9 +58,10 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
 
         if (changes.PanelConfigId is not null)
         {
-            var panelConfig = await _unitOfWork.PanelConfigsRepository.GetByIdNotNullAsync(
+            var panelConfig = await _unitOfWork.PanelConfigsRepository.GetByIdAsync(
                 changes.PanelConfigId.ToGuid()
             );
+            panelConfig.ThrowHubExceptionIfNull();
             panel.PanelConfigId = panelConfig.Id;
         }
 

@@ -1,10 +1,10 @@
-﻿using Infrastructure.Common;
+﻿
 using Projects.Contracts.Data;
-using Projects.Domain.Entities;
+
 
 namespace Projects.Contracts.Responses;
 
-public class PanelCreatedResponse : IMappable<Panel>
+public class PanelCreatedResponse
 {
     public string RequestId { get; set; } = default!;
     public string ProjectId { get; set; } = default!;

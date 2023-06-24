@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using Infrastructure.Authentication;
+using ApplicationCore.Entities;
+using ApplicationCore.Extensions;
 using Infrastructure.Extensions;
 using Infrastructure.SignalR.HubFilters;
 using Microsoft.AspNetCore.Hosting;
@@ -45,27 +46,6 @@ public static class SignalRExtensions
         return services;
     }
 
-    /*public static ISignalRServerBuilder AddHubFilter<THubFilter>(
-        this ISignalRServerBuilder builder
-    ) where THubFilter : class, IHubFilter
-    {
-        builder.Services.AddSingleton<IHubFilter, THubFilter>();
-        return builder;
-    }*/
-
-    public static T ThrowNewHubExceptionIfNull<T>(
-        [NotNull] this T? hubItem,
-        string errorMessage,
-        string exceptionMessage
-    )
-        where T : notnull
-    {
-        if (hubItem is not null)
-            return hubItem;
-        Log.Logger.Error("{Message}", errorMessage);
-        throw new HubException(exceptionMessage);
-    }
-
     public static Guid GetGuidUserId(this HubCallerContext context)
     {
         var user = context.User;
@@ -79,13 +59,6 @@ public static class SignalRExtensions
         return user.GetUserName();
     }
 
-    public static HubAppUser ToHubAppUser(this HubCallerContext context)
-    {
-        var userId = context.GetGuidUserId();
-
-        return HubAppUser.Create(userId, context.ConnectionId);
-    }
-
     public static AuthUser ToAuthUser(this HubCallerContext context)
     {
         var userId = context.GetGuidUserId();
@@ -93,7 +66,7 @@ public static class SignalRExtensions
         return AuthUser.Create(userId, userName, context.ConnectionId);
     }
 
-    public static string GetLoggingString(this AuthUser user)
+    public static string ToAuthUserLog(this AuthUser user)
     {
         return $"User: {user.UserName} ({user.Id})";
     }
@@ -116,12 +89,6 @@ public static class SignalRExtensions
         throw new HubException(message);
     }
 
-    public static void ThrowHubException<T>(string message)
-    {
-        Log.Logger.Error("{Message}", message);
-        throw new HubException(message);
-    }
-
     public static async Task<T> ThrowHubExceptionIfNullSingleOrDefaultAsync<T>(
         this IQueryable<T> query,
         Expression<Func<T, bool>> predicate,
@@ -131,7 +98,6 @@ public static class SignalRExtensions
         var result = await query.SingleOrDefaultAsync(predicate);
 
         ThrowHubExceptionIfNull(result, message);
-        // [NotNull]
         return result;
     }
 

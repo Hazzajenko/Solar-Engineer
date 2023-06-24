@@ -2,6 +2,7 @@
 using Messages.Application.Data.UnitOfWork;
 using Messages.Application.Handlers.GroupChats;
 using Messages.Contracts.Data;
+using Messages.Contracts.Responses;
 using Messages.SignalR.Hubs;
 using Messages.SignalR.Queries.Messages;
 using Microsoft.AspNetCore.SignalR;
@@ -36,12 +37,9 @@ public class GetLatestUserMessagesHandler
         );
         await _hubContext.Clients
             .User(request.AuthUser.Id.ToString())
-            .GetLatestMessages(latestMessages);
+            .GetLatestMessages(new GetLatestMessagesResponse { Messages = latestMessages });
 
-        _logger.LogInformation(
-            "{User} Fetched Latest Messages",
-            request.AuthUser.GetLoggingString()
-        );
+        _logger.LogInformation("{User} Fetched Latest Messages", request.AuthUser.ToAuthUserLog());
         return latestMessages;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Identity.Contracts.Responses.Friends;
+﻿using ApplicationCore.Entities;
+using Identity.Contracts.Responses.Friends;
 using Infrastructure.Authentication;
 using Mediator;
 

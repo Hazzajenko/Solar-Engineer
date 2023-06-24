@@ -1,6 +1,4 @@
-// using Infrastructure.Entities.Identity;
-
-using Infrastructure.Common;
+using ApplicationCore.Interfaces;
 
 namespace Messages.Domain.Entities;
 
