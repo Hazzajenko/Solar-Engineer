@@ -70,7 +70,6 @@ public static class SignalRExtensions
     {
         var user = context.User;
         user.ThrowHubExceptionIfNull("User is not authenticated");
-        // var user = ThrowHubExceptionIfNull(context.User, "User is not authenticated");
         return user.TryGetGuidUserId(new HubException("User is not authenticated"));
     }
 

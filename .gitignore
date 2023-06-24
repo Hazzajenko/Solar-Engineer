@@ -6,6 +6,8 @@
 seq-data
 **/seq-data
 seq-data/**
+**/seq-data/**
+./seq-data
 
 db-data
 **/db-data

@@ -1,5 +1,4 @@
 ﻿using FastEndpoints;
-using Identity.Application.Handlers.Images.CreateDpImage;
 using Identity.Application.Services.AzureStorage;
 using Identity.Application.Services.Images;
 using Identity.Contracts.Data;

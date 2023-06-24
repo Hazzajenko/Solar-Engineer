@@ -24,6 +24,7 @@
         <PackageReference Include="FastEndpoints" Version="5.7.1" />
         <PackageReference Include="FastEndpoints.Security" Version="5.7.1" />
         <PackageReference Include="FastEndpoints.Swagger" Version="5.7.1" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
         <PackageReference Include="Grpc.AspNetCore" Version="2.51.0" />
         <PackageReference Include="Grpc.Net.Client" Version="2.51.0" />
         <PackageReference Include="Grpc.Tools" Version="2.51.0">

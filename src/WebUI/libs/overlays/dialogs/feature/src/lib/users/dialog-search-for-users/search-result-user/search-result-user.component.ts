@@ -2,10 +2,9 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	computed,
-	ElementRef,
 	inject,
-	Injector,
 	Input,
+	OnDestroy,
 	signal,
 	TemplateRef,
 	ViewChild,
@@ -24,13 +23,8 @@ import { injectProjectsStore } from '@entities/data-access'
 import { ProjectModel } from '@entities/shared'
 import { DialogBackdropTemplateComponent } from '../../../dialog-backdrop-template/dialog-backdrop-template.component'
 import { DialogUserOptionsComponent } from '../../dialog-user-options/dialog-user-options.component'
-import {
-	DialogWarningTemplateComponent,
-	DialogWarningTemplateInput,
-	DialogWarningTemplateInputsComponent,
-} from '../../../shared'
+import { DialogWarningTemplateInput, DialogWarningTemplateInputsComponent } from '../../../shared'
 import { injectUsersStore } from '@auth/data-access'
-import { injectUiStore } from '@overlays/ui-store/data-access'
 
 @Component({
 	selector: 'app-search-result-user',
@@ -55,23 +49,16 @@ import { injectUiStore } from '@overlays/ui-store/data-access'
 	animations: [opacityInOutAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchResultUserComponent {
+export class SearchResultUserComponent implements OnDestroy {
 	private _userOptionsOverlay: OverlayRef | undefined
 	private _childSubMenuOverlay: OverlayRef | undefined
 	private _viewContainerRef = inject(ViewContainerRef)
 	private _overlay = inject(Overlay)
 	private _projectsStore = injectProjectsStore()
 	private _usersStore = injectUsersStore()
-	private _uiStore = injectUiStore()
-	private _injector = inject(Injector)
-	// userContextMenuComponent = DialogUserOptionsComponent
-	@ViewChild('userContextMenu') private _userContextMenu!: TemplateRef<any>
-	@ViewChild('dialogWarning') private _dialogWarning!: TemplateRef<any>
-	@ViewChild('contextMenuOrigin') private _contextMenuOrigin!: ElementRef<HTMLButtonElement>
-	warningComponent = DialogWarningTemplateComponent
-	dialogInjector: Injector | undefined
+	@ViewChild('userContextMenu') private _userContextMenu!: TemplateRef<unknown>
+	@ViewChild('dialogWarning') private _dialogWarning!: TemplateRef<unknown>
 	@Input({ required: true }) user!: WebUserModel
-	userContextMenuOpen = signal(false)
 	invitingToProject = signal(false)
 	projectsThatFriendIsNotIn = computed(() => {
 		const projects = this._projectsStore.select.allProjects()
@@ -173,5 +160,10 @@ export class SearchResultUserComponent {
 				data,
 			}),
 		)
+	}
+
+	ngOnDestroy() {
+		this._userOptionsOverlay?.dispose()
+		this._childSubMenuOverlay?.dispose()
 	}
 }

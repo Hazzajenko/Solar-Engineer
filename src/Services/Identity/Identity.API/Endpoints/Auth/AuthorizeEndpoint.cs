@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
-using Identity.Application.Handlers.AppUsers.GetAppUserDto;
-using Identity.Application.Handlers.Auth.Authorize;
+using Identity.Application.Commands;
+using Identity.Application.Queries.AppUsers;
 using Identity.Application.Services.Jwt;
 using Identity.Contracts.Responses;
 using Identity.Domain;

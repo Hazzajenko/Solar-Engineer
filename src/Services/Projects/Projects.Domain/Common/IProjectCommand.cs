@@ -12,7 +12,5 @@ public interface IProjectCommand
 public interface IProjectCommand<TRequest> : IProjectCommand
     where TRequest : class
 {
-    // HubAppUser User { get; init; }
     TRequest Request { get; init; }
-    // string RequestId { get; init; }
 }

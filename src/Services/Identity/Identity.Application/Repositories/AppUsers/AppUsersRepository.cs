@@ -71,7 +71,6 @@ public sealed class AppUsersRepository
                     && !ids.Contains(x.Id)
             )
             .Select(x => x.ToWebUserDto())
-            // .ProjectToType<WebUserDto>()
             .ToListAsync();
     }
 

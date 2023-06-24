@@ -1,15 +1,5 @@
-import {
-	ChangeDetectionStrategy,
-	Component,
-	computed,
-	effect,
-	inject,
-	Injector,
-	signal,
-} from '@angular/core'
-import { DialogInputUserOptions, injectUiStore } from '@overlays/ui-store/data-access'
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core'
 import { injectAppUser, injectUsersStore } from '@auth/data-access'
-import { dialogInputInjectionToken } from '../../dialog-renderer'
 import { DialogBackdropTemplateComponent } from '../../dialog-backdrop-template/dialog-backdrop-template.component'
 import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgTemplateOutlet } from '@angular/common'
 import {
@@ -56,12 +46,8 @@ import { SearchResultUserComponent } from './search-result-user/search-result-us
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogSearchForUsersComponent {
-	private _dialog = inject(Injector).get(dialogInputInjectionToken) as DialogInputUserOptions
-	private _uiStore = injectUiStore()
 	private _usersStore = injectUsersStore()
 	user = injectAppUser()
-	isMobile = this._uiStore.select.isMobile
-	isTablet = this._uiStore.select.isTablet
 	userSearchResults = this._usersStore.select.userSearchResults
 	fourMostRecentFriends = this._usersStore.select.fourMostRecentFriends
 	isUserInSearch = signal(false)
@@ -84,7 +70,6 @@ export class DialogSearchForUsersComponent {
 			return undefined
 		}
 		return this._usersStore.select.getById(id)()
-		// return this.userSearchResults().find((x) => x.id === id)
 	})
 
 	lastKeyUpTime = 0

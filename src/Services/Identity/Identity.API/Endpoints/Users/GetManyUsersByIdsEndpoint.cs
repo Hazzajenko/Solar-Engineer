@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
-using Identity.Application.Handlers.AppUsers.GetAppUser;
-using Identity.Application.Handlers.AppUsers.GetAppUserDto;
+using Identity.Application.Handlers.AppUsers;
 using Identity.Application.Mapping;
+using Identity.Application.Queries.AppUsers;
 using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses;

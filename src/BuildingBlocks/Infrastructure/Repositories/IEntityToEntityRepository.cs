@@ -7,6 +7,7 @@ public interface IEntityToEntityRepository<TEntityToEntity>
     where TEntityToEntity : class, IEntityToEntity
 {
     Task AddAsync(TEntityToEntity model);
+    Task AddRangeAsync(IEnumerable<TEntityToEntity> items);
     Task<TEntityToEntity> AddAndSaveChangesAsync(TEntityToEntity model);
     Task<IEnumerable<TEntityToEntity>> AddManyAndSaveChangesAsync(
         IEnumerable<TEntityToEntity> items

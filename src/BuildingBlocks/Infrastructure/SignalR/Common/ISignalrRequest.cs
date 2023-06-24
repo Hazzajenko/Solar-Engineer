@@ -1,7 +1,8 @@
-﻿namespace Infrastructure.SignalR.Common;
+﻿using Infrastructure.Authentication;
 
-/*public interface IProjectSignalrRequest
+namespace Infrastructure.SignalR.Common;
+
+public interface ISignalrRequest
 {
-    string RequestId { get; set; }
-    
-}*/
+    AuthUser AuthUser { get; init; }
+}

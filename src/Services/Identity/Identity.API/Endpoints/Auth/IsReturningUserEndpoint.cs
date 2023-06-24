@@ -1,5 +1,4 @@
 ﻿using FastEndpoints;
-using Identity.Application.Handlers.AppUsers.GetAppUserDto;
 using Identity.Application.Services.Jwt;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses;
