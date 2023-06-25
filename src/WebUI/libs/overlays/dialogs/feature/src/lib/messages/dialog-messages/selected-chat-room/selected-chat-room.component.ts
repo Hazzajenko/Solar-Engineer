@@ -6,6 +6,7 @@ import {
 	Input,
 	OnDestroy,
 	OnInit,
+	signal,
 	Signal,
 	ViewContainerRef,
 } from '@angular/core'
@@ -18,7 +19,12 @@ import {
 	NgStyle,
 	NgTemplateOutlet,
 } from '@angular/common'
-import { MessageModel, MessagePreviewCombinedModel, UserToUserChatRoom } from '@auth/shared'
+import {
+	MessageModel,
+	MessagePreviewCombinedModel,
+	UserToUserChatRoom,
+	WebUserModel,
+} from '@auth/shared'
 import { StandaloneDatePipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 import { LetDirective } from '@ngrx/component'
 import { MatRippleModule } from '@angular/material/core'
@@ -33,6 +39,7 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { TextFieldModule } from '@angular/cdk/text-field'
 import { MatInputModule } from '@angular/material/input'
 import { MatButtonModule } from '@angular/material/button'
+import { AuthWebUserAvatarComponent } from '@auth/ui'
 
 @Component({
 	// eslint-disable-next-line @angular-eslint/component-selector
@@ -57,9 +64,32 @@ import { MatButtonModule } from '@angular/material/button'
 		MatInputModule,
 		MatButtonModule,
 		NgClass,
+		AuthWebUserAvatarComponent,
 	],
 	templateUrl: './selected-chat-room.component.html',
-	styleUrls: [],
+	styles: [
+		`
+			/* width */
+			::-webkit-scrollbar {
+				width: 5px;
+			}
+
+			/* Track */
+			::-webkit-scrollbar-track {
+				background: #f1f1f1;
+			}
+
+			/* Handle */
+			::-webkit-scrollbar-thumb {
+				background: #888;
+			}
+
+			/* Handle on hover */
+			::-webkit-scrollbar-thumb:hover {
+				background: #555;
+			}
+		`,
+	],
 	animations: [opacityInOutAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -71,19 +101,25 @@ export class SelectedChatRoomComponent implements OnInit, OnDestroy {
 	private _overlay = inject(Overlay)
 	private _projectsStore = injectProjectsStore()
 	private _usersStore = injectUsersStore()
+	isUserTyping = signal(false)
 	// private _chatRoomPreview!: MessagePreviewCombinedModel
 	@Input({ required: true }) chatRoomPreview!: MessagePreviewCombinedModel
+	// chatRoom = this._messagesStore.select.allUserMessagesByUserId(this.chatRoomPreview.chatId)
 	chatRoom!: Signal<UserToUserChatRoom>
+	otherUser!: Signal<WebUserModel | undefined>
 
 	// chatRoom!: Signal<UserToUserChatRoom>
 	user = injectAppUser()
 	_eff = effect(() => {
-		console.log('chatRoom', this.chatRoom())
+		if (this.chatRoom) {
+			console.log('chatRoom', this.chatRoom())
+		}
 	})
 
 	ngOnInit() {
 		console.log('SelectedChatRoomComponent', this.chatRoomPreview)
 		this.chatRoom = this._messagesStore.select.allUserMessagesByUserId(this.chatRoomPreview.chatId)
+		this.otherUser = this._usersStore.select.getById(this.chatRoomPreview.chatId)
 	}
 
 	/*	@Input({ required: true }) set chatRoomPreview(value: MessagePreviewCombinedModel) {
@@ -98,5 +134,41 @@ export class SelectedChatRoomComponent implements OnInit, OnDestroy {
 	ngOnDestroy() {
 		this._userOptionsOverlay?.dispose()
 		this._childSubMenuOverlay?.dispose()
+	}
+
+	onMessageBoxKeyUp(event: KeyboardEvent, messageInput: HTMLInputElement) {
+		event.preventDefault()
+		event.stopPropagation()
+
+		// const target = event.target as HTMLInputElement
+		const value = messageInput.value
+		console.log(value)
+
+		if (!this.isUserTyping() && event.key !== 'Enter' && value.length > 0) {
+			this.isUserTyping.set(true)
+		}
+
+		if (value.length <= 0) {
+			this.isUserTyping.set(false)
+		}
+
+		if (event.key === 'Enter') {
+			this.sentContent(value)
+			messageInput.value = ''
+		}
+	}
+
+	sendMessageToUserFromButton(messageInput: HTMLInputElement) {
+		const content = messageInput.value
+		console.log(content)
+		this.sentContent(content)
+		messageInput.value = ''
+	}
+
+	private sentContent(content: string) {
+		this._messagesStore.dispatch.sendMessageToUser({
+			recipientUserId: this.chatRoomPreview.chatId,
+			content,
+		})
 	}
 }

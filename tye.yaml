@@ -20,3 +20,12 @@ services:
       - port: 5006
         name:  non-secure
         protocol: http
+  - name: messages-api
+    project: src\Services\Messages\Messages.API\Messages.API.csproj
+    bindings:
+      - port: 5005
+        name:  secure
+        protocol: https
+      - port: 5004
+        name:  non-secure
+        protocol: http

@@ -96,7 +96,15 @@ public static class StringExtensions
         return char.ToUpper(x[0]) + x.Substring(1);
     }
 
-    public static string ToKebabCase(this string s)
+    public static string ToKebabCase(this string str)
+    {
+        if (string.IsNullOrWhiteSpace(str))
+            return str;
+
+        return Regex.Replace(str, @"([a-z0-9])([A-Z])", "$1-$2", RegexOptions.Compiled).ToLower();
+    }
+
+    /*public static string ToKebabCase(this string s)
     {
         var x = s.Replace("_", "-");
         if (x.Length == 0)
@@ -107,7 +115,7 @@ public static class StringExtensions
             m => m.Groups[1].Value + m.Groups[2].Value.ToLower() + m.Groups[3].Value
         );
         return char.ToLower(x[0]) + x.Substring(1);
-    }
+    }*/
 
     public static string PascalCaseConverter(string s)
     {

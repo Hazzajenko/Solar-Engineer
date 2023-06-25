@@ -1,6 +1,9 @@
-<div class="flex flex-col flex-auto border-l overflow-hidden bg-gray-50 dark:bg-transparent">
+<div class="flex flex-col flex-auto border-l overflow-hidden bg-gray-50 h-96 dark:bg-transparent">
 	<ng-container *ngIf="chatRoom() as chat; else selectChatOrStartNew">
-		<div class="flex flex-col-reverse overflow-y-auto overscroll-y-contain">
+		<div
+			*ngIf="otherUser() as otherUser"
+			class="flex flex-col-reverse overflow-y-auto overscroll-y-contain"
+		>
 			<div class="flex flex-col flex-auto shrink p-6">
 				<ng-container
 					*ngFor="
@@ -31,8 +34,9 @@
 						[ngClass]="{
 							'items-end': message.isUserSender,
 							'items-start': !message.isUserSender,
-							'mt-0.5': i > 0 && chat.messages[i - 1].isUserSender === message.isUserSender,
-							'mt-3': i > 0 && chat.messages[i - 1].isUserSender !== message.isUserSender
+							'mt-3': i > 0 && chat.messages[i - 1].isUserSender === message.isUserSender,
+							'mt-4': last && !message.isUserSender,
+							'mt-5': i > 0 && chat.messages[i - 1].isUserSender !== message.isUserSender
 						}"
 						class="flex flex-col"
 					>
@@ -44,6 +48,26 @@
 							}"
 							class="relative max-w-3/4 px-3 py-2 rounded-lg"
 						>
+							<!--							<p
+															*ngIf="last || chat.messages[i + 1].isUserSender !== message.isUserSender"
+															class="absolute top-0 left-0 right-0 -mt-4 text-xs text-gray-500 font-medium text-secondary"
+														>
+															{{ message.isUserSender ? "You" : otherUser.displayName }}
+														</p>-->
+							<p
+								*ngIf="last && !message.isUserSender"
+								class="absolute top-0 left-0 right-0 pl-1 -mt-4 text-xs text-gray-500 font-medium text-secondary"
+							>
+								{{ otherUser.displayName }}
+							</p>
+							<!--							<auth-web-user-avatar
+															*ngIf="!message.isUserSender"
+															[ngClass]="{
+																'absolute bottom-0 right-0 mb-1 mr-1': message.isUserSender,
+																'absolute bottom-0 left-0 mb-1 ml-1': !message.isUserSender
+															}"
+															[user]="otherUser"
+														/>-->
 							<!-- Speech bubble tail -->
 							<ng-container
 								*ngIf="last || chat.messages[i + 1].isUserSender !== message.isUserSender"
@@ -72,7 +96,7 @@
 						>
 							<div
 								[ngClass]="{ 'mr-3': message.isUserSender, 'ml-3': !message.isUserSender }"
-								class="my-0.5 text-sm font-medium text-secondary"
+								class="my-0.5 text-xs font-medium text-secondary"
 							>
 								{{ message.messageSentTime | standaloneDate : "HH:mm" }}
 							</div>
@@ -82,21 +106,40 @@
 			</div>
 		</div>
 
-		<!-- Message field -->
-		<div class="flex items-end p-4 border-t bg-gray-50 dark:bg-transparent">
-			<mat-form-field
-				[subscriptSizing]="'dynamic'"
-				class="fuse-mat-dense fuse-mat-rounded fuse-mat-bold w-full"
-			>
-				<textarea #messageInput cdkTextareaAutosize matInput></textarea>
-			</mat-form-field>
-			<div class="flex items-center h-11 my-px ml-4">
-				<button mat-icon-button>
-					<svg-input svgName="SvgPaperAirplane" />
-					<!--					<mat-icon [svgIcon]="'heroicons_outline:paper-airplane'" class="rotate-90"></mat-icon>-->
-				</button>
+		<!--		<div class="absolute bottom-0 left-0 right-0 ">-->
+		<div class="mt-2 p-1 flex rounded-md shadow-sm">
+			<div class="relative flex flex-grow items-stretch focus-within:z-10">
+				<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+					<svg
+						aria-hidden="true"
+						class="h-5 w-5 text-gray-400"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+					>
+						<path
+							d="M7 8a3 3 0 100-6 3 3 0 000 6zM14.5 9a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM1.615 16.428a1.224 1.224 0 01-.569-1.175 6.002 6.002 0 0111.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 017 18a9.953 9.953 0 01-5.385-1.572zM14.5 16h-.106c.07-.297.088-.611.048-.933a7.47 7.47 0 00-1.588-3.755 4.502 4.502 0 015.874 2.636.818.818 0 01-.36.98A7.465 7.465 0 0114.5 16z"
+						/>
+					</svg>
+				</div>
+				<input
+					#messageInput
+					(keyup)="onMessageBoxKeyUp($event, messageInput)"
+					class="block w-full rounded-none rounded-l-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+					id="message"
+					name="message"
+					placeholder="Send a message"
+					type="text"
+				/>
 			</div>
+			<button
+				(click)="sendMessageToUserFromButton(messageInput)"
+				class="-ml-px flex items-center justify-center gap-x-1.5 rounded-r-md px-6 py-3 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+				type="button"
+			>
+				<svg-input class="-ml-0.5 h-5 w-5 text-gray-400" svgName="SvgPaperAirplane" />
+			</button>
 		</div>
+		<!--		</div>-->
 	</ng-container>
 </div>
 

@@ -39,8 +39,12 @@
 				"
 			/>
 			<ng-template #resultState>
-				<div class="flex md:flex-row md:divide-x md:divide-y-0 divide-gray-100 flex-col divide-y">
-					<div class="max-h-96 min-w-0 flex-auto scroll-py-4 overflow-y-auto px-6 py-4">
+				<div
+					class="flex md:grid md:grid-cols-4 md:divide-x md:divide-y-0 divide-gray-100 flex-col divide-y"
+				>
+					<div
+						class="md:col-span-1 max-h-96 min-w-0 flex-auto scroll-py-4 overflow-y-auto px-6 py-4"
+					>
 						<ng-container
 							*ngIf="!isUserInSearch(); then defaultState; else userSearchResultsTemplate"
 						/>
@@ -54,7 +58,7 @@
 					</div>
 
 					<div
-						class="hidden h-96 w-1/2 flex-none flex-col divide-y divide-gray-100 overflow-y-auto md:flex"
+						class="hidden md:col-span-3 h-96 flex-none flex-col divide-y divide-gray-100 overflow-y-auto md:flex"
 					>
 						<ng-container *ngIf="selectedChatId(); then sideResultPanel; else noUserSelected" />
 					</div>

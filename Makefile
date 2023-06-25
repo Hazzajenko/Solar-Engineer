@@ -2,16 +2,16 @@ convert:
 	kompose convert
 
 convert-file:
-	kompose --file docker-voting.yml convert
+	kompose --file ${composeFile} convert
 
 run-kube:
-	kubectl apply -f frontend-tcp-service.yaml,redis-master-service.yaml,redis-slave-service.yaml,frontend-deployment.yaml,redis-master-deployment.yaml,redis-slave-deployment.yaml
+	kubectl apply -f ${service1},${service2}
 
 describe:
-	kubectl describe svc frontend
+	kubectl describe svc ${service}
 
 clean-up:
-	kubectl delete -f frontend-tcp-service.yaml,redis-master-service.yaml,redis-slave-service.yaml,frontend-deployment.yaml,redis-master-deployment.yaml,redis-slave-deployment.yaml
+	kubectl delete -f ${service1},${service2}
 
 new-cert:
 	openssl req -x509 -subj /CN=${domain} -days 365 -set_serial 2 -newkey rsa:4096 -keyout ${domain}.key -nodes -out ${domain}.pem
