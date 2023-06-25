@@ -5,7 +5,6 @@ import { injectConnectionsStore, injectUsersStore } from '../store'
 import { HubConnection } from '@microsoft/signalr'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
 import { DeviceInfoModel } from '@shared/data-access/models'
-// import { NotificationModel } from '@users/shared'
 
 const hubName = 'Users'
 const hubUrl = '/hubs/users'
@@ -17,12 +16,8 @@ export class UsersSignalrService {
 	private _usersStore = injectUsersStore()
 	private _notificationsStore = injectNotificationsStore()
 	private _connectionsStore = injectConnectionsStore()
-	// private _signalrHubs = inject(SignalrHubsService)
 
 	hubConnection: HubConnection | undefined
-	// get hubConnection() {
-	// 	return this._signalrHubs.usersHubConnection
-	// }
 
 	init(token: string, deviceInfo: DeviceInfoModel) {
 		const request: HubConnectionRequest = {
@@ -60,16 +55,10 @@ export class UsersSignalrService {
 		this.onHub(USERS_SIGNALR_EVENT.GET_USER_FRIENDS, (response: GetUserFriendsResponse) => {
 			console.log(USERS_SIGNALR_EVENT.GET_USER_FRIENDS, response)
 			this._usersStore.dispatch.addManyUsers(response.friends)
-			/*			if (Array.isArray(response.friends)) {
-			 this._usersStore.dispatch.addManyUsers(response.friends)
-			 } else {
-			 this._usersStore.dispatch.addUser(response.friends)
-			 }*/
 		})
 
 		this.onHub(USERS_SIGNALR_EVENT.RECEIVE_FRIEND, (response: ReceiveFriendResponse) => {
 			console.log(USERS_SIGNALR_EVENT.RECEIVE_FRIEND, response)
-			// const webUser = friendToWebUser(response)
 			this._usersStore.dispatch.addUser(response.friend)
 		})
 
@@ -158,13 +147,6 @@ export class UsersSignalrService {
 		// this.invokeHubConnection(USERS_SIGNALR_METHOD.REMOVE_FRIEND, appUserId)
 	}
 
-	getNotifications() {
-		this.invokeHub(USERS_SIGNALR_METHOD.GET_NOTIFICATIONS)
-	}
-
-	// readNotification(notificationId: string) {
-	// 	this.invokeHubConnection(USERS_SIGNALR_METHOD.READ_NOTIFICATION, notificationId)
-	// }
 
 	readManyNotifications(notificationIds: string[]) {
 		this.invokeHub(USERS_SIGNALR_METHOD.READ_MANY_NOTIFICATIONS, notificationIds)

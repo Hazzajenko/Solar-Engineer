@@ -8,20 +8,31 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Messages.Application.Repositories.Messages;
 
-public sealed class MessagesRepository : GenericRepository<MessagesContext, Message>, IMessagesRepository
+public sealed class MessagesRepository
+    : GenericRepository<MessagesContext, Message>,
+        IMessagesRepository
 {
-    public MessagesRepository(MessagesContext context) : base(context)
-    {
-    }
+    public MessagesRepository(MessagesContext context)
+        : base(context) { }
 
-    public async Task<IEnumerable<MessageDto>> GetUserMessagesWithUserAsync(Guid appUserId, Guid recipientUserId)
+    public async Task<IEnumerable<MessageDto>> GetUserMessagesWithUserAsync(
+        Guid appUserId,
+        Guid recipientUserId
+    )
     {
         return await Queryable
-            .Where(m => (m.RecipientId == appUserId && m.RecipientDeleted == false
-                                                    && m.SenderId ==
-                                                    recipientUserId)
-                        || (m.RecipientId == recipientUserId
-                            && m.SenderId == appUserId && m.SenderDeleted == false)
+            .Where(
+                m =>
+                    (
+                        m.RecipientId == appUserId
+                        && m.RecipientDeleted == false
+                        && m.SenderId == recipientUserId
+                    )
+                    || (
+                        m.RecipientId == recipientUserId
+                        && m.SenderId == appUserId
+                        && m.SenderDeleted == false
+                    )
             )
             .MarkUnreadAsRead(appUserId)
             .OrderBy(x => x.MessageSentTime)
@@ -29,21 +40,40 @@ public sealed class MessagesRepository : GenericRepository<MessagesContext, Mess
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<MessagePreviewDto>> GetLatestUserMessagesAsPreviewAsync(
+        Guid appUserId
+    )
+    {
+        return await Queryable
+            .Where(x => x.SenderId == appUserId || x.RecipientId == appUserId)
+            .OrderBy(x => x.MessageSentTime)
+            .GroupBy(x => x.SenderId == appUserId ? x.RecipientId : x.SenderId)
+            .Where(x => x.Any())
+            .Select(
+                x =>
+                    x.OrderByDescending(o => o.MessageSentTime)
+                        .Select(y => y.ToMessagePreviewDto(appUserId))
+                        .SingleOrDefault()!
+            )
+            .ToListAsync();
+    }
 
     public async Task<IEnumerable<LatestUserMessageDto>> GetLatestUserMessagesAsync(Guid appUserId)
     {
         return await Queryable
-            .Where(x => x.SenderId == appUserId ||
-                        x.RecipientId == appUserId)
+            .Where(x => x.SenderId == appUserId || x.RecipientId == appUserId)
+            .OrderBy(x => x.MessageSentTime)
             .GroupBy(x => x.SenderId == appUserId ? x.RecipientId : x.SenderId)
-            .OrderBy(x => x.Select(message => message.MessageSentTime))
-            .Select(x => new LatestUserMessageDto
-            {
-                UserId = x.Key.ToString(),
-                Message = x.OrderByDescending(o => o.MessageSentTime)
-                    .Select(y => y.ToDto(appUserId))
-                    .SingleOrDefault()
-            })
+            .Select(
+                x =>
+                    new LatestUserMessageDto
+                    {
+                        UserId = x.Key.ToString(),
+                        Message = x.OrderByDescending(o => o.MessageSentTime)
+                            .Select(y => y.ToDto(appUserId))
+                            .SingleOrDefault()
+                    }
+            )
             .ToListAsync();
     }
 }

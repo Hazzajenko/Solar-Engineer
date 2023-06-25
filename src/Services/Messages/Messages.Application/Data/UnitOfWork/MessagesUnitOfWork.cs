@@ -13,7 +13,7 @@ public class MessagesUnitOfWork : UnitOfWorkFactory<MessagesContext>, IMessagesU
         : base(context) { }
 
     public IAppUserGroupChatsRepository AppUserGroupChatsRepository =>
-        new AppAppUserGroupChatsRepository(Context);
+        new AppUserGroupChatsRepository(Context);
     public IMessagesRepository MessagesRepository => new MessagesRepository(Context);
     public IGroupChatsRepository GroupChatsRepository => new GroupChatsRepository(Context);
     public IGroupChatMessagesRepository GroupChatMessagesRepository =>

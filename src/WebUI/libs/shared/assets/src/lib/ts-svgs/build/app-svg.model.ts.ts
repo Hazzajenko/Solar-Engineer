@@ -40,6 +40,7 @@ export type AppSvg =
   | 'minus_circle'
   | 'move'
   | 'paint_brush'
+  | 'paper_airplane'
   | 'pencil_square'
   | 'play_circle'
   | 'play'

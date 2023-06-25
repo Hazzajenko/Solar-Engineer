@@ -1,0 +1,126 @@
+<div class="flex flex-col flex-auto border-l overflow-hidden bg-gray-50 dark:bg-transparent">
+	<ng-container *ngIf="chatRoom() as chat; else selectChatOrStartNew">
+		<div class="flex flex-col-reverse overflow-y-auto overscroll-y-contain">
+			<div class="flex flex-col flex-auto shrink p-6">
+				<ng-container
+					*ngFor="
+						let message of chat.messages;
+						let i = index;
+						let first = first;
+						let last = last;
+						trackBy: userMessageTrackByFn
+					"
+				>
+					<!-- Start of the day -->
+					<ng-container
+						*ngIf="
+							first ||
+							(chat.messages[i - 1].messageSentTime | standaloneDate : 'd') !==
+								(message.messageSentTime | standaloneDate : 'd')
+						"
+					>
+						<div class="flex items-center justify-center my-3 -mx-6">
+							<div class="flex-auto border-b"></div>
+							<div class="flex-0 mx-4 text-sm font-medium leading-5 text-secondary">
+								{{ message.messageSentTime | standaloneDate : "longDate" }}
+							</div>
+							<div class="flex-auto border-b"></div>
+						</div>
+					</ng-container>
+					<div
+						[ngClass]="{
+							'items-end': message.isUserSender,
+							'items-start': !message.isUserSender,
+							'mt-0.5': i > 0 && chat.messages[i - 1].isUserSender === message.isUserSender,
+							'mt-3': i > 0 && chat.messages[i - 1].isUserSender !== message.isUserSender
+						}"
+						class="flex flex-col"
+					>
+						<!-- Bubble -->
+						<div
+							[ngClass]="{
+								'bg-blue-500 text-blue-50': message.isUserSender,
+								'bg-gray-500 text-gray-50': !message.isUserSender
+							}"
+							class="relative max-w-3/4 px-3 py-2 rounded-lg"
+						>
+							<!-- Speech bubble tail -->
+							<ng-container
+								*ngIf="last || chat.messages[i + 1].isUserSender !== message.isUserSender"
+							>
+								<div
+									[ngClass]="{
+										'text-blue-500 -right-1 -mr-px mb-px': message.isUserSender,
+										'text-gray-500 -left-1 -ml-px mb-px -scale-x-1': !message.isUserSender
+									}"
+									class="absolute bottom-0 w-3"
+								>
+									<ng-container *ngTemplateOutlet="speechBubbleExtension"></ng-container>
+								</div>
+							</ng-container>
+							<!-- Message -->
+							<div [innerHTML]="message.content" class="min-w-4 leading-5"></div>
+						</div>
+						<!-- Time -->
+						<ng-container
+							*ngIf="
+								first ||
+								last ||
+								chat.messages[i + 1].isUserSender !== message.isUserSender ||
+								chat.messages[i + 1].messageSentTime !== message.messageSentTime
+							"
+						>
+							<div
+								[ngClass]="{ 'mr-3': message.isUserSender, 'ml-3': !message.isUserSender }"
+								class="my-0.5 text-sm font-medium text-secondary"
+							>
+								{{ message.messageSentTime | standaloneDate : "HH:mm" }}
+							</div>
+						</ng-container>
+					</div>
+				</ng-container>
+			</div>
+		</div>
+
+		<!-- Message field -->
+		<div class="flex items-end p-4 border-t bg-gray-50 dark:bg-transparent">
+			<mat-form-field
+				[subscriptSizing]="'dynamic'"
+				class="fuse-mat-dense fuse-mat-rounded fuse-mat-bold w-full"
+			>
+				<textarea #messageInput cdkTextareaAutosize matInput></textarea>
+			</mat-form-field>
+			<div class="flex items-center h-11 my-px ml-4">
+				<button mat-icon-button>
+					<svg-input svgName="SvgPaperAirplane" />
+					<!--					<mat-icon [svgIcon]="'heroicons_outline:paper-airplane'" class="rotate-90"></mat-icon>-->
+				</button>
+			</div>
+		</div>
+	</ng-container>
+</div>
+
+<ng-template #selectChatOrStartNew>
+	<div class="flex flex-col flex-auto items-center justify-center w-full h-full p-4">
+		<!--		<mat-icon
+					[svgIcon]="'heroicons_outline:chat-bubble-bottom-center-text'"
+					class="icon-size-24"
+				></mat-icon>-->
+		<svg-input svgName="SvgChatBubbleLeft" />
+		<div class="mt-4 text-xl text-center font-medium tracking-tight text-secondary">
+			Select a conversation
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #speechBubbleExtension>
+	<svg height="100%" viewBox="0 0 66 66" width="100%" xmlns="http://www.w3.org/2000/svg">
+		<g fill="none" fill-rule="evenodd" id="Page-1" stroke="none" stroke-width="1">
+			<path
+				d="M1.01522827,0.516204834 C-8.83532715,54.3062744 61.7609863,70.5215302 64.8009949,64.3061218 C68.8074951,54.8859711 30.1663208,52.9997559 37.5036011,0.516204834 L1.01522827,0.516204834 Z"
+				fill="currentColor"
+				fill-rule="nonzero"
+			></path>
+		</g>
+	</svg>
+</ng-template>

@@ -20,7 +20,7 @@ import {
 	SideUiProjectsListViewComponent,
 	SideUiSelectedProjectViewComponent,
 } from '../projects'
-import { injectUiStore } from '@overlays/ui-store/data-access'
+import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 import { SideUiAuthViewComponent } from '../side-ui-auth-view/side-ui-auth-view.component'
 import { SideUiUsersViewComponent } from '../side-ui-users-view/side-ui-users-view.component'
 import { SideUiNotificationsViewComponent } from '../side-ui-notifications-view/side-ui-notifications-view.component'
@@ -199,5 +199,11 @@ export class SideUiNavBarComponent {
 
 	toggle() {
 		this._uiStore.dispatch.toggleSideUiNav()
+	}
+
+	openChat() {
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.MESSAGES,
+		})
 	}
 }

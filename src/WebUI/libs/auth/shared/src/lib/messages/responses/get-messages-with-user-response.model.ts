@@ -1,6 +1,6 @@
-import { MessageDto } from '../data/message-dto.model'
+import { MessageModel } from '../data'
 
 export interface GetMessagesWithUserResponse {
 	userId: string
-	messages: MessageDto[]
+	messages: MessageModel[]
 }

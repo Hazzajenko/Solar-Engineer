@@ -1,91 +1,66 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import {
-	FriendRequestResponse,
-	MinimalWebMessage,
-	SearchForAppMessageRequest,
-	SearchForAppMessageResponse,
-	WebMessageModel,
+	GetMessagesWithUserRequest,
+	MessageModel,
+	MessagePreviewModel,
+	SendMessageRequest,
 } from '@auth/shared'
 import { EntityUpdate } from '@shared/data-access/models'
 
 export const MessagesActions = createActionGroup({
 	source: 'Messages Store',
 	events: {
-		'Get Online Friends': emptyProps(),
-		'Receive Friend Request Event': props<{
-			response: FriendRequestResponse
-		}>(),
-		'Send Friend Request': props<{
-			messageId: string
-		}>(),
-		'Accept Friend Request': props<{
-			messageId: string
-		}>(),
-		'Reject Friend Request': props<{
-			messageId: string
-		}>(),
-		'Remove Friend': props<{
-			messageId: string
-		}>(),
-		'Search For App Message By Message Name': props<{
-			query: string
-		}>(),
-		'Search For App Message': props<{
-			request: SearchForAppMessageRequest
-		}>(),
-		'Receive Messages From Search': props<{
-			messages: MinimalWebMessage[]
-		}>(),
-		'Receive Search Results For App Message': props<{
-			response: SearchForAppMessageResponse
-		}>(),
-		'Clear App Message Search Results': emptyProps(),
-		'Clear Message Search Results': emptyProps(),
 		'Load Messages': props<{
-			messages: WebMessageModel[]
+			messages: MessageModel[]
 		}>(),
-		'Add App Message': props<{
-			message: WebMessageModel
+		'Load Latest Messages': props<{
+			messages: MessagePreviewModel[]
+		}>(),
+		'Fetch Messages By User Id': props<{
+			request: GetMessagesWithUserRequest
+		}>(),
+		'Send Message To User': props<{
+			request: SendMessageRequest
 		}>(),
 		'Add Message': props<{
-			message: WebMessageModel
+			message: MessageModel
 		}>(),
 		'Add Many Messages': props<{
-			messages: WebMessageModel[]
+			messages: MessageModel[]
 		}>(),
 		'Update Message': props<{
-			update: UpdateStr<WebMessageModel>
+			update: UpdateStr<MessageModel>
 		}>(),
 		'Update Many Messages': props<{
-			updates: UpdateStr<WebMessageModel>[]
+			updates: UpdateStr<MessageModel>[]
 		}>(),
 		'Update Many Messages With String': props<{
-			updates: EntityUpdate<WebMessageModel>[]
+			updates: EntityUpdate<MessageModel>[]
 		}>(),
 		'Delete Message': props<{
-			messageId: WebMessageModel['id']
+			messageId: MessageModel['id']
 		}>(),
 		'Delete Many Messages': props<{
-			messageIds: WebMessageModel['id'][]
+			messageIds: MessageModel['id'][]
 		}>(),
 		'Add Message No Signalr': props<{
-			message: WebMessageModel
+			message: MessageModel
 		}>(),
 		'Add Many Messages No Signalr': props<{
-			messages: WebMessageModel[]
+			messages: MessageModel[]
 		}>(),
 		'Update Message No Signalr': props<{
-			update: UpdateStr<WebMessageModel>
+			update: UpdateStr<MessageModel>
 		}>(),
 		'Update Many Messages No Signalr': props<{
-			updates: UpdateStr<WebMessageModel>[]
+			updates: UpdateStr<MessageModel>[]
 		}>(),
 		'Delete Message No Signalr': props<{
-			messageId: WebMessageModel['id']
+			messageId: MessageModel['id']
 		}>(),
 		'Delete Many Messages No Signalr': props<{
-			messageIds: WebMessageModel['id'][]
+			messageIds: MessageModel['id'][]
 		}>(),
 		'Clear Messages State': emptyProps(),
 		Noop: emptyProps(),

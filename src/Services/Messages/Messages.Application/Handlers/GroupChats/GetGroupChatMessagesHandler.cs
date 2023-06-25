@@ -29,11 +29,12 @@ public class GetGroupChatMessagesHandler : IRequestHandler<GetGroupChatMessagesQ
     public async ValueTask<bool> Handle(GetGroupChatMessagesQuery query, CancellationToken cT)
     {
         var appUserId = query.AuthUser.Id;
+        var groupChatId = query.Request.GroupChatId.ToGuid();
 
         var groupChatMessages =
             await _unitOfWork.GroupChatMessagesRepository.GetGroupChatMessagesAsync(
                 appUserId,
-                query.GroupChatId.ToGuid()
+                groupChatId
             );
 
         await _hubContext.Clients
@@ -45,7 +46,7 @@ public class GetGroupChatMessagesHandler : IRequestHandler<GetGroupChatMessagesQ
         _logger.LogInformation(
             "{User} GetGroupChatMessages with GroupChat {Recipient}",
             appUserId,
-            query.GroupChatId
+            groupChatId
         );
 
         return true;

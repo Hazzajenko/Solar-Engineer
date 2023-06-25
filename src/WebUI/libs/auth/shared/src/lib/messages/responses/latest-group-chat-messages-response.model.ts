@@ -1,5 +1,5 @@
-import { GroupChatDto } from '../data/group-chat-dto.model'
+import { GroupChatModel } from '../data'
 
 export interface LatestGroupChatMessagesResponse {
-	groupChats: GroupChatDto[]
+	groupChats: GroupChatModel[]
 }

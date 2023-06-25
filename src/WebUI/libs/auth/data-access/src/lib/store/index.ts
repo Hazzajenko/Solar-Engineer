@@ -1,3 +1,6 @@
 export * from './auth/index'
 export * from './users/index'
 export * from './connections/index'
+export * from './messages/index'
+export * from './messaging/index'
+export * from './group-chats/index'

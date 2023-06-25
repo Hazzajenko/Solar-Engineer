@@ -8,5 +8,7 @@ public interface IAppUserGroupChatsRepository : IEntityToEntityRepository<AppUse
 {
     Task<IEnumerable<string>> GetGroupChatMemberIdsAsync(Guid groupChatId, Guid? userId = null);
     Task<IEnumerable<GroupChatDto>> GetLatestGroupChatMessagesAsync(Guid appUserId);
+
+    Task<IEnumerable<MessagePreviewDto>> GetLatestGroupChatMessagesAsPreviewAsync(Guid appUserId);
     Task<AppUserGroupChat?> GetByAppUserAndGroupChatIdAsync(Guid appUserId, Guid groupChatId);
 }

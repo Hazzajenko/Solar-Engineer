@@ -1,10 +1,3 @@
-/*export enum MessageFrom {
- Unknown,
- OtherUser,
- CurrentUser,
- Server,
- }*/
-
 export const MESSAGE_FROM = {
 	UNKNOWN: 'Unknown',
 	OTHER_USER: 'OtherUser',

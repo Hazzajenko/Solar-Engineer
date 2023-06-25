@@ -25,7 +25,7 @@ public static class ServiceExtensions
     )
     {
         services.AddScoped<IMessagesUnitOfWork, MessagesUnitOfWork>();
-        services.AddScoped<IAppUserGroupChatsRepository, AppAppUserGroupChatsRepository>();
+        services.AddScoped<IAppUserGroupChatsRepository, AppUserGroupChatsRepository>();
         services.AddScoped<IMessagesRepository, MessagesRepository>();
         services.AddScoped<IGroupChatsRepository, GroupChatsRepository>();
         services.AddScoped<IGroupChatMessagesRepository, GroupChatMessagesRepository>();

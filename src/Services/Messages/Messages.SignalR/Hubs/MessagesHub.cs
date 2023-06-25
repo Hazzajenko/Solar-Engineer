@@ -4,6 +4,7 @@ using Messages.Contracts.Requests;
 using Messages.SignalR.Commands.GroupChats;
 using Messages.SignalR.Queries.GroupChats;
 using Messages.SignalR.Queries.Messages;
+using Messages.SignalR.Queries.UserMessages;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
@@ -29,6 +30,7 @@ public class MessagesHub : Hub<IMessagesHub>
             user.Id,
             user.UserName
         );
+        await _mediator.Send(new GetLatestMessagesQuery(user));
         await _mediator.Send(new GetLatestUserMessagesQuery(user));
         await _mediator.Send(new GetLatestGroupChatMessagesQuery(user));
         await base.OnConnectedAsync();
@@ -56,14 +58,14 @@ public class MessagesHub : Hub<IMessagesHub>
         await _mediator.Send(new InviteUsersToGroupChatCommand(Context.ToAuthUser(), request));
     }
 
-    public async Task GetMessagesWithUser(string recipientId)
+    public async Task GetMessagesWithUser(GetMessagesWithUserRequest request)
     {
-        await _mediator.Send(new GetMessagesWithUserQuery(Context.ToAuthUser(), recipientId));
+        await _mediator.Send(new GetMessagesWithUserQuery(Context.ToAuthUser(), request));
     }
 
-    public async Task GetGroupChatMessages(string groupChatId)
+    public async Task GetGroupChatMessages(GetGroupChatMessagesRequest request)
     {
-        await _mediator.Send(new GetGroupChatMessagesQuery(Context.ToAuthUser(), groupChatId));
+        await _mediator.Send(new GetGroupChatMessagesQuery(Context.ToAuthUser(), request));
     }
 
     public async Task SendMessageToUser(SendMessageRequest request)

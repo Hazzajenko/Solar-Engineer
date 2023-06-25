@@ -45,6 +45,7 @@ export * from './build/Svg-microsoft.icon';
 export * from './build/Svg-minus-circle.icon';
 export * from './build/Svg-move.icon';
 export * from './build/Svg-paint-brush.icon';
+export * from './build/Svg-paper-airplane.icon';
 export * from './build/Svg-pencil-square.icon';
 export * from './build/Svg-play-circle.icon';
 export * from './build/Svg-play.icon';

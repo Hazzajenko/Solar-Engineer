@@ -6,19 +6,6 @@ namespace Messages.Application.Mapping;
 
 public static class AppUserGroupChatsMapping
 {
-    /*public static Conversation ToEntity(this SendMessageRequest request, AppUser user, AppUser recipient)
-    {
-        return new Message
-        {
-            Content = request.Content,
-            RecipientUserName = recipient.UserName!,
-            SenderUserName = user.UserName!,
-            Sender = user,
-            Recipient = recipient,
-            Status = NotificationStatus.Unread
-        };
-    }*/
-
     public static AppUserGroupChat ToDomain(this CreateGroupChatRequest request, Guid appUserId)
     {
         return new AppUserGroupChat
@@ -27,16 +14,9 @@ public static class AppUserGroupChatsMapping
             Role = "Admin",
             CanInvite = true,
             CanKick = true,
-            GroupChat = new GroupChat
-            {
-                Name = request.GroupChatName,
-                CreatedById = appUserId
-                // PhotoUrl = appUser.PhotoUrl,
-                // Created = DateTime.UtcNow
-            }
+            GroupChat = new GroupChat { Name = request.GroupChatName, CreatedById = appUserId }
         };
     }
-
 
     public static InitialGroupChatMemberDto ToInitialMemberDto(this AppUserGroupChat request)
     {
@@ -46,129 +26,43 @@ public static class AppUserGroupChatsMapping
             AppUserId = request.AppUserId.ToString(),
             // DisplayName = request.AppUser.DisplayName,
             JoinedAt = request.CreatedTime,
-
             Role = request.Role
         };
     }
 
-    /*public static GroupChatMemberDto ToMemberDto(this AppUserGroupChat request)
+    public static MessagePreviewDto ToMessagePreviewDto(
+        this AppUserGroupChat request,
+        Guid appUserId
+    )
     {
-        return new GroupChatMemberDto
+        var groupChat = request.GroupChat;
+        var lastMessage = groupChat.GroupChatMessages.MaxBy(o => o.MessageSentTime)!;
+        lastMessage.ThrowHubExceptionIfNull();
+        var lastMessageFrom = lastMessage.ServerMessage
+            ? EMessageFrom.Server.Name
+            : lastMessage.SenderId == appUserId
+                ? EMessageFrom.CurrentUser.Name
+                : EMessageFrom.OtherUser.Name;
+        var lastMessageSenderId =
+            lastMessage.SenderId == appUserId
+                ? appUserId.ToString()
+                : lastMessage.SenderId.ToString();
+        var lastMessageSentTime = lastMessage?.MessageSentTime ?? DateTime.MinValue;
+        var isLastMessageReadByUser = lastMessage?.MessageReadTimes.FirstOrDefault(
+            x => x.UserId == appUserId
+        );
+        return new GroupChatMessagePreviewDto
         {
-            Id = request.Id,
-            GroupChatId = request.GroupChatId,
-            UserId = request.AppUser.Id,
-            DisplayName = request.AppUser.DisplayName,
-            FirstName = request.AppUser.FirstName,
-            LastName = request.AppUser.LastName,
-            PhotoUrl = request.AppUser.PhotoUrl,
-            JoinedAt = request.JoinedAt,
-            Role = request.Role,
-            LastActive = request.AppUser.LastActive
+            Id = groupChat.Id.ToString(),
+            IsGroup = true,
+            GroupChatName = groupChat.Name,
+            GroupChatPhotoUrl = groupChat.PhotoUrl,
+            LastMessageContent = lastMessage?.Content ?? "",
+            LastMessageFrom = lastMessageFrom,
+            LastMessageSenderId = lastMessageSenderId,
+            LastMessageSentTime = lastMessageSentTime,
+            IsLastMessageUserSender = lastMessageFrom == EMessageFrom.CurrentUser.Name,
+            IsLastMessageReadByUser = isLastMessageReadByUser is not null
         };
     }
-
-    public static GroupChatDto ToDto(this AppUserGroupChat request)
-    {
-        return new GroupChatDto
-        {
-            Id = request.Id,
-            Name = request.GroupChat.Name,
-            PhotoUrl = request.GroupChat.PhotoUrl,
-            Created = request.GroupChat.Created,
-            Members = new List<GroupChatMemberDto>()
-        };
-    }
-
-    public static GroupChatWithoutMembersDto ToDtoWithoutMembers(this AppUserGroupChat request)
-    {
-        return new GroupChatWithoutMembersDto
-        {
-            Id = request.GroupChatId,
-            Name = request.GroupChat.Name,
-            PhotoUrl = request.GroupChat.PhotoUrl,
-            Created = request.GroupChat.Created
-        };
-    }
-
-    public static GroupChatDto ToDtoWithMembers(this AppUserGroupChat request,
-        IEnumerable<GroupChatMemberDto> memberDtos)
-    {
-        return new GroupChatDto
-        {
-            Id = request.Id,
-            Name = request.GroupChat.Name,
-            PhotoUrl = request.GroupChat.PhotoUrl,
-            Created = request.GroupChat.Created,
-            Members = memberDtos
-        };
-    }
-
-    public static GroupChatDto ToResponseDto(this AppUserGroupChat request,
-        IEnumerable<GroupChatMemberDto> memberDtos, IEnumerable<GroupChatServerMessageDto> serverMessageDtos)
-    {
-        return new GroupChatDto
-        {
-            Id = request.Id,
-            Name = request.GroupChat.Name,
-            PhotoUrl = request.GroupChat.PhotoUrl,
-            Created = request.GroupChat.Created,
-            Members = memberDtos,
-            ServerMessages = serverMessageDtos
-        };
-    }
-
-    public static InitialGroupChatDto ToInitialResponseDto(this AppUserGroupChat request,
-        IEnumerable<InitialGroupChatMemberDto> memberDtos, IEnumerable<GroupChatServerMessageDto> serverMessageDtos)
-    {
-        return new InitialGroupChatDto
-        {
-            Id = request.Id,
-            Name = request.GroupChat.Name,
-            PhotoUrl = request.GroupChat.PhotoUrl,
-            Created = request.GroupChat.Created,
-            Members = memberDtos,
-            ServerMessages = serverMessageDtos
-        };
-    }
-
-    public static GroupChatDto ToDto(this GroupChat request, IEnumerable<GroupChatMemberDto> memberDtos)
-    {
-        return new GroupChatDto
-        {
-            Id = request.Id,
-            Name = request.Name,
-            PhotoUrl = request.PhotoUrl,
-            Created = request.Created,
-            Members = memberDtos
-        };
-    }*/
-
-    /*public static CreateGroupChatResponse ToResponse(this GroupChat request,
-        IEnumerable<GroupChatMemberDto> memberDtos)
-    {
-        return new CreateGroupChatResponse
-        {
-            GroupChat = request.ToDto(memberDtos)
-        };
-    }*/
 }
-/*response = new CreateConversationResponse
-{
-    Conversation = new ConversationDto
-    {
-        Id = result.Id,
-        Name = result.Name,
-        Members = new List<ConversationMemberDto>
-        {
-            new()
-            {
-                FirstName = user.FirstName,
-                Role = "Admin",
-                UserName = user.UserName!,
-                LastName = user.LastName,
-                JoinedConversationAt = DateTime.UtcNow
-            }
-        }
-    }
-}*/

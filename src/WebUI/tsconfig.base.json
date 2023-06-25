@@ -99,6 +99,7 @@
 			"@imagery/feature/azure-maps": ["libs/imagery/feature/azure-maps/src/index.ts"],
 			"@overlays/context-menus/feature": ["libs/overlays/context-menus/feature/src/index.ts"],
 			"@overlays/dialogs/feature": ["libs/overlays/dialogs/feature/src/index.ts"],
+			"@overlays/messages/feature": ["libs/overlays/messages/feature/src/index.ts"],
 			"@overlays/notifications/data-access": [
 				"libs/overlays/notifications/data-access/src/index.ts"
 			],

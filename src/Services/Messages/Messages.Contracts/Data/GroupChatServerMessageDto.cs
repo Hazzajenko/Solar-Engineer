@@ -8,5 +8,5 @@ public class GroupChatServerMessageDto
     public string Content { get; set; } = default!;
     public DateTime MessageSentTime { get; set; } = DateTime.UtcNow;
 
-    public MessageFrom MessageFrom { get; set; } = MessageFrom.Server;
+    public EMessageFrom MessageFrom { get; set; } = EMessageFrom.Server;
 }

@@ -11,7 +11,7 @@ public class GroupChatMessageDto
 
     public DateTime MessageSentTime { get; set; } = DateTime.UtcNow;
 
-    public MessageFrom MessageFrom { get; set; } = MessageFrom.Unknown;
+    public EMessageFrom MessageFrom { get; set; } = EMessageFrom.Unknown;
 
     public bool SenderInGroup { get; set; } = true;
 }

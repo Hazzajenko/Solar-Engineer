@@ -1,6 +1,6 @@
 export * from './messages.actions'
-export * from './messages.effects'
 export * from './messages.reducer'
 export * from './messages.feature'
 export * from './messages.selectors'
 export * from './messages.store'
+export * from './messages.effects'

@@ -1,6 +1,6 @@
 import { MessageFrom } from './message-from.model'
 
-export interface GroupChatServerMessageDto {
+export interface GroupChatServerMessageModel {
 	id: string
 	groupChatId: string
 	content: string

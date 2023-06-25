@@ -7,8 +7,11 @@ namespace Messages.Application.Mapping;
 
 public static class GroupChatMessagesMapper
 {
-    public static GroupChatMessage ToEntity(this SendGroupChatMessageRequest request, Guid appUserId,
-        GroupChat groupChat)
+    public static GroupChatMessage ToEntity(
+        this SendGroupChatMessageRequest request,
+        Guid appUserId,
+        GroupChat groupChat
+    )
     {
         return new GroupChatMessage
         {
@@ -18,7 +21,6 @@ public static class GroupChatMessagesMapper
             Content = request.Content
         };
     }
-
 
     public static GroupChatMessageDto ToDto(this GroupChatMessage request, Guid appUserId)
     {
@@ -40,7 +42,10 @@ public static class GroupChatMessagesMapper
         };
     }
 
-    public static GroupChatCombinedMessageDto ToCombinedDto(this GroupChatMessage request, Guid appUserId)
+    public static GroupChatCombinedMessageDto ToCombinedDto(
+        this GroupChatMessage request,
+        Guid appUserId
+    )
     {
         return new GroupChatCombinedMessageDto
         {
@@ -61,21 +66,17 @@ public static class GroupChatMessagesMapper
         };
     }
 
-    public static IEnumerable<GroupChatCombinedMessageDto> ToCombinedDtoList(this GroupChatMessage request,
-        Guid appUserId)
+    public static IEnumerable<GroupChatCombinedMessageDto> ToCombinedDtoList(
+        this GroupChatMessage request,
+        Guid appUserId
+    )
     {
-        return new List<GroupChatCombinedMessageDto>
-        {
-            request.ToCombinedDto(appUserId)
-        };
+        return new List<GroupChatCombinedMessageDto> { request.ToCombinedDto(appUserId) };
     }
 
     public static List<GroupChatMessageDto> ToDtoList(this GroupChatMessage request, Guid appUserId)
     {
-        return new List<GroupChatMessageDto>
-        {
-            request.ToDto(appUserId)
-        };
+        return new List<GroupChatMessageDto> { request.ToDto(appUserId) };
     }
 
     public static GroupChatMessageDto ToOtherUsersDto(this GroupChatMessage request)
@@ -91,7 +92,7 @@ public static class GroupChatMessagesMapper
             MessageReadTimes = request.MessageReadTimes.Any()
                 ? request.MessageReadTimes.Select(x => x.ToDto())
                 : new List<GroupChatReadTimeDto>(),
-            MessageFrom = MessageFrom.OtherUser
+            MessageFrom = EMessageFrom.OtherUser
         };
     }
 
@@ -109,24 +110,20 @@ public static class GroupChatMessagesMapper
             MessageReadTimes = request.MessageReadTimes.Any()
                 ? request.MessageReadTimes.Select(x => x.ToDto())
                 : new List<GroupChatReadTimeDto>(),
-            MessageFrom = MessageFrom.OtherUser
+            MessageFrom = EMessageFrom.OtherUser
         };
     }
 
     public static List<GroupChatMessageDto> ToOtherUsersDtoList(this GroupChatMessage request)
     {
-        return new List<GroupChatMessageDto>
-        {
-            request.ToOtherUsersDto()
-        };
+        return new List<GroupChatMessageDto> { request.ToOtherUsersDto() };
     }
 
-    public static IEnumerable<GroupChatCombinedMessageDto> ToOtherUsersCombinedDtoList(this GroupChatMessage request)
+    public static IEnumerable<GroupChatCombinedMessageDto> ToOtherUsersCombinedDtoList(
+        this GroupChatMessage request
+    )
     {
-        return new List<GroupChatCombinedMessageDto>
-        {
-            request.ToOtherUsersCombinedDto()
-        };
+        return new List<GroupChatCombinedMessageDto> { request.ToOtherUsersCombinedDto() };
     }
 
     public static GroupChatServerMessage ToServerMessage(

@@ -1,12 +1,12 @@
-import { GroupChatReadTimeDto } from './group-chat-read-time-dto.model'
+import { GroupChatReadTimeModel } from './group-chat-read-time.model'
 import { MessageFrom } from './message-from.model'
 
-export interface GroupChatCombinedMessageDto {
+export interface GroupChatCombinedMessageModel {
 	id: string
 	groupChatId: string
 	senderId: string
 	content: string
-	messageReadTimes: GroupChatReadTimeDto[]
+	messageReadTimes: GroupChatReadTimeModel[]
 	messageSentTime: string
 	messageFrom: MessageFrom
 	senderInGroup: boolean

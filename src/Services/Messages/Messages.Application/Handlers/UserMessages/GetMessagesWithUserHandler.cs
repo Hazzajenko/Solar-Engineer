@@ -1,7 +1,6 @@
 ﻿// using Infrastructure.Entities.Identity;
 
 using ApplicationCore.Extensions;
-using Infrastructure.Extensions;
 using Mediator;
 using Messages.Application.Data.UnitOfWork;
 using Messages.Contracts.Responses;
@@ -9,7 +8,7 @@ using Messages.SignalR.Hubs;
 using Messages.SignalR.Queries.GroupChats;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Messages.Application.Handlers.Messages;
+namespace Messages.Application.Handlers.UserMessages;
 
 public class GetMessagesWithUserHandler : IQueryHandler<GetMessagesWithUserQuery, bool>
 {
@@ -31,7 +30,7 @@ public class GetMessagesWithUserHandler : IQueryHandler<GetMessagesWithUserQuery
     public async ValueTask<bool> Handle(GetMessagesWithUserQuery query, CancellationToken cT)
     {
         var appUserId = query.AuthUser.Id;
-        var recipientUserId = query.RecipientId.ToGuid();
+        var recipientUserId = query.Request.UserId.ToGuid();
 
         var messages = await _unitOfWork.MessagesRepository.GetUserMessagesWithUserAsync(
             appUserId,

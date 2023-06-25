@@ -6,6 +6,7 @@ import { ButtonAnimatedDownUpArrowComponent, InputSvgComponent } from '@shared/u
 import { DefaultHoverEffectsDirective } from '@shared/directives'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { LetDirective } from '@ngrx/component'
+import { injectMessagesStore } from '@auth/data-access'
 
 @Component({
 	selector: 'app-users-view-web-user-item',
@@ -28,6 +29,8 @@ import { LetDirective } from '@ngrx/component'
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersViewWebUserItemComponent {
+	private _messagesStore = injectMessagesStore()
+
 	@Input({ required: true }) friend!: WebUserModel
 	@Output() readonly userViewToggle = new EventEmitter<string>()
 	@Output() readonly userContextMenuOpen = new EventEmitter<MouseEvent>()
@@ -35,5 +38,12 @@ export class UsersViewWebUserItemComponent {
 
 	openUserOptionsDialog(event: MouseEvent) {
 		this.userOptionsDialogOpen.emit(event)
+	}
+
+	sendMessage() {
+		this._messagesStore.dispatch.sendMessageToUser({
+			recipientUserId: this.friend.id,
+			content: 'hello',
+		})
 	}
 }

@@ -25,6 +25,7 @@ import { DialogInviteToProjectConfirmComponent } from '../projects/dialog-invite
 import { DialogSearchForUsersComponent, DialogUserOptionsComponent } from '../users'
 import { DialogWarningTemplateComponent } from '../shared'
 import { DialogProjectMemberOptionsComponent } from '../projects/dialog-project-member-options/dialog-project-member-options.component'
+import { DialogMessagesComponent } from '../messages'
 
 export const dialogInputInjectionToken = new InjectionToken<DialogInput>('')
 
@@ -108,6 +109,8 @@ export class DialogRendererComponent implements OnDestroy {
 				return DialogProjectMemberOptionsComponent
 			case DIALOG_COMPONENT.SEARCH_FOR_USERS:
 				return DialogSearchForUsersComponent
+			case DIALOG_COMPONENT.MESSAGES:
+				return DialogMessagesComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

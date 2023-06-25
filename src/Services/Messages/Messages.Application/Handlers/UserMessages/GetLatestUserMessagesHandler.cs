@@ -1,13 +1,12 @@
 ﻿using Mediator;
 using Messages.Application.Data.UnitOfWork;
-using Messages.Application.Handlers.GroupChats;
 using Messages.Contracts.Data;
 using Messages.Contracts.Responses;
 using Messages.SignalR.Hubs;
-using Messages.SignalR.Queries.Messages;
+using Messages.SignalR.Queries.UserMessages;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Messages.Application.Handlers.Messages;
+namespace Messages.Application.Handlers.UserMessages;
 
 public class GetLatestUserMessagesHandler
     : IQueryHandler<GetLatestUserMessagesQuery, IEnumerable<LatestUserMessageDto>>
@@ -37,7 +36,7 @@ public class GetLatestUserMessagesHandler
         );
         await _hubContext.Clients
             .User(request.AuthUser.Id.ToString())
-            .GetLatestMessages(new GetLatestMessagesResponse { Messages = latestMessages });
+            .GetLatestUserMessages(new GetLatestUserMessagesResponse { Messages = latestMessages });
 
         _logger.LogInformation("{User} Fetched Latest Messages", request.AuthUser.ToAuthUserLog());
         return latestMessages;

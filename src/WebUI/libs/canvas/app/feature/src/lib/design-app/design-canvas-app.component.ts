@@ -47,9 +47,7 @@ import { DialogRendererComponent } from '@overlays/dialogs/feature'
 import { injectProjectsStore } from '@entities/data-access'
 import { injectAuthStore } from '@auth/data-access'
 import { LoadingProjectSpinnerComponent } from '../ui/loading-project-spinner/loading-project-spinner.component'
-import { DeviceDetectorService } from 'ngx-device-detector'
 import { DefaultHoverEffectsDirective } from '@shared/directives'
-import { HttpClient } from '@angular/common/http'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -84,8 +82,6 @@ import { HttpClient } from '@angular/common/http'
 	templateUrl: './design-canvas-app.component.html',
 })
 export class DesignCanvasAppComponent implements AfterViewInit {
-	private _http = inject(HttpClient)
-	private _deviceService = inject(DeviceDetectorService)
 	private _projectsStore = injectProjectsStore()
 	private _authStore = injectAuthStore()
 	private _renderer = inject(Renderer2)
@@ -105,7 +101,7 @@ export class DesignCanvasAppComponent implements AfterViewInit {
 		return !this.isProjectReadyToRender() && !!this.user() && this.userProjects().length > 0
 	})
 
-	version = signal('1.0.7')
+	version = signal('1.0.8')
 	showFpsState = toSignal(this._graphicsStore.state$.pipe(map((state) => state.showFps)), {
 		initialValue: this._graphicsStore.state.showFps,
 	})

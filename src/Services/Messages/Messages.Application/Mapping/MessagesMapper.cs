@@ -1,4 +1,5 @@
-﻿using Messages.Contracts.Data;
+﻿using Infrastructure.Logging;
+using Messages.Contracts.Data;
 using Messages.Contracts.Requests;
 using Messages.Domain.Entities;
 
@@ -41,66 +42,45 @@ public static class MessageMapper
                 : new List<GroupChatReadTimeDto>(),
             MessageFrom =
                 appUserId == request.SenderId
-                    ? MessageFrom.CurrentUser
-                    : MessageFrom.OtherUser,
-            IsUserSender = appUserId == request.SenderId
+                    ? EMessageFrom.CurrentUser.Name
+                    : EMessageFrom.OtherUser.Name,
+            IsUserSender = appUserId == request.SenderId,
+            OtherUserId =
+                appUserId == request.SenderId
+                    ? request.RecipientId.ToString()
+                    : request.SenderId.ToString()
         };
     }
 
     public static List<MessageDto> ToDtoList(this Message request, Guid appUserId)
     {
-        return new List<MessageDto>
-        {
-            request.ToDto(appUserId)
-        };
+        return new List<MessageDto> { request.ToDto(appUserId) };
     }
 
-    /*public static GroupChatMessageDto ToDto(this GroupChatMessage request, AppUser appUser)
+    public static MessagePreviewDto ToMessagePreviewDto(this Message request, Guid appUserId)
     {
-        return new GroupChatMessageDto
+        var lastMessageFrom =
+            request.SenderId == appUserId
+                ? EMessageFrom.CurrentUser.Name
+                : EMessageFrom.OtherUser.Name;
+        var lastMessageSenderId = request.SenderId.ToString();
+        var otherUserId =
+            request.SenderId == appUserId
+                ? request.RecipientId.ToString()
+                : request.SenderId.ToString();
+        var isLastMessageReadByUser =
+            lastMessageFrom == EMessageFrom.CurrentUser.Name || request.MessageReadTime.HasValue;
+        return new UserMessagePreviewDto
         {
-            Id = request.Id,
-            GroupChatId = request.GroupChatId,
-            Content = request.Content,
-            SenderDisplayName = request.Sender.UserName!,
-            MessageSentTime = request.MessageSentTime,
-            MessageReadTimes = request.MessageReadTimes.Any()
-                ? request.MessageReadTimes.Select(x => x.ToDto())
-                : new List<GroupChatReadTimeDto>(),
-            // IsUserSender = appUser.UserName! == request.Sender.UserName!,
-            // IsServer = false,
-            MessageFrom =
-                appUser.UserName! == request.Sender.UserName!
-                    ? MessageFrom.CurrentUser
-                    : MessageFrom.OtherUser
+            Id = request.Id.ToString(),
+            IsGroup = false,
+            LastMessageContent = request.Content,
+            OtherUserId = otherUserId,
+            LastMessageFrom = lastMessageFrom,
+            LastMessageSenderId = lastMessageSenderId,
+            LastMessageSentTime = request.MessageSentTime,
+            IsLastMessageUserSender = lastMessageFrom == EMessageFrom.CurrentUser.Name,
+            IsLastMessageReadByUser = isLastMessageReadByUser,
         };
     }
-
-    public static GroupChatMessageDto ToOtherUsersDto(this GroupChatMessage request)
-    {
-        return new GroupChatMessageDto
-        {
-            Id = request.Id,
-            GroupChatId = request.GroupChatId,
-            Content = request.Content,
-            SenderDisplayName = request.Sender.UserName!,
-            MessageSentTime = request.MessageSentTime,
-            MessageReadTimes = request.MessageReadTimes.Any()
-                ? request.MessageReadTimes.Select(x => x.ToDto())
-                : new List<GroupChatReadTimeDto>(),
-            // IsUserSender = appUser.UserName! == request.Sender.UserName!,
-            // IsServer = false,
-            MessageFrom = MessageFrom.OtherUser
-        };
-    }
-
-    public static GroupChatReadTimeDto ToDto(this GroupChatReadTime request)
-    {
-        return new GroupChatReadTimeDto
-        {
-            Id = request.Id,
-            RecipientDisplayName = request.AppUser.UserName!,
-            MessageReadTime = request.MessageReadTime
-        };
-    }*/
 }

@@ -1,7 +1,7 @@
-import { InitialGroupChatMemberDto } from '../data/initial-group-chat-member-dto.model'
+import { InitialGroupChatMemberModel } from '../data'
 
 export interface GroupChatMembersAddedResponse {
 	groupChatId: string
 	invitedByUserId: string
-	members: InitialGroupChatMemberDto[]
+	members: InitialGroupChatMemberModel[]
 }

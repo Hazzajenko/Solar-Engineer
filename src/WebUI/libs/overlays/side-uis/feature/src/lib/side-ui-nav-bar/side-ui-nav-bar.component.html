@@ -60,6 +60,22 @@
 					</li>
 					<li>
 						<a
+							(click)="openChat()"
+							class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+						>
+							<svg-input inputClass="w-5 h-5" svgName="SvgChatBubbleLeft" />
+							<!--						<ng-container *ngrxLet="amountOfOnlineFriends() as amountOfOnlineFriends">
+														<div
+															*ngIf="amountOfOnlineFriends && amountOfOnlineFriends > 0"
+															class="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-blue-500 border-1 border border-gray-300 rounded-full -top-2 -right-2 dark:border-gray-900"
+														>
+															{{ amountOfOnlineFriends }}
+														</div>
+													</ng-container>-->
+						</a>
+					</li>
+					<li>
+						<a
 							(click)="changeView('notifications')"
 							*ngrxLet="currentView() === 'notifications' as isCurrentView"
 							[isSelected]="isCurrentView"

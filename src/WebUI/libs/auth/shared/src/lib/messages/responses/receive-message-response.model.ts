@@ -1,5 +1,5 @@
-import { MessageDto } from '../data/message-dto.model'
+import { MessageModel } from '../data'
 
 export interface ReceiveMessageResponse {
-	message: MessageDto
+	message: MessageModel
 }

@@ -1,5 +1,5 @@
-import { LatestUserMessageDto } from '../data/latest-user-message-dto.model'
+import { LatestUserMessageModel } from '../data'
 
 export interface LatestUserMessagesResponse {
-	messages: LatestUserMessageDto[]
+	messages: LatestUserMessageModel[]
 }

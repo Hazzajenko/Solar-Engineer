@@ -2,7 +2,7 @@ namespace Messages.Contracts.Data;
 
 public class GroupChatMemberDto
 {
-    public int Id { get; set; }
+    // public int Id { get; set; }
     public int GroupChatId { get; set; }
     public int UserId { get; set; }
     public string DisplayName { get; set; } = default!;

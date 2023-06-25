@@ -1,5 +1,5 @@
-import { GroupChatCombinedMessageDto } from '../data/group-chat-combined-message-dto.model'
+import { GroupChatCombinedMessageModel } from '../data'
 
 export interface GetGroupChatMessagesResponse {
-	groupChatMessages: GroupChatCombinedMessageDto[]
+	groupChatMessages: GroupChatCombinedMessageModel[]
 }

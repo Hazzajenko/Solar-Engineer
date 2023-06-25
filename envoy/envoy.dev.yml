@@ -93,6 +93,15 @@ static_resources:
                   prefix_rewrite: "/"
                   cluster: messages-api
               - match:
+                  prefix: "/hubs/messages"
+                route:
+                  prefix_rewrite: "/hubs/messages"
+                  cluster: messages-api
+                  timeout: 300s
+                  upgrade_configs:
+                    upgrade_type: "websocket"
+                    enabled: true
+              - match:
                   prefix: "/projects/"
                 route:
                   prefix_rewrite: "/"

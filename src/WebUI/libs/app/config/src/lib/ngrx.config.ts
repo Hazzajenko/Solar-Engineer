@@ -20,6 +20,9 @@ import { provideRouterStore } from '@ngrx/router-store'
 import {
 	provideAuthFeature,
 	provideConnectionsFeature,
+	provideGroupChatMessagesFeature,
+	provideGroupChatsFeature,
+	provideMessagesFeature,
 	provideUsersFeature,
 } from '@auth/data-access'
 import { provideHubsFeature } from '@app/data-access/signalr'
@@ -33,6 +36,9 @@ export function provideNgrx() {
 		provideAuthFeature(),
 		provideHubsFeature(),
 		provideConnectionsFeature(),
+		provideMessagesFeature(),
+		provideGroupChatsFeature(),
+		provideGroupChatMessagesFeature(),
 		provideUsersFeature(),
 		provideProjectsFeature(),
 		provideSignalrEventsFeature(),

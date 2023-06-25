@@ -1,5 +1,4 @@
 ﻿using ApplicationCore.Extensions;
-using Infrastructure.Extensions;
 using Mediator;
 using Messages.Application.Data.UnitOfWork;
 using Messages.Application.Mapping;
@@ -8,7 +7,7 @@ using Messages.SignalR.Commands.GroupChats;
 using Messages.SignalR.Hubs;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Messages.Application.Handlers.Messages;
+namespace Messages.Application.Handlers.UserMessages;
 
 public class SendMessageToUserHandler : IQueryHandler<SendMessageToUserCommand, bool>
 {
@@ -36,6 +35,9 @@ public class SendMessageToUserHandler : IQueryHandler<SendMessageToUserCommand, 
 
         await _unitOfWork.MessagesRepository.AddAsync(message);
         await _unitOfWork.SaveChangesAsync();
+
+        message = await _unitOfWork.MessagesRepository.GetByIdAsync(message.Id);
+        message.ThrowHubExceptionIfNull();
 
         // var appUserResult = message.ToDtoList(appUserId);
         // var recipientUserResult = message.ToDtoList(recipientUserId);
