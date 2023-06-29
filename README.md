@@ -32,20 +32,115 @@ Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
 
 ## Key Features
 
+### Projects
+- Create, update, and delete projects
+- View project details
+- Change project name
+- Change project colour
+- Invite users to projects
+- View project members
+- View project strings in data view in side UI
 
-* Panels
-  - Click to create
-  - Alt click drag to multi select
-  - Alt click drag in create mode to multi create
-  - Create String with selected
-  <!-- -  -->
-* Strings
-  - View string stats next to selected string
-  - Link panels in link mode
-  - View links with line graphics
-* Options
-  - Change key bindings
-  - Toggle graphics settings
+### Strings
+- Create, update, and delete strings
+- View string details
+- View string panels
+- View string stats next to the selected string
+- Link panels in link mode
+- View links with line graphics
+- Create a string with selected panels
+- Change string colour
+- Surrounding box for selected string
+- Right click in selected string to open string context menu
+  - View string details
+  - View connecting Panel Links in String
+  - Change String colour
+  - Delete string
+
+### Panels
+- Click to create a panel
+- Alt click drag to multi-select
+- Alt click drag in create mode to multi-create
+- Create a string with selected panels
+- Move, rotate, and delete panels on desktop
+- Right click to open panel context menu
+  - View panel details
+  - View connecting Panel Links
+  - Move to existing String
+  - Delete panel
+- Surrounding box for selected panels
+- Right click in selected panels to open panel context menu
+  - Create string with selected panels
+  - Move all panels to existing String
+  - Delete all selected panels
+
+
+### Panel Links
+- Create Panel Links between panels in a string
+- View Panel Links in a string in link mode
+- View amount of vanel Links in a string in data view in side UI
+- View amount of panels that are not linked in a string in data view in side UI
+- Right click on panel link in link mode to open panel link context menu
+  - View panel link details
+  - View connecting panels
+  - Delete panel link
+
+
+
+### Authentication
+
+- Sign in with Google
+<!-- - Sign in with GitHub -->
+
+
+### SignalR
+- Real-time user updates
+  - User status
+  - User search
+  - User project updates
+  - User friend status updates
+  - User notification updates
+- Real-time project updates
+  - Project updates
+  - Project member updates
+  - Project string updates
+  - Project panel updates
+  - Project panel link updates
+
+
+### Users
+- View user profile
+- View user projects
+- Search for users by username with real-time updates
+- View user settings
+- Friends
+  - Send friend requests
+  - Accept friend requests
+  - Reject friend requests
+  - View friends
+  - View friend requests
+  - Invite friends to projects
+- Notifications
+  - View notifications
+  - Dismiss notifications
+  - Delete notifications
+
+### UI
+- Responsive design
+- Context menus for desktop
+- Side UI for desktop
+- Mobile
+  - Mobile friendly
+  - Fullscreen side UI
+  - Optimised dialogs for small screens
+  - Touch controls
+  - Zoom in and out
+  - Pan around
+
+### Settings
+- Change key bindings
+- Toggle graphics settings
+<!-- - Toggle dark mode -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -135,25 +230,83 @@ Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] Add Changelog
 - [x] Add in multiple panel dragging and rotation
 - [x] Add in settings menu
-    - [x] Add change graphics settings
-    - [x] Add edit keybinds
-- [ ] Add in UI for mobile
-    - [ ] Add all actions in mobile menu for doing everything you can do with a mouse and keyboard
-- [ ] More strings edit functionality
-    - [ ] Open a dialog to display string settings
-    - [ ] Option to change string colour
-    - [ ] Edit string name
-- [ ] More panels edit functionality
-    - [ ] Edit panel config
-    - [ ] Change panel data values that will change the total string stats
-- [ ] Implement backend for app
-    - [ ] Add auth
-    - [ ] Add save/load
-    - [ ] Add share projects with other users
-    - [ ] Multiple users on the same project at the same time via signalr
+  - [x] Add change graphics settings
+  - [x] Add edit keybindings
+- [x] More strings edit functionality
+  - [x] Open a dialog to display string settings
+  - [x] Change string colour
+  - [ ] Edit string name
+- [x] More panels edit functionality
+  - [ ] Edit panel config
+  - [ ] Change panel data values that will change the total string stats
+- [x] Implement backend for app
+  - [x] Add auth
+  - [x] Add save/load
+  - [x] Add share projects with other users
+  - [x] Multiple users on the same project at the same time via SignalR
+- [ ] Add in multiple auth providers
+  - [x] Add Google Signin
+  - [x] Add Github Signin
+  - [ ] Add in Microsoft Signin
+- [x] Add SignalR
+  - [x] Add in real-time updates for projects
+  - [x] Add in real-time updates for users
+  - [x] Add in real-time updates for strings
+  - [x] Add in real-time updates for panels
+  - [x] Add in real-time updates for panel links
+  - [x] Add in real-time updates for project members
+  - [x] Add in real-time updates for project invites
+  - [x] Add in real-time updates for user notifications
+  - [x] Add in real-time updates for user friend requests
+  - [x] Add in real-time updates for user status
+  - [x] Add in real-time updates for user search
+  - [ ] Add in real-time updates for other user mouse cursors
+  - [ ] Add in real-time updates for other user selections
+  - [ ] Add in real-time updates for other user panel movements
+  - [ ] Add in real-time updates for other user panel rotations
+- [x] Invite users to project
+  - [x] View project invites in side UI
+  - [x] View project members in side UI
+  - [ ] As an admin, be able to remove users from the project
+  - [ ] Change roles of users in the project
+  - [ ] Implement roles for users in the project
+- [x] Edit project details
+  - [x] Change project name
+  - [x] Change project colour
+  - [ ] Change project description
+  - [ ] Change project tags
+  - [ ] Change project visibility
+  - [ ] Change project permissions
+  - [ ] Change project roles
+  - [ ] Change project owner
+- [x] Add in UI for mobile
+  - [x] Add all actions in mobile menu for doing everything you can do with a mouse and keyboard
+  - [x] Optimise UI for mobile
+  - [x] Add in mobile controls for moving, selecting, and multi-selecting panels
+  - [x] Add in mobile controls for creating panel links
+  - [x] Add in mobile controls for creating strings
+  - [x] Add in mobile controls for creating panels
+  - [x] Add in mobile action bar for doing actions on selected panels and strings
+  - [ ] Add in mobile controls for editing panels
+  - [ ] Add in mobile controls for rotating panels
+- [x] Add in Connections
+  - [x] Add in user profiles
+  - [x] Add in user friend requests
+  - [x] Add in user notifications
+  - [x] Add in user settings
+  - [x] Add in user search
+- [ ] Add in Dark Mode
+- [ ] Add in more graphics settings
+- [ ] Add in more keybinds
+- [ ] Add in Azure Maps
+  - [ ] Be able to type in an address and have it search for it
+  - [ ] Be able to save the location and take a screenshot of the map
+  - [ ] Save the screenshot to the user's project and be able to view it inside the app
+- [ ] Add in more panel types
+
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
