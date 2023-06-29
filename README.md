@@ -24,9 +24,91 @@
 </p>
 
 
+
+
+
+
 ## How To Use
 
 Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
+
+### Snapping to Axis
+- Hold `Alt` to snap to axis of nearest panel
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<p align="center">
+<img src="./img/hold-alt-to-snap-to-axis-v2.gif" width="80%"/>
+</p>
+
+### Multi Create Panels
+
+- Press `M` to enter multi create mode
+- Hold `Alt` and drag in create mode to multi create
+
+<p align="center">
+<img src="./img/multi-create-panels.gif" width="80%"/>
+</p>
+
+### Multi Select Panels
+
+- Ensure you are in select mode (press `M` to exit multi create mode)
+- Hold `Alt` and drag to multi select panels
+- When panels are selected, press `ESC` to deselect all panels
+
+<p align="center">
+<img src="./img/multi-select-and-cancel.gif" width="80%"/>
+</p>
+
+### Move Selected Panels
+
+- Ensure you have panels selected (see above)
+- Hold `Ctrl` and `Shift` and drag to move selected panels
+
+<p align="center">
+<img src="./img/multi-select-dragging.gif" width="80%"/>
+</p>
+
+### Rotate Selected Panels
+
+- Ensure you have panels selected (see above)
+- Hold `Ctrl` and `Alt` and drag to rotate selected panels
+
+<p align="center">
+<img src="./img/multi-select-rotating.gif" width="80%"/>
+</p>
+
+### Create String with Selected Panels
+
+- Ensure you have panels selected (see above)
+- Press `C` to create a string with selected panels
+- Press `ESC` to deselect string
+
+<p align="center">
+<img src="./img/creating-string-with-selected.gif" width="80%"/>
+</p>
+
+### Link Panels in Selected String
+
+- Ensure you have a string selected (see above)
+- Press `L` to enter link mode
+- Click on a panel to start linking
+- Click on another panel to finish linking
+- Hold `Shift` when finishing a link to automatically start a new link
+- Press `L` to exit link mode
+
+<p align="center">
+  <img src="./img/link-panels-in-selected-string.gif" width="80%"  alt="#"/>
+</p>
+
+### Delete Selected Panels
+
+- Ensure you have panels selected (see above)
+- Press `Delete` to delete selected panels
+
+<p align="center">
+<img src="./img/multi-select-deleting.gif" width="60%"/>
+</p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

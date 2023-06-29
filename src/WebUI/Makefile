@@ -34,7 +34,14 @@ newlib:
 #ngrx:
 #	nx generate @nx/angular:ngrx --name=blocks --directory=libs/project-id/data-access/store/src/lib/blocks --barrels --facade --skipImport
 
+tree:
+	treee  -o tree.txt --ignore 'node_modules/, design-app/, design-app-e2e/, web/, web-app-ssr/, storybook/, core-components/, ngrx-pull/, dist/' -l 10 -d
 
+
+#design-app
+#design-app-e2e
+#web
+#web-app-ssr
 
 graph:
 	nx graph
