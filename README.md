@@ -107,7 +107,7 @@ Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
 - Press `Delete` to delete selected panels
 
 <p align="center">
-<img src="./img/multi-select-deleting.gif" width="60%"/>
+<img src="./img/multi-select-deleting.gif" width="80%"/>
 </p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
