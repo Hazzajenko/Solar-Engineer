@@ -52,27 +52,82 @@ Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
 
 ## Release History
 
-* 1.0.1
-  - Add in Link mode when string is selected
-  - Link up panels in a string
-  - Render lines between panels to show links
-  - Display string stats next to selected string
-  - New menu options
-  - Change graphics settings for canvas
-  - Able to edit keybinds for app
-* 1.0.0
-  - Initial release
-  - Create panels
-  - Create strings
-  - Switch between select and create mode
-  - Multi create dragging in create mode
-  - Multi select dragging in select mode
-  - Zooming in and out
-  - Dragging screen position
-  - Moving panels
-  - Rotating panels
-  - Moving multiple panels while selected
-  - Rotating multiple panels while selected
+### 1.0.6 - <span style="font-size: smaller;">21/06/2023</span>
+**New Features:**
+- Redesigned context menus.
+- Redesigned the desktop toolbar to include all action buttons from the mobile version.
+- Mobile users can now create panel links without any glitches.
+- Introduced a new side action bar for mobile users.
+- Enabled mobile controls for moving panels, selecting, and multi-selecting.
+- Moved the settings dialog to the side UI for mobile users.
+
+**Bug Fixes:**
+- Fixed a bug where panel link lines mapped to random panels.
+- Panel links are now saved to the database and can update in real-time over SignalR.
+
+### 1.0.5 - <span style="font-size: smaller;">19/06/2023</span>
+**New Features:**
+- Improved project management in the side UI, allowing users to edit projects on desktop and mobile.
+- Implemented new user profile cards when tapping on the preview.
+- Enhanced dialogs, side UI data view animations, and introduced SVG animations.
+- Provided a different view for mobile in the projects side UI, now featuring a right-to-left animation for changing pages.
+- Client now saves all friend connections and can see when users come online or go offline.
+- Improved mobile UI for the side UI nav bar.
+- Added custom dialogs for mobile screens.
+
+**Bug Fixes:**
+- Fixed the issue where an undefined string was not created on project creation.
+- Sorted the projects list by last updated, updating the "last updated" field for every item create, update, or delete.
+- Improved notifications for mobile devices.
+
+### 1.0.4 - <span style="font-size: smaller;">14/06/2023</span>
+**New Features:**
+- Added MessagePack to SignalR and included more options in the projects side menu.
+- Enabled adding users to projects from the context menu. Built a reusable context menu component to streamline the process.
+- Implemented the ability to invite friends to projects.
+- Developed friend requests and notifications UI.
+- Enabled accepting friend requests, viewing friends in the side menu, and improved notifications.
+- Enabled sending friend requests and receiving notifications on the recipient side.
+- Introduced notifications feature.
+- Implemented search box querying for users and receiving responses via SignalR. Added a new users store.
+- Added sign-in with GitHub.
+
+**Bug Fixes:**
+- Fixed the issue where an undefined string was not created on project creation.
+- Redesigned Nginx proxy.
+
+### 1.0.3 - <span style="font-size: smaller;">08/06/2023</span>
+**New Features:**
+- Added effects for when other SignalR users make an action, updating both displays.
+
+### 1.0.2 - <span style="font-size: smaller;">07/06/2023</span>
+**New Features:**
+- Added SignalR for real-time updates between users.
+- Added Google Sign in.
+
+**API Changes:**
+- Added a new `PanelLink` model to the API.
+
+### 1.0.1 - <span style="font-size: smaller;">01/06/2023</span>
+**New Features:**
+- Added Link mode when string is selected.
+- New menu options.
+- Change graphics settings for canvas.
+- Able to edit keybindings for app.
+
+### 1.0.0 - <span style="font-size: smaller;">20/05/2023</span>
+**New Features:**
+- Create panels.
+- Create strings.
+- Switch between select and create mode.
+- Multi create dragging in create mode.
+- Multi select dragging in select mode.
+- Zooming in and out.
+- Dragging screen position.
+- Moving panels.
+- Rotating panels.
+- Moving multiple panels while selected.
+- Rotating multiple panels while selected.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
