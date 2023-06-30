@@ -2,8 +2,8 @@ import { PanelLinksActions } from './panel-links.actions'
 import {
 	CreatePanelLinkSignalrRequest,
 	DeletePanelLinkSignalrRequest,
+	PROJECT_ENTITY_MODEL,
 	SIGNALR_EVENT_ACTION,
-	SIGNALR_EVENT_MODEL,
 	SignalrEventRequest,
 	UpdateManyPanelLinksSignalrRequest,
 } from '@entities/shared'
@@ -21,7 +21,7 @@ export const addPanelLinkSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId,
 			action: SIGNALR_EVENT_ACTION.CREATE,
-			model: SIGNALR_EVENT_MODEL.PANEL_LINK,
+			model: PROJECT_ENTITY_MODEL.PANEL_LINK,
 			data: JSON.stringify(request),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},
@@ -38,7 +38,7 @@ export const updateManyPanelLinksSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId: projectId,
 			action: SIGNALR_EVENT_ACTION.UPDATE_MANY,
-			model: SIGNALR_EVENT_MODEL.PANEL_LINK,
+			model: PROJECT_ENTITY_MODEL.PANEL_LINK,
 			data: JSON.stringify(toJsonRequest),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},
@@ -55,7 +55,7 @@ export const deletePanelLinkSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId: projectId,
 			action: SIGNALR_EVENT_ACTION.DELETE,
-			model: SIGNALR_EVENT_MODEL.PANEL_LINK,
+			model: PROJECT_ENTITY_MODEL.PANEL_LINK,
 			data: JSON.stringify(toJsonRequest),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},

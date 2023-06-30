@@ -13,6 +13,9 @@ import {
 export const PanelLinksActions = createActionGroup({
 	source: 'PanelLinks Store',
 	events: {
+		'Load Local Storage Panel Links': props<{
+			panelLinks: PanelLinkModel[]
+		}>(),
 		'Load Panel Links': props<{
 			panelLinks: PanelLinkModel[]
 		}>(),

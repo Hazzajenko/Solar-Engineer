@@ -4,6 +4,7 @@ import { CanvasRenderOptions } from '@canvas/rendering/data-access'
 export const drawCreationDragBox = (
 	ctx: CanvasRenderingContext2D,
 	creationBox: CanvasRenderOptions['creationBox'],
+	isLoggedIn: boolean,
 ) => {
 	ctx.save()
 	ctx.beginPath()
@@ -27,7 +28,8 @@ export const drawCreationDragBox = (
 		ctx.fillStyle = spot.vacant
 			? CANVAS_COLORS.PreviewPanelFillStyle
 			: CANVAS_COLORS.TakenSpotFillStyle
-		ctx.fillStyle = index < 30 ? ctx.fillStyle : CANVAS_COLORS.TakenSpotFillStyle
+		ctx.fillStyle = index > 30 && isLoggedIn ? CANVAS_COLORS.TakenSpotFillStyle : ctx.fillStyle
+		// ctx.fillStyle = index < 30 && !isLoggedIn ? ctx.fillStyle : CANVAS_COLORS.TakenSpotFillStyle
 		ctx.rect(spot.x, spot.y, entitySize.width, entitySize.height)
 		ctx.fill()
 		ctx.stroke()
@@ -35,7 +37,7 @@ export const drawCreationDragBox = (
 	})
 	ctx.restore()
 
-	if (creationBox.spots.length > 30) {
+	if (creationBox.spots.length > 30 && isLoggedIn) {
 		ctx.save()
 		const fontSize = 10
 		ctx.font = `${fontSize}px Consolas, sans-serif`

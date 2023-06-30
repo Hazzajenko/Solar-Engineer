@@ -7,6 +7,7 @@ import {
 	InviteToProjectRequest,
 	KickProjectMemberRequest,
 	ProjectId,
+	ProjectLocalStorageModel,
 	ProjectMemberKickedResponse,
 	ProjectMemberUpdatedResponse,
 	ProjectModel,
@@ -20,6 +21,9 @@ import { EntityUpdate } from '@shared/data-access/models'
 export const ProjectsActions = createActionGroup({
 	source: 'Projects Store',
 	events: {
+		'Init Local Storage Project': props<{
+			localStorageProject: ProjectLocalStorageModel
+		}>(),
 		'Project Entity Store Initialized': props<{
 			store: ProjectEntityStore
 		}>(),

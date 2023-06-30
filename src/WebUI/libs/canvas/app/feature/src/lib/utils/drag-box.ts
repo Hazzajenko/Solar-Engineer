@@ -58,6 +58,7 @@ export const dragBoxOnMouseUpHandler = (
 	_appStore: AppStateStore,
 	_selectedStore: SelectedStore,
 	_panelsStore: PanelsStore,
+	isLoggedIn: boolean,
 ) => {
 	switch (_appStore.select.mode()) {
 		case MODE_STATE.SELECT_MODE:
@@ -65,7 +66,14 @@ export const dragBoxOnMouseUpHandler = (
 		case MODE_STATE.LINK_MODE:
 			return selectionBoxMouseUp(currentPoint, dragBoxStart, panels, _appStore, _selectedStore)
 		case MODE_STATE.CREATE_MODE:
-			return creationBoxMouseUp(currentPoint, dragBoxStart, panels, _appStore, _panelsStore)
+			return creationBoxMouseUp(
+				currentPoint,
+				dragBoxStart,
+				panels,
+				_appStore,
+				_panelsStore,
+				isLoggedIn,
+			)
 	}
 }
 
@@ -143,6 +151,7 @@ export const creationBoxMouseUp = (
 	panels: PanelModel[],
 	_appStore: AppStateStore,
 	_panelsStore: PanelsStore,
+	isLoggedIn: boolean,
 ) => {
 	const spots = getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint, panels)
 	if (!spots || !spots.length) return
@@ -150,7 +159,7 @@ export const creationBoxMouseUp = (
 	if (takenSpots.length) {
 		return
 	}
-	if (spots.length > 30) {
+	if (spots.length > 30 && isLoggedIn) {
 		console.error('Too many spots selected, max 30')
 		_appStore.dispatch.setDragBoxState({
 			state: 'NoDragBox',

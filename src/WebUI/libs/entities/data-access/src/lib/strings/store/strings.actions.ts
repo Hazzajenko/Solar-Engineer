@@ -9,6 +9,9 @@ export const StringsActions = createActionGroup({
 		'Load Strings': props<{
 			strings: StringModel[]
 		}>(),
+		'Load Local Storage Strings': props<{
+			strings: StringModel[]
+		}>(),
 		'Set Undefined String Id': props<{
 			stringId: StringId
 		}>(),

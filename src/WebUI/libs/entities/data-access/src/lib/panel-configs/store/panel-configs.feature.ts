@@ -3,10 +3,11 @@ import { PANEL_CONFIGS_FEATURE_KEY, panelConfigsReducer } from '@entities/data-a
 import { provideState } from '@ngrx/store'
 import { provideEffects } from '@ngrx/effects'
 import * as PanelConfigsEffects from './panel-configs.effects'
+import * as PanelConfigsLocalStorageEffects from './panel-configs.local-storage.effects'
 
 export function providePanelConfigsFeature() {
 	return makeEnvironmentProviders([
 		provideState(PANEL_CONFIGS_FEATURE_KEY, panelConfigsReducer),
-		provideEffects(PanelConfigsEffects),
+		provideEffects(PanelConfigsEffects, PanelConfigsLocalStorageEffects),
 	])
 }

@@ -1,8 +1,8 @@
 import {
 	CreateStringSignalrRequest,
 	DeleteStringSignalrRequest,
+	PROJECT_ENTITY_MODEL,
 	SIGNALR_EVENT_ACTION,
-	SIGNALR_EVENT_MODEL,
 	SignalrEventRequest,
 	UpdateStringSignalrRequest,
 } from '@entities/shared'
@@ -22,7 +22,7 @@ export const addStringSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId,
 			action: SIGNALR_EVENT_ACTION.CREATE,
-			model: SIGNALR_EVENT_MODEL.STRING,
+			model: PROJECT_ENTITY_MODEL.STRING,
 			data: JSON.stringify(request),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},
@@ -41,7 +41,7 @@ export const addStringWithPanelsSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId,
 			action: SIGNALR_EVENT_ACTION.CREATE,
-			model: SIGNALR_EVENT_MODEL.STRING,
+			model: PROJECT_ENTITY_MODEL.STRING,
 			data: JSON.stringify(request),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},
@@ -58,7 +58,7 @@ export const updateStringSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId,
 			action: SIGNALR_EVENT_ACTION.UPDATE,
-			model: SIGNALR_EVENT_MODEL.STRING,
+			model: PROJECT_ENTITY_MODEL.STRING,
 			data: JSON.stringify(request),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},
@@ -75,7 +75,7 @@ export const deleteStringSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId,
 			action: SIGNALR_EVENT_ACTION.DELETE,
-			model: SIGNALR_EVENT_MODEL.STRING,
+			model: PROJECT_ENTITY_MODEL.STRING,
 			data: JSON.stringify(request),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},

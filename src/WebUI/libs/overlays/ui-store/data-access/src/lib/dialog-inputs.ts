@@ -21,6 +21,7 @@ export const DIALOG_COMPONENT = {
 	PROJECT_MEMBER_OPTIONS: 'DialogProjectMemberOptionsComponent',
 	SEARCH_FOR_USERS: 'DialogSearchForUsersComponent',
 	MESSAGES: 'DialogMessagesComponent',
+	VIEW_PROJECT_TEMPLATES: 'DialogViewProjectTemplatesComponent',
 } as const
 
 export type DialogComponent = (typeof DIALOG_COMPONENT)[keyof typeof DIALOG_COMPONENT]
@@ -115,6 +116,10 @@ export type DialogInputMessages = DialogInputTemplate & {
 	component: typeof DIALOG_COMPONENT.MESSAGES
 }
 
+export type DialogInputViewProjectTemplates = DialogInputTemplate & {
+	component: typeof DIALOG_COMPONENT.VIEW_PROJECT_TEMPLATES
+}
+
 export type DialogInput =
 	| DialogInputMovePanelsToString
 	| DialogInputAppSettings
@@ -131,3 +136,4 @@ export type DialogInput =
 	| DialogInputProjectMemberOptions
 	| DialogInputSearchForUsers
 	| DialogInputMessages
+	| DialogInputViewProjectTemplates

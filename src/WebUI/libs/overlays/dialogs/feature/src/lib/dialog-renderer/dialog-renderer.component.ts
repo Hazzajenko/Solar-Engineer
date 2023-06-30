@@ -16,6 +16,7 @@ import {
 	DialogDeleteProjectWarningComponent,
 	DialogSelectProjectComponent,
 	DialogSelectProjectViewComponent,
+	DialogViewProjectTemplatesComponent,
 	MovePanelsToStringDialogComponent,
 } from '../projects'
 import { ProfileSettingsDialogComponent } from '../profile-settings-dialog/profile-settings-dialog.component'
@@ -111,6 +112,8 @@ export class DialogRendererComponent implements OnDestroy {
 				return DialogSearchForUsersComponent
 			case DIALOG_COMPONENT.MESSAGES:
 				return DialogMessagesComponent
+			case DIALOG_COMPONENT.VIEW_PROJECT_TEMPLATES:
+				return DialogViewProjectTemplatesComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

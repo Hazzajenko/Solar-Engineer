@@ -1,3 +1,5 @@
 export * from './project.model'
+export * from './data-templates'
 export * from './projects.contracts'
 export * from './projects.signalr.events'
+export * from './project-template.model'

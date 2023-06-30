@@ -19,16 +19,11 @@ export const createProjectSignalr$ = createEffect(
 )
 
 export const initProjectsSignalr$ = createEffect(
-	(
-		actions$ = inject(Actions),
-		projectsSignalr = inject(ProjectsSignalrService), // panelsSignalr = inject(PanelsSignalrService),
-	) => {
+	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
 		return actions$.pipe(
 			ofType(AuthActions.signInSuccess),
 			tap(({ token }) => {
 				projectsSignalr.init(token)
-				// const hubConnection = projectsSignalr.init(token)
-				// panelsSignalr.init(hubConnection)
 			}),
 		)
 	},

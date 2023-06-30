@@ -3,12 +3,13 @@ import { provideState } from '@ngrx/store'
 import { provideEffects } from '@ngrx/effects'
 import * as stringsEffects from './strings.effects'
 import * as stringsSignalrEffects from './strings.signalr.effects'
+import * as stringsLocalStorageEffects from './strings.local-storage.effects'
 import { STRINGS_FEATURE_KEY, stringsReducer } from './strings.reducer'
 
 export function provideStringsFeature() {
 	return makeEnvironmentProviders([
 		provideState(STRINGS_FEATURE_KEY, stringsReducer),
 		provideEffects(stringsEffects),
-		provideEffects(stringsSignalrEffects),
+		provideEffects(stringsSignalrEffects, stringsLocalStorageEffects),
 	])
 }

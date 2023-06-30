@@ -1,4 +1,4 @@
-import { ENTITY_TYPE, EntityBase } from '../common'
+import { ENTITY_BASE, ENTITY_TYPE, EntityBase } from '../common'
 import { Polarity } from '../panel-links'
 import { StringId } from '../strings'
 import { PanelConfigId, PanelConfigModel } from '../panel-configs'
@@ -15,7 +15,7 @@ export type PanelModel = Omit<EntityBase, 'id' | 'type'> & {
 }
 
 export const PANEL_MODEL = z.object({
-	...EntityBase.shape,
+	...ENTITY_BASE.shape,
 	id: z.string(),
 	stringId: z.string(),
 	panelConfigId: z.string(),

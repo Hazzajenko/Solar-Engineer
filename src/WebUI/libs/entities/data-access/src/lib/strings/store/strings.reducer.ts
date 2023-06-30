@@ -36,6 +36,9 @@ export const initialStringsState: StringsState = stringsAdapter.getInitialState(
 
 const reducer = createReducer(
 	initialStringsState,
+	on(StringsActions.loadLocalStorageStrings, (state, { strings }) =>
+		stringsAdapter.setAll(strings, state),
+	),
 	on(StringsActions.loadStrings, (state, { strings }) => {
 		const newState = stringsAdapter.upsertMany(strings, state)
 		const undefinedStringId = strings.find((string) => string.name === UNDEFINED_STRING_NAME)?.id

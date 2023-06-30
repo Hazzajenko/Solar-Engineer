@@ -49,6 +49,9 @@ export const initialPanelLinksState: PanelLinksState = panelLinksAdapter.getInit
 
 const reducer = createReducer(
 	initialPanelLinksState,
+	on(PanelLinksActions.loadLocalStoragePanelLinks, (state, { panelLinks }) =>
+		panelLinksAdapter.setAll(panelLinks, state),
+	),
 	on(PanelLinksActions.loadPanelLinks, (state, { panelLinks }) =>
 		panelLinksAdapter.setMany(panelLinks, state),
 	),

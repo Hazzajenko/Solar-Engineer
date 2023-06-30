@@ -91,6 +91,10 @@ export class RenderService {
 		// this._svgs
 	}
 
+	private get isLoggedIn() {
+		return !!this._authStore.select.user()
+	}
+
 	private get averageFps() {
 		if (this._previousFpsStats[this._previousFpsStats.length - 1] === 0) {
 			return 0
@@ -310,7 +314,7 @@ export class RenderService {
 
 			if (options?.creationBox) {
 				const creationBox = options.creationBox
-				drawCreationDragBox(ctx, creationBox)
+				drawCreationDragBox(ctx, creationBox, this.isLoggedIn)
 			}
 
 			if (options?.clickNearEntityBounds) {

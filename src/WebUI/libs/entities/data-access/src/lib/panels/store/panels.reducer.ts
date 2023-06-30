@@ -26,6 +26,9 @@ const reducer = createReducer(
 		...state,
 		undefinedStringId,
 	})),
+	on(PanelsActions.loadLocalStoragePanels, (state, { panels }) =>
+		panelsAdapter.setAll(panels, state),
+	),
 	on(PanelsActions.loadPanels, (state, { panels }) => panelsAdapter.setMany(panels, state)),
 	on(PanelsActions.addPanel, (state, { panel }) => {
 		if (panel.stringId === UNDEFINED_STRING_ID && state.undefinedStringId) {

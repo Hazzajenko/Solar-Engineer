@@ -47,7 +47,7 @@ export type SignalrEventRequest = {
 	requestId: RequestId
 	projectId: ProjectId
 	action: SignalrEventAction
-	model: SignalrEventModel
+	model: ProjectEntityModel
 	data: string
 	timeStamp: string
 }
@@ -66,10 +66,10 @@ export type CombinedProjectEvent = {
 	requestId: RequestId
 	projectId: ProjectId
 	actionOne: SignalrEventAction
-	modelOne: SignalrEventModel
+	modelOne: ProjectEntityModel
 	dataOne: string
 	actionTwo: SignalrEventAction
-	modelTwo: SignalrEventModel
+	modelTwo: ProjectEntityModel
 	dataTwo: string
 	timeStamp: string
 }
@@ -94,7 +94,7 @@ export const SIGNALR_EVENT_ACTION = {
 
 export type SignalrEventAction = (typeof SIGNALR_EVENT_ACTION)[keyof typeof SIGNALR_EVENT_ACTION]
 
-export const SIGNALR_EVENT_MODEL = {
+export const PROJECT_ENTITY_MODEL = {
 	UNDEFINED: 'Undefined',
 	INVERTER: 'Inverter',
 	PANEL: 'Panel',
@@ -108,4 +108,4 @@ export const SIGNALR_EVENT_MODEL = {
 	PANEL_CONFIG: 'PanelConfig',
 } as const
 
-export type SignalrEventModel = (typeof SIGNALR_EVENT_MODEL)[keyof typeof SIGNALR_EVENT_MODEL]
+export type ProjectEntityModel = (typeof PROJECT_ENTITY_MODEL)[keyof typeof PROJECT_ENTITY_MODEL]

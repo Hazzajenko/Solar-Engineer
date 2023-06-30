@@ -172,4 +172,10 @@ export class SideUiProjectsListViewComponent {
 			component: DIALOG_COMPONENT.SIGN_IN,
 		})
 	}
+
+	showTemplatesDialog() {
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.VIEW_PROJECT_TEMPLATES,
+		})
+	}
 }

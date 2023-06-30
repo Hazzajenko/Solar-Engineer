@@ -11,7 +11,7 @@ export type EntityBase = {
 	angle: AngleRadians
 }
 
-export const EntityBase = z.object({
+export const ENTITY_BASE = z.object({
 	location: POINT,
 	angle: z.number(),
 })

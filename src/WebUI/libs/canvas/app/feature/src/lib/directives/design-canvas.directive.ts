@@ -76,6 +76,7 @@ import {
 	SizeByType,
 	UNDEFINED_STRING_ID,
 } from '@entities/shared'
+import { injectAppUser } from '@auth/data-access'
 
 @Directive({
 	selector: '[appDesignCanvas]',
@@ -137,6 +138,10 @@ export class DesignCanvasDirective implements OnInit {
 		}, 50)
 	}
 
+	private get isLoggedIn() {
+		return !!this.user()
+	}
+
 	private get allPanels() {
 		return this._entities.panels.select.allPanels()
 	}
@@ -144,6 +149,8 @@ export class DesignCanvasDirective implements OnInit {
 	private get allStrings() {
 		return this._entities.strings.select.allStrings()
 	}
+
+	user = injectAppUser()
 
 	platform: Platform = getCurrentPlatform()
 	currentTransformedCursor!: TransformedPoint
@@ -473,6 +480,7 @@ export class DesignCanvasDirective implements OnInit {
 				this._entities.panels.select.allPanels(),
 				this._appStore,
 				this._entities.panels,
+				this.isLoggedIn,
 			)
 			return
 		}
@@ -1048,6 +1056,7 @@ export class DesignCanvasDirective implements OnInit {
 				this._appStore,
 				this._selectedStore,
 				this._entities.panels,
+				this.isLoggedIn,
 			)
 			this.clearGesture()
 			this.touchHolding = false

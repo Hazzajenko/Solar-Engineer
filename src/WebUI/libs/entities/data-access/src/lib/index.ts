@@ -1,4 +1,5 @@
 export * from './strings/index'
+export * from './local-storage/index'
 export * from './panels/index'
 export * from './panel-configs/index'
 export * from './panel-links/index'

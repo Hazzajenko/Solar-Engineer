@@ -4,8 +4,8 @@ import {
 	CreatePanelSignalrRequest,
 	DeleteManyPanelsSignalrRequest,
 	DeletePanelSignalrRequest,
+	PROJECT_ENTITY_MODEL,
 	SIGNALR_EVENT_ACTION,
-	SIGNALR_EVENT_MODEL,
 	SignalrEventRequest,
 	UpdateManyPanelsSignalrRequest,
 	UpdatePanelSignalrRequest,
@@ -24,7 +24,7 @@ export const addPanelSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId,
 			action: SIGNALR_EVENT_ACTION.CREATE,
-			model: SIGNALR_EVENT_MODEL.PANEL,
+			model: PROJECT_ENTITY_MODEL.PANEL,
 			data: JSON.stringify(request),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},
@@ -48,7 +48,7 @@ export const addManyPanelsSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId,
 			action: SIGNALR_EVENT_ACTION.CREATE_MANY,
-			model: SIGNALR_EVENT_MODEL.PANEL,
+			model: PROJECT_ENTITY_MODEL.PANEL,
 			data: JSON.stringify(request),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},
@@ -65,7 +65,7 @@ export const updatePanelSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId: projectId,
 			action: SIGNALR_EVENT_ACTION.UPDATE,
-			model: SIGNALR_EVENT_MODEL.PANEL,
+			model: PROJECT_ENTITY_MODEL.PANEL,
 			data: JSON.stringify(toJsonRequest),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},
@@ -82,7 +82,7 @@ export const updateManyPanelsSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId: projectId,
 			action: SIGNALR_EVENT_ACTION.UPDATE_MANY,
-			model: SIGNALR_EVENT_MODEL.PANEL,
+			model: PROJECT_ENTITY_MODEL.PANEL,
 			data: JSON.stringify(toJsonRequest),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},
@@ -99,7 +99,7 @@ export const deletePanelSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId: projectId,
 			action: SIGNALR_EVENT_ACTION.DELETE,
-			model: SIGNALR_EVENT_MODEL.PANEL,
+			model: PROJECT_ENTITY_MODEL.PANEL,
 			data: JSON.stringify(toJsonRequest),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},
@@ -116,7 +116,7 @@ export const deleteManyPanelsSignalr$ = createProjectSignalrEffect(
 			requestId: newGuidT(),
 			projectId,
 			action: SIGNALR_EVENT_ACTION.DELETE_MANY,
-			model: SIGNALR_EVENT_MODEL.PANEL,
+			model: PROJECT_ENTITY_MODEL.PANEL,
 			data: JSON.stringify(toJsonRequest),
 		} as Omit<SignalrEventRequest, 'timeStamp'>
 	},

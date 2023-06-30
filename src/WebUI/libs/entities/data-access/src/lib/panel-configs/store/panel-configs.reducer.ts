@@ -41,6 +41,9 @@ export const initialPanelConfigsState: PanelConfigsState = panelConfigsAdapter.g
 
 const reducer = createReducer(
 	initialPanelConfigsState,
+	on(PanelConfigsActions.loadLocalStoragePanelConfigs, (state, { panelConfigs }) =>
+		panelConfigsAdapter.addMany(panelConfigs, state),
+	),
 	on(PanelConfigsActions.loadPanelConfigs, (state, { panelConfigs }) =>
 		panelConfigsAdapter.setMany(panelConfigs, state),
 	),

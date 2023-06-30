@@ -1,0 +1,764 @@
+C:\Users\jenki\source\app\solar-engineer\src\WebUI
+├── apps
+|  └── web-app
+|  |  └── src
+|  |     └── assets
+├── conf
+├── libs
+|  ├── app
+|  |  ├── app-component
+|  |  |  └── src
+|  |  |     └── lib
+|  |  |        └── app-component
+|  |  ├── config
+|  |  |  └── src
+|  |  |     └── lib
+|  |  |        └── interceptors
+|  |  ├── data-access
+|  |  |  ├── connections
+|  |  |  ├── errors
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  ├── friends
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  |        ├── api
+|  |  |  |        ├── effects
+|  |  |  |        ├── facades
+|  |  |  |        ├── models
+|  |  |  |        └── store
+|  |  |  ├── images
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  |        ├── api
+|  |  |  |        └── models
+|  |  |  ├── messages
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  |        ├── api
+|  |  |  |        |  ├── group-chats
+|  |  |  |        |  └── user-messages
+|  |  |  |        ├── effects
+|  |  |  |        |  ├── group-chats
+|  |  |  |        |  └── user-messages
+|  |  |  |        ├── models
+|  |  |  |        |  ├── requests
+|  |  |  |        |  └── responses
+|  |  |  |        ├── services
+|  |  |  |        |  ├── group-chats
+|  |  |  |        |  └── user-messages
+|  |  |  |        └── store
+|  |  |  |           ├── group-chat-members
+|  |  |  |           ├── group-chat-messages
+|  |  |  |           ├── group-chats
+|  |  |  |           └── user-messages
+|  |  |  ├── notifications
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  |        ├── api
+|  |  |  |        ├── effects
+|  |  |  |        ├── facades
+|  |  |  |        ├── models
+|  |  |  |        └── store
+|  |  |  └── signalr
+|  |  |     └── src
+|  |  |        └── lib
+|  |  |           ├── services
+|  |  |           ├── store
+|  |  |           ├── types
+|  |  |           └── utils
+|  |  ├── feature
+|  |  |  ├── app-features
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  |        └── center-feature
+|  |  |  ├── app-user-profile
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  |        ├── add-new-friend
+|  |  |  |        ├── app-user-item
+|  |  |  |        ├── change-display-picture
+|  |  |  |        └── search-app-user
+|  |  |  ├── chatrooms
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  |        ├── conversation
+|  |  |  |        |  ├── group-chat
+|  |  |  |        |  |  ├── add-members
+|  |  |  |        |  |  ├── menu
+|  |  |  |        |  |  ├── options-bar
+|  |  |  |        |  |  ├── pipes
+|  |  |  |        |  |  └── view-members
+|  |  |  |        |  ├── member-item
+|  |  |  |        |  ├── message-bar
+|  |  |  |        |  ├── message-item
+|  |  |  |        |  ├── options-bar
+|  |  |  |        |  |  └── start-chat
+|  |  |  |        |  └── user-conversation
+|  |  |  |        ├── facades
+|  |  |  |        ├── list
+|  |  |  |        ├── new-chat-room
+|  |  |  |        ├── services
+|  |  |  |        └── store
+|  |  |  ├── friends
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  |        └── component
+|  |  |  ├── main-dialog
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  ├── notifications
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  |        └── component
+|  |  |  ├── profile
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  |        └── component
+|  |  |  ├── recipient-user-profile
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  ├── sidenav
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  ├── user-settings
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  ├── username-profile
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  └── users-overlay
+|  |  |     └── src
+|  |  |        └── lib
+|  |  ├── index
+|  |  |  └── src
+|  |  |     └── lib
+|  |  |        └── app-v2
+|  |  ├── routes
+|  |  |  └── src
+|  |  |     └── lib
+|  |  ├── shared
+|  |  |  └── src
+|  |  |     └── lib
+|  |  |        └── pipes
+|  |  └── utils
+|  |     └── src
+|  |        └── lib
+|  |           ├── components
+|  |           └── services
+|  ├── auth
+|  |  ├── data-access
+|  |  |  └── src
+|  |  |     └── lib
+|  |  |        ├── api
+|  |  |        ├── contracts
+|  |  |        ├── effects
+|  |  |        ├── pipes
+|  |  |        ├── services
+|  |  |        ├── signalr
+|  |  |        └── store
+|  |  |           ├── auth
+|  |  |           ├── connections
+|  |  |           ├── group-chats
+|  |  |           |  ├── group-chats
+|  |  |           |  └── group-chats-messages
+|  |  |           ├── messages
+|  |  |           ├── messaging
+|  |  |           └── users
+|  |  ├── feature
+|  |  |  └── src
+|  |  |     └── lib
+|  |  |        ├── authenticated-page
+|  |  |        ├── google-sign-in
+|  |  |        ├── sign-in
+|  |  |        ├── sign-in-center
+|  |  |        ├── sign-in-dialog
+|  |  |        ├── sign-in-v2
+|  |  |        └── supabase-auth
+|  |  ├── guards
+|  |  |  └── src
+|  |  |     └── lib
+|  |  ├── interceptors
+|  |  |  └── src
+|  |  |     └── lib
+|  |  ├── shared
+|  |  |  ├── models
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  └── src
+|  |  |     └── lib
+|  |  |        ├── backend-signalr-contracts
+|  |  |        |  └── responses
+|  |  |        ├── messages
+|  |  |        |  ├── data
+|  |  |        |  ├── requests
+|  |  |        |  └── responses
+|  |  |        ├── notifications
+|  |  |        ├── signalr
+|  |  |        └── users
+|  |  ├── ui
+|  |  |  └── src
+|  |  |     └── lib
+|  |  |        ├── auth-sign-out-button
+|  |  |        ├── auth-users-preview
+|  |  |        ├── auth-web-user
+|  |  |        └── auth-web-user-avatar
+|  |  └── utils
+|  |     └── src
+|  |        └── lib
+|  |           ├── auth
+|  |           ├── directives
+|  |           ├── notifications
+|  |           └── users
+|  ├── canvas
+|  |  ├── app
+|  |  |  ├── data-access
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  |        ├── config
+|  |  |  |        ├── global
+|  |  |  |        ├── grid
+|  |  |  |        ├── services
+|  |  |  |        |  └── div-elements
+|  |  |  |        └── store
+|  |  |  └── feature
+|  |  |     └── src
+|  |  |        └── lib
+|  |  |           ├── directives
+|  |  |           ├── ui
+|  |  |           |  ├── loading-project-spinner
+|  |  |           |  └── mobile-open-side-ui-button
+|  |  |           └── utils
+|  |  ├── canvas
+|  |  ├── graphics
+|  |  |  └── data-access
+|  |  |     └── src
+|  |  |        └── lib
+|  |  |           └── store
+|  |  ├── keys
+|  |  |  └── data-access
+|  |  |     └── src
+|  |  |        └── lib
+|  |  |           ├── services
+|  |  |           ├── store
+|  |  |           └── types
+|  |  ├── object-positioning
+|  |  |  └── data-access
+|  |  |     └── src
+|  |  |        └── lib
+|  |  |           ├── services
+|  |  |           |  ├── dom-point
+|  |  |           |  |  └── utils
+|  |  |           |  ├── nearby
+|  |  |           |  |  ├── ctx-fns
+|  |  |           |  |  └── utils
+|  |  |           |  ├── positioning
+|  |  |           |  |  └── utils
+|  |  |           |  └── rotating
+|  |  |           |     └── utils
+|  |  |           └── store
+|  |  ├── rendering
+|  |  |  └── data-access
+|  |  |     └── src
+|  |  |        └── lib
+|  |  |           ├── services
+|  |  |           |  ├── drag-box
+|  |  |           |  └── render
+|  |  |           |     ├── directives
+|  |  |           |     ├── effects
+|  |  |           |     ├── render-fns
+|  |  |           |     |  ├── drag-box
+|  |  |           |     |  ├── entities
+|  |  |           |     |  ├── html
+|  |  |           |     |  ├── links
+|  |  |           |     |  ├── move-svg
+|  |  |           |     |  ├── nearby
+|  |  |           |     |  ├── preview
+|  |  |           |     |  └── strings
+|  |  |           |     └── utils
+|  |  |           ├── svgs
+|  |  |           └── types
+|  |  ├── selected
+|  |  |  └── data-access
+|  |  |     └── src
+|  |  |        └── lib
+|  |  |           ├── services
+|  |  |           └── store
+|  |  ├── shared
+|  |  |  └── src
+|  |  |     └── lib
+|  |  |        └── types
+|  |  ├── utils
+|  |  |  └── src
+|  |  |     └── lib
+|  |  |        ├── ctx
+|  |  |        └── lines
+|  |  └── view-positioning
+|  |     └── data-access
+|  |        └── src
+|  |           └── lib
+|  |              └── services
+|  |                 └── view-positioning
+|  ├── entities
+|  |  ├── data-access
+|  |  |  └── src
+|  |  |     └── lib
+|  |  |        ├── panel-configs
+|  |  |        |  ├── data
+|  |  |        |  └── store
+|  |  |        ├── panel-links
+|  |  |        |  ├── services
+|  |  |        |  |  └── utils
+|  |  |        |  └── store
+|  |  |        ├── panels
+|  |  |        |  ├── services
+|  |  |        |  └── store
+|  |  |        ├── projects
+|  |  |        |  ├── services
+|  |  |        |  └── store
+|  |  |        ├── shared
+|  |  |        |  ├── services
+|  |  |        |  └── store
+|  |  |        ├── signalr-events
+|  |  |        |  └── store
+|  |  |        |     └── utils
+|  |  |        └── strings
+|  |  |           ├── services
+|  |  |           └── store
+|  |  ├── shared
+|  |  |  └── src
+|  |  |     └── lib
+|  |  |        ├── backend-data
+|  |  |        ├── common
+|  |  |        ├── panel-configs
+|  |  |        ├── panel-links
+|  |  |        ├── panels
+|  |  |        ├── projects
+|  |  |        └── strings
+|  |  └── utils
+|  |     └── src
+|  |        └── lib
+|  |           ├── panel-links
+|  |           ├── panels
+|  |           |  ├── pipes
+|  |           |  └── utils
+|  |           ├── projects
+|  |           ├── shared-selectors
+|  |           ├── signalr-events
+|  |           └── strings
+|  |              ├── pipes
+|  |              └── utils
+|  ├── overlays
+|  |  ├── context-menus
+|  |  |  └── feature
+|  |  |     └── src
+|  |  |        └── lib
+|  |  |           ├── colour-picker-menu
+|  |  |           ├── context-menu-builder
+|  |  |           ├── context-menu-friend
+|  |  |           ├── context-menu-mode-picker
+|  |  |           ├── context-menu-project
+|  |  |           ├── context-menu-renderer
+|  |  |           ├── context-menu-template
+|  |  |           ├── context-menu-user-search-result
+|  |  |           ├── directives
+|  |  |           ├── multiple-panels-menu
+|  |  |           ├── panel-link-menu
+|  |  |           ├── single-panel-menu
+|  |  |           └── string-menu
+|  |  ├── dialogs
+|  |  |  └── feature
+|  |  |     └── src
+|  |  |        └── lib
+|  |  |           ├── app-settings-dialog
+|  |  |           |  ├── display-settings
+|  |  |           |  ├── graphics-settings
+|  |  |           |  └── key-map-settings
+|  |  |           ├── dialog-backdrop-template
+|  |  |           ├── dialog-command-palette-template
+|  |  |           ├── dialog-renderer
+|  |  |           ├── messages
+|  |  |           |  └── dialog-messages
+|  |  |           |     └── selected-chat-room
+|  |  |           ├── profile-settings-dialog
+|  |  |           ├── projects
+|  |  |           |  ├── dialog-change-string-colour
+|  |  |           |  ├── dialog-create-project
+|  |  |           |  ├── dialog-delete-project-warning
+|  |  |           |  ├── dialog-invite-to-project-confirm
+|  |  |           |  ├── dialog-project-member-options
+|  |  |           |  ├── dialog-search-for-projects
+|  |  |           |  |  └── search-result-project
+|  |  |           |  ├── dialog-select-project
+|  |  |           |  ├── dialog-select-project-view
+|  |  |           |  └── move-panels-to-string-dialog
+|  |  |           ├── shared
+|  |  |           |  ├── dialog-warning-template
+|  |  |           |  └── dialog-warning-template-inputs
+|  |  |           ├── sign-in-dialog
+|  |  |           └── users
+|  |  |              ├── dialog-search-for-users
+|  |  |              |  └── search-result-user
+|  |  |              └── dialog-user-options
+|  |  ├── messages
+|  |  |  └── feature
+|  |  ├── notifications
+|  |  |  ├── data-access
+|  |  |  |  └── src
+|  |  |  |     └── lib
+|  |  |  |        ├── store
+|  |  |  |        └── types
+|  |  |  └── feature
+|  |  |     └── src
+|  |  |        └── lib
+|  |  |           └── overlay-notification-modal
+|  |  ├── side-uis
+|  |  |  └── feature
+|  |  |     └── src
+|  |  |        └── lib
+|  |  |           ├── projects
+|  |  |           |  ├── projects-list
+|  |  |           |  |  ├── side-ui-projects-view-desktop
+|  |  |           |  |  └── side-ui-projects-view-mobile
+|  |  |           |  ├── selectors
+|  |  |           |  ├── shared
+|  |  |           |  |  ├── project-currently-selected
+|  |  |           |  |  ├── project-data-view
+|  |  |           |  |  |  └── data-view-string-item
+|  |  |           |  |  ├── project-details-view
+|  |  |           |  |  ├── project-list-item
+|  |  |           |  |  ├── project-members-view
+|  |  |           |  |  |  ├── project-member-item
+|  |  |           |  |  |  └── project-member-preview
+|  |  |           |  |  ├── project-profile-view
+|  |  |           |  |  └── project-settings-view
+|  |  |           |  ├── side-ui-demo-project-view
+|  |  |           |  └── side-ui-selected-project-view
+|  |  |           ├── settings
+|  |  |           |  └── side-ui-settings-view
+|  |  |           |     ├── settings-view-display
+|  |  |           |     ├── settings-view-graphics
+|  |  |           |     ├── settings-view-keymap
+|  |  |           |     └── settings-view-section-preview
+|  |  |           ├── shared
+|  |  |           |  └── ui
+|  |  |           |     └── side-ui-view-heading
+|  |  |           ├── side-ui-auth-view
+|  |  |           ├── side-ui-base
+|  |  |           ├── side-ui-nav-bar
+|  |  |           ├── side-ui-notifications-view
+|  |  |           |  ├── notifications-view-notification-item
+|  |  |           |  └── notifications-view-notification-preview
+|  |  |           └── side-ui-users-view
+|  |  |              ├── users-view-user-preview
+|  |  |              └── users-view-web-user-item
+|  |  ├── toolbars
+|  |  |  └── feature
+|  |  |     └── src
+|  |  |        └── lib
+|  |  |           ├── mobile-bottom-toolbar
+|  |  |           ├── mobile-side-action-toolbar
+|  |  |           ├── overlay-tool-bar
+|  |  |           └── selected-string-tool-bar
+|  |  ├── ui-store
+|  |  |  └── data-access
+|  |  |     └── src
+|  |  |        └── lib
+|  |  └── windows
+|  |     ├── data-access
+|  |     |  └── src
+|  |     |     └── lib
+|  |     |        └── store
+|  |     └── feature
+|  |        └── src
+|  |           └── lib
+|  |              └── window
+|  └── shared
+|     ├── animations
+|     |  └── src
+|     |     └── lib
+|     ├── assets
+|     |  └── src
+|     |     └── lib
+|     |        ├── hero-icons
+|     |        |  ├── outline
+|     |        |  └── solid
+|     |        ├── imgs
+|     |        ├── svg-to-ts
+|     |        ├── svgs
+|     |        |  ├── arrows
+|     |        |  ├── bars
+|     |        |  ├── cursor
+|     |        |  ├── gen-logos
+|     |        |  ├── gifs
+|     |        |  ├── hero-icons-backup
+|     |        |  |  ├── outline
+|     |        |  |  └── solid
+|     |        |  ├── img
+|     |        |  ├── links
+|     |        |  ├── logo
+|     |        |  ├── menus
+|     |        |  ├── polarity
+|     |        |  ├── profile
+|     |        |  ├── projects
+|     |        |  ├── solar
+|     |        |  ├── toolbar
+|     |        |  ├── users
+|     |        |  └── window
+|     |        ├── ts-svgs
+|     |        |  └── build
+|     |        └── ts-svgs-utils
+|     ├── config
+|     |  └── src
+|     |     └── lib
+|     |        └── store-devtools
+|     ├── data-access
+|     |  ├── backend-types
+|     |  |  └── src
+|     |  |     └── lib
+|     |  ├── models
+|     |  |  └── src
+|     |  |     └── lib
+|     |  |        ├── auth
+|     |  |        ├── blog
+|     |  |        ├── canvas
+|     |  |        ├── colors
+|     |  |        ├── grid
+|     |  |        ├── group-chats
+|     |  |        ├── groups
+|     |  |        ├── home
+|     |  |        ├── images
+|     |  |        ├── json
+|     |  |        ├── keys
+|     |  |        ├── location
+|     |  |        ├── messages
+|     |  |        ├── mouse
+|     |  |        ├── notifications
+|     |  |        ├── object
+|     |  |        ├── platform
+|     |  |        ├── projects
+|     |  |        |  ├── block
+|     |  |        |  ├── interfaces
+|     |  |        |  ├── model
+|     |  |        |  ├── panel
+|     |  |        |  ├── panel-config
+|     |  |        |  ├── path
+|     |  |        |  ├── project
+|     |  |        |  └── string
+|     |  |        ├── responses
+|     |  |        ├── signalr
+|     |  |        |  └── projects
+|     |  |        ├── styles
+|     |  |        ├── ui
+|     |  |        ├── update
+|     |  |        ├── users
+|     |  |        └── window
+|     |  ├── router
+|     |  |  └── src
+|     |  |     └── lib
+|     |  ├── signalr
+|     |  |  └── src
+|     |  |     └── lib
+|     |  ├── store
+|     |  |  └── src
+|     |  |     └── lib
+|     |  └── types
+|     |     └── src
+|     |        └── lib
+|     ├── directives
+|     |  ├── on-destroy
+|     |  |  └── src
+|     |  |     └── lib
+|     |  └── src
+|     |     └── lib
+|     |        ├── center-this-element
+|     |        ├── console-log
+|     |        ├── css-toggle
+|     |        ├── div-init
+|     |        ├── expandable-absolute
+|     |        ├── messages
+|     |        └── svgs
+|     ├── environment
+|     |  └── src
+|     |     └── lib
+|     ├── interceptors
+|     |  └── src
+|     |     └── lib
+|     ├── logger
+|     |  └── src
+|     |     └── lib
+|     |        └── delayed-logger
+|     ├── pipes
+|     |  └── src
+|     |     └── lib
+|     |        ├── angles
+|     |        ├── arrays
+|     |        ├── date-time
+|     |        ├── friends
+|     |        ├── images
+|     |        ├── messages
+|     |        ├── numbers
+|     |        ├── projects
+|     |        ├── text
+|     |        └── types
+|     ├── svgs
+|     |  └── src
+|     |     └── lib
+|     |        ├── arrows
+|     |        ├── bars
+|     |        ├── cursor
+|     |        ├── gen-logos
+|     |        ├── gifs
+|     |        ├── hero-icons
+|     |        |  ├── outline
+|     |        |  └── solid
+|     |        ├── img
+|     |        ├── links
+|     |        ├── logo
+|     |        ├── menus
+|     |        ├── polarity
+|     |        ├── profile
+|     |        ├── solar
+|     |        ├── toolbar
+|     |        └── window
+|     ├── types
+|     |  └── src
+|     |     └── lib
+|     |        └── tuples
+|     ├── ui
+|     |  ├── app-bar
+|     |  |  └── src
+|     |  |     └── lib
+|     |  ├── footer
+|     |  |  └── src
+|     |  |     └── lib
+|     |  ├── google-login-button
+|     |  |  └── src
+|     |  |     └── lib
+|     |  |        └── svgs
+|     |  ├── header
+|     |  |  └── src
+|     |  |     └── lib
+|     |  ├── logo
+|     |  |  └── src
+|     |  |     └── lib
+|     |  ├── modals
+|     |  |  └── src
+|     |  |     └── lib
+|     |  |        ├── cancel-modal
+|     |  |        └── success-modal
+|     |  ├── models
+|     |  |  └── src
+|     |  ├── nav-bars
+|     |  |  └── src
+|     |  |     └── lib
+|     |  |        ├── dark-nav-compact
+|     |  |        ├── dark-nav-overlap
+|     |  |        └── dark-nav-overlap-v2
+|     |  ├── not-found
+|     |  |  └── src
+|     |  |     └── lib
+|     |  |        ├── bg-not-found
+|     |  |        ├── simple-not-found
+|     |  |        └── split-image-not-found
+|     |  ├── notifications
+|     |  |  └── src
+|     |  |     └── lib
+|     |  |        ├── request-notification
+|     |  |        └── success-notification
+|     |  ├── route-breadcrumbs
+|     |  |  └── src
+|     |  |     └── lib
+|     |  |        └── route-breadcrumbs
+|     |  ├── show-hide
+|     |  |  └── src
+|     |  |     └── lib
+|     |  ├── sidebars
+|     |  |  └── src
+|     |  |     └── lib
+|     |  |        ├── narrow-mat-sidenav
+|     |  |        ├── narrow-sidebar-dark
+|     |  |        └── narrow-sidebar-purple
+|     |  ├── sidenav
+|     |  |  └── src
+|     |  |     └── lib
+|     |  ├── spinner
+|     |  |  └── src
+|     |  |     └── lib
+|     |  ├── src
+|     |  |  └── lib
+|     |  |     ├── buttons
+|     |  |     ├── menus
+|     |  |     ├── notifications
+|     |  |     |  ├── actions-notification
+|     |  |     |  ├── request-notification
+|     |  |     |  ├── success-notification
+|     |  |     |  └── undo-action-notification
+|     |  |     ├── spinner
+|     |  |     ├── svg-buttons
+|     |  |     |  ├── button-animated-down-up-arrow
+|     |  |     |  ├── button-animated-left-right-arrow
+|     |  |     |  └── button-context-menu
+|     |  |     ├── svgs
+|     |  |     └── tooltip
+|     |  └── statistics
+|     |     └── src
+|     |        └── lib
+|     └── utils
+|        └── src
+|           └── lib
+|              ├── arrays
+|              ├── builders
+|              ├── callbacks
+|              ├── canvas
+|              ├── colors
+|              ├── compare
+|              ├── components
+|              ├── dates
+|              ├── dialogs
+|              ├── div-elements
+|              ├── entities
+|              ├── environment
+|              ├── events
+|              ├── flowbite
+|              ├── gesture
+|              ├── helpers
+|              ├── html
+|              ├── ids
+|              ├── injections
+|              ├── logging
+|              ├── mapping
+|              ├── matrices
+|              ├── mock-data
+|              ├── ngrx
+|              ├── null
+|              ├── numbers
+|              ├── objects
+|              ├── observables
+|              ├── profile-picture
+|              ├── promises
+|              ├── returns
+|              ├── strings
+|              ├── switches
+|              ├── tailwind
+|              ├── validation
+|              |  └── schemas
+|              ├── vectors
+|              ├── window
+|              └── zoom
+├── packages
+├── patches
+├── ssl
+├── tmp
+|  └── libs
+└── tools
+   └── ngrx-generator
+      └── src
+         └── generators
+            └── ngrx-entity
+               └── files
+                  └── store
+
+directory: 7798
+
+ignored: directory (672)

@@ -5,6 +5,9 @@ import { createActionGroup, emptyProps, props } from '@ngrx/store'
 export const PanelConfigsActions = createActionGroup({
 	source: 'PanelConfigs Store',
 	events: {
+		'Load Local Storage Panel Configs': props<{
+			panelConfigs: PanelConfigModel[]
+		}>(),
 		'Load PanelConfigs': props<{
 			panelConfigs: PanelConfigModel[]
 		}>(),
