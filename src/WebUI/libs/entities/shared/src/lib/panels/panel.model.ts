@@ -27,6 +27,14 @@ export const PANEL_MODEL_UPDATE = z.object({
 	changes: z.object(PANEL_MODEL.shape).partial(),
 })
 
+export const isPanelArray = (array: unknown[]): array is PanelModel[] => {
+	return array.every((item) => PANEL_MODEL.parse(item))
+}
+
+// export const isPanel = (item: unknown): item is PanelModel => {
+// 	return PANEL_MODEL.parse(item)
+// }
+
 // azureApplicationInsightsConnectionString
 
 // PANEL_MODEL.array()

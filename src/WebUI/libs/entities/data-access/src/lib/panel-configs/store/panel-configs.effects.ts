@@ -3,6 +3,7 @@ import { inject } from '@angular/core'
 import { map } from 'rxjs'
 import { PanelConfigsActions } from './panel-configs.actions'
 import { ProjectsActions } from '../../projects'
+import { PanelLinksActions } from '../../panel-links'
 
 export const panelConfigsStoreInitialized$ = createEffect(
 	(actions$ = inject(Actions)) => {
@@ -12,6 +13,21 @@ export const panelConfigsStoreInitialized$ = createEffect(
 				return ProjectsActions.projectEntityStoreInitialized({
 					store: 'panelConfigs',
 				})
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+export const loadProjectSuccessLoadPanelConfigs$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.loadProjectSuccess),
+			map(({ projectEntities }) => {
+				const panelConfigs = projectEntities.panelConfigs
+				if (!panelConfigs) return PanelConfigsActions.noop()
+				if (!Array.isArray(panelConfigs)) return PanelLinksActions.noop()
+				return PanelConfigsActions.loadPanelConfigs({ panelConfigs })
 			}),
 		)
 	},

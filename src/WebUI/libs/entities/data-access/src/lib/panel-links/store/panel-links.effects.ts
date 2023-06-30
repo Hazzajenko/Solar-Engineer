@@ -26,6 +26,21 @@ export const panelLinksStoreInitialized$ = createEffect(
 	{ functional: true },
 )
 
+export const loadProjectSuccessLoadPanelLinks$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.loadProjectSuccess),
+			map(({ projectEntities }) => {
+				const panelLinks = projectEntities.panelLinks
+				if (!panelLinks) return PanelLinksActions.noop()
+				if (!Array.isArray(panelLinks)) return PanelLinksActions.noop()
+				return PanelLinksActions.loadPanelLinks({ panelLinks })
+			}),
+		)
+	},
+	{ functional: true },
+)
+
 export const updateSelectedStringCircuitSelectString$ = createEffect(
 	(actions$ = inject(Actions), _panelLinksStore = injectPanelLinksStore()) => {
 		return actions$.pipe(

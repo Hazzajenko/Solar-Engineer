@@ -5,26 +5,30 @@ export type ProjectTemplatePreviewModel = {
 	description: string
 	photoUrl: string
 }
-export const PROJECT_TEMPLATE: Record<string, ProjectTemplatePreviewModel> = {
+export const PROJECT_TEMPLATE = {
 	BLANK: {
 		name: 'Blank',
 		description: 'Blank project template with no strings or panels',
+		templateName: 'template__blank',
 		photoUrl: `${environment.AZURE_STORAGE_URL}project-template-previews/template__blank.png`,
 	},
-	SIX_ROWS_OF_PANELS: {
-		name: 'Six rows of panels',
-		description: 'Blank project template with six rows of panels',
-		photoUrl: `${environment.AZURE_STORAGE_URL}project-template-previews/template__6-rows-of-panels-no-strings.png`,
+	TWELVE_ROWS_OF_PANELS_NO_STRING: {
+		name: 'Twelve rows of panels, no strings',
+		description: 'Blank project template with twelve rows of panels, no strings',
+		templateName: 'template__12-rows-no-strings',
+		photoUrl: `${environment.AZURE_STORAGE_URL}project-template-previews/template__12-rows-no-strings.png`,
 	},
-	SIX_ROWS_OF_PANELS_IN_STRINGS: {
-		name: 'Six rows of panels in strings',
-		description: 'Blank project template with six rows of panels in strings',
-		photoUrl: `${environment.AZURE_STORAGE_URL}project-template-previews/template__6-rows-of-panels-in-strings.png`,
+	TWELVE_ROWS_OF_PANELS_SIX_STRINGS: {
+		name: 'Twelve rows of panels, six strings',
+		description: 'Blank project template with twelve rows of panels in six strings',
+		templateName: 'template__12-rows-6-strings',
+		photoUrl: `${environment.AZURE_STORAGE_URL}project-template-previews/template__12-rows-6-strings.png`,
 	},
-	SIX_ROWS_OF_PANELS_IN_STRINGS_AND_PANEL_LINKS: {
-		name: 'Six rows of panels in strings and panel links',
-		description: 'Blank project template with six rows of panels in strings with panel links',
-		photoUrl: `${environment.AZURE_STORAGE_URL}project-template-previews/template__6-rows-of-panels-in-strings-with-panel-links.png`,
+	TWELVE_ROWS_OF_PANELS_SIX_STRINGS_AND_PANEL_LINKS: {
+		name: 'Twelve rows of panels, six strings, panel links',
+		description: 'Blank project template with twelve rows of panels in six strings and panel links',
+		templateName: 'template__12-rows-6-strings-with-links',
+		photoUrl: `${environment.AZURE_STORAGE_URL}project-template-previews/template__12-rows-6-strings-with-links.png`,
 	},
 } as const
 

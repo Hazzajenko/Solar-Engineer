@@ -20,6 +20,7 @@ import {
 	ProjectMemberKickedResponse,
 	ProjectMemberUpdatedResponse,
 	ProjectModel,
+	ProjectTemplate,
 	RejectProjectInviteRequest,
 	UpdateProjectMemberRequest,
 	UserLeftProjectResponse,
@@ -51,6 +52,8 @@ export function projectsStoreFactory(store: Store) {
 	}
 
 	const dispatch = {
+		loadProjectTemplate: (templateName: ProjectTemplate['templateName']) =>
+			store.dispatch(ProjectsActions.loadProjectTemplate({ templateName })),
 		createProjectSignalr: (request: CreateProjectRequest) =>
 			store.dispatch(ProjectsActions.createProjectSignalr({ request })),
 		loadUserProjects: () => store.dispatch(ProjectsActions.loadUserProjects()),

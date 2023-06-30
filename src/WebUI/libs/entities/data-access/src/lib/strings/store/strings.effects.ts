@@ -20,6 +20,21 @@ export const stringsStoreInitialized$ = createEffect(
 	{ functional: true },
 )
 
+export const loadProjectSuccessLoadStrings$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.loadProjectSuccess),
+			map(({ projectEntities }) => {
+				const strings = projectEntities.strings
+				if (!strings) return StringsActions.noop()
+				if (!Array.isArray(strings)) return StringsActions.noop()
+				return StringsActions.loadStrings({ strings })
+			}),
+		)
+	},
+	{ functional: true },
+)
+
 /*export const stringsStoreToClear$ = createEffect(
  (actions$ = inject(Actions)) => {
  return actions$.pipe(

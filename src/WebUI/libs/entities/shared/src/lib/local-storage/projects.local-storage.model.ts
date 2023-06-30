@@ -12,7 +12,12 @@ export type ProjectLocalStorageModel = {
 	panelConfigs: PanelConfigModel[]
 }
 
-export type ProjectLocalStorageEntities = Omit<ProjectLocalStorageModel, 'project'>
+export type ProjectEntities = {
+	strings: StringModel[]
+	panels: PanelModel[]
+	panelLinks: PanelLinkModel[]
+	panelConfigs: PanelConfigModel[]
+}
 
 export const PROJECT_LOCAL_STORAGE_ENTITIES = {
 	strings: z.array(STRING_MODEL),

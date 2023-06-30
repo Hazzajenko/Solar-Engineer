@@ -1,5 +1,12 @@
 [
 	{
+		"id": "UNDEFINED_STRING_ID",
+		"colour": "#000000",
+		"name": "UNDEFINED_STRING",
+		"parallel": false,
+		"type": "String"
+	},
+	{
 		"id": "63abb83c-5090-4538-a7d2-6d03d8e2a556",
 		"colour": "#B366CC",
 		"name": "String_0",

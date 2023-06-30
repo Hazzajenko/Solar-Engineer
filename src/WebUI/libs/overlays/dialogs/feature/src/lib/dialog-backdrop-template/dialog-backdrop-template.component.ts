@@ -85,7 +85,7 @@ export class DialogBackdropTemplateComponent implements AfterViewInit, OnDestroy
 				this.backdrop.nativeElement,
 				'click',
 				(event: MouseEvent) => {
-					console.log('backdrop click', event.target)
+					// console.log('backdrop click', event.target)
 					const dialogContentElement =
 						this.backdrop.nativeElement.children[0].id === 'dialog-content'
 							? this.backdrop.nativeElement.children[0]

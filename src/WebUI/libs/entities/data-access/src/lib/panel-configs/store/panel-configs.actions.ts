@@ -48,5 +48,6 @@ export const PanelConfigsActions = createActionGroup({
 			panelConfigIds: PanelConfigId[]
 		}>(),
 		'Clear PanelConfigs State': emptyProps(),
+		Noop: emptyProps(),
 	},
 })

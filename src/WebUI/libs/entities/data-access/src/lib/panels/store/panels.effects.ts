@@ -25,6 +25,21 @@ export const panelsStoreInitialized$ = createEffect(
 	{ functional: true },
 )
 
+export const loadProjectSuccessLoadPanels$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.loadProjectSuccess),
+			map(({ projectEntities }) => {
+				const panels = projectEntities.panels
+				if (!panels) return PanelsActions.noop()
+				if (!Array.isArray(panels)) return PanelsActions.noop()
+				return PanelsActions.loadPanels({ panels })
+			}),
+		)
+	},
+	{ functional: true },
+)
+
 export const updatePanelsFromCreatingString$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(

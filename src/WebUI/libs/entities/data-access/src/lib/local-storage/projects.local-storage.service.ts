@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import {
 	PROJECT_LOCAL_STORAGE_MODEL,
-	ProjectLocalStorageEntities,
+	ProjectEntities,
 	ProjectLocalStorageModel,
 } from '@entities/shared'
 import { ProjectLocalStorageAction } from '@entities/utils'
@@ -37,26 +37,26 @@ export class ProjectsLocalStorageService {
 			}, {} as ProjectLocalStorageModel)
 	}
 
-	getProjectDataByKey<T extends keyof ProjectLocalStorageEntities>(key: T) {
+	getProjectDataByKey<T extends keyof ProjectEntities>(key: T) {
 		const storedItem = localStorage.getItem(key)
 		if (!storedItem) throw new Error(`No data found for key ${key}`)
 		const parsed = PROJECT_LOCAL_STORAGE_MODEL[key].safeParse(JSON.parse(storedItem))
 		if (!parsed.success) throw new Error(parsed.error.message)
-		return parsed.data as ProjectLocalStorageEntities[T]
+		return parsed.data as ProjectEntities[T]
 	}
 
-	addProjectItem<
-		TKey extends keyof ProjectLocalStorageEntities,
-		TEntity extends ProjectLocalStorageEntities[TKey][number],
-	>(key: TKey, item: TEntity) {
+	addProjectItem<TKey extends keyof ProjectEntities, TEntity extends ProjectEntities[TKey][number]>(
+		key: TKey,
+		item: TEntity,
+	) {
 		const dataByKey = this.getProjectDataByKey<TKey>(key) as Array<TEntity>
 		dataByKey.push(item)
 		localStorage.setItem(key, JSON.stringify(dataByKey))
 	}
 
 	addManyProjectItems<
-		TKey extends keyof ProjectLocalStorageEntities,
-		TEntity extends ProjectLocalStorageEntities[TKey][number],
+		TKey extends keyof ProjectEntities,
+		TEntity extends ProjectEntities[TKey][number],
 	>(key: TKey, items: TEntity[]) {
 		const dataByKey = this.getProjectDataByKey<TKey>(key) as Array<TEntity>
 		dataByKey.push(...items)
@@ -64,8 +64,8 @@ export class ProjectsLocalStorageService {
 	}
 
 	updateProjectItem<
-		TKey extends keyof ProjectLocalStorageEntities,
-		TEntity extends ProjectLocalStorageEntities[TKey][number],
+		TKey extends keyof ProjectEntities,
+		TEntity extends ProjectEntities[TKey][number],
 	>(key: TKey, item: UpdateStr<TEntity>) {
 		const dataByKey = this.getProjectDataByKey<TKey>(key) as Array<TEntity>
 		const index = dataByKey.findIndex((i) => i.id === item.id)
@@ -79,8 +79,8 @@ export class ProjectsLocalStorageService {
 	}
 
 	updateManyProjectItems<
-		TKey extends keyof ProjectLocalStorageEntities,
-		TEntity extends ProjectLocalStorageEntities[TKey][number],
+		TKey extends keyof ProjectEntities,
+		TEntity extends ProjectEntities[TKey][number],
 	>(key: TKey, items: UpdateStr<TEntity>[]) {
 		const dataByKey = this.getProjectDataByKey<TKey>(key) as Array<TEntity>
 		items.forEach((item) => {
@@ -96,8 +96,8 @@ export class ProjectsLocalStorageService {
 	}
 
 	deleteProjectItem<
-		TKey extends keyof ProjectLocalStorageEntities,
-		TEntity extends ProjectLocalStorageEntities[TKey][number],
+		TKey extends keyof ProjectEntities,
+		TEntity extends ProjectEntities[TKey][number],
 	>(key: TKey, itemId: TEntity['id']) {
 		const dataByKey = this.getProjectDataByKey<TKey>(key) as Array<TEntity>
 		const index = dataByKey.findIndex((i) => i.id === itemId)
@@ -107,8 +107,8 @@ export class ProjectsLocalStorageService {
 	}
 
 	deleteManyProjectItems<
-		TKey extends keyof ProjectLocalStorageEntities,
-		TEntity extends ProjectLocalStorageEntities[TKey][number],
+		TKey extends keyof ProjectEntities,
+		TEntity extends ProjectEntities[TKey][number],
 	>(key: TKey, itemIds: TEntity['id'][]) {
 		const dataByKey = this.getProjectDataByKey<TKey>(key) as Array<TEntity>
 		itemIds.forEach((itemId) => {
