@@ -9,6 +9,9 @@ export const PanelsActions = createActionGroup({
 		'Set Undefined StringId': props<{
 			undefinedStringId: StringId
 		}>(),
+		'Load New State': props<{
+			panels: PanelModel[]
+		}>(),
 		'Load Local Storage Panels': props<{
 			panels: PanelModel[]
 		}>(),

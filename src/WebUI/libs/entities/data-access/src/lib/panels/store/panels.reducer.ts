@@ -22,6 +22,11 @@ export const initialPanelsState: PanelsState = panelsAdapter.getInitialState({
 
 const reducer = createReducer(
 	initialPanelsState,
+	on(PanelsActions.loadNewState, (state, { panels }) => {
+		let newState = panelsAdapter.removeAll(state)
+		newState = panelsAdapter.setAll(panels, newState)
+		return { ...newState, loaded: true }
+	}),
 	on(PanelsActions.setUndefinedStringId, (state, { undefinedStringId }) => ({
 		...state,
 		undefinedStringId,

@@ -1,1 +1,23 @@
-[]
+{
+	"panelConfigs": [
+		{
+			"id": "Longi-Himo555m",
+			"fullName": "Longi Himo555m",
+			"brand": "Longi",
+			"model": "Himo555m",
+			"currentAtMaximumPower": 13.19,
+			"shortCircuitCurrent": 14.01,
+			"shortCircuitCurrentTemp": 0.05,
+			"maximumPower": 555,
+			"maximumPowerTemp": -0.34,
+			"voltageAtMaximumPower": 42.1,
+			"openCircuitVoltage": 49.95,
+			"openCircuitVoltageTemp": -0.265,
+			"length": 2256,
+			"width": 1133,
+			"weight": 27.2,
+			"type": "PanelConfig",
+			"default": true
+		}
+	]
+}

@@ -36,6 +36,11 @@ export const initialStringsState: StringsState = stringsAdapter.getInitialState(
 
 const reducer = createReducer(
 	initialStringsState,
+	on(StringsActions.loadNewState, (state, { strings }) => {
+		let newState = stringsAdapter.removeAll(state)
+		newState = stringsAdapter.setAll(strings, newState)
+		return { ...newState, loaded: true }
+	}),
 	on(StringsActions.loadLocalStorageStrings, (state, { strings }) =>
 		stringsAdapter.setAll(strings, state),
 	),

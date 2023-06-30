@@ -33,7 +33,7 @@ export const loadProjectSuccessLoadPanels$ = createEffect(
 				const panels = projectEntities.panels
 				if (!panels) return PanelsActions.noop()
 				if (!Array.isArray(panels)) return PanelsActions.noop()
-				return PanelsActions.loadPanels({ panels })
+				return PanelsActions.loadNewState({ panels })
 			}),
 		)
 	},

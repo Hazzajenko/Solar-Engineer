@@ -34,7 +34,7 @@ export const loadProjectSuccessLoadPanelLinks$ = createEffect(
 				const panelLinks = projectEntities.panelLinks
 				if (!panelLinks) return PanelLinksActions.noop()
 				if (!Array.isArray(panelLinks)) return PanelLinksActions.noop()
-				return PanelLinksActions.loadPanelLinks({ panelLinks })
+				return PanelLinksActions.loadNewState({ panelLinks })
 			}),
 		)
 	},

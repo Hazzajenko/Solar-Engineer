@@ -113,5 +113,6 @@ export const ProjectsActions = createActionGroup({
 			projectId: ProjectId
 		}>(),
 		'Clear Projects State': emptyProps(),
+		Noop: emptyProps(),
 	},
 })

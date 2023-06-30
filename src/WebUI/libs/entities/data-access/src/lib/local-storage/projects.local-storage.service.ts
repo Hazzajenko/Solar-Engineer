@@ -12,9 +12,9 @@ import { UpdateStr } from '@ngrx/entity/src/models'
 })
 export class ProjectsLocalStorageService {
 	fetchExistingProject() {
-		if (!this.isProjectExisting()) {
-			this.initNewProject()
-		}
+		// if (!this.isProjectExisting()) {
+		// 	this.initNewProject()
+		// }
 
 		const modelKeys = Object.keys(PROJECT_LOCAL_STORAGE_MODEL)
 
@@ -289,7 +289,7 @@ export class ProjectsLocalStorageService {
 
 	// private
 
-	private isProjectExisting() {
+	isProjectExisting() {
 		return Object.keys(PROJECT_LOCAL_STORAGE_MODEL).every((key) => {
 			return !!localStorage.getItem(key)
 		})

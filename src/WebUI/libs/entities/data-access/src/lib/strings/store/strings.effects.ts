@@ -28,7 +28,7 @@ export const loadProjectSuccessLoadStrings$ = createEffect(
 				const strings = projectEntities.strings
 				if (!strings) return StringsActions.noop()
 				if (!Array.isArray(strings)) return StringsActions.noop()
-				return StringsActions.loadStrings({ strings })
+				return StringsActions.loadNewState({ strings })
 			}),
 		)
 	},

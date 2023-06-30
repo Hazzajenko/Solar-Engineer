@@ -27,7 +27,7 @@ export const loadProjectSuccessLoadPanelConfigs$ = createEffect(
 				const panelConfigs = projectEntities.panelConfigs
 				if (!panelConfigs) return PanelConfigsActions.noop()
 				if (!Array.isArray(panelConfigs)) return PanelLinksActions.noop()
-				return PanelConfigsActions.loadPanelConfigs({ panelConfigs })
+				return PanelConfigsActions.loadNewState({ panelConfigs })
 			}),
 		)
 	},

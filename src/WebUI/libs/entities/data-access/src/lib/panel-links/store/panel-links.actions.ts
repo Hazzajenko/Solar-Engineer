@@ -16,6 +16,9 @@ export const PanelLinksActions = createActionGroup({
 		'Load Local Storage Panel Links': props<{
 			panelLinks: PanelLinkModel[]
 		}>(),
+		'Load New State': props<{
+			panelLinks: PanelLinkModel[]
+		}>(),
 		'Load Panel Links': props<{
 			panelLinks: PanelLinkModel[]
 		}>(),

@@ -134,3 +134,23 @@ export const backToPreviousPage$ = createEffect(
 	},
 	{ functional: true, dispatch: false },
 )
+
+/*
+ export const signInDemoAcc$ = createEffect(
+ (actions$ = inject(Actions), _location = inject(Location)) => {
+ return actions$.pipe(
+ ofType(AuthActions.signInAsGuest),
+ tap(() => {
+ const previousUrl = localStorage.getItem('previousUrl')
+ if (previousUrl) {
+ localStorage.removeItem('previousUrl')
+ _location.go(previousUrl)
+ return
+ }
+ _location.go('/')
+ // _location.back()
+ }),
+ )
+ },
+ { functional: true, dispatch: false },
+ )*/

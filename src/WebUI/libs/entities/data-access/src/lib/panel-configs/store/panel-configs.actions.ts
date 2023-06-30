@@ -8,6 +8,9 @@ export const PanelConfigsActions = createActionGroup({
 		'Load Local Storage Panel Configs': props<{
 			panelConfigs: PanelConfigModel[]
 		}>(),
+		'Load New State': props<{
+			panelConfigs: PanelConfigModel[]
+		}>(),
 		'Load PanelConfigs': props<{
 			panelConfigs: PanelConfigModel[]
 		}>(),
