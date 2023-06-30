@@ -48,6 +48,7 @@ import { injectProjectsStore } from '@entities/data-access'
 import { injectAuthStore } from '@auth/data-access'
 import { LoadingProjectSpinnerComponent } from '../ui/loading-project-spinner/loading-project-spinner.component'
 import { DefaultHoverEffectsDirective } from '@shared/directives'
+import { environment } from '@shared/environment'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -90,6 +91,8 @@ export class DesignCanvasAppComponent implements AfterViewInit {
 	private _uiStore = injectUiStore()
 	private _graphicsStore = inject(GraphicsStoreService)
 	private _objectPositioningStore = injectObjectPositioningStore()
+
+	isDevelopment = !environment.production
 
 	user = this._authStore.select.user
 	sideUiMobileMenuOpen = this._uiStore.select.sideUiMobileMenuOpen as Signal<boolean>
@@ -154,5 +157,9 @@ export class DesignCanvasAppComponent implements AfterViewInit {
 
 	toggleSideUiNav() {
 		this._uiStore.dispatch.toggleSideUiNav()
+	}
+
+	clearLocalStorage() {
+		localStorage.clear()
 	}
 }

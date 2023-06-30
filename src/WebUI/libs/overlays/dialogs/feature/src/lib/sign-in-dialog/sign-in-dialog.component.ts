@@ -20,6 +20,7 @@ import { RadiansToDegreesPipe, TruncatePipe } from '@shared/pipes'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { IsTypeOfPanelPipe } from '@entities/utils'
 import { injectAuthStore } from '@auth/data-access'
+import { ProjectsLocalStorageService } from '@entities/data-access'
 
 @Component({
 	selector: 'dialog-sign-in',
@@ -48,6 +49,7 @@ import { injectAuthStore } from '@auth/data-access'
 export class SignInDialogComponent {
 	private _uiStore = inject(UiStoreService)
 	private _auth = injectAuthStore()
+	private _projectsLocalStorage = inject(ProjectsLocalStorageService)
 
 	user = this._auth.select.user
 
@@ -75,7 +77,15 @@ export class SignInDialogComponent {
 	}
 
 	signInAsGuest() {
+		/*		if (!this._projectsLocalStorage.isProjectExisting()) {
+		 this.closeDialog()
+		 this._uiStore.dispatch.openDialog({
+		 component: DIALOG_COMPONENT.VIEW_PROJECT_TEMPLATES,
+		 })
+		 return
+		 }*/
 		this._auth.dispatch.signInAsGuest()
+
 		this.closeDialog()
 	}
 

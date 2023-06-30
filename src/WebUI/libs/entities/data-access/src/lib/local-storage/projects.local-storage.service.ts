@@ -145,6 +145,13 @@ export class ProjectsLocalStorageService {
 		localStorage.setItem('project', JSON.stringify(project))
 	}
 
+	setProjectEntities(entities: ProjectEntities) {
+		Object.keys(entities).forEach((key) => {
+			const entity = entities[key as keyof ProjectEntities]
+			localStorage.setItem(key, JSON.stringify(entity))
+		})
+	}
+
 	appActionController(action: ProjectLocalStorageAction) {
 		console.log('appActionController', action)
 		switch (action.type) {
