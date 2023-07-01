@@ -37,4 +37,23 @@
       <PackageReference Include="WolverineFx.RabbitMQ" Version="0.9.15" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\panels.json" />
+      <EmbeddedResource Include="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\panels.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+        <None Remove="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\strings.json" />
+        <EmbeddedResource Include="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\strings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <None Remove="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\panel-links.json" />
+        <EmbeddedResource Include="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\panel-links.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <None Remove="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\panel-configs.json" />
+        <EmbeddedResource Include="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\panel-configs.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+    </ItemGroup>
+
 </Project>

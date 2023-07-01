@@ -1,0 +1,54 @@
+{
+	"strings": [
+		{
+			"id": "UNDEFINED_STRING_ID",
+			"colour": "#000000",
+			"name": "UNDEFINED_STRING",
+			"parallel": false,
+			"type": "String"
+		},
+		{
+			"id": "63abb83c-5090-4538-a7d2-6d03d8e2a556",
+			"colour": "#B366CC",
+			"name": "String_0",
+			"parallel": false,
+			"type": "String"
+		},
+		{
+			"id": "7bfdc209-8831-4bb4-9ce5-3e6311256d6c",
+			"colour": "#FF99E6",
+			"name": "String_1",
+			"parallel": false,
+			"type": "String"
+		},
+		{
+			"id": "5fa7b2e7-16ec-4495-b88c-10127b12cb5e",
+			"colour": "#6680B3",
+			"name": "String_2",
+			"parallel": false,
+			"type": "String"
+		},
+		{
+			"id": "6f5a4c54-e5b8-4b1a-9f02-069d598fabed",
+			"colour": "#80B300",
+			"name": "String_3",
+			"parallel": false,
+			"type": "String"
+		},
+		{
+			"id": "e70f3291-1509-4f38-8488-dd9c72fb69b6",
+			"colour": "#9900B3",
+			"name": "String_4",
+			"parallel": false,
+			"type": "String"
+		},
+		{
+			"id": "2e6f8027-b6ad-4165-ae1b-fe3d15a4e855",
+			"name": "String_5",
+			"colour": "#B33300",
+			"parallel": false,
+			"type": "String"
+		}
+	]
+}
+
