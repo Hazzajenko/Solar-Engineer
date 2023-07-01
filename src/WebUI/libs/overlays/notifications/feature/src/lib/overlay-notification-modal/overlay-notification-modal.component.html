@@ -109,7 +109,7 @@
 				></div>
 			</div>
 		</ng-container>
-		<ng-container *ngFor="let localNotification of localNotifications()">
+		<ng-container *ngFor="let localNotification of localUserNotifications()">
 			<div
 				#notificationEl
 				*ngIf="localNotification"

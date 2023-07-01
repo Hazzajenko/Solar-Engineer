@@ -2,6 +2,7 @@ import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
+	computed,
 	effect,
 	ElementRef,
 	inject,
@@ -18,6 +19,8 @@ import {
 	injectNotificationsStore,
 } from '@overlays/notifications/data-access'
 import {
+	LOCAL_NOTIFICATION_TYPE,
+	LocalNotification__UserStatusChanged,
 	LocalNotificationModel,
 	NOTIFICATION_MODEL_SCHEMA,
 	NOTIFICATION_TYPE,
@@ -49,6 +52,20 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 	private _notificationStartTimeMap = signal(new Map<string, number>())
 	notifications = this._notificationsStore.select.notificationsThatUserHasNotReceived
 	localNotifications = this._notificationsStore.select.localNotifications
+	localUserNotifications = computed(() => {
+		const localNotifications = this._notificationsStore.select.localNotifications()
+		return localNotifications.filter(
+			(n) =>
+				n.notificationType === LOCAL_NOTIFICATION_TYPE.USER_IS_ONLINE ||
+				n.notificationType === LOCAL_NOTIFICATION_TYPE.USER_IS_OFFLINE,
+		) as LocalNotification__UserStatusChanged[]
+	})
+	localProjectNotifications = computed(() => {
+		const localNotifications = this._notificationsStore.select.localNotifications()
+		return localNotifications.filter(
+			(n) => n.notificationType === LOCAL_NOTIFICATION_TYPE.LOADED_LOCAL_SAVE,
+		)
+	})
 	@ViewChildren('notificationEl') notificationEls!: QueryList<HTMLDivElement>
 	@ViewChildren('progressBar') progressBarEls!: QueryList<ElementRef<HTMLDivElement>>
 	protected readonly getContentMessageBasedOnType = getNotificationContentMessageBasedOnType

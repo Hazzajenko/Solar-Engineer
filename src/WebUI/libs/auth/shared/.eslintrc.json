@@ -5,6 +5,7 @@
 		{
 			"files": ["*.ts"],
 			"rules": {
+				"no-mixed-spaces-and-tabs": "off",
 				"@angular-eslint/directive-selector": [
 					"error",
 					{

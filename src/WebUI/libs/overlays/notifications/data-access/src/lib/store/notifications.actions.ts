@@ -1,7 +1,7 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { EntityUpdate } from '@shared/data-access/models'
-import { LocalNotificationModel, NotificationModel } from '@auth/shared'
+import { DynamicNotificationModel, LocalNotificationModel, NotificationModel } from '@auth/shared'
 
 export const NotificationsActions = createActionGroup({
 	source: 'Notifications Store',
@@ -14,6 +14,12 @@ export const NotificationsActions = createActionGroup({
 		}>(),
 		'Load Notifications': props<{
 			notifications: NotificationModel[]
+		}>(),
+		'Add Dynamic Notification': props<{
+			dynamicNotification: DynamicNotificationModel
+		}>(),
+		'Delete Dynamic Notification': props<{
+			dynamicNotificationId: DynamicNotificationModel['id']
 		}>(),
 		'Add Local Notification': props<{
 			localNotification: LocalNotificationModel

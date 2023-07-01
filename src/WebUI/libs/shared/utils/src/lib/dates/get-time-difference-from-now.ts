@@ -1,6 +1,7 @@
 export const getTimeDifferenceFromNow = (
 	dateTime: string | undefined | null,
 	format: 'short' | 'medium' = 'short',
+	withAgo = false,
 ) => {
 	if (!dateTime) return
 	const now = Date.now()
@@ -13,12 +14,17 @@ export const getTimeDifferenceFromNow = (
 	if (hours > 24) {
 		const days = Math.floor(hours / 24)
 		const daysString = days === 1 ? 'Day' : 'Days'
+		if (withAgo) return `${days} ${daysString} ago`
 		return `${days} ${daysString}`
 	}
 
 	const hoursString = getHoursString(format, hours)
 	const minutesString = getMinutesString(format, minutes)
-	if (hours < 1) return `${minutes}${minutesString}`
+	if (hours < 1) {
+		if (withAgo) return `${minutes}${minutesString} ago`
+		return `${minutes}${minutesString}`
+	}
+	if (withAgo) return `${hours}${hoursString} ago`
 	return `${hours}${hoursString}`
 }
 

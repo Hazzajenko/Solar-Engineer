@@ -2,6 +2,7 @@ import { Store } from '@ngrx/store'
 import {
 	selectAllNotifications,
 	selectAmountOfUnreadNotifications,
+	selectDynamicNotifications,
 	selectLocalNotifications,
 	selectNotCompletedNotificationsSortedByCreatedTime,
 	selectNotificationsEntities,
@@ -10,7 +11,7 @@ import {
 import { createRootServiceInjector } from '@shared/utils'
 import { NotificationsActions } from './notifications.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { LocalNotificationModel, NotificationModel } from '@auth/shared'
+import { DynamicNotificationModel, LocalNotificationModel, NotificationModel } from '@auth/shared'
 
 export function injectNotificationsStore(): NotificationsStore {
 	return notificationsStoreInjector()
@@ -37,6 +38,7 @@ function notificationsStoreFactory(store: Store) {
 			selectNotCompletedNotificationsSortedByCreatedTime,
 		),
 		localNotifications: store.selectSignal(selectLocalNotifications),
+		dynamicNotifications: store.selectSignal(selectDynamicNotifications),
 	}
 
 	const dispatch = {
@@ -46,6 +48,10 @@ function notificationsStoreFactory(store: Store) {
 			store.dispatch(NotificationsActions.markManyNotificationsAsRead({ notificationIds })),
 		loadNotifications: (notifications: NotificationModel[]) =>
 			store.dispatch(NotificationsActions.loadNotifications({ notifications })),
+		addDynamicNotification: (dynamicNotification: DynamicNotificationModel) =>
+			store.dispatch(NotificationsActions.addDynamicNotification({ dynamicNotification })),
+		deleteDynamicNotification: (dynamicNotificationId: DynamicNotificationModel['id']) =>
+			store.dispatch(NotificationsActions.deleteDynamicNotification({ dynamicNotificationId })),
 		addLocalNotification: (localNotification: LocalNotificationModel) =>
 			store.dispatch(NotificationsActions.addLocalNotification({ localNotification })),
 		deleteLocalNotification: (localNotificationId: LocalNotificationModel['id']) =>

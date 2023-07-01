@@ -1,13 +1,14 @@
 import { NotificationsActions } from './notifications.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { LocalNotificationModel, NotificationModel } from '@auth/shared'
+import { DynamicNotificationModel, LocalNotificationModel, NotificationModel } from '@auth/shared'
 
 export const NOTIFICATIONS_FEATURE_KEY = 'notifications'
 
 export interface NotificationsState extends EntityState<NotificationModel> {
 	loaded: boolean
 	localNotifications: LocalNotificationModel[]
+	dynamicNotifications: DynamicNotificationModel[]
 	error?: string | null
 }
 
@@ -23,6 +24,7 @@ export const notificationsAdapter: EntityAdapter<NotificationModel> =
 export const initialNotificationsState: NotificationsState = notificationsAdapter.getInitialState({
 	loaded: false,
 	localNotifications: [],
+	dynamicNotifications: [],
 })
 
 const reducer = createReducer(
@@ -53,6 +55,16 @@ const reducer = createReducer(
 	on(NotificationsActions.loadNotifications, (state, { notifications }) =>
 		notificationsAdapter.setMany(notifications, state),
 	),
+	on(NotificationsActions.addDynamicNotification, (state, { dynamicNotification }) => ({
+		...state,
+		dynamicNotifications: handleDynamicNotifications(state, dynamicNotification),
+	})),
+	on(NotificationsActions.deleteDynamicNotification, (state, { dynamicNotificationId }) => ({
+		...state,
+		dynamicNotifications: state.dynamicNotifications.filter(
+			(dynamicNotification) => dynamicNotification.id !== dynamicNotificationId,
+		),
+	})),
 	on(NotificationsActions.addLocalNotification, (state, { localNotification }) => ({
 		...state,
 		localNotifications: handleLocalNotifications(state, localNotification),
@@ -97,11 +109,25 @@ const handleLocalNotifications = (
 ) => {
 	const isExisting = state.localNotifications.some(
 		(localNotificationItem) =>
-			localNotificationItem.notificationType === localNotification.notificationType &&
-			localNotificationItem.senderAppUserId === localNotification.senderAppUserId,
+			localNotificationItem.notificationType === localNotification.notificationType /* &&
+	 localNotificationItem.senderAppUserId === localNotification.senderAppUserId,*/,
 	)
 	if (!isExisting) {
 		return [...state.localNotifications, localNotification]
 	}
 	return state.localNotifications
+}
+
+const handleDynamicNotifications = (
+	state: NotificationsState,
+	dynamicNotificationModel: DynamicNotificationModel,
+) => {
+	const isExisting = state.dynamicNotifications.some(
+		(localNotificationItem) => localNotificationItem.id === dynamicNotificationModel.id /* &&
+	 localNotificationItem.senderAppUserId === dynamicNotificationModel.senderAppUserId,*/,
+	)
+	if (!isExisting) {
+		return [...state.dynamicNotifications, dynamicNotificationModel]
+	}
+	return state.dynamicNotifications
 }

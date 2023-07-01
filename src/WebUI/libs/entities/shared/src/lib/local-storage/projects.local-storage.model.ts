@@ -5,7 +5,9 @@ import { PANEL_CONFIG_MODEL, PanelConfigModel } from '../panel-configs'
 import { z } from 'zod'
 
 export type ProjectLocalStorageModel = {
-	project: ProjectInfoModel
+	// project: ProjectInfoModel
+	createdTime: string
+	lastModifiedTime: string
 	strings: StringModel[]
 	panels: PanelModel[]
 	panelLinks: PanelLinkModel[]
@@ -37,7 +39,9 @@ export const PROJECT_INFO_MODEL = z.object({
 })
 
 export const PROJECT_LOCAL_STORAGE_MODEL = {
-	project: PROJECT_INFO_MODEL,
+	// project: PROJECT_INFO_MODEL,
+	createdTime: z.string(),
+	lastModifiedTime: z.string(),
 	strings: z.array(STRING_MODEL),
 	panels: z.array(PANEL_MODEL),
 	panelLinks: z.array(PANEL_LINK_MODEL),

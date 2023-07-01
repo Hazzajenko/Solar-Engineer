@@ -26,11 +26,10 @@ import { AuthStoreService } from '@auth/data-access'
 import { AppUserModel, NotificationModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
-import { Observable } from 'rxjs'
+import { Observable, of } from 'rxjs'
 import { GetFriendRequestPipe } from '../get-friend-request.pipe'
 import { SortNotificationsPipe } from '../sort-notifications.pipe'
 import { NotificationDirective } from './notification.directive'
-import { NotificationsStoreService } from '@overlays/notifications/data-access'
 
 @Component({
 	selector: 'app-notifications-component',
@@ -65,12 +64,13 @@ import { NotificationsStoreService } from '@overlays/notifications/data-access'
 	standalone: true,
 })
 export class NotificationsComponent {
-	private notificationsStore = inject(NotificationsStoreService)
+	// private notificationsStore = inject(NotificationsStoreService)
 	private authStore = inject(AuthStoreService)
 	// private friendsService = inject(FriendsService)
 	// private friendsStore = inject(FriendsStoreService)
 
-	notifications$: Observable<NotificationModel[]> = this.notificationsStore.select.notifications$
+	notifications$: Observable<NotificationModel[]> = of([])
+	// notifications$: Observable<NotificationModel[]> = this.notificationsStore.select.notifications$
 	user$: Observable<AppUserModel | undefined> = this.authStore.select.user$
 	selectedNotification?: NotificationModel
 

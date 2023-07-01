@@ -1,5 +1,5 @@
 <side-ui-base [view]="sideUiView">
-	<side-ui-view-heading heading="Friends" />
+	<side-ui-view-heading heading="Connections" />
 	<ng-container *ngIf="user() as user; then loggedIn; else notLoggedIn" />
 	<ng-template #loggedIn>
 		<!--

@@ -27,6 +27,7 @@ import { DialogSearchForUsersComponent, DialogUserOptionsComponent } from '../us
 import { DialogWarningTemplateComponent } from '../shared'
 import { DialogProjectMemberOptionsComponent } from '../projects/dialog-project-member-options/dialog-project-member-options.component'
 import { DialogMessagesComponent } from '../messages'
+import { DialogInitialVisitWithTemplatesComponent } from '../dialog-initial-visit-with-templates/dialog-initial-visit-with-templates.component'
 
 export const dialogInputInjectionToken = new InjectionToken<DialogInput>('')
 
@@ -114,6 +115,8 @@ export class DialogRendererComponent implements OnDestroy {
 				return DialogMessagesComponent
 			case DIALOG_COMPONENT.VIEW_PROJECT_TEMPLATES:
 				return DialogViewProjectTemplatesComponent
+			case DIALOG_COMPONENT.INITIAL_VISIT_WITH_TEMPLATES:
+				return DialogInitialVisitWithTemplatesComponent
 			default:
 				return handleAllSwitchCases(component)
 		}

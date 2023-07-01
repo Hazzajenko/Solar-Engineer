@@ -30,8 +30,11 @@ export function checkAuthFlow() {
 
 	setTimeout(() => {
 		uiStore.dispatch.openDialog({
-			component: DIALOG_COMPONENT.SIGN_IN,
+			component: DIALOG_COMPONENT.INITIAL_VISIT_WITH_TEMPLATES,
 		})
+		// uiStore.dispatch.openDialog({
+		// 	component: DIALOG_COMPONENT.SIGN_IN,
+		// })
 	}, 1000)
 	return false
 }

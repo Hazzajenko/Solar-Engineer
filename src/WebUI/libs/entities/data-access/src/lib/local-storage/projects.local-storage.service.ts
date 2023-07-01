@@ -11,11 +11,10 @@ import { UpdateStr } from '@ngrx/entity/src/models'
 	providedIn: 'root',
 })
 export class ProjectsLocalStorageService {
-	fetchExistingProject() {
-		// if (!this.isProjectExisting()) {
-		// 	this.initNewProject()
-		// }
+	private updateLastModified = () =>
+		localStorage.setItem('lastModifiedTime', JSON.stringify(new Date().toISOString()))
 
+	fetchExistingProject() {
 		const modelKeys = Object.keys(PROJECT_LOCAL_STORAGE_MODEL)
 
 		return modelKeys
@@ -52,6 +51,7 @@ export class ProjectsLocalStorageService {
 		const dataByKey = this.getProjectDataByKey<TKey>(key) as Array<TEntity>
 		dataByKey.push(item)
 		localStorage.setItem(key, JSON.stringify(dataByKey))
+		this.updateLastModified()
 	}
 
 	addManyProjectItems<
@@ -61,6 +61,7 @@ export class ProjectsLocalStorageService {
 		const dataByKey = this.getProjectDataByKey<TKey>(key) as Array<TEntity>
 		dataByKey.push(...items)
 		localStorage.setItem(key, JSON.stringify(dataByKey))
+		this.updateLastModified()
 	}
 
 	updateProjectItem<
@@ -76,6 +77,7 @@ export class ProjectsLocalStorageService {
 			...changes,
 		}
 		localStorage.setItem(key, JSON.stringify(dataByKey))
+		this.updateLastModified()
 	}
 
 	updateManyProjectItems<
@@ -93,6 +95,7 @@ export class ProjectsLocalStorageService {
 			}
 		})
 		localStorage.setItem(key, JSON.stringify(dataByKey))
+		this.updateLastModified()
 	}
 
 	deleteProjectItem<
@@ -104,6 +107,7 @@ export class ProjectsLocalStorageService {
 		if (index === -1) throw new Error(`No item found with id ${itemId}`)
 		dataByKey.splice(index, 1)
 		localStorage.setItem(key, JSON.stringify(dataByKey))
+		this.updateLastModified()
 	}
 
 	deleteManyProjectItems<
@@ -117,18 +121,13 @@ export class ProjectsLocalStorageService {
 			dataByKey.splice(index, 1)
 		})
 		localStorage.setItem(key, JSON.stringify(dataByKey))
-	}
-
-	pushItemToArray<T>(array: T[], item: T) {
-		array.push(item)
+		this.updateLastModified()
 	}
 
 	initNewProject() {
 		const project: ProjectLocalStorageModel = {
-			project: {
-				createdTime: new Date().toISOString(),
-				lastModifiedTime: new Date().toISOString(),
-			},
+			createdTime: new Date().toISOString(),
+			lastModifiedTime: new Date().toISOString(),
 			strings: [],
 			panels: [],
 			panelLinks: [],
@@ -239,48 +238,6 @@ export class ProjectsLocalStorageService {
 		}
 	}
 
-	appActionControllerV2(action: ProjectLocalStorageAction) {
-		// operation and entity type is extracted from the action type
-		const [, entity, operation] = /\[(\w+)\sStore\]\s(.+)\s(\w+)/.exec(action.type) || []
-		console.log('appActionControllerV2', action, entity, operation)
-
-		// entity type is transformed to camelCase
-		const entityType = entity.charAt(0).toLowerCase() + entity.slice(1)
-
-		// Mapping operation type to method
-		const operationMethods: Record<string, keyof this> = {
-			Add: 'addProjectItem',
-			Update: 'updateProjectItem',
-			Delete: 'deleteProjectItem',
-			'Add Many': 'addManyProjectItems',
-			'Update Many': 'updateManyProjectItems',
-			'Delete Many': 'deleteManyProjectItems',
-		}
-
-		const method = operationMethods[operation]
-
-		// check if operation type is correct
-		if (!method) {
-			throw new Error(`Operation type not handled`)
-		}
-
-		// call the correct method based on the operation type
-		if (entity.includes('Many')) {
-			const property = entity.toLowerCase() + 's'
-			if (property in action) {
-				this[method](entityType, action[property as keyof typeof action])
-			}
-		} else {
-			if (entity === 'Delete') {
-				const property = entity.toLowerCase() + 'Id'
-				this[method](entityType, action[property as keyof typeof action])
-				return
-			}
-			const property = entity.toLowerCase()
-			this[method](entityType, action[property as keyof typeof action])
-		}
-	}
-
 	updatePanel(panel: ProjectLocalStorageModel['panels'][number]) {
 		const project = this.fetchExistingProject()
 		if (!project) return
@@ -289,12 +246,6 @@ export class ProjectsLocalStorageService {
 		project.panels[index] = panel
 		this.setProject(project)
 	}
-
-	removeProject() {
-		localStorage.removeItem('project')
-	}
-
-	// private
 
 	isProjectExisting() {
 		return Object.keys(PROJECT_LOCAL_STORAGE_MODEL).every((key) => {

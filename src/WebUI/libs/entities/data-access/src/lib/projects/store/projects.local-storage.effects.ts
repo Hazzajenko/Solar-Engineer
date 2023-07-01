@@ -6,6 +6,8 @@ import { AuthActions } from '@auth/data-access'
 import { fetchProjectTemplateData } from '@entities/shared'
 import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
+import { createDynamicNotification } from '@auth/utils'
+import { getTimeDifferenceFromNow } from '@shared/utils'
 
 export const initLocalStorageProject$ = createEffect(
 	(
@@ -25,9 +27,28 @@ export const initLocalStorageProject$ = createEffect(
 			}),
 			tap((action) => {
 				if (action.type === '[Projects Store] Init Local Storage Project') {
-					notificationsStore.dispatch.addLocalNotification({
-						id: 'initLocalStorageProject',
+					// const localNotification = createLocalNotification.loadedLocalSave(
+					// 	action.localStorageProject.lastModifiedTime,
+					// )
+					const lastModifiedTime = getTimeDifferenceFromNow(
+						action.localStorageProject.lastModifiedTime,
+						'short',
+						true,
+					)
+					const dynamicNotification = createDynamicNotification({
+						title: 'Loaded Local Save',
+						subtitle: `Last Modified: ${lastModifiedTime}`,
+						photoUrl: undefined,
+						message: undefined,
+						actionButton: undefined,
+						dismissButton: {
+							text: 'Dismiss',
+							onClick: undefined,
+						},
 					})
+					notificationsStore.dispatch.addDynamicNotification(dynamicNotification)
+					// notificationsStore.dispatch.addLocalNotification(localNotification)
+					return
 				}
 				projectsLocalStorage.initNewProject()
 				setTimeout(() => {

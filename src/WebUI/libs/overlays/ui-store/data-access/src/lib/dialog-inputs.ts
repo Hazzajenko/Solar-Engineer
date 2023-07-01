@@ -1,5 +1,6 @@
 import { ProjectId, ProjectWebModel, ProjectWebUserModel, StringId } from '@entities/shared'
 import { WebUserModel } from '@auth/shared'
+import { DialogInitialVisitWithTemplatesComponent } from '../../../../dialogs/feature/src/lib/dialog-initial-visit-with-templates/dialog-initial-visit-with-templates.component'
 
 export type DialogInputTemplate = {
 	component: DialogComponent
@@ -22,6 +23,7 @@ export const DIALOG_COMPONENT = {
 	SEARCH_FOR_USERS: 'DialogSearchForUsersComponent',
 	MESSAGES: 'DialogMessagesComponent',
 	VIEW_PROJECT_TEMPLATES: 'DialogViewProjectTemplatesComponent',
+	INITIAL_VISIT_WITH_TEMPLATES: 'DialogInitialVisitWithTemplatesComponent',
 } as const
 
 export type DialogComponent = (typeof DIALOG_COMPONENT)[keyof typeof DIALOG_COMPONENT]
@@ -120,6 +122,10 @@ export type DialogInputViewProjectTemplates = DialogInputTemplate & {
 	component: typeof DIALOG_COMPONENT.VIEW_PROJECT_TEMPLATES
 }
 
+export type DialogInputInitialVisitWithTemplates = DialogInputTemplate & {
+	component: typeof DIALOG_COMPONENT.INITIAL_VISIT_WITH_TEMPLATES
+}
+
 export type DialogInput =
 	| DialogInputMovePanelsToString
 	| DialogInputAppSettings
@@ -137,3 +143,4 @@ export type DialogInput =
 	| DialogInputSearchForUsers
 	| DialogInputMessages
 	| DialogInputViewProjectTemplates
+	| DialogInputInitialVisitWithTemplates

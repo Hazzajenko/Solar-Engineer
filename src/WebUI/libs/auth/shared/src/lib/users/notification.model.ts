@@ -53,21 +53,59 @@ export const NOTIFICATION_TYPE = {
 
 export type NotificationType = (typeof NOTIFICATION_TYPE)[keyof typeof NOTIFICATION_TYPE]
 
-export type LocalNotificationModel = {
+export type LocalNotificationBase = {
 	id: string
+	notificationType: LocalNotificationType
+}
+
+export type UserBasedLocalNotification = LocalNotificationBase & {
 	senderAppUserId: string
 	senderAppUserUserName: string
 	senderAppUserPhotoUrl: string
 	senderAppUserDisplayName: string
-	notificationType: LocalNotificationType
-	completed: boolean
 }
+
+export type LocalNotification__UserIsOnline = UserBasedLocalNotification & {
+	notificationType: typeof LOCAL_NOTIFICATION_TYPE.USER_IS_ONLINE
+}
+
+export type LocalNotification__UserIsOffline = UserBasedLocalNotification & {
+	notificationType: typeof LOCAL_NOTIFICATION_TYPE.USER_IS_OFFLINE
+}
+
+export type LocalNotification__UserStatusChanged =
+	| LocalNotification__UserIsOnline
+	| LocalNotification__UserIsOffline
+
+export type LocalNotification__SelectedProject = LocalNotificationBase & {
+	notificationType: typeof LOCAL_NOTIFICATION_TYPE.SELECTED_PROJECT
+	projectId: string
+	projectName: string
+}
+
+export type LocalNotification__LoadedTemplate = LocalNotificationBase & {
+	notificationType: typeof LOCAL_NOTIFICATION_TYPE.LOADED_TEMPLATE
+	templateName: string
+	templatePhotoUrl: string
+}
+
+export type LocalNotification__LoadedLocalSave = LocalNotificationBase & {
+	notificationType: typeof LOCAL_NOTIFICATION_TYPE.LOADED_LOCAL_SAVE
+	localSaveLastModified: string
+}
+
+export type LocalNotificationModel =
+	| LocalNotification__UserStatusChanged
+	| LocalNotification__SelectedProject
+	| LocalNotification__LoadedTemplate
+	| LocalNotification__LoadedLocalSave
 
 export const LOCAL_NOTIFICATION_TYPE = {
 	USER_IS_ONLINE: 'UserIsOnline',
 	USER_IS_OFFLINE: 'UserIsOffline',
-	GET_ONLINE_USERS: 'GetOnlineUsers',
-	GET_ONLINE_FRIENDS: 'GetOnlineFriends',
+	SELECTED_PROJECT: 'SelectedProject',
+	LOADED_TEMPLATE: 'LoadedTemplate',
+	LOADED_LOCAL_SAVE: 'LoadedLocalSave',
 } as const
 
 export type LocalNotificationType =

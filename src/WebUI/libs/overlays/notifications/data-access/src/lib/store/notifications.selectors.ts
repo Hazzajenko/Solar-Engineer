@@ -61,3 +61,8 @@ export const selectLocalNotifications = createSelector(
 	selectNotificationsState,
 	(state: NotificationsState) => state.localNotifications,
 )
+
+export const selectDynamicNotifications = createSelector(
+	selectNotificationsState,
+	(state: NotificationsState) => state.dynamicNotifications,
+)

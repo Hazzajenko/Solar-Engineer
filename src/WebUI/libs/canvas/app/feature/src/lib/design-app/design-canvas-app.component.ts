@@ -27,7 +27,10 @@ import {
 
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
-import { OverlayNotificationModalComponent } from '@overlays/notifications/feature'
+import {
+	OverlayDynamicNotificationComponent,
+	OverlayNotificationModalComponent,
+} from '@overlays/notifications/feature'
 import { SideUiAuthViewComponent, SideUiNavBarComponent } from '@overlays/side-uis/feature'
 import {
 	MobileBottomToolbarComponent,
@@ -76,6 +79,7 @@ import { environment } from '@shared/environment'
 		MobileSideActionToolbarComponent,
 		DefaultHoverEffectsDirective,
 		InputSvgComponent,
+		OverlayDynamicNotificationComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,

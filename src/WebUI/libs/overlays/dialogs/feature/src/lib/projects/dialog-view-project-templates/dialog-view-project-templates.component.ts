@@ -11,7 +11,7 @@ import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle } from '@angular/comm
 import { dialogInputInjectionToken } from '../../dialog-renderer'
 import {
 	DIALOG_COMPONENT,
-	DialogInputInviteToProjectConfirm,
+	DialogInputInitialVisitWithTemplates,
 	injectUiStore,
 } from '@overlays/ui-store/data-access'
 import { injectProjectsStore, ProjectsLocalStorageService } from '@entities/data-access'
@@ -42,7 +42,7 @@ export class DialogViewProjectTemplatesComponent {
 	private _uiStore = injectUiStore()
 	private _projectsLocalStorage = inject(ProjectsLocalStorageService)
 	user = injectAppUser()
-	dialog = inject(Injector).get(dialogInputInjectionToken) as DialogInputInviteToProjectConfirm
+	dialog = inject(Injector).get(dialogInputInjectionToken) as DialogInputInitialVisitWithTemplates
 
 	templates = PROJECT_TEMPLATES
 
