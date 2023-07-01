@@ -12,17 +12,47 @@
 				<svg-input (click)="toggleEditingProjectName()" svgName="SvgEdit" />
 			</div>
 			<form (ngSubmit)="saveProjectName()" [formGroup]="updateProjectNameForm">
-				<input
-					(keyup)="onProjectNameFormKeyUp($event)"
-					[disabled]="!editingProjectName()"
-					[formControl]="updateProjectNameForm.controls.name"
-					[value]="project.name"
-					class="bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-					id="title"
-					name="title"
-					required
-					type="text"
-				/>
+				<!--				<input
+									(keyup)="onProjectNameFormKeyUp($event)"
+									*ngIf="editingProjectName()"
+									[formControl]="updateProjectNameForm.controls.name"
+									[value]="project.name"
+									class="bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									id="title"
+									name="title"
+									required
+									type="text"
+								/>-->
+				<div>
+					<!--					<label class="block text-sm font-medium leading-6 text-gray-900" for="email">{{-->
+					<!--						project.name-->
+					<!--					}}</label>-->
+					<div class="mt-2">
+						<input
+							*ngIf="!editingProjectName()"
+							[placeholder]="project.name"
+							[value]="project.name"
+							class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200 sm:text-sm sm:leading-6"
+							disabled
+							id="title_preview"
+							name="title"
+							type="text"
+						/>
+						<input
+							(keyup)="onProjectNameFormKeyUp($event)"
+							*ngIf="editingProjectName()"
+							[formControl]="updateProjectNameForm.controls.name"
+							[placeholder]="project.name"
+							[value]="project.name"
+							class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200 sm:text-sm sm:leading-6"
+							id="title"
+							name="title"
+							required
+							type="text"
+						/>
+					</div>
+				</div>
+
 				<!-- error block -->
 				<span
 					*ngIf="

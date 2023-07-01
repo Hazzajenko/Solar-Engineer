@@ -48,10 +48,11 @@ import { ProjectsLocalStorageService } from '@entities/data-access'
 })
 export class SignInDialogComponent {
 	private _uiStore = inject(UiStoreService)
-	private _auth = injectAuthStore()
+	private _authStore = injectAuthStore()
 	private _projectsLocalStorage = inject(ProjectsLocalStorageService)
 
-	user = this._auth.select.user
+	user = this._authStore.select.user
+	isGuest = this._authStore.select.guest
 
 	constructor() {
 		effect(
@@ -65,11 +66,11 @@ export class SignInDialogComponent {
 	}
 
 	signInWithGoogle() {
-		this._auth.dispatch.signInWithGoogle()
+		this._authStore.dispatch.signInWithGoogle()
 	}
 
 	signInWithGithub() {
-		this._auth.dispatch.signInWithGithub()
+		this._authStore.dispatch.signInWithGithub()
 	}
 
 	closeDialog() {
@@ -84,12 +85,16 @@ export class SignInDialogComponent {
 		 })
 		 return
 		 }*/
-		this._auth.dispatch.signInAsGuest()
+		if (this.isGuest()) {
+			this.closeDialog()
+			return
+		}
+		this._authStore.dispatch.signInAsGuest()
 
 		this.closeDialog()
 	}
 
 	signInWithMicrosoft() {
-		this._auth.dispatch.signInWithMicrosoft()
+		this._authStore.dispatch.signInWithMicrosoft()
 	}
 }

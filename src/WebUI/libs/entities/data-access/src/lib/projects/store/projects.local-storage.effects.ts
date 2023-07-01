@@ -1,13 +1,11 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
-import { map, switchMap, tap } from 'rxjs'
+import { catchError, EMPTY, map, switchMap, tap } from 'rxjs'
 import { ProjectsActions, ProjectsLocalStorageService } from '@entities/data-access'
 import { AuthActions } from '@auth/data-access'
 import { fetchProjectTemplateData } from '@entities/shared'
-import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
+import { injectUiStore } from '@overlays/ui-store/data-access'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
-import { createDynamicNotification } from '@auth/utils'
-import { getTimeDifferenceFromNow } from '@shared/utils'
 
 export const initLocalStorageProject$ = createEffect(
 	(
@@ -24,39 +22,80 @@ export const initLocalStorageProject$ = createEffect(
 				}
 				const localStorageProject = projectsLocalStorage.fetchExistingProject()
 				return ProjectsActions.initLocalStorageProject({ localStorageProject })
-			}),
-			tap((action) => {
-				if (action.type === '[Projects Store] Init Local Storage Project') {
-					// const localNotification = createLocalNotification.loadedLocalSave(
-					// 	action.localStorageProject.lastModifiedTime,
-					// )
-					const lastModifiedTime = getTimeDifferenceFromNow(
-						action.localStorageProject.lastModifiedTime,
-						'short',
-						true,
-					)
-					const dynamicNotification = createDynamicNotification({
-						title: 'Loaded Local Save',
-						subtitle: `Last Modified: ${lastModifiedTime}`,
-						photoUrl: undefined,
-						message: undefined,
-						actionButton: undefined,
-						dismissButton: {
-							text: 'Dismiss',
-							onClick: undefined,
-						},
-					})
-					notificationsStore.dispatch.addDynamicNotification(dynamicNotification)
-					// notificationsStore.dispatch.addLocalNotification(localNotification)
-					return
+			}) /*	tap((action) => {
+	 if (action.type === '[Projects Store] Init Local Storage Project') {
+	 // const localNotification = createLocalNotification.loadedLocalSave(
+	 // 	action.localStorageProject.lastModifiedTime,
+	 // )
+	 const lastModifiedTime = getTimeDifferenceFromNow(
+	 action.localStorageProject.lastModifiedTime,
+	 'short',
+	 true,
+	 )
+	 const dynamicNotification = createDynamicNotification({
+	 title: 'Loaded Local Save',
+	 subtitle: `Last Modified: ${lastModifiedTime}`,
+	 photoUrl: undefined,
+	 message: undefined,
+	 actionButton: undefined,
+	 dismissButton: {
+	 text: 'Dismiss',
+	 onClick: undefined,
+	 },
+	 })
+	 notificationsStore.dispatch.addDynamicNotification(dynamicNotification)
+	 // notificationsStore.dispatch.addLocalNotification(localNotification)
+	 return
+	 }
+	 projectsLocalStorage.initNewProject()
+	 setTimeout(() => {
+	 uiStore.dispatch.openDialog({
+	 component: DIALOG_COMPONENT.VIEW_PROJECT_TEMPLATES,
+	 })
+	 }, 500)
+	 }),*/,
+		)
+	},
+	{ functional: true },
+)
+
+export const initExistingLocalStorageProject$ = createEffect(
+	(
+		actions$ = inject(Actions),
+		projectsLocalStorage = inject(ProjectsLocalStorageService),
+		notificationsStore = injectNotificationsStore(),
+	) => {
+		return actions$.pipe(
+			ofType(AuthActions.signInAsExistingGuest),
+			map(() => {
+				if (!projectsLocalStorage.isProjectExisting()) {
+					throw new Error('No existing project found')
 				}
-				projectsLocalStorage.initNewProject()
-				setTimeout(() => {
-					uiStore.dispatch.openDialog({
-						component: DIALOG_COMPONENT.VIEW_PROJECT_TEMPLATES,
-					})
-				}, 500)
+				const localStorageProject = projectsLocalStorage.fetchExistingProject()
+				return ProjectsActions.initLocalStorageProject({ localStorageProject })
 			}),
+			catchError((error) => {
+				console.error(error)
+				return EMPTY
+			}) /*tap(({ localStorageProject }) => {
+	 const lastModifiedTime = getTimeDifferenceFromNow(
+	 localStorageProject.lastModifiedTime,
+	 'short',
+	 true,
+	 )
+	 const dynamicNotification = createDynamicNotification({
+	 title: 'Loaded Local Save',
+	 subtitle: `Last Modified: ${lastModifiedTime}`,
+	 photoUrl: undefined,
+	 message: undefined,
+	 actionButton: undefined,
+	 dismissButton: {
+	 text: 'Dismiss',
+	 onClick: undefined,
+	 },
+	 })
+	 notificationsStore.dispatch.addDynamicNotification(dynamicNotification)
+	 }),*/,
 		)
 	},
 	{ functional: true },

@@ -39,7 +39,11 @@ const reducer = createReducer(
 	on(StringsActions.loadNewState, (state, { strings }) => {
 		let newState = stringsAdapter.removeAll(state)
 		newState = stringsAdapter.setAll(strings, newState)
-		return { ...newState, loaded: true }
+		const undefinedStringId = strings.find((string) => string.name === UNDEFINED_STRING_NAME)?.id
+		if (!undefinedStringId) {
+			throw new Error('Undefined string not found')
+		}
+		return { ...newState, undefinedStringId, loaded: true }
 	}),
 	on(StringsActions.loadLocalStorageStrings, (state, { strings }) =>
 		stringsAdapter.setAll(strings, state),

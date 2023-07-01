@@ -9,12 +9,14 @@ import {
 	PanelConfigsActions,
 	PanelLinksActions,
 	PanelsActions,
+	ProjectsActions,
 	StringsActions,
 } from '@entities/data-access'
 import { Actions, createEffect, ofType, provideEffects } from '@ngrx/effects'
 import { inject, makeEnvironmentProviders } from '@angular/core'
 import { RenderService } from '@canvas/rendering/data-access'
 import { tap } from 'rxjs'
+import { NotificationsActions } from '@overlays/notifications/data-access'
 
 const allStateActions = [
 	...getAllActions(AppStateActions),
@@ -27,6 +29,8 @@ const allStateActions = [
 	...getAllActions(PanelsActions),
 	...getAllActions(PanelLinksActions),
 	...getAllActions(PanelConfigsActions),
+	...getAllActions(ProjectsActions),
+	...getAllActions(NotificationsActions),
 ]
 export const renderCanvasOnStateChanges$ = createEffect(
 	(actions$ = inject(Actions), renderService = inject(RenderService)) => {

@@ -17,82 +17,177 @@
 		<ul class="flex flex-1 flex-col gap-y-7">
 			<li>
 				<ul class="space-y-2">
-					<li *ngIf="user">
-						<a
-							(click)="changeView('auth')"
-							*ngrxLet="currentView() === 'auth' as isCurrentView"
-							[isSelected]="isCurrentView"
-							class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-							sideUiNavItem
-						>
-							<svg-input inputClass="w-5 h-5" svgName="SvgUserCircle" />
-						</a>
-					</li>
-					<li>
-						<a
-							(click)="changeView('projects')"
-							*ngrxLet="currentView() === 'projects' as isCurrentView"
-							[isSelected]="isCurrentView"
-							class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-							sideUiNavItem
-						>
-							<svg-input inputClass="w-5 h-5" svgName="SvgFolder" />
-						</a>
-					</li>
-					<li *ngIf="user">
-						<a
-							(click)="changeView('users')"
-							*ngrxLet="currentView() === 'users' as isCurrentView"
-							[isSelected]="isCurrentView"
-							class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-							sideUiNavItem
-						>
-							<svg-input inputClass="w-5 h-5" svgName="SvgUsers" />
-							<!--						<ng-container *ngrxLet="amountOfOnlineFriends() as amountOfOnlineFriends">
-														<div
-															*ngIf="amountOfOnlineFriends && amountOfOnlineFriends > 0"
-															class="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-blue-500 border-1 border border-gray-300 rounded-full -top-2 -right-2 dark:border-gray-900"
-														>
-															{{ amountOfOnlineFriends }}
-														</div>
-													</ng-container>-->
-						</a>
-					</li>
-					<li *ngIf="user">
-						<a
-							(click)="openChat()"
-							class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-						>
-							<svg-input inputClass="w-5 h-5" svgName="SvgChatBubbleLeft" />
-							<!--						<ng-container *ngrxLet="amountOfOnlineFriends() as amountOfOnlineFriends">
-														<div
-															*ngIf="amountOfOnlineFriends && amountOfOnlineFriends > 0"
-															class="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-blue-500 border-1 border border-gray-300 rounded-full -top-2 -right-2 dark:border-gray-900"
-														>
-															{{ amountOfOnlineFriends }}
-														</div>
-													</ng-container>-->
-						</a>
-					</li>
-					<li *ngIf="user">
-						<a
-							(click)="changeView('notifications')"
-							*ngrxLet="currentView() === 'notifications' as isCurrentView"
-							[isSelected]="isCurrentView"
-							class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-							sideUiNavItem
-						>
-							<svg-input inputClass="w-5 h-5" svgName="SvgBell" />
-							<ng-container *ngrxLet="amountOfUnreadNotifications() as amountOfUnreadNotifications">
-								<div
-									*ngIf="amountOfUnreadNotifications && amountOfUnreadNotifications > 0"
-									class="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 border-1 border border-gray-300 rounded-full -top-2 -right-2 dark:border-gray-900"
+					<ng-container *ngIf="user; then userTemplate; else guestTemplate" />
+					<ng-template #userTemplate>
+						<li *ngIf="user">
+							<a
+								(click)="changeView('auth')"
+								*ngrxLet="currentView() === 'auth' as isCurrentView"
+								[isSelected]="isCurrentView"
+								class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+								sideUiNavItem
+							>
+								<svg-input inputClass="w-5 h-5" svgName="SvgUserCircle" />
+							</a>
+						</li>
+						<li>
+							<a
+								(click)="changeView('projects')"
+								*ngrxLet="currentView() === 'projects' as isCurrentView"
+								[isSelected]="isCurrentView"
+								class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+								sideUiNavItem
+							>
+								<svg-input inputClass="w-5 h-5" svgName="SvgFolder" />
+							</a>
+						</li>
+						<li>
+							<a
+								(click)="changeView('users')"
+								*ngrxLet="currentView() === 'users' as isCurrentView"
+								[isSelected]="isCurrentView"
+								class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+								sideUiNavItem
+							>
+								<svg-input inputClass="w-5 h-5" svgName="SvgUsers" />
+							</a>
+						</li>
+						<li>
+							<a
+								(click)="openChat()"
+								class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+							>
+								<svg-input inputClass="w-5 h-5" svgName="SvgChatBubbleLeft" />
+							</a>
+						</li>
+						<li>
+							<a
+								(click)="changeView('notifications')"
+								*ngrxLet="currentView() === 'notifications' as isCurrentView"
+								[isSelected]="isCurrentView"
+								class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+								sideUiNavItem
+							>
+								<svg-input inputClass="w-5 h-5" svgName="SvgBell" />
+								<ng-container
+									*ngrxLet="amountOfUnreadNotifications() as amountOfUnreadNotifications"
 								>
-									{{ amountOfUnreadNotifications }}
-								</div>
-							</ng-container>
-						</a>
-					</li>
+									<div
+										*ngIf="amountOfUnreadNotifications && amountOfUnreadNotifications > 0"
+										class="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 border-1 border border-gray-300 rounded-full -top-2 -right-2 dark:border-gray-900"
+									>
+										{{ amountOfUnreadNotifications }}
+									</div>
+								</ng-container>
+							</a>
+						</li>
+					</ng-template>
+					<ng-template #guestTemplate>
+						<li>
+							<a
+								(click)="openSignInDialog()"
+								class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+							>
+								<svg-input inputClass="w-5 h-5" svgName="SvgUserCircle" />
+							</a>
+						</li>
+						<li>
+							<a
+								(click)="openTemplatesDialog()"
+								class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+							>
+								<svg-input inputClass="w-5 h-5" svgName="SvgFolder" />
+							</a>
+						</li>
+						<li>
+							<a
+								(click)="changeView('demo-project')"
+								*ngrxLet="currentView() === 'demo-project' as isCurrentView"
+								[isSelected]="isCurrentView"
+								class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+								sideUiNavItem
+							>
+								<svg-input inputClass="w-5 h-5" svgName="SvgData" />
+							</a>
+						</li>
+					</ng-template>
+					<!--
+										<li *ngIf="user">
+											<a
+												(click)="changeView('auth')"
+												*ngrxLet="currentView() === 'auth' as isCurrentView"
+												[isSelected]="isCurrentView"
+												class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+												sideUiNavItem
+											>
+												<svg-input inputClass="w-5 h-5" svgName="SvgUserCircle" />
+											</a>
+										</li>
+										<li *ngIf="!user">
+											<a
+												(click)="openSignInDialog()"
+												class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+											>
+												<svg-input inputClass="w-5 h-5" svgName="SvgUserCircle" />
+											</a>
+										</li>
+										<li *ngIf="user">
+											<a
+												(click)="changeView('projects')"
+												*ngrxLet="currentView() === 'projects' as isCurrentView"
+												[isSelected]="isCurrentView"
+												class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+												sideUiNavItem
+											>
+												<svg-input inputClass="w-5 h-5" svgName="SvgFolder" />
+											</a>
+										</li>
+										<li *ngIf="!user">
+											<a
+												(click)="openTemplatesDialog()"
+												class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+											>
+												<svg-input inputClass="w-5 h-5" svgName="SvgFolder" />
+											</a>
+										</li>
+										<li *ngIf="user">
+											<a
+												(click)="changeView('users')"
+												*ngrxLet="currentView() === 'users' as isCurrentView"
+												[isSelected]="isCurrentView"
+												class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+												sideUiNavItem
+											>
+												<svg-input inputClass="w-5 h-5" svgName="SvgUsers" />
+											</a>
+										</li>
+										<li *ngIf="user">
+											<a
+												(click)="openChat()"
+												class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+											>
+												<svg-input inputClass="w-5 h-5" svgName="SvgChatBubbleLeft" />
+											</a>
+										</li>
+										<li *ngIf="user">
+											<a
+												(click)="changeView('notifications')"
+												*ngrxLet="currentView() === 'notifications' as isCurrentView"
+												[isSelected]="isCurrentView"
+												class="relative flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+												sideUiNavItem
+											>
+												<svg-input inputClass="w-5 h-5" svgName="SvgBell" />
+												<ng-container *ngrxLet="amountOfUnreadNotifications() as amountOfUnreadNotifications">
+													<div
+														*ngIf="amountOfUnreadNotifications && amountOfUnreadNotifications > 0"
+														class="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 border-1 border border-gray-300 rounded-full -top-2 -right-2 dark:border-gray-900"
+													>
+														{{ amountOfUnreadNotifications }}
+													</div>
+												</ng-container>
+											</a>
+										</li>-->
 				</ul>
 			</li>
 			<li>
@@ -159,19 +254,6 @@
 							</a>
 						</li>
 					</ng-container>
-				</ul>
-				<ul *ngIf="!user">
-					<li>
-						<a
-							(click)="changeView('demo-project')"
-							*ngrxLet="currentView() === 'demo-project' as isCurrentView"
-							[isSelected]="isCurrentView"
-							class="flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-							sideUiNavItem
-						>
-							<svg-input inputClass="w-5 h-5" svgName="SvgData" />
-						</a>
-					</li>
 				</ul>
 			</li>
 			<!--			<li class="absolute bottom-10">

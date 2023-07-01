@@ -48,7 +48,12 @@
 								<div class="w-full border-t border-gray-200"></div>
 							</div>
 							<div class="relative flex justify-center text-sm font-medium leading-6">
-								<span class="bg-slate-50 px-6 text-gray-900">Or continue as</span>
+								<span *ngIf="isGuest(); else notGuest" class="bg-slate-50 px-6 text-gray-900"
+									>Or stay as</span
+								>
+								<ng-template #notGuest>
+									<span class="bg-slate-50 px-6 text-gray-900">Or continue as</span>
+								</ng-template>
 							</div>
 						</div>
 

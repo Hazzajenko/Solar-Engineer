@@ -19,6 +19,12 @@ export const initialAuthState: AuthState = {
 export const reducer = createReducer(
 	initialAuthState,
 
+	on(AuthActions.signInAsExistingGuest, (state) => ({
+		...state,
+		guest: true,
+		user: undefined,
+	})),
+
 	on(AuthActions.signInAsGuest, (state) => ({
 		...state,
 		guest: true,

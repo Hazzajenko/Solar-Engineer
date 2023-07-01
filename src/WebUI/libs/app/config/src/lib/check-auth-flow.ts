@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store'
 import { AuthActions, AuthStore, injectAuthStore } from '@auth/data-access'
 import { JwtHelperService } from '@auth0/angular-jwt'
 import { DIALOG_COMPONENT, injectUiStore, UiStore } from '@overlays/ui-store/data-access'
+import { isProjectExisting } from '@entities/utils'
 
 const { selectQueryParam } = getRouterSelectors()
 
@@ -28,14 +29,18 @@ export function checkAuthFlow() {
 		return true
 	}
 
-	setTimeout(() => {
-		uiStore.dispatch.openDialog({
-			component: DIALOG_COMPONENT.INITIAL_VISIT_WITH_TEMPLATES,
-		})
-		// uiStore.dispatch.openDialog({
-		// 	component: DIALOG_COMPONENT.SIGN_IN,
-		// })
-	}, 1000)
+	if (!isProjectExisting()) {
+		setTimeout(() => {
+			uiStore.dispatch.openDialog({
+				component: DIALOG_COMPONENT.INITIAL_VISIT_WITH_TEMPLATES,
+			})
+			// uiStore.dispatch.openDialog({
+			// 	component: DIALOG_COMPONENT.SIGN_IN,
+			// })
+		}, 1000)
+	} else {
+		store.dispatch(AuthActions.signInAsExistingGuest())
+	}
 	return false
 }
 

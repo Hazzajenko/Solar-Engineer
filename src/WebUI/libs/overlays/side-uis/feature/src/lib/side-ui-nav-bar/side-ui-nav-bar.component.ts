@@ -206,4 +206,16 @@ export class SideUiNavBarComponent {
 			component: DIALOG_COMPONENT.MESSAGES,
 		})
 	}
+
+	openSignInDialog() {
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.SIGN_IN,
+		})
+	}
+
+	openTemplatesDialog() {
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.VIEW_PROJECT_TEMPLATES,
+		})
+	}
 }

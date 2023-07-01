@@ -166,4 +166,8 @@ export class SearchResultUserComponent implements OnDestroy {
 		this._userOptionsOverlay?.dispose()
 		this._childSubMenuOverlay?.dispose()
 	}
+
+	sendFriendRequest() {
+		this._usersStore.dispatch.sendFriendRequest(this.user.id)
+	}
 }

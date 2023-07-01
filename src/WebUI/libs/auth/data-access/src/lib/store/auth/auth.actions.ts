@@ -6,6 +6,7 @@ export const AuthActions = createActionGroup({
 	events: {
 		Login: emptyProps(),
 		'Sign In As Guest': emptyProps(),
+		'Sign In As Existing Guest': emptyProps(),
 		'Sign In With Google': emptyProps(),
 		'Sign In With Microsoft': emptyProps(),
 		'Sign In With Github': emptyProps(),

@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, Signal, signal } from '@angular/core'
+import {
+	ChangeDetectionStrategy,
+	Component,
+	computed,
+	inject,
+	Signal,
+	signal,
+	TemplateRef,
+	ViewChild,
+	ViewContainerRef,
+} from '@angular/core'
 import { DialogBackdropTemplateComponent } from '../../dialog-backdrop-template/dialog-backdrop-template.component'
 import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle } from '@angular/common'
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
@@ -17,6 +27,9 @@ import { WebUserModel } from '@auth/shared'
 import { CenterThisElementDirective } from '@shared/directives'
 import { TruncatePipe } from '@shared/pipes'
 import { AuthWebUserComponent } from '@auth/ui'
+import { PROJECT_TEMPLATES, ProjectTemplatePreviewModel } from '@entities/shared'
+import { Overlay, OverlayRef } from '@angular/cdk/overlay'
+import { TemplatePortal } from '@angular/cdk/portal'
 
 @Component({
 	selector: 'dialog-create-project',
@@ -46,23 +59,31 @@ export class DialogCreateProjectComponent {
 	private _projects = injectProjectsStore()
 	private _uiStore = injectUiStore()
 	private _usersStore = injectUsersStore()
+	private _selectTemplateOverlay: OverlayRef | undefined
+	private _viewContainerRef = inject(ViewContainerRef)
+	private _overlay = inject(Overlay)
+	@ViewChild('selectTemplateDialog') private _selectTemplateDialog!: TemplateRef<unknown>
+	templates = PROJECT_TEMPLATES
 
+	selectedTemplateName = signal<ProjectTemplatePreviewModel['name'] | undefined>(undefined)
+	selectedTemplate = computed(() =>
+		this.templates.find((t) => t.name === this.selectedTemplateName()),
+	)
 	friends = this._usersStore.select.allFriends as Signal<WebUserModel[]>
 	recentFriends = this._usersStore.select.fourMostRecentFriends
-
 	allFriendsGroupedByFirstLetter = this._usersStore.select.allFriendsGroupedByFirstLetter
-
 	multiSelectedFriendIds = signal<string[]>([])
-
 	selectedFriends = [] as WebUserModel[]
-
 	loading = signal(false)
-
 	createProjectForm = this._fb.group({
 		name: ['', [Validators.required, Validators.minLength(4)]],
 		colour: [TAILWIND_COLOUR_500.blue as string, [Validators.required]],
 	})
 	protected readonly TAILWIND_COLOUR_500_VALUES = TAILWIND_COLOUR_500_VALUES
+
+	selectTemplate(template: ProjectTemplatePreviewModel) {
+		this.selectedTemplateName.set(template.name)
+	}
 
 	setColour(colour: TailwindColor500) {
 		this.createProjectForm.get('colour')?.setValue(colour)
@@ -94,6 +115,17 @@ export class DialogCreateProjectComponent {
 		setTimeout(() => {
 			this._uiStore.dispatch.closeDialog()
 		}, 100)
+	}
+
+	openSelectTemplateDialog() {
+		this._selectTemplateOverlay = this._overlay.create({
+			hasBackdrop: true,
+			scrollStrategy: this._overlay.scrollStrategies.block(),
+		})
+
+		this._selectTemplateOverlay.attach(
+			new TemplatePortal(this._selectTemplateDialog, this._viewContainerRef),
+		)
 	}
 
 	inputChange() {
