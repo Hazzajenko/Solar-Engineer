@@ -12,9 +12,7 @@ public sealed class PanelConfigsRepository
         IPanelConfigsRepository
 {
     public PanelConfigsRepository(ProjectsContext context)
-        : base(context)
-    {
-    }
+        : base(context) { }
 
     /*public async Task<PanelConfig> GetByIdNotNullAsync(Guid id)
     {
@@ -24,25 +22,26 @@ public sealed class PanelConfigsRepository
         );
     }*/
 
-    public async Task<PanelConfig> GetDefaultPanelConfigAsync()
+    public async Task<IEnumerable<PanelConfig>> GetDefaultPanelConfigsAsync()
     {
-        return await Queryable.Where(x => x.Default).Take(1).SingleOrDefaultAsync()
-               ?? throw new ArgumentNullException(nameof(PanelConfig));
+        return await Queryable.Where(x => x.Default).ToListAsync();
     }
 
     public async Task<PanelConfig> GetByFullNameAsync(string fullname)
     {
         return await Queryable.SingleOrDefaultAsync(x => x.FullName == fullname)
-               ?? throw new ArgumentNullException(nameof(PanelConfig));
+            ?? throw new ArgumentNullException(nameof(PanelConfig));
     }
 
     public async Task<PanelConfig> GetByBrandAndModelAsync(string brand, string model)
     {
         return await Queryable.SingleOrDefaultAsync(x => x.Brand == brand && x.Name == model)
-               ?? throw new ArgumentNullException(nameof(PanelConfig));
+            ?? throw new ArgumentNullException(nameof(PanelConfig));
     }
 
-    public async Task<IEnumerable<PanelConfigDto>> GetByPanelConfigIdsAsync(IEnumerable<Guid> panelConfigIds)
+    public async Task<IEnumerable<PanelConfigDto>> GetByPanelConfigIdsAsync(
+        IEnumerable<Guid> panelConfigIds
+    )
     {
         return await Queryable
             .Where(x => panelConfigIds.Contains(x.Id))

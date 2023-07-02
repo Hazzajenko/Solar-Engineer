@@ -1,4 +1,5 @@
-﻿using Projects.Contracts.Data;
+﻿using ApplicationCore.Extensions;
+using Projects.Contracts.Data;
 
 namespace Projects.Application.Mapping;
 
@@ -24,16 +25,34 @@ public static class StringsMapping
         return new List<StringDto> { @string.ToDto() };
     }
 
-    /*
-    public static String ToUndefinedString(this String nullString, Guid projectId, Guid appUserId)
+    public static String ToEntity(
+        this StringTemplateItem stringTemplateItem,
+        Guid projectId,
+        Guid createdById
+    )
     {
-        return new String
-        {
-            Name = "undefined",
-            Color = "#808080",
-            Parallel = false,
-            ProjectId = projectId,
-            CreatedById = appUserId
-        };
-    }*/
+        return String.Create(
+            (stringTemplateItem.Id, stringTemplateItem.Name, stringTemplateItem.Colour),
+            projectId,
+            createdById
+        );
+    }
+
+    public static IEnumerable<String> ToEntityList(
+        this IEnumerable<StringTemplateItem> stringTemplateItems,
+        Guid projectId,
+        Guid createdById
+    )
+    {
+        return stringTemplateItems.Select(x => x.ToEntity(projectId, createdById));
+    }
+
+    public static String ToEntity(this StringDto stringDto, Guid projectId, Guid createdById)
+    {
+        return String.Create(
+            (stringDto.Id, stringDto.Name, stringDto.Colour),
+            projectId,
+            createdById
+        );
+    }
 }

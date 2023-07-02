@@ -11,6 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Ardalis.SmartEnum" Version="7.0.0" />
+      <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="7.0.0" />
       <PackageReference Include="FluentValidation" Version="11.5.2" />
     </ItemGroup>
 

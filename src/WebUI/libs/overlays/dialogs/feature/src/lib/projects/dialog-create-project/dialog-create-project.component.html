@@ -97,20 +97,26 @@
 				</div>
 
 				<div class="flex items-center justify-start"></div>
-				<div>
-					<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-						>Starter Template</label
-					>
-					<p class="text-xs font-medium text-gray-800 dark:text-gray-200">
-						Selected Template:
-						<span class="font-normal">{{ selectedTemplateName ?? "None" }}</span>
-					</p>
+				<div class="flex items-center justify-between">
+					<!--					<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"-->
+					<!--						>Starter Template</label-->
+					<!--					>-->
+					<div class="flex flex-col">
+						<p class="text-xs font-medium text-gray-800 dark:text-gray-200">
+							Selected Template:
+							<!--						<span class="font-normal">{{ selectedTemplateName() ?? "None" }}</span>-->
+						</p>
+						<p class="text-xs font-medium text-gray-800 dark:text-gray-200">
+							<span class="font-normal">{{ selectedTemplateName() }}</span>
+							<!--							<span class="font-normal">{{ selectedTemplateName() ?? "None" }}</span>-->
+						</p>
+					</div>
 					<button
 						(click)="openSelectTemplateDialog()"
 						class="inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
 						type="button"
 					>
-						Switch Template
+						Change
 					</button>
 				</div>
 
@@ -205,8 +211,9 @@
 </dialog-backdrop-template-component>
 
 <ng-template #selectTemplateDialog>
-	<dialog-backdrop-template-component disableCloseDialog>
-		<div class="col-span-4 sm:col-span-4 md:col-span-5 pl-2">
+	<!--	<dialog-backdrop-template-component disableCloseDialog>-->
+	<dialog-standalone-backdrop-template-component (closeDialogEvent)="closeTemplateDialog()">
+		<div class="col-span-4 sm:col-span-4 md:col-span-5 p-6">
 			<h5 class="inline-flex items-center mb-1 font-semibold text-gray-800 dark:text-gray-200">
 				Select Project Template
 			</h5>
@@ -265,7 +272,7 @@
 					</p>
 				</div>
 				<button
-					(click)="onSubmit()"
+					(click)="submitSelectedTemplate()"
 					[disabled]="!selectedTemplateName()"
 					[ngClass]="{
 						'opacity-50 cursor-not-allowed bg-blue-700 hover:bg-blue-800': !selectedTemplateName(),
@@ -277,7 +284,7 @@
 					<span> Start With Selected Template </span>
 				</button>
 				<button
-					(click)="dialog.closeDialog()"
+					(click)="startWithBlankTemplate()"
 					class="inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
 					type="button"
 				>
@@ -285,5 +292,6 @@
 				</button>
 			</div>
 		</div>
-	</dialog-backdrop-template-component>
+	</dialog-standalone-backdrop-template-component>
+	<!--	</dialog-backdrop-template-component>-->
 </ng-template>

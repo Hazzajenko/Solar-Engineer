@@ -4,8 +4,10 @@ import {
 	AcceptInviteToProjectResponse,
 	AcceptProjectInviteRequest,
 	CreateProjectRequest,
+	GetProjectByIdResponse,
 	InviteToProjectRequest,
 	KickProjectMemberRequest,
+	ProjectCreatedResponse,
 	ProjectEntities,
 	ProjectId,
 	ProjectLocalStorageModel,
@@ -41,8 +43,14 @@ export const ProjectsActions = createActionGroup({
 		'Create Project Signalr': props<{
 			request: CreateProjectRequest
 		}>(),
+		'Create Project Success': props<{
+			response: ProjectCreatedResponse
+		}>(),
 		'Select Project': props<{
 			projectId: ProjectId
+		}>(),
+		'Get Project Success': props<{
+			response: GetProjectByIdResponse
 		}>(),
 		'Get Project Failure': props<{
 			error: string | null

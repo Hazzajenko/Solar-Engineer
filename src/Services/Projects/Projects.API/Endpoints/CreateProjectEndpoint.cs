@@ -1,13 +1,16 @@
 ﻿using ApplicationCore.Extensions;
 using FastEndpoints;
 using Infrastructure.Extensions;
+using Infrastructure.Logging;
 using Mediator;
 using Projects.Contracts.Requests.Projects;
+using Projects.Contracts.Responses.Projects;
 using Projects.SignalR.Commands.Projects;
 
 namespace Projects.API.Endpoints;
 
-public class CreateProjectEndpoint : Endpoint<CreateProjectRequest>
+public class CreateProjectEndpoint
+    : Endpoint<CreateProjectRequest, ProjectCreatedWithTemplateResponse>
 {
     private readonly IMediator _mediator;
 
@@ -30,7 +33,12 @@ public class CreateProjectEndpoint : Endpoint<CreateProjectRequest>
 
     public override async Task HandleAsync(CreateProjectRequest request, CancellationToken cT)
     {
-        await _mediator.Send(new CreateProjectCommand(User.ClaimsToAuthUser(), request), cT);
-        await SendNoContentAsync(cT);
+        request.DumpObjectJson();
+        Response = await _mediator.Send(
+            new CreateProjectCommand(User.ClaimsToAuthUser(), request),
+            cT
+        );
+        Response.DumpObjectJson();
+        await SendOkAsync(Response, cT);
     }
 }

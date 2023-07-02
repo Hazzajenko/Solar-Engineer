@@ -1,0 +1,155 @@
+<link href="https://solarengineer.net" rel="preconnect" />
+<link href="https://solarengineer.blob.core.windows.net" rel="preconnect" />
+<dialog-backdrop-template-component #dialog *ngIf="!user()">
+	<div class="place-self-center lg:col-span-6">
+		<div class="p-6 mx-auto bg-slate-50 rounded-lg shadow dark:bg-gray-800 sm:p-8">
+			<a
+				class="inline-flex items-center mb-4 text-xl font-semibold text-gray-900 dark:text-white"
+				href="#"
+			>
+				Solar Engineer
+			</a>
+			<h1
+				class="mb-2 text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white"
+			>
+				Welcome back
+			</h1>
+			<p class="text-sm font-light text-gray-500 dark:text-gray-300">
+				Start your Project in seconds.
+			</p>
+			<div
+				class="flex flex-col sm:grid sm:grid-cols-7 gap-2 items-center sm:divide-x sm:divide-slate-200"
+			>
+				<form action="#" class="mt-2 sm:mt-0 space-y-6 col-span-3 sm:col-span-3 md:col-span-2">
+					<div class="space-y-3">
+						<a
+							(click)="signInWithGoogle()"
+							class="w-full inline-flex items-center justify-center py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+							href="#"
+						>
+							<svg-input class="w-4 h-4 mr-2 -ml-1" svgName="SvgMicrosoft" />
+							Sign in with Google
+						</a>
+						<button
+							(click)="signInWithMicrosoft()"
+							class="w-full inline-flex items-center justify-center py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+							type="button"
+						>
+							<svg-input class="w-4 h-4 mr-2 -ml-1" svgName="SvgMicrosoft" />
+							Sign in with Microsoft
+						</button>
+						<div class="mt-10 sm:hidden">
+							<div class="relative">
+								<div aria-hidden="true" class="absolute inset-0 flex items-center">
+									<div class="w-full border-t border-gray-200"></div>
+								</div>
+								<div class="relative flex justify-center text-sm font-medium leading-6">
+									<span class="bg-slate-50 px-6 text-gray-900"
+										>Or continue as Guest to try it out</span
+									>
+								</div>
+							</div>
+
+							<!--		<div class="mt-6">
+										<a
+											(click)="signInAsGuest()"
+											class="w-full inline-flex items-center justify-center py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+										>
+											<span class="text-sm font-semibold leading-6">Guest</span>
+										</a>
+									</div>-->
+						</div>
+					</div>
+				</form>
+				<div class="col-span-4 sm:col-span-4 md:col-span-5 pl-2">
+					<h5
+						class="hidden sm:inline-flex items-center mb-1 text-sm font-semibold text-gray-800 dark:text-gray-200"
+						id="drawer-label"
+					>
+						<!--						Select Project Template-->
+						Or continue as Guest to try it out
+					</h5>
+
+					<div
+						*ngrxLet="selectedTemplateName() as selectedTemplateName"
+						class="flex-col w-full mb-6 hidden sm:flex"
+					>
+						<p class="text-xs font-medium text-gray-800 dark:text-gray-200">
+							Selected Template:
+							<span class="font-normal">{{ selectedTemplateName ?? "None" }}</span>
+						</p>
+					</div>
+
+					<div class="border-b border-gray-200 dark:border-gray-700 sm:border-0 pb-2">
+						<ul
+							class="grid gap-x-4 gap-y-8 sm:grid-cols-1 sm:gap-x-6 md:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 max-h-[30vh] sm:max-h-[60vh] overflow-y-auto"
+							role="list"
+						>
+							<li *ngFor="let template of templates" class="relative">
+								<div
+									(click)="selectTemplate(template)"
+									class="group flex items-center justify-center aspect-h-7 aspect-w-10 m-2 overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100"
+								>
+									<img
+										[ngSrc]="template.photoUrl"
+										alt="{{ template.name }} preview"
+										class="pointer-events-none object-cover group-hover:opacity-75"
+										height="275"
+										priority="true"
+										width="425"
+									/>
+									<button class="absolute inset-0 focus:outline-none" type="button">
+										<span class="sr-only">View details for {{ template.name }}</span>
+									</button>
+								</div>
+								<p
+									class="pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900"
+								>
+									{{ template.name }}
+								</p>
+								<p class="pointer-events-none block text-sm font-medium text-gray-500">
+									{{ template.description }}
+								</p>
+							</li>
+						</ul>
+					</div>
+					<div
+						class="flex flex-col items-center mt-1 justify-center space-y-1 sm:flex-row-reverse sm:justify-start sm:space-x-1"
+					>
+						<div
+							*ngrxLet="selectedTemplateName() as selectedTemplateName"
+							class="flex flex-col w-full pb-1 sm:hidden"
+						>
+							<p class="text-sm font-semibold text-gray-800 dark:text-gray-200">
+								Selected Template:
+							</p>
+							<p class="text-xs font-semibold">
+								{{ selectedTemplateName ?? "None" }}
+							</p>
+						</div>
+						<button
+							(click)="onSubmit()"
+							[disabled]="!selectedTemplateName()"
+							[ngClass]="{
+								'opacity-50 cursor-not-allowed bg-blue-700 hover:bg-blue-800':
+									!selectedTemplateName(),
+								'bg-blue-500 hover:bg-blue-600': selectedTemplateName()
+							}"
+							class="bg-primary-500 w-full sm:w-auto text-white inline-flex items-center justify-center font-medium rounded-lg text-sm px-3 py-2 text-center focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+							type="submit"
+						>
+							<span> Start With Selected Template </span>
+						</button>
+						<button
+							(click)="startWithBlankTemplate()"
+							class="inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+							type="button"
+						>
+							Start with a blank project
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</dialog-backdrop-template-component>

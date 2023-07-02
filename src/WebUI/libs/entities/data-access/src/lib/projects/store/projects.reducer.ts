@@ -1,7 +1,7 @@
 import { ProjectsActions } from './projects.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { ProjectId, ProjectModel } from '@entities/shared'
+import { ProjectDataModel, ProjectId, ProjectModel } from '@entities/shared'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
 
@@ -68,6 +68,15 @@ const reducer = createReducer(
 		...state,
 		selectedProjectId: projectId,
 	})),
+	on(ProjectsActions.createProjectSuccess, (state, { response }) => ({
+		...state,
+		...projectsAdapter.addOne(projectDataModelToProjectModel(response.project), state),
+		selectedProjectId: response.project.id as ProjectId,
+	})),
+	on(ProjectsActions.getProjectSuccess, (state, { response }) => ({
+		...state, // ...projectsAdapter.addOne(projectDataModelToProjectModel(response.project), state),
+		selectedProjectId: response.project.id as ProjectId,
+	})),
 	on(ProjectsActions.addProject, (state, { project }) => projectsAdapter.addOne(project, state)),
 	on(ProjectsActions.addManyProjects, (state, { projects }) =>
 		projectsAdapter.addMany(projects, state),
@@ -109,4 +118,18 @@ const reducer = createReducer(
 
 export function projectsReducer(state: ProjectsState | undefined, action: Action) {
 	return reducer(state, action)
+}
+
+const projectDataModelToProjectModel = (projectDataModel: ProjectDataModel): ProjectModel => {
+	return {
+		id: projectDataModel.id as ProjectId,
+		name: projectDataModel.name,
+		createdTime: projectDataModel.createdTime,
+		memberIds: projectDataModel.memberIds,
+		colour: projectDataModel.colour,
+		createdById: projectDataModel.createdById,
+		members: projectDataModel.members,
+		lastModifiedTime: projectDataModel.lastModifiedTime,
+		undefinedStringId: projectDataModel.undefinedStringId,
+	} as ProjectModel
 }

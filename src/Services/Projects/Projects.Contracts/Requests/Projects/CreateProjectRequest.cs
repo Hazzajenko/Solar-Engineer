@@ -1,18 +1,18 @@
-﻿using MessagePack;
+﻿using System.Text.Json.Serialization;
+using Ardalis.SmartEnum.SystemTextJson;
+using MessagePack;
+using Projects.Contracts.Data;
 
 namespace Projects.Contracts.Requests.Projects;
 
-// [MessagePackObject(keyAsPropertyName: true)]
 public class CreateProjectRequest
 {
-    // [Key("name")]
     public string Name { get; set; } = default!;
-
-    // [Key("colour")]
     public string Colour { get; set; } = default!;
-
-    // [Key("memberIds")]
     public IEnumerable<string> MemberIds { get; set; } = default!;
+
+    [JsonConverter(typeof(SmartEnumNameConverter<ProjectTemplateKey, int>))]
+    public ProjectTemplateKey TemplateType { get; set; } = default!;
 }
 
 public class CreateProjectRequestValidator : AbstractValidator<CreateProjectRequest>

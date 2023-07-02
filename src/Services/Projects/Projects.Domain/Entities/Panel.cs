@@ -41,6 +41,7 @@ public class Panel : IEntity, IProjectItem, IUserObject
         CreatedById = createdById;
     }
 
+
     public Panel() { }
 
     public String String { get; set; } = default!;
@@ -74,12 +75,20 @@ public class Panel : IEntity, IProjectItem, IUserObject
     {
         return new Panel(id, projectId, stringId, panelConfigId, location, angle, createdById);
     }
-
-    public static Panel AddStringId(Panel panel, Guid stringId)
+    
+    public Panel ChangeStringId(Guid stringId)
     {
-        panel.StringId = stringId;
-        return panel;
+        StringId = stringId;
+        return this;
     }
+    
+    
+    //
+    // public static Panel AddStringId(Panel panel, Guid stringId)
+    // {
+    //     panel.StringId = stringId;
+    //     return panel;
+    // }
 
     public class Point
     {

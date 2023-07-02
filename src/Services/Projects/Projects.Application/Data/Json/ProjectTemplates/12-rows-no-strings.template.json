@@ -1,0 +1,1091 @@
+{
+	"panelLinks": [],
+	"strings": [
+		{
+			"id": "UNDEFINED_STRING_ID",
+			"colour": "#000000",
+			"name": "UNDEFINED_STRING",
+			"parallel": false,
+			"type": "String"
+		}
+	],
+	"panelConfigs": [
+		{
+			"id": "Longi-Himo555m",
+			"fullName": "Longi Himo555m",
+			"brand": "Longi",
+			"model": "Himo555m",
+			"currentAtMaximumPower": 13.19,
+			"shortCircuitCurrent": 14.01,
+			"shortCircuitCurrentTemp": 0.05,
+			"maximumPower": 555,
+			"maximumPowerTemp": -0.34,
+			"voltageAtMaximumPower": 42.1,
+			"openCircuitVoltage": 49.95,
+			"openCircuitVoltageTemp": -0.265,
+			"length": 2256,
+			"width": 1133,
+			"weight": 27.2,
+			"type": "PanelConfig",
+			"default": true
+		}
+	],
+	"panels": [
+		{
+			"location": {
+				"x": 414,
+				"y": 281
+			},
+			"angle": 0,
+			"id": "84622463-a53c-4f68-bca2-1ea7f5b39efc",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 414,
+				"y": 306
+			},
+			"angle": 0,
+			"id": "4d865f62-fa43-4dea-b521-e01f3382afc8",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 414,
+				"y": 356
+			},
+			"angle": 0,
+			"id": "2edcd550-ad9f-480b-b70c-af40489da584",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 414,
+				"y": 381
+			},
+			"angle": 0,
+			"id": "90216c9f-7890-463d-a7f3-407c3e9cd777",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 414,
+				"y": 431
+			},
+			"angle": 0,
+			"id": "27a38608-3cc3-4cae-a81b-832cc3581d55",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 414,
+				"y": 456
+			},
+			"angle": 0,
+			"id": "47f3a1a3-7a7b-4d73-be99-ca36ea66dfa8",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 414,
+				"y": 506
+			},
+			"angle": 0,
+			"id": "f4c2bf65-1be4-461a-ad2a-d324ec3ba065",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 414,
+				"y": 531
+			},
+			"angle": 0,
+			"id": "8dc30e0b-40b4-421d-81c8-1ceb1b617e90",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 414,
+				"y": 581
+			},
+			"angle": 0,
+			"id": "6b822f80-8d77-4b75-a405-49c0a2be251f",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 414,
+				"y": 606
+			},
+			"angle": 0,
+			"id": "a0a27d8a-e1f2-46c1-9be3-109018676d0f",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 414,
+				"y": 656
+			},
+			"angle": 0,
+			"id": "a8e475d9-9b07-4b39-9e0a-565d06f4747f",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 414,
+				"y": 681
+			},
+			"angle": 0,
+			"id": "9365f674-aa67-42de-91ac-6bf2cf48fab2",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 394,
+				"y": 281
+			},
+			"angle": 0,
+			"id": "1276f9c3-30f8-42ce-b251-39480713ff04",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 394,
+				"y": 306
+			},
+			"angle": 0,
+			"id": "d23b70c8-6925-4795-8736-c385b964dab0",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 394,
+				"y": 356
+			},
+			"angle": 0,
+			"id": "24b0fbc8-6d48-4fc4-a73e-748c411d3b51",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 394,
+				"y": 381
+			},
+			"angle": 0,
+			"id": "744ee7ab-a159-40fa-b2d4-1ff1c8059f40",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 394,
+				"y": 431
+			},
+			"angle": 0,
+			"id": "9a81d31b-533b-4a83-a0b2-f5dac8057ee6",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 394,
+				"y": 456
+			},
+			"angle": 0,
+			"id": "792d16d7-d236-4863-8e89-e3ec45407215",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 394,
+				"y": 506
+			},
+			"angle": 0,
+			"id": "eccf74e5-a659-4c6c-92a6-a515987ff9b2",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 394,
+				"y": 531
+			},
+			"angle": 0,
+			"id": "56bd33eb-8da6-4bc2-9808-a68fe9889444",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 394,
+				"y": 581
+			},
+			"angle": 0,
+			"id": "3a053bde-3c63-42bc-b688-6cb7dc43421d",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 394,
+				"y": 606
+			},
+			"angle": 0,
+			"id": "cdcffc0b-ca02-4a8b-af5b-9d7c55c442c8",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 394,
+				"y": 656
+			},
+			"angle": 0,
+			"id": "c6437836-6ed4-479b-8968-6d4558bbbfd3",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 394,
+				"y": 681
+			},
+			"angle": 0,
+			"id": "5414b5eb-36e5-4925-8847-f9a526261966",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 374,
+				"y": 281
+			},
+			"angle": 0,
+			"id": "fb7394fb-34c4-46ea-9060-87773b04fc28",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 374,
+				"y": 306
+			},
+			"angle": 0,
+			"id": "78f6ecb4-c7e9-49d7-aea7-5fd84c30a9eb",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 374,
+				"y": 356
+			},
+			"angle": 0,
+			"id": "5b9e9db2-91ff-4724-b811-e41c8cc7c261",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 374,
+				"y": 381
+			},
+			"angle": 0,
+			"id": "a6f20c9a-39af-49b7-9e09-83a63fef3552",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 374,
+				"y": 431
+			},
+			"angle": 0,
+			"id": "6c51be54-9eaf-4a2d-be87-c92433646e7a",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 374,
+				"y": 456
+			},
+			"angle": 0,
+			"id": "d4f6370e-786d-4e17-b909-e7bed23469f8",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 374,
+				"y": 506
+			},
+			"angle": 0,
+			"id": "4d69302d-ea92-4d98-a447-373535e230d9",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 374,
+				"y": 531
+			},
+			"angle": 0,
+			"id": "59217e74-56d1-488b-b1ac-6fcaf94146ac",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 374,
+				"y": 581
+			},
+			"angle": 0,
+			"id": "589cb94e-dbec-419c-8c11-c2408e261b8a",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 374,
+				"y": 606
+			},
+			"angle": 0,
+			"id": "9825f626-a5d1-4fba-a448-26148b8e5725",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 374,
+				"y": 656
+			},
+			"angle": 0,
+			"id": "a16c21da-bc1f-4ce6-bb60-798c0d7a9293",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 374,
+				"y": 681
+			},
+			"angle": 0,
+			"id": "1a2ba9b3-bd38-4e09-8008-e10d9cd93c82",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 354,
+				"y": 281
+			},
+			"angle": 0,
+			"id": "dcf3f79c-f9ca-4a0e-9121-e03505c29cb3",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 354,
+				"y": 306
+			},
+			"angle": 0,
+			"id": "b404afdf-32d8-42d8-b4ab-daa376439648",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 354,
+				"y": 356
+			},
+			"angle": 0,
+			"id": "453dc734-2569-45e8-a7a4-d85c364a163c",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 354,
+				"y": 381
+			},
+			"angle": 0,
+			"id": "81f5ed20-728e-4145-9ce1-755e7f635f4d",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 354,
+				"y": 431
+			},
+			"angle": 0,
+			"id": "85a9b30b-c902-45bf-b706-8af2488ce69a",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 354,
+				"y": 456
+			},
+			"angle": 0,
+			"id": "0c6c4fe8-7c7d-4f17-b741-a934a7f9d420",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 354,
+				"y": 506
+			},
+			"angle": 0,
+			"id": "4fac9107-dcd8-4c00-8dd5-f3fc7b53d9f9",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 354,
+				"y": 531
+			},
+			"angle": 0,
+			"id": "341a2f67-9246-42cc-b4e0-fe8343778af3",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 354,
+				"y": 581
+			},
+			"angle": 0,
+			"id": "7943bbdc-e086-47c8-9672-57e04032448b",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 354,
+				"y": 606
+			},
+			"angle": 0,
+			"id": "5473d2b5-70ba-4d2f-bf6c-f0e81a1dc049",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 354,
+				"y": 656
+			},
+			"angle": 0,
+			"id": "1b2fbf2f-1418-491f-9903-8f41938f5527",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 354,
+				"y": 681
+			},
+			"angle": 0,
+			"id": "51b87def-8579-42b0-b6e1-8d8822554a83",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 334,
+				"y": 281
+			},
+			"angle": 0,
+			"id": "54708211-cdba-4687-a654-3a17515fa8bc",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 334,
+				"y": 306
+			},
+			"angle": 0,
+			"id": "2855074a-9185-4006-99cd-693ca24f681a",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 334,
+				"y": 356
+			},
+			"angle": 0,
+			"id": "d4a5ecd3-40c3-418f-926f-d3822be0a1a2",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 334,
+				"y": 381
+			},
+			"angle": 0,
+			"id": "f205a711-8019-4f79-9362-d1ce50c1ad87",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 334,
+				"y": 431
+			},
+			"angle": 0,
+			"id": "3aba41e0-b432-4c20-9d62-f91c6105ecf3",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 334,
+				"y": 456
+			},
+			"angle": 0,
+			"id": "a1af242b-ab35-4cc4-bcfe-a961771298c0",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 334,
+				"y": 506
+			},
+			"angle": 0,
+			"id": "9fec0b44-9b74-4b84-8beb-1068e8520782",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 334,
+				"y": 531
+			},
+			"angle": 0,
+			"id": "0f040a2a-6f50-4adb-9f37-c7ba2f1c810b",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 334,
+				"y": 581
+			},
+			"angle": 0,
+			"id": "e2493881-04e6-49c3-a100-805dc89090b3",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 334,
+				"y": 606
+			},
+			"angle": 0,
+			"id": "160f51dc-eef3-4699-a7a7-fd269ac1f360",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 334,
+				"y": 656
+			},
+			"angle": 0,
+			"id": "c3ef3b75-b7ff-4dd4-ad51-a76f28957fdb",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 334,
+				"y": 681
+			},
+			"angle": 0,
+			"id": "7545294c-49c4-4f8e-a363-509bb3443486",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 314,
+				"y": 281
+			},
+			"angle": 0,
+			"id": "69a242aa-f0f4-4d2d-985f-8b0d9bc9e23a",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 314,
+				"y": 306
+			},
+			"angle": 0,
+			"id": "296c9322-81db-45fc-8644-b60aed05e7ae",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 314,
+				"y": 356
+			},
+			"angle": 0,
+			"id": "3b2d7228-ac10-40d0-a1af-3767a8dc6fb6",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 314,
+				"y": 381
+			},
+			"angle": 0,
+			"id": "9e4fa3f3-a162-42e2-88b5-aab0c49c9d04",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 314,
+				"y": 431
+			},
+			"angle": 0,
+			"id": "70c9cb76-64b6-4115-b042-751e5796b471",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 314,
+				"y": 456
+			},
+			"angle": 0,
+			"id": "82affc99-876d-44ba-ac09-230258449713",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 314,
+				"y": 506
+			},
+			"angle": 0,
+			"id": "721bafe4-481d-4e03-b67e-c78663e302c5",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 314,
+				"y": 531
+			},
+			"angle": 0,
+			"id": "c20e3c3b-74f3-42bb-838a-b7596e540897",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 314,
+				"y": 581
+			},
+			"angle": 0,
+			"id": "59ae77a5-675c-4b0c-9b2e-145cc5008026",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 314,
+				"y": 606
+			},
+			"angle": 0,
+			"id": "cba6ae07-02c4-4e91-a852-2d58e11ed597",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 314,
+				"y": 656
+			},
+			"angle": 0,
+			"id": "a21dd589-c931-4fe4-ba94-d6e210f27802",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 314,
+				"y": 681
+			},
+			"angle": 0,
+			"id": "ca2a53da-c0b3-405f-b32c-e379117d44c9",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 294,
+				"y": 281
+			},
+			"angle": 0,
+			"id": "6b242619-2077-4433-a695-b970aedeb0a5",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 294,
+				"y": 306
+			},
+			"angle": 0,
+			"id": "2acd9756-836a-48b5-a3a0-41f9747a06f6",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 294,
+				"y": 356
+			},
+			"angle": 0,
+			"id": "ce641e5d-f0c6-4d24-8a80-37a529f82f82",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 294,
+				"y": 381
+			},
+			"angle": 0,
+			"id": "cfa88e0a-7593-4f9a-919b-9d6f1ceb315e",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 294,
+				"y": 431
+			},
+			"angle": 0,
+			"id": "139cda70-c4b5-4bbb-a392-17cb742f298f",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 294,
+				"y": 456
+			},
+			"angle": 0,
+			"id": "0ba56eab-163b-42de-908f-478030295fb5",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 294,
+				"y": 506
+			},
+			"angle": 0,
+			"id": "c27fd825-e43f-4e3b-bf38-107e6eb7c06f",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 294,
+				"y": 531
+			},
+			"angle": 0,
+			"id": "fbfd9a84-59c9-4e63-be30-e807aa2d0170",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 294,
+				"y": 581
+			},
+			"angle": 0,
+			"id": "48a43549-e895-4e10-8c35-9beb42378f44",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 294,
+				"y": 606
+			},
+			"angle": 0,
+			"id": "09a68610-7d38-4d10-a006-a4243b7c86c3",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 294,
+				"y": 656
+			},
+			"angle": 0,
+			"id": "67c58cb8-497a-43dc-beb7-0b9ea585e25f",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 294,
+				"y": 681
+			},
+			"angle": 0,
+			"id": "4db2fb8d-8b9e-4b3f-98e9-178e0ecacefa",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 274,
+				"y": 281
+			},
+			"angle": 0,
+			"id": "801d5248-92d3-458e-942f-fd2bceced458",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 274,
+				"y": 306
+			},
+			"angle": 0,
+			"id": "f84fbaf6-24d1-4e11-8b4a-73d699222a90",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 274,
+				"y": 356
+			},
+			"angle": 0,
+			"id": "cf33ec23-0c11-4276-8297-5136d74dba9d",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 274,
+				"y": 381
+			},
+			"angle": 0,
+			"id": "823a06c7-6397-425a-9d9b-e892ff7aca57",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 274,
+				"y": 431
+			},
+			"angle": 0,
+			"id": "fcb28699-4185-4727-b50e-cb665e8654cb",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 274,
+				"y": 456
+			},
+			"angle": 0,
+			"id": "7a3867af-a110-4988-be40-e6e484bcff9a",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 274,
+				"y": 506
+			},
+			"angle": 0,
+			"id": "c6e555e9-3ddd-4d96-92ff-cf94f0419377",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 274,
+				"y": 531
+			},
+			"angle": 0,
+			"id": "1b645a09-b683-4dde-972e-180d4ce2e5bb",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 274,
+				"y": 581
+			},
+			"angle": 0,
+			"id": "135ee7eb-89ca-466c-94dd-63d524469ecf",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 274,
+				"y": 606
+			},
+			"angle": 0,
+			"id": "476a04c7-e4f3-4f71-ae5d-77c86ce68978",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 274,
+				"y": 656
+			},
+			"angle": 0,
+			"id": "60bf4dc5-147e-4743-8866-f26092f8459a",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		},
+		{
+			"location": {
+				"x": 274,
+				"y": 681
+			},
+			"angle": 0,
+			"id": "d705ea7d-5e5f-49e3-b7f1-cf83ace92615",
+			"stringId": "UNDEFINED_STRING_ID",
+			"panelConfigId": "Longi-Himo555m",
+			"type": "Panel"
+		}
+	]
+}

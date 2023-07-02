@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using System.Text.Json.Serialization;
 using ApplicationCore.Entities;
 using ApplicationCore.Extensions;
 using Infrastructure.Extensions;
@@ -8,6 +9,7 @@ using Infrastructure.SignalR.HubFilters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -18,7 +20,9 @@ public static class SignalRExtensions
 {
     public static IServiceCollection ConfigureSignalRWithRedis(
         this IServiceCollection services,
-        IWebHostEnvironment env
+        IWebHostEnvironment env,
+        Action<JsonHubProtocolOptions>? configureJsonProtocol = null,
+        List<JsonConverter>? jsonConverters = default!
     )
     {
         var redisConnectionString = env.IsDevelopment() ? "localhost" : "redis";
@@ -31,7 +35,36 @@ public static class SignalRExtensions
 
                 options.AddFilter<HubLoggerFilter>();
             })
+            .AddJsonProtocol(options =>
+            {
+                configureJsonProtocol?.Invoke(options);
+                if (jsonConverters is not null)
+                {
+                    foreach (var jsonConverter in jsonConverters)
+                    {
+                        options.PayloadSerializerOptions.Converters.Add(jsonConverter);
+                    }
+                }
+            })
             .AddStackExchangeRedis(redisConnectionString);
+
+        // ISignalRServerBuilder builder = services
+        //      .AddSignalR(options =>
+        //      {
+        //          options.DisableImplicitFromServicesParameters = true;
+        //          if (env.IsDevelopment())
+        //              options.EnableDetailedErrors = true;
+        //
+        //          options.AddFilter<HubLoggerFilter>();
+        //      })
+        //      .AddJsonProtocol(options =>
+        //      {
+        //          configureJsonProtocol?.Invoke(options);
+        //          options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        //          // options.PayloadSerializerOptions.Converters.Add(new ProjectTemplateKeyConverter());
+        //      })
+        //      .AddStackExchangeRedis(redisConnectionString);
+
         return services;
     }
 

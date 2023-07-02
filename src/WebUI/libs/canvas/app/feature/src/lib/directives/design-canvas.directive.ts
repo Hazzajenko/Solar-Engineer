@@ -695,7 +695,11 @@ export class DesignCanvasDirective implements OnInit {
 		if (entityUnderMouse) {
 			// if (!isPanel(entityUnderMouse)) return
 
-			if (entityUnderMouse.stringId === UNDEFINED_STRING_ID) return
+			if (
+				entityUnderMouse.stringId === UNDEFINED_STRING_ID ||
+				entityUnderMouse.stringId === this._entities.strings.select.undefinedStringId()
+			)
+				return
 			const selectedStringId = this._selectedStore.select.selectedStringId()
 			const belongsToString = this._entities.strings.select.getById(entityUnderMouse.stringId)
 

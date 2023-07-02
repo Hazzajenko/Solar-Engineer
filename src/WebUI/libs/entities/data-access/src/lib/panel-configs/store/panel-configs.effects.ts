@@ -8,11 +8,26 @@ import { PanelLinksActions } from '../../panel-links'
 export const panelConfigsStoreInitialized$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(
-			ofType(PanelConfigsActions.loadPanelConfigs),
+			ofType(PanelConfigsActions.loadPanelConfigs, PanelConfigsActions.loadNewState),
 			map(() => {
 				return ProjectsActions.projectEntityStoreInitialized({
 					store: 'panelConfigs',
 				})
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+export const getProjectSuccessLoadPanelConfigs$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.getProjectSuccess),
+			map(({ response }) => {
+				const panelConfigs = response.project.panelConfigs
+				if (!panelConfigs) return PanelConfigsActions.noop()
+				if (!Array.isArray(panelConfigs)) return PanelConfigsActions.noop()
+				return PanelConfigsActions.loadNewState({ panelConfigs })
 			}),
 		)
 	},

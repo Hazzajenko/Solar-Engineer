@@ -1,21 +1,67 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
-import { catchError, map, of, tap } from 'rxjs'
-import { ProjectsSignalrService } from '../services'
+import { catchError, EMPTY, map, of, switchMap, tap } from 'rxjs'
+import { ProjectsHttpService, ProjectsSignalrService } from '../services'
 import { ProjectsActions } from './projects.actions'
 import { injectEntityStore, selectProjectById } from '@entities/data-access'
 import { AuthActions } from '@auth/data-access'
-import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
+import { DIALOG_COMPONENT, UiActions } from '@overlays/ui-store/data-access'
 import { Store } from '@ngrx/store'
+import { ProjectEntities } from '@entities/shared'
 
-export const createProjectSignalr$ = createEffect(
-	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
+/*export const createProjectSignalr$ = createEffect(
+ (actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
+ return actions$.pipe(
+ ofType(ProjectsActions.createProjectSignalr),
+ tap(({ request }) => projectsSignalr.createProject(request)),
+ )
+ },
+ { functional: true, dispatch: false },
+ )*/
+
+export const createProjectHttp$ = createEffect(
+	(
+		actions$ = inject(Actions),
+		projectsHttp = inject(ProjectsHttpService),
+		entityStore = injectEntityStore(),
+	) => {
 		return actions$.pipe(
 			ofType(ProjectsActions.createProjectSignalr),
-			tap(({ request }) => projectsSignalr.createProject(request)),
+			switchMap(({ request }) => projectsHttp.createProject(request)),
+			map((response) => ProjectsActions.createProjectSuccess({ response })),
+			// tap(({ response }) => {
+			// 	const { panels, strings, panelLinks, panelConfigs } = response.project
+			// 	entityStore.panels.dispatch.loadPanels(panels)
+			// 	entityStore.strings.dispatch.loadStrings(strings)
+			// 	entityStore.panelLinks.dispatch.loadPanelLinks(panelLinks)
+			// 	entityStore.panelConfigs.dispatch.loadPanelConfigs(panelConfigs)
+			// }),
+			catchError((error) => {
+				console.error(error)
+				return EMPTY
+			}),
 		)
 	},
-	{ functional: true, dispatch: false },
+	{ functional: true },
+)
+
+export const loadProjectOnCreateSuccess$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.createProjectSuccess),
+			map(({ response }) => {
+				const { panels, strings, panelLinks, panelConfigs } = response.project
+				const projectEntities: ProjectEntities = {
+					panels,
+					strings,
+					panelLinks,
+					panelConfigs,
+				}
+				return ProjectsActions.loadProjectSuccess({ projectEntities })
+			}),
+		)
+	},
+	{ functional: true },
 )
 
 export const initProjectsSignalr$ = createEffect(
@@ -185,52 +231,147 @@ export const userLeftProject$ = createEffect(
 	{ functional: true },
 )
 
+/*export const selectUserProjectOnLoad$ = createEffect(
+ (
+ actions$ = inject(Actions),
+ projectsSignalr = inject(ProjectsSignalrService),
+ uiStore = injectUiStore(),
+ ) => {
+ return actions$.pipe(
+ ofType(ProjectsActions.loadUserProjectsSuccess),
+ map(({ projects }) => {
+ if (projects.length > 0) {
+ return ProjectsActions.selectProjectInitial({ projectId: projects[0].id })
+ }
+ return ProjectsActions.userProjectsEmpty()
+ }),
+ tap((action) => {
+ if (action.type === ProjectsActions.selectProjectInitial.type) {
+ projectsSignalr.getProjectById(action.projectId, true)
+ return
+ }
+ uiStore.dispatch.openDialog({
+ component: DIALOG_COMPONENT.CREATE_PROJECT,
+ })
+ }),
+ )
+ },
+ { functional: true },
+ )*/
+
 export const selectUserProjectOnLoad$ = createEffect(
 	(
 		actions$ = inject(Actions),
-		projectsSignalr = inject(ProjectsSignalrService),
-		uiStore = injectUiStore(),
+		projectsHttp = inject(ProjectsHttpService), // uiStore = injectUiStore(),
 	) => {
 		return actions$.pipe(
-			ofType(ProjectsActions.loadUserProjectsSuccess),
-			map(({ projects }) => {
+			ofType(ProjectsActions.loadUserProjectsSuccess), // map(({ projects }) => {
+			// 	if (projects.length > 0) {
+			// 		return ProjectsActions.selectProjectInitial({ projectId: projects[0].id })
+			// 	}
+			// 	return ProjectsActions.userProjectsEmpty()
+			// }),
+			switchMap(({ projects }) => {
 				if (projects.length > 0) {
-					return ProjectsActions.selectProjectInitial({ projectId: projects[0].id })
+					return projectsHttp.getProjectById(projects[0].id).pipe(
+						map((response) => ProjectsActions.getProjectSuccess({ response })),
+						catchError((error) => {
+							console.error(error)
+							return of(ProjectsActions.getProjectFailure({ error }))
+						}),
+					)
 				}
-				return ProjectsActions.userProjectsEmpty()
-			}),
-			tap((action) => {
-				if (action.type === ProjectsActions.selectProjectInitial.type) {
-					projectsSignalr.getProjectById(action.projectId, true)
-					return
-				}
-				uiStore.dispatch.openDialog({
-					component: DIALOG_COMPONENT.CREATE_PROJECT,
-				})
+				return of(
+					UiActions.openDialog({
+						dialog: { component: DIALOG_COMPONENT.CREATE_PROJECT },
+					}),
+				)
 			}),
 		)
 	},
 	{ functional: true },
 )
 
+/*export const onGetOrCreateProjectSuccess$ = createEffect(
+ (
+ actions$ = inject(Actions),
+ ) => {
+ return actions$.pipe(
+ ofType(ProjectsActions.createProjectSuccess, ProjectsActions.getProjectSuccess),
+ map(({ response }) => {
+ if (projects.length > 0) {
+ return ProjectsActions.selectProjectInitial({ projectId: projects[0].id })
+ }
+ return ProjectsActions.userProjectsEmpty()
+ }),
+ switchMap((action) => {
+ if (action.type === ProjectsActions.selectProjectInitial.type) {
+ return projectsHttp.getProjectById(action.projectId).pipe(
+ map((response) => ProjectsActions.getProjectSuccess({ response })),
+ catchError((error) => {
+ console.error(error)
+ return of(ProjectsActions.getProjectFailure({ error }))
+ }),
+ )
+ }
+ return of(
+ UiActions.openDialog({
+ dialog: { component: DIALOG_COMPONENT.CREATE_PROJECT },
+ }),
+ )
+ }),
+ )
+ },
+ { functional: true },
+ )*/
+
+/*export const fetchProjectDataOnSelection$ = createEffect(
+ (
+ actions$ = inject(Actions),
+ entitiesStore = injectEntityStore(),
+ projectsSignalr = inject(ProjectsSignalrService),
+ ) => {
+ return actions$.pipe(
+ ofType(ProjectsActions.selectProject),
+ tap(({ projectId }) => {
+ entitiesStore.strings.dispatch.clearStringsState()
+ entitiesStore.panels.dispatch.clearPanelsState()
+ entitiesStore.panelLinks.dispatch.clearPanelLinksState()
+ entitiesStore.panelConfigs.dispatch.clearPanelConfigsState()
+ projectsSignalr.getProjectById(projectId)
+ }),
+ )
+ },
+ { functional: true, dispatch: false },
+ )*/
+
 export const fetchProjectDataOnSelection$ = createEffect(
 	(
 		actions$ = inject(Actions),
 		entitiesStore = injectEntityStore(),
-		projectsSignalr = inject(ProjectsSignalrService),
+		projectsHttp = inject(ProjectsHttpService),
 	) => {
 		return actions$.pipe(
 			ofType(ProjectsActions.selectProject),
-			tap(({ projectId }) => {
+			tap(() => {
 				entitiesStore.strings.dispatch.clearStringsState()
 				entitiesStore.panels.dispatch.clearPanelsState()
 				entitiesStore.panelLinks.dispatch.clearPanelLinksState()
 				entitiesStore.panelConfigs.dispatch.clearPanelConfigsState()
-				projectsSignalr.getProjectById(projectId)
+				// projectsSignalr.getProjectById(projectId)
+			}),
+			switchMap(({ projectId }) => {
+				return projectsHttp.getProjectById(projectId).pipe(
+					map((response) => ProjectsActions.getProjectSuccess({ response })),
+					catchError((error) => {
+						console.error(error)
+						return of(ProjectsActions.getProjectFailure({ error }))
+					}),
+				)
 			}),
 		)
 	},
-	{ functional: true, dispatch: false },
+	{ functional: true },
 )
 
 export const inviteUsersToProject$ = createEffect(

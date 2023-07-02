@@ -6,7 +6,7 @@ namespace Projects.Application.Repositories.PanelConfigs;
 
 public interface IPanelConfigsRepository : IGenericRepository<PanelConfig>
 {
-    Task<PanelConfig> GetDefaultPanelConfigAsync();
+    Task<IEnumerable<PanelConfig>> GetDefaultPanelConfigsAsync();
 
     // Task<PanelConfig> GetByIdNotNullAsync(Guid id);
     Task<PanelConfig> GetByFullNameAsync(string fullname);

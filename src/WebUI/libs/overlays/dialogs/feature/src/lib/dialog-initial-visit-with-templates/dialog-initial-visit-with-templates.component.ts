@@ -2,40 +2,40 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	computed,
+	effect,
 	inject,
 	Injector,
 	signal,
 } from '@angular/core'
-import { DialogBackdropTemplateComponent } from '../../dialog-backdrop-template'
-import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle } from '@angular/common'
-import { dialogInputInjectionToken } from '../../dialog-renderer'
+import { InputSvgComponent } from '@shared/ui'
+import { NgClass, NgForOf, NgIf, NgOptimizedImage } from '@angular/common'
 import {
 	DIALOG_COMPONENT,
-	DialogInputInitialVisitWithTemplates,
-	injectUiStore,
+	DialogInputInviteToProjectConfirm,
+	UiStoreService,
 } from '@overlays/ui-store/data-access'
-import { injectProjectsStore, ProjectsLocalStorageService } from '@entities/data-access'
+import { injectAuthStore } from '@auth/data-access'
 import { PROJECT_TEMPLATES, ProjectTemplate } from '@entities/shared'
+import { injectProjectsStore, ProjectsLocalStorageService } from '@entities/data-access'
 import { TruncatePipe } from '@shared/pipes'
-import { PluralizePipe } from '@shared/utils'
-import { injectAppUser } from '@auth/data-access'
 import { LetDirective } from '@ngrx/component'
+import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template'
+import { dialogInputInjectionToken } from '../dialog-renderer'
 
 @Component({
-	selector: 'dialog-view-project-templates',
+	selector: 'dialog-initial-visit-with-templates',
 	standalone: true,
 	imports: [
 		DialogBackdropTemplateComponent,
+		InputSvgComponent,
+		NgIf,
 		NgForOf,
 		NgClass,
-		NgIf,
 		TruncatePipe,
-		PluralizePipe,
-		NgStyle,
 		NgOptimizedImage,
 		LetDirective,
 	],
-	templateUrl: './dialog-view-project-templates.component.html',
+	templateUrl: './dialog-initial-visit-with-templates.component.html',
 	styles: [
 		`
 			/* width */
@@ -61,19 +61,32 @@ import { LetDirective } from '@ngrx/component'
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DialogViewProjectTemplatesComponent {
-	private _projects = injectProjectsStore()
-	private _uiStore = injectUiStore()
+export class DialogInitialVisitWithTemplatesComponent {
+	private _uiStore = inject(UiStoreService)
+	private _auth = injectAuthStore()
+	private _projectsStore = injectProjectsStore()
 	private _projectsLocalStorage = inject(ProjectsLocalStorageService)
-	user = injectAppUser()
-	dialog = inject(Injector).get(dialogInputInjectionToken) as DialogInputInitialVisitWithTemplates
 
+	user = this._auth.select.user
+	dialog = inject(Injector).get(dialogInputInjectionToken) as DialogInputInviteToProjectConfirm
 	templates = PROJECT_TEMPLATES
-
 	selectedTemplateName = signal<ProjectTemplate['name'] | undefined>(undefined)
 	selectedTemplate = computed(() =>
 		this.templates.find((t) => t.name === this.selectedTemplateName()),
 	)
+	isProjectExisting = this._projectsLocalStorage.isProjectExisting
+	protected readonly PROJECT_TEMPLATES = PROJECT_TEMPLATES
+
+	constructor() {
+		effect(
+			() => {
+				if (this.user()) {
+					this.closeDialog()
+				}
+			},
+			{ allowSignalWrites: true },
+		)
+	}
 
 	selectTemplate(template: ProjectTemplate) {
 		this.selectedTemplateName.set(template.name)
@@ -83,7 +96,7 @@ export class DialogViewProjectTemplatesComponent {
 		const selectedTemplate = this.selectedTemplate()
 		if (!selectedTemplate) throw new Error('No template selected')
 		const user = this.user()
-		if (!user && this._projectsLocalStorage.isProjectExisting()) {
+		if (!user && !this._projectsLocalStorage.isProjectExisting()) {
 			this._uiStore.dispatch.openDialog({
 				component: DIALOG_COMPONENT.WARNING_TEMPLATE,
 				data: {
@@ -91,13 +104,36 @@ export class DialogViewProjectTemplatesComponent {
 					message: `Are you sure you want to load the ${selectedTemplate.templateName} template? This will overwrite your current project as you are not signed in.`,
 					buttonText: 'Load Template',
 					buttonAction: () =>
-						this._projects.dispatch.loadProjectTemplate(selectedTemplate.templateName),
+						this._projectsStore.dispatch.loadProjectTemplate(selectedTemplate.templateName),
 				},
 			})
 			return
 		}
-		this._projects.dispatch.loadProjectTemplate(selectedTemplate.templateName)
+		this._projectsStore.dispatch.loadProjectTemplate(selectedTemplate.templateName)
 		this._uiStore.dispatch.closeDialog()
+	}
+
+	signInWithGoogle() {
+		this._auth.dispatch.signInWithGoogle()
+	}
+
+	//
+	// signInWithGithub() {
+	// 	this._auth.dispatch.signInWithGithub()
+	// }
+
+	closeDialog() {
+		this._uiStore.dispatch.closeDialog()
+	}
+
+	signInAsGuest() {
+		this._auth.dispatch.signInAsGuest()
+
+		this.closeDialog()
+	}
+
+	signInWithMicrosoft() {
+		this._auth.dispatch.signInWithMicrosoft()
 	}
 
 	startWithBlankTemplate() {

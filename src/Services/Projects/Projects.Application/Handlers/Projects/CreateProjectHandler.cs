@@ -1,13 +1,16 @@
 ﻿using ApplicationCore.Events;
 using ApplicationCore.Events.Projects;
+using Infrastructure.Logging;
 using Mapster;
 using MassTransit;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
+using Projects.Application.Data.Json.ProjectTemplates;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
 using Projects.Contracts.Data;
 using Projects.Contracts.Events;
+using Projects.Contracts.Requests.Projects;
 using Projects.Contracts.Responses.Projects;
 using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Projects;
@@ -15,10 +18,11 @@ using Projects.SignalR.Hubs;
 
 namespace Projects.Application.Handlers.Projects;
 
-public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
+public class CreateProjectHandler
+    : ICommandHandler<CreateProjectCommand, ProjectCreatedWithTemplateResponse>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
-    private readonly ILogger _logger;
+    private readonly ILogger<CreateProjectHandler> _logger;
     private readonly IProjectsUnitOfWork _unitOfWork;
     private readonly IBus _bus;
 
@@ -35,11 +39,15 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
         _bus = bus;
     }
 
-    public async ValueTask<Guid> Handle(CreateProjectCommand command, CancellationToken cT)
+    public async ValueTask<ProjectCreatedWithTemplateResponse> Handle(
+        CreateProjectCommand command,
+        CancellationToken cT
+    )
     {
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
 
-        var request = command.CreateProjectRequest;
+        CreateProjectRequest request = command.CreateProjectRequest;
+        request.DumpObjectJson();
         var appUserProject = AppUserProject.CreateAsOwner(appUserId, request.Name, request.Colour);
         await _unitOfWork.AppUserProjectsRepository.AddAsync(appUserProject);
         await _unitOfWork.SaveChangesAsync();
@@ -51,17 +59,29 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
             );
 
         appUserProject.ThrowHubExceptionIfNull();
-        var project = appUserProject.Project;
+        Project project = appUserProject.Project;
 
-        String undefinedString = String.CreateUndefinedStringFromProject(appUserProject);
+        var undefinedString = String.CreateUndefinedStringFromProject(appUserProject);
         await _unitOfWork.StringsRepository.AddAsync(undefinedString);
         await _unitOfWork.SaveChangesAsync();
 
-        var projectDto = appUserProject.Adapt<ProjectDto>();
-        // var projectDto = appUserProject.Project.ToDto();
-        var projectCreatedResponse = new ProjectCreatedResponse { Project = projectDto };
+        // var projectDto = appUserProject.Adapt<ProjectDto>();
+        var defaultPanelConfigs =
+            await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigsAsync();
+        ProjectDataDto dataDto = await GetProjectDataDto(
+            request,
+            undefinedString,
+            project,
+            appUserId,
+            defaultPanelConfigs
+        );
 
-        await _hubContext.Clients.User(appUserId.ToString()).ProjectCreated(projectCreatedResponse);
+        var projectCreatedResponse = new ProjectCreatedWithTemplateResponse() { Project = dataDto };
+
+        // ! Changing to http
+        // await _hubContext.Clients.User(appUserId.ToString()).ProjectCreated(projectCreatedResponse);
+
+
 
         _logger.LogInformation(
             "User {User} created project {Project}",
@@ -71,32 +91,25 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
 
         if (command.CreateProjectRequest.MemberIds.Any() is false)
         {
-            return project.Id;
+            return projectCreatedResponse;
+            // return project.Id;
         }
 
         var userIds = command.CreateProjectRequest.MemberIds;
-        var projectId = project.Id;
-        var projectMemberIds =
-            await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(projectId);
-
-        var newProjectMembers = new UsersSentInviteToProjectResponse
-        {
-            ProjectId = projectId.ToString(),
-            InvitedByUserId = appUserId.ToString(),
-            InvitedUserIds = userIds
-        };
-
-        // var projectDto = appUserProject.Project.ToDto();
-
-        // var invitedToProjectResponse = new InvitedToProjectResponse
+        Guid projectId = project.Id;
+        // var projectMemberIds =
+        //     await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(projectId);
+        //
+        // var newProjectMembers = new UsersSentInviteToProjectResponse
         // {
-        //     Project = projectDto
+        //     ProjectId = projectId.ToString(),
+        //     InvitedByUserId = appUserId.ToString(),
+        //     InvitedUserIds = userIds
         // };
-
-        // await _hubContext.Clients.Users(userIds).InvitedToProject(invitedToProjectResponse);
-        await _hubContext.Clients
-            .Users(projectMemberIds)
-            .UsersSentInviteToProject(newProjectMembers);
+        //
+        // await _hubContext.Clients
+        //     .Users(projectMemberIds)
+        //     .UsersSentInviteToProject(newProjectMembers);
 
         _logger.LogInformation(
             "User {User} invited users {Users} to project {Project}",
@@ -119,6 +132,64 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
         );
         await _bus.Publish(invitedUsersToProjectMessage, cT);
 
-        return appUserProject.Project.Id;
+        return projectCreatedResponse;
+        // return appUserProject.Project.Id;
+    }
+
+    private async Task<ProjectDataDto> GetProjectDataDto(
+        CreateProjectRequest request,
+        String undefinedString,
+        Project project,
+        Guid appUserId,
+        IEnumerable<PanelConfig> defaultPanelConfigs
+    )
+    {
+        if (request.TemplateType == ProjectTemplateKey.Blank)
+        {
+            return project.ToDefaultEmptyDataDto(undefinedString, defaultPanelConfigs);
+        }
+
+        ProjectTemplate projectTemplate = await request.TemplateType.GetProjectTemplateByKey();
+        var panelsWithUndefinedString = projectTemplate.Panels
+            .Where(panel => panel.StringId == String.UndefinedStringId)
+            .ToList();
+
+        panelsWithUndefinedString.ForEach(panel => panel.StringId = undefinedString.Id.ToString());
+
+        var panelsWithDefaultConfigs = projectTemplate.Panels
+            .Where(panel => panel.PanelConfigId == PanelConfig.DefaultPanelConfigId)
+            .ToList();
+
+        panelsWithDefaultConfigs.ForEach(
+            panel => panel.PanelConfigId = defaultPanelConfigs.First().Id.ToString()
+        );
+
+        var panels = projectTemplate.Panels.ToEntityList(project.Id, appUserId);
+        var strings = projectTemplate.Strings
+            .Where(x => x.Id != String.UndefinedStringId)
+            .ToEntityList(project.Id, appUserId);
+        var panelLinks = projectTemplate.PanelLinks.Adapt<IEnumerable<PanelLink>>();
+        // var panelConfigs = projectTemplate.PanelConfigs
+        //     .Where(x => x.Id != PanelConfig.DefaultPanelConfigId)
+        //     .Adapt<IEnumerable<PanelConfig>>()
+        //     .Concat(defaultPanelConfigs);
+        // await _unitOfWork.PanelConfigsRepository.AddRangeAsync(panelConfigs);
+        // await _unitOfWork.SaveChangesAsync();
+
+        await _unitOfWork.StringsRepository.AddRangeAsync(strings);
+        await _unitOfWork.SaveChangesAsync();
+
+        await _unitOfWork.PanelsRepository.AddRangeAsync(panels);
+        await _unitOfWork.SaveChangesAsync();
+
+        await _unitOfWork.PanelLinksRepository.AddRangeAsync(panelLinks);
+        await _unitOfWork.SaveChangesAsync();
+
+        return project.ToDataDto(
+            panels,
+            strings.Concat(new[] { undefinedString }),
+            panelLinks,
+            defaultPanelConfigs
+        );
     }
 }

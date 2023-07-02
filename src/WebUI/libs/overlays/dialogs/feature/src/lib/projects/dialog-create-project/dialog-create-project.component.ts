@@ -2,6 +2,7 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	computed,
+	DestroyRef,
 	inject,
 	Signal,
 	signal,
@@ -9,7 +10,10 @@ import {
 	ViewChild,
 	ViewContainerRef,
 } from '@angular/core'
-import { DialogBackdropTemplateComponent } from '../../dialog-backdrop-template/dialog-backdrop-template.component'
+import {
+	DialogBackdropTemplateComponent,
+	DialogStandaloneBackdropTemplateComponent,
+} from '../../dialog-backdrop-template'
 import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle } from '@angular/common'
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import {
@@ -27,7 +31,7 @@ import { WebUserModel } from '@auth/shared'
 import { CenterThisElementDirective } from '@shared/directives'
 import { TruncatePipe } from '@shared/pipes'
 import { AuthWebUserComponent } from '@auth/ui'
-import { PROJECT_TEMPLATES, ProjectTemplatePreviewModel } from '@entities/shared'
+import { PROJECT_TEMPLATES, ProjectTemplate } from '@entities/shared'
 import { Overlay, OverlayRef } from '@angular/cdk/overlay'
 import { TemplatePortal } from '@angular/cdk/portal'
 
@@ -49,6 +53,7 @@ import { TemplatePortal } from '@angular/cdk/portal'
 		CenterThisElementDirective,
 		TruncatePipe,
 		AuthWebUserComponent,
+		DialogStandaloneBackdropTemplateComponent,
 	],
 	templateUrl: './dialog-create-project.component.html',
 	styles: [],
@@ -59,13 +64,14 @@ export class DialogCreateProjectComponent {
 	private _projects = injectProjectsStore()
 	private _uiStore = injectUiStore()
 	private _usersStore = injectUsersStore()
-	private _selectTemplateOverlay: OverlayRef | undefined
+	private _selectTemplateOverlayRef: OverlayRef | undefined
 	private _viewContainerRef = inject(ViewContainerRef)
 	private _overlay = inject(Overlay)
+	private _destroyRef = inject(DestroyRef)
 	@ViewChild('selectTemplateDialog') private _selectTemplateDialog!: TemplateRef<unknown>
 	templates = PROJECT_TEMPLATES
 
-	selectedTemplateName = signal<ProjectTemplatePreviewModel['name'] | undefined>(undefined)
+	selectedTemplateName = signal<ProjectTemplate['name']>('Blank')
 	selectedTemplate = computed(() =>
 		this.templates.find((t) => t.name === this.selectedTemplateName()),
 	)
@@ -81,7 +87,7 @@ export class DialogCreateProjectComponent {
 	})
 	protected readonly TAILWIND_COLOUR_500_VALUES = TAILWIND_COLOUR_500_VALUES
 
-	selectTemplate(template: ProjectTemplatePreviewModel) {
+	selectTemplate(template: ProjectTemplate) {
 		this.selectedTemplateName.set(template.name)
 	}
 
@@ -105,10 +111,16 @@ export class DialogCreateProjectComponent {
 		const memberIds = this.multiSelectedFriendIds()
 		console.log('memberIds', memberIds)
 
+		const selectedTemplate = this.selectedTemplate()
+		if (!selectedTemplate) {
+			throw new Error('Selected template is undefined')
+		}
+
 		this._projects.dispatch.createProjectSignalr({
 			name,
 			colour,
 			memberIds,
+			templateType: selectedTemplate.key,
 		})
 
 		this.loading.set(true)
@@ -118,12 +130,11 @@ export class DialogCreateProjectComponent {
 	}
 
 	openSelectTemplateDialog() {
-		this._selectTemplateOverlay = this._overlay.create({
-			hasBackdrop: true,
+		this._selectTemplateOverlayRef = this._overlay.create({
 			scrollStrategy: this._overlay.scrollStrategies.block(),
 		})
 
-		this._selectTemplateOverlay.attach(
+		this._selectTemplateOverlayRef.attach(
 			new TemplatePortal(this._selectTemplateDialog, this._viewContainerRef),
 		)
 	}
@@ -150,5 +161,18 @@ export class DialogCreateProjectComponent {
 			return
 		}
 		this.multiSelectedFriendIds.set([...this.multiSelectedFriendIds(), friend.id])
+	}
+
+	closeTemplateDialog() {
+		this._selectTemplateOverlayRef?.dispose()
+	}
+
+	startWithBlankTemplate() {
+		this.selectedTemplateName.set('Blank')
+		this.closeTemplateDialog()
+	}
+
+	submitSelectedTemplate() {
+		this.closeTemplateDialog()
 	}
 }

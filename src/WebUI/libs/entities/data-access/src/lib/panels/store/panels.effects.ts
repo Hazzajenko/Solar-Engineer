@@ -14,11 +14,26 @@ import { StringsActions } from '../../strings'
 export const panelsStoreInitialized$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(
-			ofType(PanelsActions.loadPanels),
+			ofType(PanelsActions.loadPanels, PanelsActions.loadNewState),
 			map(() => {
 				return ProjectsActions.projectEntityStoreInitialized({
 					store: 'panels',
 				})
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+export const getProjectSuccessLoadPanels$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.getProjectSuccess),
+			map(({ response }) => {
+				const panels = response.project.panels
+				if (!panels) return PanelsActions.noop()
+				if (!Array.isArray(panels)) return PanelsActions.noop()
+				return PanelsActions.loadNewState({ panels })
 			}),
 		)
 	},

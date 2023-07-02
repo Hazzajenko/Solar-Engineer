@@ -69,25 +69,25 @@ const parsePanelConfigFile = (panelConfigs: unknown) => {
 }
 
 export const PROJECT_TEMPLATE_DATA = {
-	[PROJECT_TEMPLATE.BLANK.name]: {
+	[PROJECT_TEMPLATE.Blank.name]: {
 		strings: [],
 		panels: [],
 		panelLinks: [],
 		panelConfigs: [],
 	},
-	[PROJECT_TEMPLATE.TWELVE_ROWS_OF_PANELS_NO_STRING.name]: {
+	[PROJECT_TEMPLATE.TwelveRowsNoStrings.name]: {
 		panels: SixRowsOfPanels_Panels.panels as PanelModel[], // panels: Object.values(SixRowsOfPanels_Panels) as PanelModel[],
 		strings: [],
 		panelLinks: [],
 		panelConfigs: [],
 	},
-	[PROJECT_TEMPLATE.TWELVE_ROWS_OF_PANELS_SIX_STRINGS.name]: {
+	[PROJECT_TEMPLATE.TwelveRowsSixStrings.name]: {
 		panels: SixRowsOfPanelsInStrings_Panels.panels as PanelModel[],
 		strings: SixRowsOfPanelsInStrings_Strings.strings as StringModel[],
 		panelLinks: [],
 		panelConfigs: [],
 	},
-	[PROJECT_TEMPLATE.TWELVE_ROWS_OF_PANELS_SIX_STRINGS_AND_PANEL_LINKS.name]: {
+	[PROJECT_TEMPLATE.TwelveRowsSixStringsWithLinks.name]: {
 		panels: SixRowsOfPanelsInStringsAndPanelLinks_Panels.panels as PanelModel[],
 		strings: SixRowsOfPanelsInStringsAndPanelLinks_Strings.strings as StringModel[],
 		panelLinks: SixRowsOfPanelsInStringsAndPanelLinks_PanelLinks.panelLinks as PanelLinkModel[],

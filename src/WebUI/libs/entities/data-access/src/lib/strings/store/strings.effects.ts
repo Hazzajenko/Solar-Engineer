@@ -9,11 +9,26 @@ import { ProjectsActions } from '../../projects'
 export const stringsStoreInitialized$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(
-			ofType(StringsActions.loadStrings),
+			ofType(StringsActions.loadStrings, StringsActions.loadNewState),
 			map(() => {
 				return ProjectsActions.projectEntityStoreInitialized({
 					store: 'strings',
 				})
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+export const getProjectSuccessLoadStrings$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.getProjectSuccess),
+			map(({ response }) => {
+				const strings = response.project.strings
+				if (!strings) return StringsActions.noop()
+				if (!Array.isArray(strings)) return StringsActions.noop()
+				return StringsActions.loadNewState({ strings })
 			}),
 		)
 	},

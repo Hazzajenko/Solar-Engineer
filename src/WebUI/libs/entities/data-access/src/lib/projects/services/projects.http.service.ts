@@ -3,8 +3,10 @@ import { HttpClient } from '@angular/common/http'
 import {
 	CreateProjectRequest,
 	DeleteProjectRequest,
+	GetProjectByIdResponse,
 	GetUserProjectsResponse,
 	InviteToProjectRequest,
+	ProjectCreatedResponse,
 	UpdateProjectRequest,
 } from '@entities/shared'
 
@@ -18,8 +20,12 @@ export class ProjectsHttpService {
 		return this._http.get<GetUserProjectsResponse>('/projects')
 	}
 
+	getProjectById(projectId: string) {
+		return this._http.get<GetProjectByIdResponse>(`/projects/projects/${projectId}`)
+	}
+
 	createProject(request: CreateProjectRequest) {
-		return this._http.post('/projects', request)
+		return this._http.post<ProjectCreatedResponse>('/projects', request)
 	}
 
 	updateProject(request: UpdateProjectRequest) {

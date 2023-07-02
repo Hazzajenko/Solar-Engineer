@@ -1,4 +1,5 @@
-﻿using Projects.Contracts.Data;
+﻿using Mapster;
+using Projects.Contracts.Data;
 using Projects.Contracts.Requests.Projects;
 using Projects.Domain.Entities;
 
@@ -50,6 +51,54 @@ public static class ProjectsMapping
             LastModifiedTime = request.LastModifiedTime,
             MemberIds = request.AppUserProjects.Select(x => x.AppUserId.ToString()),
             UndefinedStringId = request.UndefinedStringId.ToString(),
+        };
+    }
+
+    public static ProjectDataDto ToDataDto(
+        this Project request,
+        IEnumerable<Panel> panels,
+        IEnumerable<String> strings,
+        IEnumerable<PanelLink> panelLinks,
+        IEnumerable<PanelConfig> panelConfigs
+    )
+    {
+        return new ProjectDataDto
+        {
+            Id = request.Id.ToString(),
+            Name = request.Name,
+            Colour = request.Colour,
+            CreatedById = request.CreatedById.ToString(),
+            CreatedTime = request.CreatedTime,
+            LastModifiedTime = request.LastModifiedTime,
+            MemberIds = request.AppUserProjects.Select(x => x.AppUserId.ToString()),
+            UndefinedStringId = request.UndefinedStringId.ToString(),
+            Panels = panels.Adapt<IEnumerable<PanelDto>>(),
+            Strings = strings.Adapt<IEnumerable<StringDto>>(),
+            PanelLinks = panelLinks.Adapt<IEnumerable<PanelLinkDto>>(),
+            PanelConfigs = panelConfigs.Adapt<IEnumerable<PanelConfigDto>>(),
+        };
+    }
+
+    public static ProjectDataDto ToDefaultEmptyDataDto(
+        this Project request,
+        String undefinedString,
+        IEnumerable<PanelConfig> defaultPanelConfigs
+    )
+    {
+        return new ProjectDataDto
+        {
+            Id = request.Id.ToString(),
+            Name = request.Name,
+            Colour = request.Colour,
+            CreatedById = request.CreatedById.ToString(),
+            CreatedTime = request.CreatedTime,
+            LastModifiedTime = request.LastModifiedTime,
+            MemberIds = request.AppUserProjects.Select(x => x.AppUserId.ToString()),
+            UndefinedStringId = request.UndefinedStringId.ToString(),
+            Panels = new List<PanelDto>(),
+            Strings = new List<StringDto> { undefinedString.ToDto() },
+            PanelLinks = new List<PanelLinkDto>(),
+            PanelConfigs = defaultPanelConfigs.Select(x => x.ToDto()),
         };
     }
 }

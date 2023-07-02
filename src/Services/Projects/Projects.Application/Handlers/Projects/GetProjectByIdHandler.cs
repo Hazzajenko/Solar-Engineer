@@ -5,12 +5,13 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Contracts.Data;
+using Projects.Contracts.Responses.Projects;
 using Projects.SignalR.Hubs;
 using Projects.SignalR.Queries.Projects;
 
 namespace Projects.Application.Handlers.Projects;
 
-public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, bool>
+public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, GetProjectByIdResponse>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<GetProjectByIdHandler> _logger;
@@ -27,11 +28,14 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, bool>
         _hubContext = hubContext;
     }
 
-    public async ValueTask<bool> Handle(GetProjectByIdQuery request, CancellationToken cT)
+    public async ValueTask<GetProjectByIdResponse> Handle(
+        GetProjectByIdQuery request,
+        CancellationToken cT
+    )
     {
-        var appUserIdGuid = request.User.Id;
+        Guid appUserIdGuid = request.User.Id;
         var projectIdGuid = request.ProjectId.ToGuid();
-        var project =
+        ProjectDto? project =
             await _unitOfWork.AppUserProjectsRepository.GetProjectByAppUserAndProjectIdAsync(
                 appUserIdGuid,
                 projectIdGuid
@@ -50,7 +54,7 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, bool>
             panelConfigIds
         );
 
-        var response = new GetProjectDataResponse
+        var projectDataDto = new ProjectDataDto
         {
             Name = project.Name,
             Id = project.Id,
@@ -60,10 +64,31 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, bool>
             Strings = strings,
             Panels = panels,
             PanelLinks = panelLinks,
-            PanelConfigs = panelConfigs
+            PanelConfigs = panelConfigs,
+            Colour = project.Colour,
+            MemberIds = project.MemberIds,
+            Members = project.Members,
+            UndefinedStringId = project.UndefinedStringId,
         };
 
-        await _hubContext.Clients.User(request.User.Id.ToString()).GetProject(response);
+        var response = new GetProjectByIdResponse { Project = projectDataDto };
+
+        // var response = new GetProjectDataResponse
+        // {
+        //     Name = project.Name,
+        //     Id = project.Id,
+        //     CreatedTime = project.CreatedTime,
+        //     LastModifiedTime = project.LastModifiedTime,
+        //     CreatedById = project.CreatedById,
+        //     Strings = strings,
+        //     Panels = panels,
+        //     PanelLinks = panelLinks,
+        //     PanelConfigs = panelConfigs
+        // };
+
+
+        // ! Changing from signalr to http
+        // await _hubContext.Clients.User(request.User.Id.ToString()).GetProject(response);
         /*// await _hubContext.Clients.Client(request.User.ConnectionId).GetProject(response);*/
 
         _logger.LogInformation(
@@ -72,6 +97,6 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, bool>
             projectIdGuid.ToString()
         );
 
-        return true;
+        return response;
     }
 }

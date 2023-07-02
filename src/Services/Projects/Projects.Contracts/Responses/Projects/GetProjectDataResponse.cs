@@ -1,4 +1,6 @@
-﻿namespace Projects.Contracts.Data;
+﻿using Projects.Contracts.Data;
+
+namespace Projects.Contracts.Responses.Projects;
 
 public class GetProjectDataResponse : IProjectItemDto
 {

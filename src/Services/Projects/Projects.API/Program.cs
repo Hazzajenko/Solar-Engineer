@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using FastEndpoints;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Projects.Application.Configuration;
 using Projects.Application.Data;
 using Projects.Application.Extensions;
+using Projects.Contracts.Data;
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
@@ -35,7 +37,14 @@ builder.Services.AddAuthorization();
 
 builder.Services.InitDbContext<ProjectsContext>(config, environment, "Projects.Application");
 
-builder.Services.ConfigureSignalRWithRedis(environment);
+builder.Services.ConfigureSignalRWithRedis(
+    environment,
+    options =>
+    {
+        options.PayloadSerializerOptions.Converters.Add(new ProjectTemplateKeyConverter());
+    },
+    new List<JsonConverter> { new ProjectTemplateKeyConverter() }
+);
 builder.Services.InitCors("corsPolicy");
 
 builder.Services.AddFastEndpoints();

@@ -90,6 +90,7 @@ public static class PanelsMapping
         {
             Id = panel.Id.ToString(),
             // ProjectId = panel.ProjectId.ToString(),
+            Location = panel.Location,
             CreatedTime = panel.CreatedTime,
             PanelConfigId = panel.PanelConfigId.ToString(),
             StringId = panel.StringId.ToString(),
@@ -101,6 +102,45 @@ public static class PanelsMapping
     public static IEnumerable<PanelDto> ToDtoList(this Panel panel)
     {
         return new List<PanelDto> { panel.ToDto() };
+    }
+
+    public static Panel ToEntity(
+        this PanelTemplateItem panelTemplateItem,
+        Guid projectId,
+        Guid createdById
+    )
+    {
+        return Panel.Create(
+            panelTemplateItem.Id.ToGuid(),
+            projectId,
+            panelTemplateItem.StringId.ToGuid(),
+            panelTemplateItem.PanelConfigId.ToGuid(),
+            panelTemplateItem.Location,
+            panelTemplateItem.Angle,
+            createdById
+        );
+    }
+
+    public static IEnumerable<Panel> ToEntityList(
+        this IEnumerable<PanelTemplateItem> panelTemplateItems,
+        Guid projectId,
+        Guid createdById
+    )
+    {
+        return panelTemplateItems.Select(x => x.ToEntity(projectId, createdById));
+    }
+
+    public static Panel ToEntity(this PanelDto panelDto, Guid projectId, Guid createdById)
+    {
+        return Panel.Create(
+            panelDto.Id.ToGuid(),
+            projectId,
+            panelDto.StringId.ToGuid(),
+            panelDto.PanelConfigId.ToGuid(),
+            panelDto.Location,
+            panelDto.Angle,
+            createdById
+        );
     }
 
     /*public static Panel ToDomain(this UpdatePanelRequest request)

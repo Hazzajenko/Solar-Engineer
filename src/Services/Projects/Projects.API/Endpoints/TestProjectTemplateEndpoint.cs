@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Extensions;
 using FastEndpoints;
 using Infrastructure.Extensions;
+using Infrastructure.Logging;
 using Mediator;
 using Projects.Application.Data.Json.ProjectTemplates;
 using Projects.Contracts.Data;
@@ -10,28 +11,25 @@ using Projects.SignalR.Queries.Projects;
 
 namespace Projects.API.Endpoints;
 
-public class GetProjectTemplateEndpoint : EndpointWithoutRequest<ProjectTemplate>
+public class TestProjectTemplateEndpoint : Endpoint<ProjectTemplateKey, ProjectTemplateKey>
 {
     private readonly IMediator _mediator;
 
-    public GetProjectTemplateEndpoint(IMediator mediator)
+    public TestProjectTemplateEndpoint(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     public override void Configure()
     {
-        Get("/template");
+        Post("/template");
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(CancellationToken cT)
+    public override async Task HandleAsync(ProjectTemplateKey request, CancellationToken cT)
     {
-        ProjectTemplateKey templateKey = ProjectTemplateKey.TwelveRowsNoStrings;
+        request.DumpObjectJson();
 
-        // Response = await ProjectTemplateExtensions.GetJsonString();
-        Response = await templateKey.GetProjectTemplateByKey();
-
-        await SendOkAsync(Response, cT);
+        await SendOkAsync(request, cT);
     }
 }

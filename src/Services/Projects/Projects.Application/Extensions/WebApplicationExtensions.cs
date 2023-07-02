@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Projects.Application.Data.Seed;
+using Projects.Contracts.Data;
 using Projects.SignalR.Hubs;
 using Serilog;
 
@@ -24,6 +25,8 @@ public static class WebApplicationExtensions
             options.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             options.Endpoints.Filter = ep => ep.EndpointTags?.Contains("Deprecated") is not true;
+            options.Serializer.Options.Converters.Add(new JsonStringEnumConverter());
+            options.Serializer.Options.Converters.Add(new ProjectTemplateKeyConverter());
             options.Errors.ResponseBuilder = (failures, ctx, statusCode) =>
             {
                 return new ValidationProblemDetails(
@@ -45,7 +48,10 @@ public static class WebApplicationExtensions
         {
             app.UseDefaultExceptionHandler();
             app.UseOpenApi();
-            app.UseSwaggerUi3(x => { x.ServerUrl = "https://localhost:5007"; });
+            app.UseSwaggerUi3(x =>
+            {
+                x.ServerUrl = "https://localhost:5007";
+            });
         }
 
         app.UseSerilogRequestLogging();

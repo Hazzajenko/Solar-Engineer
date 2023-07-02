@@ -1,4 +1,5 @@
 import { ProjectId, ProjectModel, ProjectUserModel } from './project.model'
+import { ProjectDataModel } from './project-data.model'
 
 /**
  * * Requests
@@ -8,7 +9,17 @@ export type CreateProjectRequest = {
 	name: string
 	colour: string
 	memberIds: string[]
+	templateType: ProjectTemplateType
 }
+
+export const PROJECT_TEMPLATE_TYPE = {
+	BLANK: 'Blank',
+	TWELVE_ROWS_NO_STRINGS: 'TwelveRowsNoStrings',
+	TWELVE_ROWS_SIX_STRINGS: 'TwelveRowsSixStrings',
+	TWELVE_ROWS_SIX_STRINGS_WITH_LINKS: 'TwelveRowsSixStringsWithLinks',
+} as const
+
+export type ProjectTemplateType = (typeof PROJECT_TEMPLATE_TYPE)[keyof typeof PROJECT_TEMPLATE_TYPE]
 
 export type UpdateProjectRequest = {
 	projectId: ProjectId
@@ -82,8 +93,15 @@ export type UsersSentInviteToProjectResponse = {
 	invitedUserIds: string[]
 }
 
+// export type ProjectCreatedResponse = {
+// 	project: ProjectModel
+// }
 export type ProjectCreatedResponse = {
-	project: ProjectModel
+	project: ProjectDataModel
+}
+
+export type GetProjectByIdResponse = {
+	project: ProjectDataModel
 }
 
 export type InvitedToProjectResponse = {

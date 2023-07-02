@@ -15,11 +15,26 @@ import { injectSelectedStore, SelectedActions } from '@canvas/selected/data-acce
 export const panelLinksStoreInitialized$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(
-			ofType(PanelLinksActions.loadPanelLinks),
+			ofType(PanelLinksActions.loadPanelLinks, PanelLinksActions.loadNewState),
 			map(() => {
 				return ProjectsActions.projectEntityStoreInitialized({
 					store: 'panelLinks',
 				})
+			}),
+		)
+	},
+	{ functional: true },
+)
+
+export const getProjectSuccessLoadPanelLinks$ = createEffect(
+	(actions$ = inject(Actions)) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.getProjectSuccess),
+			map(({ response }) => {
+				const panelLinks = response.project.panelLinks
+				if (!panelLinks) return PanelLinksActions.noop()
+				if (!Array.isArray(panelLinks)) return PanelLinksActions.noop()
+				return PanelLinksActions.loadNewState({ panelLinks })
 			}),
 		)
 	},

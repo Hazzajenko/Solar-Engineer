@@ -38,10 +38,17 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\panels.json" />
-      <EmbeddedResource Include="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\panels.json">
+        <None Remove="Data\Json\ProjectTemplates\12-rows-no-strings.template.json" />
+        <EmbeddedResource Include="Data\Json\ProjectTemplates\12-rows-no-strings-old.template.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Data\Json\ProjectTemplates\12-rows-no-strings.template.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <None Remove="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\panels.json" />
+        <EmbeddedResource Include="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\panels.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
+        </EmbeddedResource>
         <None Remove="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\strings.json" />
         <EmbeddedResource Include="Data\Json\ProjectTemplates\TemplateTwelveRowsNoStrings\strings.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
