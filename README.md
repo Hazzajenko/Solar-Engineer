@@ -5,7 +5,7 @@
   <img src="./img/logo-name.png"/>
 </h1>
 
-<h4 align="center">A web app for designing solar system installs built on top of <a href="https://angular.io/" target="_blank">Angular</a>.</h4>
+<h4 align="center">A web app for designing solar system installs built on top of <a href="https://angular.io/" target="_blank">Angular, NGRX, ASP.NET, SignalR</a>.</h4>
 
 
 <p align="center">
@@ -229,20 +229,68 @@ Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
 
 ## Release History
 
-### 1.0.6 - <span style="font-size: smaller;">21/06/2023</span>
+### [1.0.8] - 2023-07-02
+
 **New Features:**
-- Redesigned context menus.
+- Authenticated users can now choose a template when creating a project.
+- Implementation of templates on the backend for authenticated users.
+- UI changes for guest users, sign-in dialog replaced with initial-visit-sign-in-with-templates.
+- Users can now see project templates before deciding to sign in.
+- Added dialog warning that loading a template will override the existing project for demo users.
+- Starter template selection dialog pops up when user logs in as a guest.
+- Ability to load templates and update the app importing local json state saves.
+- Addition of templates for starter projects; in demo account, project now saves to local storage and automatically loads on login.
+- Creation of chat dialog for showing user messages and group chats.
+- Message contracts ported to TypeScript in web-ui.
+- Started messages-service for the backend.
+- New dialog for user search in the side UI.
+- Added Microsoft login.
+- Users side UI filtered by last active. 
+- Member permissions visible in selected project members tab.
+- Members with roles of owner or admin can now edit member permissions.
+- Users can leave projects.
+- Project Admins can now kick members from projects.
+- Project Admins can now change member permissions.
+- Project Admins can now change member roles.
+- Project Admins can now delete projects.
+- All project member edits are now reflected in real-time.
+
+**Changes:**
+- Update of UI for guest users. Removed side ui and replaced with a dialog for auth and projects.
+- Updated roadmap and changelog in README.md.
+
+**Bug Fixes:**
+- Fixed a bug where friend requests weren't being accepted due to Entity Framework tracking. Users now immediately see if a user is online after accepting a friend request.
+- Fixed a couple of bugs related to the SkiaSharp library not working in deployment.
+- Fixed an issue with screen breakpoints.
+- Bug fix where sometimes friends weren't seen as online.
+
+**Removed:**
+- Removed GitHub login
+
+### [1.0.7] - 22/06/2023
+
+**New Features:**
 - Redesigned the desktop toolbar to include all action buttons from the mobile version.
 - Mobile users can now create panel links without any glitches.
 - Introduced a new side action bar for mobile users.
+
+**Bug Fixes:**
+- Fixed a bug with panel link lines mapping to random panels.
+
+
+### [1.0.6] - 21/06/2023
+**New Features:**
+- Redesigned context menus.
 - Enabled mobile controls for moving panels, selecting, and multi-selecting.
 - Moved the settings dialog to the side UI for mobile users.
 
 **Bug Fixes:**
-- Fixed a bug where panel link lines mapped to random panels.
 - Panel links are now saved to the database and can update in real-time over SignalR.
+- Optimized large SignalR messages and put a limit on 30 max panels to be created at once. A message is displayed on the canvas when this limit is exceeded.
+- Fixed an issue causing a failure in project creation when encountering an undefined string.
 
-### 1.0.5 - <span style="font-size: smaller;">19/06/2023</span>
+### [1.0.5] - 19/06/2023
 **New Features:**
 - Improved project management in the side UI, allowing users to edit projects on desktop and mobile.
 - Implemented new user profile cards when tapping on the preview.
@@ -257,7 +305,7 @@ Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
 - Sorted the projects list by last updated, updating the "last updated" field for every item create, update, or delete.
 - Improved notifications for mobile devices.
 
-### 1.0.4 - <span style="font-size: smaller;">14/06/2023</span>
+### [1.0.4]- 14/06/2023
 **New Features:**
 - Added MessagePack to SignalR and included more options in the projects side menu.
 - Enabled adding users to projects from the context menu. Built a reusable context menu component to streamline the process.
@@ -273,11 +321,11 @@ Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
 - Fixed the issue where an undefined string was not created on project creation.
 - Redesigned Nginx proxy.
 
-### 1.0.3 - <span style="font-size: smaller;">08/06/2023</span>
+### [1.0.3] - 08/06/2023
 **New Features:**
 - Added effects for when other SignalR users make an action, updating both displays.
 
-### 1.0.2 - <span style="font-size: smaller;">07/06/2023</span>
+### [1.0.2] - 07/06/2023
 **New Features:**
 - Added SignalR for real-time updates between users.
 - Added Google Sign in.
@@ -285,14 +333,14 @@ Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
 **API Changes:**
 - Added a new `PanelLink` model to the API.
 
-### 1.0.1 - <span style="font-size: smaller;">01/06/2023</span>
+### [1.0.1] - 01/06/2023
 **New Features:**
 - Added Link mode when string is selected.
 - New menu options.
 - Change graphics settings for canvas.
 - Able to edit keybindings for app.
 
-### 1.0.0 - <span style="font-size: smaller;">20/05/2023</span>
+### [1.0.0] - 20/05/2023
 **New Features:**
 - Create panels.
 - Create strings.
@@ -328,10 +376,10 @@ Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
   - [x] Add save/load
   - [x] Add share projects with other users
   - [x] Multiple users on the same project at the same time via SignalR
-- [ ] Add in multiple auth providers
+- [x] Add in multiple auth providers
   - [x] Add Google Signin
-  - [x] Add Github Signin
-  - [ ] Add in Microsoft Signin
+  - [x] <del>Add Github Signin</del>
+  - [x] Add in Microsoft Signin
 - [x] Add SignalR
   - [x] Add in real-time updates for projects
   - [x] Add in real-time updates for users
@@ -351,8 +399,8 @@ Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
 - [x] Invite users to project
   - [x] View project invites in side UI
   - [x] View project members in side UI
-  - [ ] As an admin, be able to remove users from the project
-  - [ ] Change roles of users in the project
+  - [x] As an admin, be able to remove users from the project
+  - [x] Change roles of users in the project
   - [ ] Implement roles for users in the project
 - [x] Edit project details
   - [x] Change project name
@@ -381,7 +429,7 @@ Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
   - [x] Add in user search
 - [ ] Add in Dark Mode
 - [ ] Add in more graphics settings
-- [ ] Add in more keybinds
+- [ ] Add in more keybindings
 - [ ] Add in Azure Maps
   - [ ] Be able to type in an address and have it search for it
   - [ ] Be able to save the location and take a screenshot of the map
@@ -400,7 +448,9 @@ This software uses the following open source packages:
 - [Nx](https://nx.dev/)
 - [Ngrx](https://ngrx.io/)
 - [Tailwind](https://tailwindcss.com/)
-- [.Net](https://dotnet.microsoft.com/en-us/)
+- [ASP.NET](https://github.com/dotnet/aspnetcore)
+- [SignalR](https://github.com/SignalR/SignalR)
+- [FastEndpoints](https://github.com/FastEndpoints/FastEndpoints)
 <!-- - [![Angular][Angular.io]][Angular-url] -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
