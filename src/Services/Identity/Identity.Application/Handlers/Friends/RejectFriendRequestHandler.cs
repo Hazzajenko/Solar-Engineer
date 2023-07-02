@@ -65,15 +65,16 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
         }
         appUserLink.ThrowHubExceptionIfNull();
         appUserLink.RejectFriendRequest(appUser);
+        _unitOfWork.DetachAllEntities();
         await _unitOfWork.AppUserLinksRepository.UpdateAsync(appUserLink);
         await _unitOfWork.SaveChangesAsync();
 
-        var notificationCommand = new DispatchNotificationCommand(
-            appUser,
-            recipientUser,
-            NotificationType.FriendRequestReceived
-        );
-        await _mediator.Send(notificationCommand, cT);
+        // var notificationCommand = new DispatchNotificationCommand(
+        //     appUser,
+        //     recipientUser,
+        //     NotificationType.FriendRequestReceived
+        // );
+        // await _mediator.Send(notificationCommand, cT);
 
         var originalSenderId = recipientUser.Id;
         var friendRequestNotification =
@@ -85,6 +86,7 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
         friendRequestNotification.ThrowHubExceptionIfNull();
         friendRequestNotification.SetNotificationCompleted();
 
+        _unitOfWork.DetachAllEntities();
         await _unitOfWork.NotificationsRepository.UpdateAsync(friendRequestNotification);
         await _unitOfWork.SaveChangesAsync();
 

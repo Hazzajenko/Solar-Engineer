@@ -62,6 +62,7 @@ public class RemoveFriendHandler : ICommandHandler<RemoveFriendCommand, bool>
         }
         appUserLink.ThrowHubExceptionIfNull();
         appUserLink.RemoveFriend(appUser);
+        _unitOfWork.DetachAllEntities();
         await _unitOfWork.AppUserLinksRepository.UpdateAsync(appUserLink);
         await _unitOfWork.SaveChangesAsync();
 

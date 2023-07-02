@@ -64,6 +64,7 @@ public class SendFriendRequestHandler : ICommandHandler<SendFriendRequestCommand
         }
         appUserLink.ThrowHubExceptionIfNull();
         appUserLink.SendFriendRequest(appUser);
+        _unitOfWork.DetachAllEntities();
         await _unitOfWork.AppUserLinksRepository.UpdateAsync(appUserLink);
         await _unitOfWork.SaveChangesAsync().ConfigureAwait(false);
 

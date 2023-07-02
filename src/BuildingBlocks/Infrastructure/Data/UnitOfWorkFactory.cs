@@ -45,14 +45,49 @@ public abstract class UnitOfWorkFactory<TContext> : IUnitOfWorkFactory
         return changes;
     }
 
+    public void PrintTrackedEntities()
+    {
+        var entries = Context.ChangeTracker.Entries();
+
+        foreach (EntityEntry entry in entries)
+        {
+            Console.WriteLine(
+                $"Entity: {entry.Entity.GetType().Name}, State: {entry.State.ToString()}"
+            );
+        }
+    }
+
+    public void DetachAllEntities()
+    {
+        var entitiesToDetach = Context.ChangeTracker
+            .Entries()
+            .Where(e => e.State != EntityState.Detached)
+            .ToList();
+
+        foreach (EntityEntry entry in entitiesToDetach)
+            entry.State = EntityState.Detached;
+    }
+
+    public void PrintTrackedEntitiesOfType<T>()
+        where T : class
+    {
+        var entries = Context.ChangeTracker.Entries<T>();
+
+        foreach (var entry in entries)
+        {
+            Console.WriteLine(
+                $"Entity: {entry.Entity.GetType().Name}, State: {entry.State.ToString()}"
+            );
+        }
+    }
+
     private void UpdateLastModifiedTimeBeforeSave()
     {
         foreach (var entry in Context.ChangeTracker.Entries<IEntityBase>().ToList())
-            switch (entry.State)
+            entry.Entity.LastModifiedTime = entry.State switch
             {
-                case EntityState.Modified:
-                    entry.Entity.LastModifiedTime = DateTime.UtcNow;
-                    break;
-            }
+                EntityState.Modified => DateTime.UtcNow,
+                _ => entry.Entity.LastModifiedTime
+            };
     }
 }
