@@ -71,7 +71,7 @@ public static class AppUserMapper
             ArgumentNullException.ThrowIfNull(email);
             var userName = Strings.Split(email, "@")[0];
 
-            var photoUrl = "https://robohash.org/user1.png?size=30x30";
+            var photoUrl = $"https://robohash.org/{userName}";
 
             return new AppUser
             {
@@ -97,7 +97,7 @@ public static class AppUserMapper
             PhotoUrl = request.PhotoUrl,
             IsFriend = false,
             IsOnline = false,
-            BecameFriendsTime = 
+            BecameFriendsTime =
             
         }
     }*/
@@ -131,7 +131,7 @@ public class AppUserMappingConfig : IRegister
             .Map(dest => dest.PhotoUrl, src => src.PhotoUrl)
             .Map(dest => dest.CreatedTime, src => src.CreatedTime)
             .Map(dest => dest.LastModifiedTime, src => src.LastModifiedTime);
-        
+
         config
             .NewConfig<AppUser, WebUserDto>()
             .Map(dest => dest.Id, src => src.Id.ToString())

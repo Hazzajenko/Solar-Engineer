@@ -18,8 +18,6 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
     private readonly SignInManager<AppUser> _signInManager;
     private readonly UserManager<AppUser> _userManager;
 
-    // private readonly IImagesService _imagesService;
-
     public AuthorizeHandler(
         UserManager<AppUser> userManager,
         ILogger<AuthorizeHandler> logger,
@@ -98,7 +96,7 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
     {
         var appUser = user.ToAppUser(externalLogin);
 
-        var createUserResult = await _userManager.CreateAsync(appUser);
+        IdentityResult createUserResult = await _userManager.CreateAsync(appUser);
 
         if (!createUserResult.Succeeded)
         {
@@ -141,9 +139,11 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
             throw new UnauthorizedException();
         }
 
-        var response = await _mediator.Send(new CreateInitialDpCommand(appUser));
+        UploadUrlImageToCdnResponse uploadPhotoResponse = await _mediator.Send(
+            new UploadUrlImageToCdnCommand(appUser)
+        );
 
-        appUser.PhotoUrl = response.PhotoUrl;
+        appUser.PhotoUrl = uploadPhotoResponse.PhotoUrl;
         await _userManager.UpdateAsync(appUser);
         return new() { AppUser = appUser, LoginProvider = externalLogin.LoginProvider };
     }

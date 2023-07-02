@@ -15,6 +15,7 @@ using Infrastructure.OpenTelemetry;
 using Infrastructure.SignalR;
 using Infrastructure.Swagger;
 using Infrastructure.Web;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
@@ -120,7 +121,7 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var loginEndpoints = app.MapGroup("login");
 
-loginEndpoints.MapGet(
+/*loginEndpoints.MapGet(
     "/github",
     (SignInManager<AppUser> signInManager) =>
     {
@@ -133,7 +134,7 @@ loginEndpoints.MapGet(
         properties.AllowRefresh = true;
         return Results.Challenge(properties, new List<string> { "github" });
     }
-);
+);*/
 
 loginEndpoints.MapGet(
     "/google",
@@ -154,9 +155,9 @@ loginEndpoints.MapGet(
     "/microsoft",
     (SignInManager<AppUser> signInManager) =>
     {
-        var provider = "microsoft";
-        var redirectUrl = "/?authorize=true";
-        var properties = signInManager.ConfigureExternalAuthenticationProperties(
+        const string provider = "microsoft";
+        const string redirectUrl = "/?authorize=true";
+        AuthenticationProperties properties = signInManager.ConfigureExternalAuthenticationProperties(
             provider,
             redirectUrl
         );

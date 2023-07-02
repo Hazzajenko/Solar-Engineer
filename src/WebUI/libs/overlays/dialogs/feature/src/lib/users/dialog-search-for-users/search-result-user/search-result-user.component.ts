@@ -25,6 +25,7 @@ import { DialogBackdropTemplateComponent } from '../../../dialog-backdrop-templa
 import { DialogUserOptionsComponent } from '../../dialog-user-options/dialog-user-options.component'
 import { DialogWarningTemplateInput, DialogWarningTemplateInputsComponent } from '../../../shared'
 import { injectUsersStore } from '@auth/data-access'
+import { injectNotificationsStore } from '@overlays/notifications/data-access'
 
 @Component({
 	selector: 'app-search-result-user',
@@ -56,6 +57,7 @@ export class SearchResultUserComponent implements OnDestroy {
 	private _overlay = inject(Overlay)
 	private _projectsStore = injectProjectsStore()
 	private _usersStore = injectUsersStore()
+	private _notificationsStore = injectNotificationsStore()
 	@ViewChild('userContextMenu') private _userContextMenu!: TemplateRef<unknown>
 	@ViewChild('dialogWarning') private _dialogWarning!: TemplateRef<unknown>
 	@Input({ required: true }) user!: WebUserModel
@@ -147,6 +149,18 @@ export class SearchResultUserComponent implements OnDestroy {
 			buttonText: 'Send',
 			buttonAction: () => {
 				this._usersStore.dispatch.sendFriendRequest(this.user.id)
+				this._notificationsStore.dispatch.addDynamicNotification({
+					id: this.user.id,
+					title: 'Friend Request Sent',
+					message: `You sent ${this.user.displayName} a friend request`,
+					photoUrl: this.user.photoUrl,
+					dismissButton: {
+						text: 'Dismiss',
+						onClick: undefined,
+					},
+					actionButton: undefined,
+					subtitle: undefined,
+				})
 			},
 		}
 		this._childSubMenuOverlay?.detach()

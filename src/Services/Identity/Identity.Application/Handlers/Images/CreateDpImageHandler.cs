@@ -19,20 +19,21 @@ public class CreateDpImageHandler : ICommandHandler<CreateDpImageCommand, Create
         CancellationToken cT
     )
     {
-        var bitmap = GenerateBitmap(command.Initials);
+        SKBitmap bitmap = GenerateBitmap(command.Initials);
 
         // var result = await Task.Run(() => ConvertBitmapToPng(bitmap), cT);
         var result = ConvertBitmapToPng(bitmap);
 
-
         _logger.LogInformation("Image generated for initials: {Initials}", command.Initials);
-        return ValueTask.FromResult(new CreateDpImageResponse
-        {
-            ImageUrl = $"data:image/png;base64,{Convert.ToBase64String(result)}"
-        });
+        return ValueTask.FromResult(
+            new CreateDpImageResponse
+            {
+                ImageUrl = $"data:image/png;base64,{Convert.ToBase64String(result)}"
+            }
+        );
     }
-    
-    private SKBitmap GenerateBitmap(string initials)
+
+    private static SKBitmap GenerateBitmap(string initials)
     {
         var size = 100;
         var bitmap = new SKBitmap(size, size, SKColorType.Rgba8888, SKAlphaType.Premul);
@@ -61,7 +62,7 @@ public class CreateDpImageHandler : ICommandHandler<CreateDpImageCommand, Create
         return bitmap;
     }
 
-    private byte[] ConvertBitmapToPng(SKBitmap bitmap)
+    private static byte[] ConvertBitmapToPng(SKBitmap bitmap)
     {
         using var image = SKImage.FromBitmap(bitmap);
         using var data = image.Encode(SKEncodedImageFormat.Png, 100);
