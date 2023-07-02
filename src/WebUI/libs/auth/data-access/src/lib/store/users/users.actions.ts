@@ -16,6 +16,9 @@ export const UsersActions = createActionGroup({
 		'Receive Friend Request Event': props<{
 			response: FriendRequestResponse
 		}>(),
+		'Receive Friend': props<{
+			friend: WebUserModel
+		}>(),
 		'Send Friend Request': props<{
 			userId: string
 		}>(),

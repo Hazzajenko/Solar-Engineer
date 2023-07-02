@@ -69,6 +69,7 @@ function usersStoreFactory(store: Store) {
 			store.dispatch(UsersActions.receiveSearchResultsForAppUser({ response })),
 		clearUserSearchResults: () => store.dispatch(UsersActions.clearUserSearchResults()),
 		loadUsers: (users: WebUserModel[]) => store.dispatch(UsersActions.loadUsers({ users })),
+		receiveFriend: (friend: WebUserModel) => store.dispatch(UsersActions.receiveFriend({ friend })),
 		addUser: (user: WebUserModel) => store.dispatch(UsersActions.addUser({ user })),
 		addManyUsers: (users: WebUserModel[]) => store.dispatch(UsersActions.addManyUsers({ users })),
 		updateUser: (update: UpdateStr<WebUserModel>) =>

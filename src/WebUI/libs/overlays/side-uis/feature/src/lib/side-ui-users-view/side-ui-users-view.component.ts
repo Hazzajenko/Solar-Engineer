@@ -90,7 +90,7 @@ export class SideUiUsersViewComponent {
 
 	webUserSorter = signal<keyof WebUserModel | undefined>('lastActiveTime')
 	friendsSorted = computed(() => {
-		const friends = this.friends()
+		const friends = this._usersStore.select.allFriends()
 		const sorter = this.webUserSorter()
 		if (!sorter) return friends
 		if (

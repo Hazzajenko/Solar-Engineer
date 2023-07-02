@@ -1,6 +1,8 @@
 ﻿using ApplicationCore.Extensions;
 using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Handlers.Notifications;
+using Identity.Application.Mapping;
+using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Friends;
 using Identity.Contracts.Responses.Notifications;
@@ -22,25 +24,28 @@ public class AcceptFriendRequestHandler : ICommandHandler<AcceptFriendRequestCom
     private readonly IIdentityUnitOfWork _unitOfWork;
     private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
     private readonly IMediator _mediator;
+    private readonly IConnectionsService _connectionsService;
 
     public AcceptFriendRequestHandler(
         ILogger<AcceptFriendRequestHandler> logger,
         IIdentityUnitOfWork unitOfWork,
         IHubContext<UsersHub, IUsersHub> hubContext,
-        IMediator mediator
+        IMediator mediator,
+        IConnectionsService connectionsService
     )
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
         _hubContext = hubContext;
         _mediator = mediator;
+        _connectionsService = connectionsService;
     }
 
     public async ValueTask<bool> Handle(AcceptFriendRequestCommand request, CancellationToken cT)
     {
-        var appUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(request.AuthUser.Id);
+        var appUser = await _unitOfWork.AppUsersRepository.GetByIdNoTracking(request.AuthUser.Id);
         var recipientUserId = request.RecipientUserId.ToGuid();
-        var recipientUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(recipientUserId);
+        var recipientUser = await _unitOfWork.AppUsersRepository.GetByIdNoTracking(recipientUserId);
         appUser.ThrowHubExceptionIfNull();
         recipientUser.ThrowHubExceptionIfNull();
 
@@ -67,18 +72,24 @@ public class AcceptFriendRequestHandler : ICommandHandler<AcceptFriendRequestCom
         }
         appUserLink.ThrowHubExceptionIfNull();
         appUserLink.AcceptFriendRequest();
+        _unitOfWork.DetachAllEntities();
         await _unitOfWork.AppUserLinksRepository.UpdateAsync(appUserLink);
         await _unitOfWork.SaveChangesAsync();
+
+        var recipientOnline = _connectionsService.IsUserOnline(recipientUser.Id);
 
         await _hubContext.Clients
             .User(appUser.Id.ToString())
             .ReceiveFriend(
-                new ReceiveFriendResponse { Friend = recipientUser.Adapt<WebUserDto>() }
+                new ReceiveFriendResponse
+                {
+                    Friend = recipientUser.ToFriendWebUserDto(recipientOnline)
+                }
             );
 
         await _hubContext.Clients
             .User(recipientUser.Id.ToString())
-            .ReceiveFriend(new ReceiveFriendResponse { Friend = appUser.Adapt<WebUserDto>() });
+            .ReceiveFriend(new ReceiveFriendResponse { Friend = appUser.ToFriendWebUserDto(true) });
 
         var notificationCommand = new DispatchNotificationCommand(
             appUser,
@@ -97,7 +108,9 @@ public class AcceptFriendRequestHandler : ICommandHandler<AcceptFriendRequestCom
         friendRequestNotification.ThrowHubExceptionIfNull();
         friendRequestNotification.SetNotificationCompleted();
 
+        _unitOfWork.DetachAllEntities();
         await _unitOfWork.NotificationsRepository.UpdateAsync(friendRequestNotification);
+
         await _unitOfWork.SaveChangesAsync();
 
         var notificationDto = friendRequestNotification.Adapt<NotificationDto>();

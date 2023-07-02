@@ -81,6 +81,24 @@ const reducer = createReducer(
 			currentAppUserId: user.id,
 		}
 	}),
+	on(UsersActions.receiveFriend, (state, { friend }) => {
+		if (state.entities[friend.id]) {
+			return {
+				...state,
+				...usersAdapter.updateOne(
+					{
+						id: friend.id,
+						changes: friend,
+					},
+					state,
+				),
+			}
+		}
+		return {
+			...state,
+			...usersAdapter.addOne(friend, state),
+		}
+	}),
 	on(UsersActions.addUser, (state, { user }) => usersAdapter.addOne(user, state)),
 	on(UsersActions.addManyUsers, (state, { users }) => usersAdapter.addMany(users, state)),
 	on(UsersActions.updateUser, (state, { update }) => usersAdapter.updateOne(update, state)),

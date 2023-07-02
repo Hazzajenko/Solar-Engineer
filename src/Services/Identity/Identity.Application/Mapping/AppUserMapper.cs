@@ -115,6 +115,22 @@ public static class AppUserMapper
             Email = request.Email!
         };
     }
+
+    public static WebUserDto ToFriendWebUserDto(this AppUser request, bool isOnline = false)
+    {
+        return new WebUserDto
+        {
+            Id = request.Id.ToString(),
+            DisplayName = request.DisplayName,
+            UserName = request.UserName,
+            PhotoUrl = request.PhotoUrl,
+            IsFriend = true,
+            IsOnline = isOnline,
+            BecameFriendsTime = DateTime.UtcNow,
+            RegisteredAtTime = request.CreatedTime,
+            LastActiveTime = request.LastModifiedTime
+        };
+    }
 }
 
 public class AppUserMappingConfig : IRegister

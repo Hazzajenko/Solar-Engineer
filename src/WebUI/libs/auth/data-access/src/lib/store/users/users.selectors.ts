@@ -52,9 +52,15 @@ export const selectUserSearchResultById = (props: { id: string }) =>
 		users.find((u) => u.id === props.id),
 	)
 
-export const selectAllFriends = createSelector(
-	selectAllUsersMappedWithConnections,
-	(users: WebUserModel[]) => users.filter((user) => user.isFriend),
+/*
+ export const selectAllFriends = createSelector(
+ selectAllUsersMappedWithConnections,
+ (users: WebUserModel[]) => users.filter((user) => user.isFriend),
+ )
+ */
+
+export const selectAllFriends = createSelector(selectAllUsers, (users: WebUserModel[]) =>
+	users.filter((user) => user.isFriend),
 )
 
 export const selectAllOnlineFriends = createSelector(selectAllFriends, (users: WebUserModel[]) =>

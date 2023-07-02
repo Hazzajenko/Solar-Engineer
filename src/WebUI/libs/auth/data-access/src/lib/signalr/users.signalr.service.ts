@@ -1,6 +1,24 @@
 import { Injectable } from '@angular/core'
 import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import { FriendRequestResponse, GetOnlineFriendsResponse, GetOnlineUsersResponse, GetUserFriendsResponse, NotificationUpdatedResponse, ReceiveAppUserNotificationsResponse, ReceiveFriendResponse, ReceiveNotificationResponse, SearchForAppUserRequest, SearchForAppUserResponse, SearchForUserResponse, UpdateNotificationResponse, UserIsOfflineResponse, UserIsOnlineResponse, USERS_SIGNALR_EVENT, USERS_SIGNALR_METHOD, UsersSignalrEvent } from '@auth/shared'
+import {
+	FriendRequestResponse,
+	GetOnlineFriendsResponse,
+	GetOnlineUsersResponse,
+	GetUserFriendsResponse,
+	NotificationUpdatedResponse,
+	ReceiveAppUserNotificationsResponse,
+	ReceiveFriendResponse,
+	ReceiveNotificationResponse,
+	SearchForAppUserRequest,
+	SearchForAppUserResponse,
+	SearchForUserResponse,
+	UpdateNotificationResponse,
+	UserIsOfflineResponse,
+	UserIsOnlineResponse,
+	USERS_SIGNALR_EVENT,
+	USERS_SIGNALR_METHOD,
+	UsersSignalrEvent,
+} from '@auth/shared'
 import { injectConnectionsStore, injectUsersStore } from '../store'
 import { HubConnection } from '@microsoft/signalr'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
@@ -59,7 +77,7 @@ export class UsersSignalrService {
 
 		this.onHub(USERS_SIGNALR_EVENT.RECEIVE_FRIEND, (response: ReceiveFriendResponse) => {
 			console.log(USERS_SIGNALR_EVENT.RECEIVE_FRIEND, response)
-			this._usersStore.dispatch.addUser(response.friend)
+			this._usersStore.dispatch.receiveFriend(response.friend)
 		})
 
 		this.onHub(
@@ -146,7 +164,6 @@ export class UsersSignalrService {
 		console.log('removeFriend', appUserId)
 		// this.invokeHubConnection(USERS_SIGNALR_METHOD.REMOVE_FRIEND, appUserId)
 	}
-
 
 	readManyNotifications(notificationIds: string[]) {
 		this.invokeHub(USERS_SIGNALR_METHOD.READ_MANY_NOTIFICATIONS, notificationIds)
