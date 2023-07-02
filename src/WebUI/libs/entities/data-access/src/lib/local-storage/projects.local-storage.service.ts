@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core'
 import {
+	PanelConfigModel,
+	PanelLinkModel,
+	PanelModel,
 	PROJECT_LOCAL_STORAGE_MODEL,
 	ProjectEntities,
 	ProjectLocalStorageModel,
+	StringModel,
 } from '@entities/shared'
 import { ProjectLocalStorageAction } from '@entities/utils'
 import { UpdateStr } from '@ngrx/entity/src/models'
@@ -16,24 +20,65 @@ export class ProjectsLocalStorageService {
 
 	fetchExistingProject() {
 		const modelKeys = Object.keys(PROJECT_LOCAL_STORAGE_MODEL)
+		const projectLocalStorage: ProjectLocalStorageModel = {
+			panels: this.getObjectFromLocalStorage(
+				'panels',
+				PROJECT_LOCAL_STORAGE_MODEL.panels,
+			) as PanelModel[],
+			panelConfigs: this.getObjectFromLocalStorage(
+				'panelConfigs',
+				PROJECT_LOCAL_STORAGE_MODEL.panelConfigs,
+			) as PanelConfigModel[],
+			panelLinks: this.getObjectFromLocalStorage(
+				'panelLinks',
+				PROJECT_LOCAL_STORAGE_MODEL.panelLinks,
+			) as PanelLinkModel[],
+			strings: this.getObjectFromLocalStorage(
+				'strings',
+				PROJECT_LOCAL_STORAGE_MODEL.strings,
+			) as StringModel[],
+			createdTime: this.getStringFromLocalStorage('createdTime') as string,
+			lastModifiedTime: this.getStringFromLocalStorage('lastModifiedTime') as string,
+		}
+		/*const projectLocalStorage = modelKeys
+		 .filter((key) => key !== 'createdTime' && key !== 'lastModifiedTime')
+		 .map((key) => {
+		 const storedItem = localStorage.getItem(key)
+		 console.log('storedItem', storedItem, key)
+		 if (!storedItem) return
+		 const parsed = PROJECT_LOCAL_STORAGE_MODEL[
+		 key as keyof typeof PROJECT_LOCAL_STORAGE_MODEL
+		 ].safeParse(JSON.parse(storedItem))
+		 console.log(key, parsed)
+		 if (!parsed.success) throw new Error(parsed.error.message)
+		 return parsed.data
+		 })
+		 .reduce((acc, curr, i) => {
+		 if (!curr) return acc
+		 return {
+		 ...acc,
+		 [modelKeys[i]]: curr,
+		 }
+		 }, {} as ProjectLocalStorageModel)
+		 projectLocalStorage.createdTime = localStorage.getItem('createdTime') || ''
+		 projectLocalStorage.lastModifiedTime = localStorage.getItem('lastModifiedTime') || ''*/
+		console.log('projectLocalStorage', projectLocalStorage)
+		return projectLocalStorage
+	}
 
-		return modelKeys
-			.map((key) => {
-				const storedItem = localStorage.getItem(key)
-				if (!storedItem) return
-				const parsed = PROJECT_LOCAL_STORAGE_MODEL[
-					key as keyof typeof PROJECT_LOCAL_STORAGE_MODEL
-				].safeParse(JSON.parse(storedItem))
-				if (!parsed.success) throw new Error(parsed.error.message)
-				return parsed.data
-			})
-			.reduce((acc, curr, i) => {
-				if (!curr) return acc
-				return {
-					...acc,
-					[modelKeys[i]]: curr,
-				}
-			}, {} as ProjectLocalStorageModel)
+	getObjectFromLocalStorage(
+		key: string,
+		schema: (typeof PROJECT_LOCAL_STORAGE_MODEL)[keyof typeof PROJECT_LOCAL_STORAGE_MODEL],
+	) {
+		const storedItem = localStorage.getItem(key)
+		if (!storedItem) return
+		const parsed = schema.safeParse(JSON.parse(storedItem))
+		if (!parsed.success) throw new Error(parsed.error.message)
+		return parsed.data
+	}
+
+	getStringFromLocalStorage(key: string) {
+		return localStorage.getItem(key)
 	}
 
 	getProjectDataByKey<T extends keyof ProjectEntities>(key: T) {
@@ -149,6 +194,8 @@ export class ProjectsLocalStorageService {
 			const entity = entities[key as keyof ProjectEntities]
 			localStorage.setItem(key, JSON.stringify(entity))
 		})
+		localStorage.setItem('lastModifiedTime', new Date().toISOString())
+		localStorage.setItem('createdTime', new Date().toISOString())
 	}
 
 	appActionController(action: ProjectLocalStorageAction) {

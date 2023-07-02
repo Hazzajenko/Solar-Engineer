@@ -13,14 +13,14 @@
 				<div class="flex flex-col items-start justify-center text-sm">
 					<ng-container *ngIf="user.isFriend; then friendTemplate; else notFriendTemplate" />
 					<ng-template #friendTemplate>
-						<button
-							class="cursor-default flex relative hover:bg-gray-200 my-1 py-1 rounded-md w-full items-center justify-between"
-							matRipple
-							type="button"
-						>
-							<svg-input class="scale-90" svgName="SvgChatBubbleLeft" />
-							<label class="select-none ml-1 font-medium text-gray-900">Message</label>
-						</button>
+						<!--						<button
+													class="cursor-default flex relative hover:bg-gray-200 my-1 py-1 rounded-md w-full items-center justify-between"
+													matRipple
+													type="button"
+												>
+													<svg-input class="scale-90" svgName="SvgChatBubbleLeft" />
+													<label class="select-none ml-1 font-medium text-gray-900">Message</label>
+												</button>-->
 						<button
 							(click)="invitingToProject.set(!invitingToProject())"
 							class="cursor-default flex relative hover:bg-gray-200 my-1 py-1 rounded-md w-full items-center justify-between"

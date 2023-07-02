@@ -166,9 +166,10 @@ export class SelectedChatRoomComponent implements OnInit, OnDestroy {
 	}
 
 	private sentContent(content: string) {
-		this._messagesStore.dispatch.sendMessageToUser({
-			recipientUserId: this.chatRoomPreview.chatId,
-			content,
-		})
+		// TODO send message
+		// this._messagesStore.dispatch.sendMessageToUser({
+		// 	recipientUserId: this.chatRoomPreview.chatId,
+		// 	content,
+		// })
 	}
 }

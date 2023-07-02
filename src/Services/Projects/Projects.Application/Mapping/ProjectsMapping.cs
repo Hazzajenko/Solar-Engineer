@@ -96,9 +96,9 @@ public static class ProjectsMapping
             MemberIds = request.AppUserProjects.Select(x => x.AppUserId.ToString()),
             UndefinedStringId = request.UndefinedStringId.ToString(),
             Panels = new List<PanelDto>(),
-            Strings = new List<StringDto> { undefinedString.ToDto() },
+            Strings = new List<StringDto> { undefinedString.Adapt<StringDto>() },
             PanelLinks = new List<PanelLinkDto>(),
-            PanelConfigs = defaultPanelConfigs.Select(x => x.ToDto()),
+            PanelConfigs = defaultPanelConfigs.Adapt<IEnumerable<PanelConfigDto>>(),
         };
     }
 }

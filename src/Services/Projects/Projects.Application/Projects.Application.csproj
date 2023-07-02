@@ -39,6 +39,12 @@
 
     <ItemGroup>
         <None Remove="Data\Json\ProjectTemplates\12-rows-no-strings.template.json" />
+        <EmbeddedResource Include="Data\Json\ProjectTemplates\12-rows-6-strings-with-links.template.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Data\Json\ProjectTemplates\12-rows-6-strings.template.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
         <EmbeddedResource Include="Data\Json\ProjectTemplates\12-rows-no-strings-old.template.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>

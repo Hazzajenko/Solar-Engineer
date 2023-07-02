@@ -67,7 +67,7 @@ export class DialogViewProjectTemplatesComponent {
 	private _projectsLocalStorage = inject(ProjectsLocalStorageService)
 	user = injectAppUser()
 	dialog = inject(Injector).get(dialogInputInjectionToken) as DialogInputInitialVisitWithTemplates
-
+	isProjectExisting = this._projectsLocalStorage.isProjectExisting()
 	templates = PROJECT_TEMPLATES
 
 	selectedTemplateName = signal<ProjectTemplate['name'] | undefined>(undefined)
@@ -103,5 +103,9 @@ export class DialogViewProjectTemplatesComponent {
 	startWithBlankTemplate() {
 		this.selectedTemplateName.set('Blank')
 		this.onSubmit()
+	}
+
+	continueWithLocalSave() {
+		this._uiStore.dispatch.closeDialog()
 	}
 }

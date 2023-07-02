@@ -30,8 +30,13 @@ export const userIsOnlineDispatchNotification$ = createEffect(
 					.pipe(
 						map((userOrAction) => {
 							const user = 'type' in userOrAction ? userOrAction.user : userOrAction
-							const localNotification = createLocalNotification.userIsOnline(user)
-							return NotificationsActions.addLocalNotification({ localNotification })
+							if (user.isOnline) {
+								return NotificationsActions.addLocalNotification({
+									localNotification: createLocalNotification.userIsOnline(user),
+								})
+							}
+							// const localNotification = createLocalNotification.userIsOnline(user)
+							return NotificationsActions.noop()
 						}),
 					)
 			}),

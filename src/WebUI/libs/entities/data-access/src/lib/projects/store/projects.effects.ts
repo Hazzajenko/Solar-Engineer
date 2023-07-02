@@ -3,7 +3,7 @@ import { inject } from '@angular/core'
 import { catchError, EMPTY, map, of, switchMap, tap } from 'rxjs'
 import { ProjectsHttpService, ProjectsSignalrService } from '../services'
 import { ProjectsActions } from './projects.actions'
-import { injectEntityStore, selectProjectById } from '@entities/data-access'
+import { injectEntityStore, injectProjectsStore, selectProjectById } from '@entities/data-access'
 import { AuthActions } from '@auth/data-access'
 import { DIALOG_COMPONENT, UiActions } from '@overlays/ui-store/data-access'
 import { Store } from '@ngrx/store'
@@ -87,13 +87,36 @@ export const updateProjectSignalr$ = createEffect(
 )
 
 export const deleteProjectSignalr$ = createEffect(
-	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
+	(
+		actions$ = inject(Actions),
+		projectsSignalr = inject(ProjectsSignalrService),
+		projectsStore = injectProjectsStore(),
+	) => {
 		return actions$.pipe(
-			ofType(ProjectsActions.deleteProject),
-			tap(({ projectId }) => projectsSignalr.deleteProject(projectId)),
+			ofType(ProjectsActions.deleteProject, ProjectsActions.leaveProject),
+			tap((action) => {
+				const projectId = action.projectId
+				if (action.type === ProjectsActions.deleteProject.type) {
+					projectsSignalr.deleteProject(projectId)
+					return
+				}
+				projectsSignalr.leaveProject({ projectId })
+			}),
+			map(({ projectId }) => {
+				const projects = projectsStore.select.allProjects()
+				const projectsExceptDeleted = projects.filter((project) => project.id !== projectId)
+				if (projectsExceptDeleted.length === 0) {
+					return UiActions.openDialog({
+						dialog: {
+							component: DIALOG_COMPONENT.CREATE_PROJECT,
+						},
+					})
+				}
+				return ProjectsActions.selectProject({ projectId: projectsExceptDeleted[0].id })
+			}),
 		)
 	},
-	{ functional: true, dispatch: false },
+	{ functional: true },
 )
 
 export const userAcceptedInviteToProject$ = createEffect(
@@ -196,15 +219,15 @@ export const projectMemberKicked$ = createEffect(
 	{ functional: true },
 )
 
-export const leaveProject$ = createEffect(
-	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
-		return actions$.pipe(
-			ofType(ProjectsActions.leaveProject),
-			tap(({ projectId }) => projectsSignalr.leaveProject({ projectId })),
-		)
-	},
-	{ functional: true, dispatch: false },
-)
+/*export const leaveProject$ = createEffect(
+ (actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
+ return actions$.pipe(
+ ofType(ProjectsActions.leaveProject),
+ tap(({ projectId }) => projectsSignalr.leaveProject({ projectId })),
+ )
+ },
+ { functional: true, dispatch: false },
+ )*/
 
 export const userLeftProject$ = createEffect(
 	(actions$ = inject(Actions), store = inject(Store)) => {

@@ -74,7 +74,7 @@ export class DialogInitialVisitWithTemplatesComponent {
 	selectedTemplate = computed(() =>
 		this.templates.find((t) => t.name === this.selectedTemplateName()),
 	)
-	isProjectExisting = this._projectsLocalStorage.isProjectExisting
+	isProjectExisting = this._projectsLocalStorage.isProjectExisting()
 	protected readonly PROJECT_TEMPLATES = PROJECT_TEMPLATES
 
 	constructor() {
@@ -96,7 +96,7 @@ export class DialogInitialVisitWithTemplatesComponent {
 		const selectedTemplate = this.selectedTemplate()
 		if (!selectedTemplate) throw new Error('No template selected')
 		const user = this.user()
-		if (!user && !this._projectsLocalStorage.isProjectExisting()) {
+		if (!user && this._projectsLocalStorage.isProjectExisting()) {
 			this._uiStore.dispatch.openDialog({
 				component: DIALOG_COMPONENT.WARNING_TEMPLATE,
 				data: {
@@ -139,5 +139,10 @@ export class DialogInitialVisitWithTemplatesComponent {
 	startWithBlankTemplate() {
 		this.selectedTemplateName.set('Blank')
 		this.onSubmit()
+	}
+
+	continueWithLocalSave() {
+		// this._projectsStore.dispatch.loadProjectFromLocalStorage()
+		this._uiStore.dispatch.closeDialog()
 	}
 }

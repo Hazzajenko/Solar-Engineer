@@ -93,8 +93,9 @@ const reducer = createReducer(
 	on(ProjectsActions.deleteProject, (state, { projectId }) => {
 		const newState = projectsAdapter.removeOne(projectId, state)
 		if (projectId === state.selectedProjectId) {
+			// if (newState.ids[0] === projectId)
 			return {
-				...newState,
+				...newState, // selectedProjectId: state.ids[0] as ProjectId ,
 				selectedProjectId: undefined,
 			}
 		}
@@ -132,4 +133,15 @@ const projectDataModelToProjectModel = (projectDataModel: ProjectDataModel): Pro
 		lastModifiedTime: projectDataModel.lastModifiedTime,
 		undefinedStringId: projectDataModel.undefinedStringId,
 	} as ProjectModel
+}
+
+const handleDeleteProject = (state: ProjectsState, projectId: ProjectId) => {
+	const newState = projectsAdapter.removeOne(projectId, state)
+	if (projectId === state.selectedProjectId) {
+		return {
+			...newState,
+			selectedProjectId: undefined,
+		}
+	}
+	return newState
 }

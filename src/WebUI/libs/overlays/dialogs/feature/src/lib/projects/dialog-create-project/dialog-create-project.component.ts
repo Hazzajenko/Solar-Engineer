@@ -69,7 +69,9 @@ export class DialogCreateProjectComponent {
 	private _overlay = inject(Overlay)
 	private _destroyRef = inject(DestroyRef)
 	@ViewChild('selectTemplateDialog') private _selectTemplateDialog!: TemplateRef<unknown>
-	templates = PROJECT_TEMPLATES
+	templates = PROJECT_TEMPLATES.filter(
+		(t) => t.name === 'Blank' || t.name === 'Twelve rows of panels, no strings',
+	)
 
 	selectedTemplateName = signal<ProjectTemplate['name']>('Blank')
 	selectedTemplate = computed(() =>

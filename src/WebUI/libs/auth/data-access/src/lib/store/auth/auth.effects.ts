@@ -4,7 +4,7 @@ import { AuthActions } from './index'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { catchError, map, of, switchMap, tap } from 'rxjs'
 import { Location } from '@angular/common'
-import { MessagesSignalrService, UsersSignalrService } from '../../signalr'
+import { UsersSignalrService } from '../../signalr'
 import { DeviceDetectorService } from 'ngx-device-detector'
 import { DIALOG_COMPONENT, UiActions } from '@overlays/ui-store/data-access'
 
@@ -71,8 +71,7 @@ export const isReturningUser$ = createEffect(
 export const signInSuccess$ = createEffect(
 	(
 		actions$ = inject(Actions),
-		usersSignalr = inject(UsersSignalrService),
-		messagesSignalr = inject(MessagesSignalrService),
+		usersSignalr = inject(UsersSignalrService), // messagesSignalr = inject(MessagesSignalrService),
 		deviceService = inject(DeviceDetectorService),
 	) => {
 		return actions$.pipe(
@@ -82,7 +81,7 @@ export const signInSuccess$ = createEffect(
 				const { device, deviceType, os } = deviceService.getDeviceInfo()
 				const deviceInfo = { device, deviceType, os }
 				usersSignalr.init(token, deviceInfo)
-				messagesSignalr.init(token)
+				// messagesSignalr.init(token)
 			}),
 			map(() => {
 				return UiActions.setScreenSize({

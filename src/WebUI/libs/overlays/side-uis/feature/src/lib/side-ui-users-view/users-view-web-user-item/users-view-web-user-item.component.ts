@@ -41,9 +41,9 @@ export class UsersViewWebUserItemComponent {
 	}
 
 	sendMessage() {
-		this._messagesStore.dispatch.sendMessageToUser({
-			recipientUserId: this.friend.id,
-			content: 'hello',
-		})
+		// this._messagesStore.dispatch.sendMessageToUser({
+		// 	recipientUserId: this.friend.id,
+		// 	content: 'hello',
+		// })
 	}
 }
