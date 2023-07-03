@@ -1,4 +1,4 @@
-C:\Users\jenki\source\app\solar-engineer\src\WebUI
+C:\solar-engineer\src\WebUI
 ├── apps
 |  └── web-app
 |  |  └── src

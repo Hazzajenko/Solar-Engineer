@@ -1,0 +1,214 @@
+solar-engineer\src
+├── BuildingBlocks
+|  ├── ApplicationCore
+|  |  ├── Contracts
+|  |  |  ├── Data
+|  |  |  ├── Request
+|  |  |  └── Responses
+|  |  ├── Entities
+|  |  ├── Events
+|  |  |  ├── AppUsers
+|  |  |  └── Projects
+|  |  ├── Exceptions
+|  |  ├── Extensions
+|  |  └── Interfaces
+|  ├── Domain
+|  |  └── Entities
+|  ├── EventBus
+|  |  ├── Common
+|  |  ├── Domain
+|  |  |  ├── AppUserEvents
+|  |  |  ├── AppUserEventsV2
+|  |  |  └── ProjectsEvents
+|  |  ├── Mapping
+|  |  ├── Services
+|  |  └── Wolverine
+|  └── Infrastructure
+|     ├── Authentication
+|     ├── Azure
+|     ├── Behaviours
+|     ├── Common
+|     |  ├── Behaviours
+|     |  └── User
+|     ├── Config
+|     ├── Converters
+|     ├── Data
+|     |  └── Seed
+|     ├── Extensions
+|     ├── Grpc
+|     ├── Health
+|     ├── Helpers
+|     ├── Logging
+|     ├── Mapping
+|     ├── Mediator
+|     ├── OpenTelemetry
+|     ├── Repositories
+|     ├── Services
+|     ├── Settings
+|     ├── SignalR
+|     |  └── HubFilters
+|     ├── Swagger
+|     ├── Validation
+|     └── Web
+├── Serverless
+|  └── Application.AzureFunctions
+|     ├── GetApplicationVersion
+|     |  ├── Contracts
+|     |  └── Function
+|     └── Properties
+├── Services
+|  ├── Identity
+|  |  ├── Identity.API
+|  |  |  ├── Auth
+|  |  |  ├── Config
+|  |  |  ├── Endpoints
+|  |  |  ├── Extensions
+|  |  |  ├── Properties
+|  |  |  ├── Queues
+|  |  |  └── Swagger
+|  |  ├── Identity.API.Tests.Integration
+|  |  ├── Identity.Application
+|  |  |  ├── Commands
+|  |  |  ├── Consumers
+|  |  |  ├── Data
+|  |  |  ├── Events
+|  |  |  ├── Exceptions
+|  |  |  ├── Extensions
+|  |  |  ├── Handlers
+|  |  |  ├── HubFilters
+|  |  |  ├── Mapping
+|  |  |  ├── Middleware
+|  |  |  ├── Models
+|  |  |  ├── Queries
+|  |  |  ├── Repositories
+|  |  |  ├── Services
+|  |  |  ├── Settings
+|  |  |  └── Validation
+|  |  ├── Identity.Contracts
+|  |  |  ├── Data
+|  |  |  ├── Requests
+|  |  |  └── Responses
+|  |  ├── Identity.Domain
+|  |  └── Identity.SignalR
+|  |     ├── Commands
+|  |     ├── Hubs
+|  |     ├── Mapping
+|  |     └── Queries
+|  ├── Messages
+|  |  ├── Messages.API
+|  |  |  ├── Endpoints
+|  |  |  └── Properties
+|  |  ├── Messages.Application
+|  |  |  ├── Converters
+|  |  |  ├── Data
+|  |  |  ├── Extensions
+|  |  |  ├── Handlers
+|  |  |  ├── Mapping
+|  |  |  └── Repositories
+|  |  ├── Messages.Contracts
+|  |  |  ├── Data
+|  |  |  ├── Requests
+|  |  |  └── Responses
+|  |  ├── Messages.Domain
+|  |  |  └── Entities
+|  |  └── Messages.SignalR
+|  |     ├── Commands
+|  |     ├── Hubs
+|  |     └── Queries
+|  └── Projects
+|     ├── Projects.API
+|     |  ├── Endpoints
+|     |  ├── Logs
+|     |  ├── PostProcessors
+|     |  ├── Properties
+|     |  └── Queues
+|     ├── Projects.Application
+|     |  ├── Configuration
+|     |  ├── Consumers
+|     |  ├── Data
+|     |  ├── Events
+|     |  ├── Exceptions
+|     |  ├── Extensions
+|     |  ├── Handlers
+|     |  ├── Mapping
+|     |  ├── Middleware
+|     |  └── Repositories
+|     ├── Projects.Contracts
+|     |  ├── Data
+|     |  ├── Events
+|     |  ├── Requests
+|     |  └── Responses
+|     ├── Projects.Domain
+|     |  ├── Common
+|     |  └── Entities
+|     └── Projects.SignalR
+|        ├── Commands
+|        ├── Helpers
+|        ├── HubFilters
+|        ├── Hubs
+|        ├── Mapping
+|        ├── Queries
+|        └── Services
+└── WebUI
+   ├── apps
+   |  └── web-app
+   |  |  └── src
+   ├── conf
+   └── libs
+   |  ├── app
+   |  |  ├── app-component
+   |  |  ├── config
+   |  |  ├── data-access
+   |  |  ├── errors
+   |  |  ├── feature
+   |  |  ├── index
+   |  |  ├── routes
+   |  |  ├── shared
+   |  |  ├── signalr
+   |  |  ├── theme
+   |  |  └── utils
+   |  ├── auth
+   |  |  ├── data-access
+   |  |  ├── feature
+   |  |  ├── guards
+   |  |  ├── interceptors
+   |  |  ├── shared
+   |  |  ├── ui
+   |  |  └── utils
+   |  ├── canvas
+   |  |  ├── app
+   |  |  ├── graphics
+   |  |  ├── keys
+   |  |  ├── object-positioning
+   |  |  ├── rendering
+   |  |  ├── selected
+   |  |  ├── shared
+   |  |  ├── utils
+   |  |  └── view-positioning
+   |  ├── entities
+   |  |  ├── data-access
+   |  |  ├── shared
+   |  |  └── utils
+   |  ├── overlays
+   |  |  ├── context-menus
+   |  |  ├── dialogs
+   |  |  ├── messages
+   |  |  ├── notifications
+   |  |  ├── side-uis
+   |  |  ├── toolbars
+   |  |  ├── ui-store
+   |  |  └── windows
+   |  └── shared
+   |     ├── animations
+   |     ├── assets
+   |     ├── config
+   |     ├── data-access
+   |     ├── directives
+   |     ├── environment
+   |     ├── interceptors
+   |     ├── logger
+   |     ├── pipes
+   |     ├── svgs
+   |     ├── types
+   |     ├── ui
+   |     └── utils

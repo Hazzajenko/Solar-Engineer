@@ -423,14 +423,15 @@ export class RenderService {
 				drawTooltipWithOptionsCtx(ctx, point, panelLink.id)
 			}
 
-			if (hoveringOverPanel) {
-				const { width } = getEntitySize(hoveringOverPanel)
-				const point = {
-					x: hoveringOverPanel.location.x + width * 2,
-					y: hoveringOverPanel.location.y - width * 2,
-				}
-				drawTooltipWithOptionsCtx(ctx, point, hoveringOverPanel.id)
-			}
+			// * Draw the tooltip
+			// if (hoveringOverPanel) {
+			// 	const { width } = getEntitySize(hoveringOverPanel)
+			// 	const point = {
+			// 		x: hoveringOverPanel.location.x + width * 2,
+			// 		y: hoveringOverPanel.location.y - width * 2,
+			// 	}
+			// 	drawTooltipWithOptionsCtx(ctx, point, hoveringOverPanel.id)
+			// }
 
 			/*			const isMobile = this._uiStore.select.isMobile()
 			 if (isMobile) {
