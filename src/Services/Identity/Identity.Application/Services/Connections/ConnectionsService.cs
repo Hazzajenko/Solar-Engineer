@@ -62,7 +62,7 @@ public class ConnectionsService : IConnectionsService
 
     public bool UpdateLastActiveTime(Guid appUserId)
     {
-        var appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
+        AppUserConnectionDto? appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
         if (appUserConnection is not null)
         {
             appUserConnection.LastActiveTime = DateTime.UtcNow;

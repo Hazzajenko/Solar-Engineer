@@ -1,1 +1,0 @@
-FROM envoyproxy/envoy:v1.15.0
