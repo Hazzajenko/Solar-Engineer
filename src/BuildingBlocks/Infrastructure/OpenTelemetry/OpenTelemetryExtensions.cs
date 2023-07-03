@@ -54,7 +54,8 @@ public static class OpenTelemetryExtensions
                     tracerProviderBuilder.ConfigureTracerProviderBuilder(
                         config,
                         activitySource,
-                        applicationInsightsConnectionString
+                        applicationInsightsConnectionString,
+                        serviceName
                     )
             )
             .WithMetrics(
@@ -62,7 +63,8 @@ public static class OpenTelemetryExtensions
                     metricsProviderBuilder.ConfigureMeterProviderBuilder(
                         config,
                         meter,
-                        applicationInsightsConnectionString
+                        applicationInsightsConnectionString,
+                        serviceName
                     )
             );
         return services;
@@ -72,22 +74,17 @@ public static class OpenTelemetryExtensions
         this TracerProviderBuilder builder,
         IConfiguration config,
         ActivitySource activitySource,
-        string applicationInsightsConnectionString
+        string applicationInsightsConnectionString,
+        string serviceName
     )
     {
         return builder
             .AddSource(activitySource.Name)
-            .ConfigureResource(resource => resource.AddService(DiagnosticsConfig.ServiceName))
+            .ConfigureResource(resource => resource.AddService(serviceName))
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddAzureMonitorTraceExporterIfEnabled(config, applicationInsightsConnectionString)
             .AddZipkinExporterIfEnabled(config);
-        // .AddSource("Wolverine");
-        ;
-
-        /*.AddOtlpExporter(
-                       options => options.Endpoint = new Uri("http://localhost:4317")
-                   )*/
     }
 
     private static TracerProviderBuilder AddZipkinExporterIfEnabled(
@@ -120,19 +117,16 @@ public static class OpenTelemetryExtensions
         this MeterProviderBuilder builder,
         IConfiguration config,
         Meter meter,
-        string applicationInsightsConnectionString
+        string applicationInsightsConnectionString,
+        string serviceName
     )
     {
         return builder
-            .ConfigureResource(resource => resource.AddService(DiagnosticsConfig.ServiceName))
+            .ConfigureResource(resource => resource.AddService(serviceName))
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddMeter(meter.Name)
-            // .AddMeter("MyApplicationMetrics")
             .AddAzureMonitorMetricExporterIfEnabled(config, applicationInsightsConnectionString);
-        /*.AddOtlpExporter(
-            options => options.Endpoint = new Uri("http://localhost:4317")
-        )*/
     }
 
     private static MeterProviderBuilder AddAzureMonitorMetricExporterIfEnabled(
