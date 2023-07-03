@@ -1,0 +1,1611 @@
+C:\Users\jenki\source\app\solar-engineer
+├── api-gateways
+|  ├── envoy
+|  ├── nginx
+|  |  ├── config
+|  |  ├── https
+|  |  ├── sites-available
+|  |  └── sites-enabled
+|  └── traefik
+|     ├── conf.d
+|     ├── configuration
+|     └── letsencrypt
+├── db-data
+|  └── postgres
+|     ├── base
+|     |  ├── 1
+|     |  ├── 13756
+|     |  ├── 13757
+|     |  ├── 16384
+|     |  ├── 24857
+|     |  ├── 24869
+|     |  ├── 24996
+|     |  └── 25285
+|     ├── global
+|     ├── pg_commit_ts
+|     ├── pg_dynshmem
+|     ├── pg_logical
+|     |  ├── mappings
+|     |  └── snapshots
+|     ├── pg_multixact
+|     |  ├── members
+|     |  └── offsets
+|     ├── pg_notify
+|     ├── pg_replslot
+|     ├── pg_serial
+|     ├── pg_snapshots
+|     ├── pg_stat
+|     ├── pg_stat_tmp
+|     ├── pg_subtrans
+|     ├── pg_tblspc
+|     ├── pg_twophase
+|     ├── pg_wal
+|     |  └── archive_status
+|     └── pg_xact
+├── docker
+|  └── open_telementry
+|     └── output
+├── https
+├── img
+|  ├── icons
+|  |  └── default-dps
+|  └── project-template-previews
+|     └── redo
+|        └── originals
+├── scripts
+|  ├── azure
+|  ├── bash
+|  ├── certs
+|  ├── container-management
+|  ├── deployment
+|  └── starters
+├── seq-data
+|  ├── Backups
+|  ├── Documents
+|  ├── Init
+|  ├── Logs
+|  └── Stream
+├── src
+|  ├── BuildingBlocks
+|  |  ├── ApplicationCore
+|  |  |  ├── bin
+|  |  |  |  ├── Debug
+|  |  |  |  |  └── net7.0
+|  |  |  |  └── Release
+|  |  |  |     └── net7.0
+|  |  |  ├── Contracts
+|  |  |  |  ├── Data
+|  |  |  |  ├── Request
+|  |  |  |  └── Responses
+|  |  |  ├── Entities
+|  |  |  ├── Events
+|  |  |  |  ├── AppUsers
+|  |  |  |  └── Projects
+|  |  |  ├── Exceptions
+|  |  |  ├── Extensions
+|  |  |  ├── Interfaces
+|  |  |  └── obj
+|  |  |     ├── Debug
+|  |  |     |  └── net7.0
+|  |  |     |     ├── ref
+|  |  |     |     └── refint
+|  |  |     └── Release
+|  |  |        └── net7.0
+|  |  |           ├── ref
+|  |  |           └── refint
+|  |  ├── Domain
+|  |  |  ├── bin
+|  |  |  |  ├── Debug
+|  |  |  |  |  └── net7.0
+|  |  |  |  └── Release
+|  |  |  |     └── net7.0
+|  |  |  ├── Entities
+|  |  |  └── obj
+|  |  |     ├── Debug
+|  |  |     |  └── net7.0
+|  |  |     |     ├── ref
+|  |  |     |     └── refint
+|  |  |     └── Release
+|  |  |        └── net7.0
+|  |  |           ├── ref
+|  |  |           └── refint
+|  |  ├── EventBus
+|  |  |  ├── bin
+|  |  |  |  ├── Debug
+|  |  |  |  |  └── net7.0
+|  |  |  |  └── Release
+|  |  |  |     └── net7.0
+|  |  |  ├── Common
+|  |  |  ├── Domain
+|  |  |  |  ├── AppUserEvents
+|  |  |  |  |  ├── Events
+|  |  |  |  |  └── Responses
+|  |  |  |  ├── AppUserEventsV2
+|  |  |  |  └── ProjectsEvents
+|  |  |  ├── Mapping
+|  |  |  ├── obj
+|  |  |  |  ├── Debug
+|  |  |  |  |  └── net7.0
+|  |  |  |  |     ├── ref
+|  |  |  |  |     └── refint
+|  |  |  |  └── Release
+|  |  |  |     └── net7.0
+|  |  |  |        ├── ref
+|  |  |  |        └── refint
+|  |  |  ├── Services
+|  |  |  └── Wolverine
+|  |  └── Infrastructure
+|  |     ├── Authentication
+|  |     ├── Azure
+|  |     ├── Behaviours
+|  |     ├── bin
+|  |     |  ├── Debug
+|  |     |  |  └── net7.0
+|  |     |  └── Release
+|  |     |     └── net7.0
+|  |     ├── Common
+|  |     |  ├── Behaviours
+|  |     |  └── User
+|  |     ├── Config
+|  |     ├── Converters
+|  |     ├── Data
+|  |     |  └── Seed
+|  |     ├── Extensions
+|  |     ├── Grpc
+|  |     ├── Health
+|  |     ├── Helpers
+|  |     ├── Logging
+|  |     ├── Mapping
+|  |     ├── Mediator
+|  |     ├── obj
+|  |     |  ├── Debug
+|  |     |  |  └── net7.0
+|  |     |  |     ├── ref
+|  |     |  |     └── refint
+|  |     |  └── Release
+|  |     |     └── net7.0
+|  |     |        ├── ref
+|  |     |        └── refint
+|  |     ├── OpenTelemetry
+|  |     ├── redis-data
+|  |     |  └── redis
+|  |     ├── Repositories
+|  |     ├── Services
+|  |     ├── Settings
+|  |     ├── SignalR
+|  |     |  └── HubFilters
+|  |     ├── Swagger
+|  |     ├── Validation
+|  |     └── Web
+|  ├── db-data
+|  |  └── postgres
+|  |     ├── base
+|  |     |  ├── 1
+|  |     |  ├── 13756
+|  |     |  ├── 13757
+|  |     |  ├── 16384
+|  |     |  ├── 16385
+|  |     |  ├── 16386
+|  |     |  ├── 40963
+|  |     |  ├── 73732
+|  |     |  └── 82495
+|  |     ├── global
+|  |     ├── pg_commit_ts
+|  |     ├── pg_dynshmem
+|  |     ├── pg_logical
+|  |     |  ├── mappings
+|  |     |  └── snapshots
+|  |     ├── pg_multixact
+|  |     |  ├── members
+|  |     |  └── offsets
+|  |     ├── pg_notify
+|  |     ├── pg_replslot
+|  |     ├── pg_serial
+|  |     ├── pg_snapshots
+|  |     ├── pg_stat
+|  |     ├── pg_stat_tmp
+|  |     ├── pg_subtrans
+|  |     ├── pg_tblspc
+|  |     ├── pg_twophase
+|  |     ├── pg_wal
+|  |     |  └── archive_status
+|  |     └── pg_xact
+|  ├── Serverless
+|  |  └── Application.AzureFunctions
+|  |     ├── bin
+|  |     |  ├── Debug
+|  |     |  |  └── net7.0
+|  |     |  |     ├── bin
+|  |     |  |     |  └── runtimes
+|  |     |  |     |     └── win
+|  |     |  |     |        └── lib
+|  |     |  |     └── runtimes
+|  |     |  |        └── win
+|  |     |  |           └── lib
+|  |     |  |              └── netcoreapp2.0
+|  |     |  ├── output
+|  |     |  |  └── runtimes
+|  |     |  |     └── win
+|  |     |  |        └── lib
+|  |     |  |           └── netcoreapp2.0
+|  |     |  └── publish
+|  |     |     └── runtimes
+|  |     |        └── win
+|  |     |           └── lib
+|  |     |              └── netcoreapp2.0
+|  |     ├── GetApplicationVersion
+|  |     |  ├── Contracts
+|  |     |  └── Function
+|  |     ├── obj
+|  |     |  ├── Debug
+|  |     |  |  └── net7.0
+|  |     |  |     ├── ref
+|  |     |  |     └── refint
+|  |     |  └── release
+|  |     |     └── net7.0
+|  |     |        ├── ref
+|  |     |        └── refint
+|  |     └── Properties
+|  ├── Services
+|  |  ├── Identity
+|  |  |  ├── Identity.API
+|  |  |  |  ├── Auth
+|  |  |  |  ├── bin
+|  |  |  |  |  ├── Debug
+|  |  |  |  |  |  ├── net6.0
+|  |  |  |  |  |  └── net7.0
+|  |  |  |  |  |     ├── cs
+|  |  |  |  |  |     ├── de
+|  |  |  |  |  |     ├── es
+|  |  |  |  |  |     ├── fr
+|  |  |  |  |  |     ├── it
+|  |  |  |  |  |     ├── ja
+|  |  |  |  |  |     ├── ko
+|  |  |  |  |  |     ├── Logs
+|  |  |  |  |  |     ├── pl
+|  |  |  |  |  |     ├── pt-BR
+|  |  |  |  |  |     ├── ru
+|  |  |  |  |  |     ├── runtimes
+|  |  |  |  |  |     |  ├── alpine-x64
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── linux-arm
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── linux-arm64
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── linux-armel
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── linux-mips64
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── linux-musl-x64
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── linux-s390x
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── linux-x64
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── linux-x86
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── osx
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── osx-arm64
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── osx-x64
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── unix
+|  |  |  |  |  |     |  |  └── lib
+|  |  |  |  |  |     |  ├── win
+|  |  |  |  |  |     |  |  └── lib
+|  |  |  |  |  |     |  ├── win-arm
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── win-arm64
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  ├── win-x64
+|  |  |  |  |  |     |  |  └── native
+|  |  |  |  |  |     |  └── win-x86
+|  |  |  |  |  |     |     └── native
+|  |  |  |  |  |     ├── tr
+|  |  |  |  |  |     ├── zh-Hans
+|  |  |  |  |  |     └── zh-Hant
+|  |  |  |  |  └── Release
+|  |  |  |  |     └── net7.0
+|  |  |  |  |        └── linux-x64
+|  |  |  |  |           ├── cs
+|  |  |  |  |           ├── de
+|  |  |  |  |           ├── es
+|  |  |  |  |           ├── fr
+|  |  |  |  |           ├── it
+|  |  |  |  |           ├── ja
+|  |  |  |  |           ├── ko
+|  |  |  |  |           ├── Logs
+|  |  |  |  |           ├── pl
+|  |  |  |  |           ├── pt-BR
+|  |  |  |  |           ├── publish
+|  |  |  |  |           |  ├── cs
+|  |  |  |  |           |  ├── de
+|  |  |  |  |           |  ├── es
+|  |  |  |  |           |  ├── fr
+|  |  |  |  |           |  ├── it
+|  |  |  |  |           |  ├── ja
+|  |  |  |  |           |  ├── ko
+|  |  |  |  |           |  ├── Logs
+|  |  |  |  |           |  ├── pl
+|  |  |  |  |           |  ├── pt-BR
+|  |  |  |  |           |  ├── ru
+|  |  |  |  |           |  ├── tr
+|  |  |  |  |           |  ├── zh-Hans
+|  |  |  |  |           |  └── zh-Hant
+|  |  |  |  |           ├── ru
+|  |  |  |  |           ├── tr
+|  |  |  |  |           ├── zh-Hans
+|  |  |  |  |           └── zh-Hant
+|  |  |  |  ├── Config
+|  |  |  |  ├── db-data
+|  |  |  |  |  └── postgres
+|  |  |  |  |     ├── base
+|  |  |  |  |     |  ├── 1
+|  |  |  |  |     |  ├── 13756
+|  |  |  |  |     |  ├── 13757
+|  |  |  |  |     |  └── 16384
+|  |  |  |  |     ├── global
+|  |  |  |  |     ├── pg_commit_ts
+|  |  |  |  |     ├── pg_dynshmem
+|  |  |  |  |     ├── pg_logical
+|  |  |  |  |     |  ├── mappings
+|  |  |  |  |     |  └── snapshots
+|  |  |  |  |     ├── pg_multixact
+|  |  |  |  |     |  ├── members
+|  |  |  |  |     |  └── offsets
+|  |  |  |  |     ├── pg_notify
+|  |  |  |  |     ├── pg_replslot
+|  |  |  |  |     ├── pg_serial
+|  |  |  |  |     ├── pg_snapshots
+|  |  |  |  |     ├── pg_stat
+|  |  |  |  |     ├── pg_stat_tmp
+|  |  |  |  |     ├── pg_subtrans
+|  |  |  |  |     ├── pg_tblspc
+|  |  |  |  |     ├── pg_twophase
+|  |  |  |  |     ├── pg_wal
+|  |  |  |  |     |  └── archive_status
+|  |  |  |  |     └── pg_xact
+|  |  |  |  ├── Endpoints
+|  |  |  |  |  ├── App
+|  |  |  |  |  ├── Auth
+|  |  |  |  |  ├── Connections
+|  |  |  |  |  └── Users
+|  |  |  |  ├── Extensions
+|  |  |  |  ├── obj
+|  |  |  |  |  ├── Debug
+|  |  |  |  |  |  ├── net6.0
+|  |  |  |  |  |  |  ├── ref
+|  |  |  |  |  |  |  ├── refint
+|  |  |  |  |  |  |  └── staticwebassets
+|  |  |  |  |  |  └── net7.0
+|  |  |  |  |  |     ├── Proto
+|  |  |  |  |  |     ├── ref
+|  |  |  |  |  |     ├── refint
+|  |  |  |  |  |     └── staticwebassets
+|  |  |  |  |  └── Release
+|  |  |  |  |     └── net7.0
+|  |  |  |  |        └── linux-x64
+|  |  |  |  |           ├── ref
+|  |  |  |  |           ├── refint
+|  |  |  |  |           └── staticwebassets
+|  |  |  |  ├── Properties
+|  |  |  |  ├── Queues
+|  |  |  |  └── Swagger
+|  |  |  ├── Identity.API.Tests.Integration
+|  |  |  |  └── obj
+|  |  |  ├── Identity.Application
+|  |  |  |  ├── bin
+|  |  |  |  |  ├── Debug
+|  |  |  |  |  |  └── net7.0
+|  |  |  |  |  └── Release
+|  |  |  |  |     └── net7.0
+|  |  |  |  ├── Commands
+|  |  |  |  ├── Consumers
+|  |  |  |  ├── Data
+|  |  |  |  |  ├── Bogus
+|  |  |  |  |  ├── Config
+|  |  |  |  |  ├── Migrations
+|  |  |  |  |  ├── Seed
+|  |  |  |  |  └── UnitOfWork
+|  |  |  |  ├── Events
+|  |  |  |  ├── Exceptions
+|  |  |  |  ├── Extensions
+|  |  |  |  ├── Handlers
+|  |  |  |  |  ├── AppUsers
+|  |  |  |  |  ├── Auth
+|  |  |  |  |  ├── Connections
+|  |  |  |  |  ├── Friends
+|  |  |  |  |  ├── Images
+|  |  |  |  |  └── Notifications
+|  |  |  |  ├── HubFilters
+|  |  |  |  ├── Mapping
+|  |  |  |  ├── Middleware
+|  |  |  |  ├── Models
+|  |  |  |  ├── obj
+|  |  |  |  |  ├── Debug
+|  |  |  |  |  |  └── net7.0
+|  |  |  |  |  |     ├── ref
+|  |  |  |  |  |     └── refint
+|  |  |  |  |  └── Release
+|  |  |  |  |     └── net7.0
+|  |  |  |  |        ├── ref
+|  |  |  |  |        └── refint
+|  |  |  |  ├── Queries
+|  |  |  |  |  └── AppUsers
+|  |  |  |  ├── Repositories
+|  |  |  |  |  ├── AppUserLinks
+|  |  |  |  |  ├── AppUsers
+|  |  |  |  |  └── Notifications
+|  |  |  |  ├── Services
+|  |  |  |  |  ├── AzureStorage
+|  |  |  |  |  ├── Connections
+|  |  |  |  |  ├── DockerHub
+|  |  |  |  |  ├── Images
+|  |  |  |  |  └── Jwt
+|  |  |  |  ├── Settings
+|  |  |  |  └── Validation
+|  |  |  ├── Identity.Contracts
+|  |  |  |  ├── bin
+|  |  |  |  |  ├── Debug
+|  |  |  |  |  |  └── net7.0
+|  |  |  |  |  └── Release
+|  |  |  |  |     └── net7.0
+|  |  |  |  ├── Data
+|  |  |  |  ├── obj
+|  |  |  |  |  ├── Debug
+|  |  |  |  |  |  └── net7.0
+|  |  |  |  |  |     ├── ref
+|  |  |  |  |  |     └── refint
+|  |  |  |  |  └── Release
+|  |  |  |  |     └── net7.0
+|  |  |  |  |        ├── ref
+|  |  |  |  |        └── refint
+|  |  |  |  ├── Requests
+|  |  |  |  |  ├── Errors
+|  |  |  |  |  └── Users
+|  |  |  |  └── Responses
+|  |  |  |     ├── Connections
+|  |  |  |     ├── Friends
+|  |  |  |     ├── Notifications
+|  |  |  |     └── Users
+|  |  |  ├── Identity.Domain
+|  |  |  |  ├── bin
+|  |  |  |  |  ├── Debug
+|  |  |  |  |  |  └── net7.0
+|  |  |  |  |  └── Release
+|  |  |  |  |     └── net7.0
+|  |  |  |  └── obj
+|  |  |  |     ├── Debug
+|  |  |  |     |  └── net7.0
+|  |  |  |     |     ├── ref
+|  |  |  |     |     └── refint
+|  |  |  |     └── Release
+|  |  |  |        └── net7.0
+|  |  |  |           ├── ref
+|  |  |  |           └── refint
+|  |  |  └── Identity.SignalR
+|  |  |     ├── bin
+|  |  |     |  ├── Debug
+|  |  |     |  |  └── net7.0
+|  |  |     |  └── Release
+|  |  |     |     └── net7.0
+|  |  |     ├── Commands
+|  |  |     |  ├── AppUsers
+|  |  |     |  ├── Connections
+|  |  |     |  ├── Friends
+|  |  |     |  └── Notifications
+|  |  |     ├── Hubs
+|  |  |     ├── Mapping
+|  |  |     ├── obj
+|  |  |     |  ├── Debug
+|  |  |     |  |  └── net7.0
+|  |  |     |  |     ├── ref
+|  |  |     |  |     └── refint
+|  |  |     |  └── Release
+|  |  |     |     └── net7.0
+|  |  |     |        ├── ref
+|  |  |     |        └── refint
+|  |  |     └── Queries
+|  |  ├── Messages
+|  |  |  ├── Messages.API
+|  |  |  |  ├── bin
+|  |  |  |  |  └── Debug
+|  |  |  |  |     └── net7.0
+|  |  |  |  |        ├── cs
+|  |  |  |  |        ├── de
+|  |  |  |  |        ├── es
+|  |  |  |  |        ├── fr
+|  |  |  |  |        ├── it
+|  |  |  |  |        ├── ja
+|  |  |  |  |        ├── ko
+|  |  |  |  |        ├── Logs
+|  |  |  |  |        ├── pl
+|  |  |  |  |        ├── pt-BR
+|  |  |  |  |        ├── ru
+|  |  |  |  |        ├── runtimes
+|  |  |  |  |        |  ├── alpine-x64
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── linux-arm
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── linux-arm64
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── linux-armel
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── linux-mips64
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── linux-musl-x64
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── linux-s390x
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── linux-x64
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── linux-x86
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── osx-arm64
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── osx-x64
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── unix
+|  |  |  |  |        |  |  └── lib
+|  |  |  |  |        |  ├── win
+|  |  |  |  |        |  |  └── lib
+|  |  |  |  |        |  ├── win-arm
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── win-arm64
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  ├── win-x64
+|  |  |  |  |        |  |  └── native
+|  |  |  |  |        |  └── win-x86
+|  |  |  |  |        |     └── native
+|  |  |  |  |        ├── tr
+|  |  |  |  |        ├── zh-Hans
+|  |  |  |  |        └── zh-Hant
+|  |  |  |  ├── Endpoints
+|  |  |  |  ├── obj
+|  |  |  |  |  └── Debug
+|  |  |  |  |     └── net7.0
+|  |  |  |  |        ├── ref
+|  |  |  |  |        ├── refint
+|  |  |  |  |        └── staticwebassets
+|  |  |  |  └── Properties
+|  |  |  ├── Messages.Application
+|  |  |  |  ├── bin
+|  |  |  |  |  └── Debug
+|  |  |  |  |     └── net7.0
+|  |  |  |  ├── Converters
+|  |  |  |  ├── Data
+|  |  |  |  |  ├── Config
+|  |  |  |  |  ├── Migrations
+|  |  |  |  |  ├── Seed
+|  |  |  |  |  └── UnitOfWork
+|  |  |  |  ├── Extensions
+|  |  |  |  ├── Handlers
+|  |  |  |  |  ├── GroupChats
+|  |  |  |  |  ├── Messages
+|  |  |  |  |  └── UserMessages
+|  |  |  |  ├── Mapping
+|  |  |  |  ├── obj
+|  |  |  |  |  └── Debug
+|  |  |  |  |     └── net7.0
+|  |  |  |  |        ├── ref
+|  |  |  |  |        └── refint
+|  |  |  |  └── Repositories
+|  |  |  |     ├── AppUserGroupChats
+|  |  |  |     ├── GroupChatMessages
+|  |  |  |     ├── GroupChats
+|  |  |  |     ├── GroupChatServerMessages
+|  |  |  |     ├── Mapping
+|  |  |  |     └── Messages
+|  |  |  ├── Messages.Contracts
+|  |  |  |  ├── bin
+|  |  |  |  |  └── Debug
+|  |  |  |  |     └── net7.0
+|  |  |  |  ├── Data
+|  |  |  |  ├── obj
+|  |  |  |  |  └── Debug
+|  |  |  |  |     └── net7.0
+|  |  |  |  |        ├── ref
+|  |  |  |  |        └── refint
+|  |  |  |  ├── Requests
+|  |  |  |  └── Responses
+|  |  |  ├── Messages.Domain
+|  |  |  |  ├── bin
+|  |  |  |  |  └── Debug
+|  |  |  |  |     └── net7.0
+|  |  |  |  ├── Entities
+|  |  |  |  └── obj
+|  |  |  |     └── Debug
+|  |  |  |        └── net7.0
+|  |  |  |           ├── ref
+|  |  |  |           └── refint
+|  |  |  └── Messages.SignalR
+|  |  |     ├── bin
+|  |  |     |  └── Debug
+|  |  |     |     └── net7.0
+|  |  |     ├── Commands
+|  |  |     |  └── GroupChats
+|  |  |     ├── Hubs
+|  |  |     ├── obj
+|  |  |     |  └── Debug
+|  |  |     |     └── net7.0
+|  |  |     |        ├── ref
+|  |  |     |        └── refint
+|  |  |     └── Queries
+|  |  |        ├── GroupChats
+|  |  |        ├── Messages
+|  |  |        └── UserMessages
+|  |  └── Projects
+|  |     ├── Projects.API
+|  |     |  ├── bin
+|  |     |  |  ├── Debug
+|  |     |  |  |  └── net7.0
+|  |     |  |  |     ├── cs
+|  |     |  |  |     ├── Data
+|  |     |  |  |     |  └── Json
+|  |     |  |  |     |     └── ProjectTemplates
+|  |     |  |  |     ├── de
+|  |     |  |  |     ├── es
+|  |     |  |  |     ├── fr
+|  |     |  |  |     ├── it
+|  |     |  |  |     ├── ja
+|  |     |  |  |     ├── ko
+|  |     |  |  |     ├── Logs
+|  |     |  |  |     ├── pl
+|  |     |  |  |     ├── pt-BR
+|  |     |  |  |     ├── ru
+|  |     |  |  |     ├── runtimes
+|  |     |  |  |     |  ├── alpine-x64
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── linux-arm
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── linux-arm64
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── linux-armel
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── linux-mips64
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── linux-musl-x64
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── linux-s390x
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── linux-x64
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── linux-x86
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── osx-arm64
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── osx-x64
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── unix
+|  |     |  |  |     |  |  └── lib
+|  |     |  |  |     |  ├── win
+|  |     |  |  |     |  |  └── lib
+|  |     |  |  |     |  ├── win-arm
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── win-arm64
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  ├── win-x64
+|  |     |  |  |     |  |  └── native
+|  |     |  |  |     |  └── win-x86
+|  |     |  |  |     |     └── native
+|  |     |  |  |     ├── tr
+|  |     |  |  |     ├── zh-Hans
+|  |     |  |  |     └── zh-Hant
+|  |     |  |  └── Release
+|  |     |  |     └── net7.0
+|  |     |  |        └── linux-x64
+|  |     |  |           ├── cs
+|  |     |  |           ├── Data
+|  |     |  |           |  └── Json
+|  |     |  |           ├── de
+|  |     |  |           ├── es
+|  |     |  |           ├── fr
+|  |     |  |           ├── it
+|  |     |  |           ├── ja
+|  |     |  |           ├── ko
+|  |     |  |           ├── Logs
+|  |     |  |           ├── pl
+|  |     |  |           ├── pt-BR
+|  |     |  |           ├── publish
+|  |     |  |           |  ├── cs
+|  |     |  |           |  ├── Data
+|  |     |  |           |  ├── de
+|  |     |  |           |  ├── es
+|  |     |  |           |  ├── fr
+|  |     |  |           |  ├── it
+|  |     |  |           |  ├── ja
+|  |     |  |           |  ├── ko
+|  |     |  |           |  ├── Logs
+|  |     |  |           |  ├── pl
+|  |     |  |           |  ├── pt-BR
+|  |     |  |           |  ├── ru
+|  |     |  |           |  ├── tr
+|  |     |  |           |  ├── zh-Hans
+|  |     |  |           |  └── zh-Hant
+|  |     |  |           ├── ru
+|  |     |  |           ├── tr
+|  |     |  |           ├── zh-Hans
+|  |     |  |           └── zh-Hant
+|  |     |  ├── Endpoints
+|  |     |  ├── Logs
+|  |     |  ├── obj
+|  |     |  |  ├── Debug
+|  |     |  |  |  └── net7.0
+|  |     |  |  |     ├── ref
+|  |     |  |  |     ├── refint
+|  |     |  |  |     └── staticwebassets
+|  |     |  |  └── Release
+|  |     |  |     └── net7.0
+|  |     |  |        └── linux-x64
+|  |     |  |           ├── ref
+|  |     |  |           ├── refint
+|  |     |  |           └── staticwebassets
+|  |     |  ├── PostProcessors
+|  |     |  ├── Properties
+|  |     |  └── Queues
+|  |     ├── Projects.Application
+|  |     |  ├── bin
+|  |     |  |  ├── Debug
+|  |     |  |  |  └── net7.0
+|  |     |  |  |     └── Data
+|  |     |  |  |        └── Json
+|  |     |  |  |           └── ProjectTemplates
+|  |     |  |  └── Release
+|  |     |  |     └── net7.0
+|  |     |  |        └── Data
+|  |     |  |           └── Json
+|  |     |  |              └── ProjectTemplates
+|  |     |  ├── Configuration
+|  |     |  ├── Consumers
+|  |     |  ├── Data
+|  |     |  |  ├── Bogus
+|  |     |  |  ├── Config
+|  |     |  |  ├── Json
+|  |     |  |  |  └── ProjectTemplates
+|  |     |  |  |     ├── TemplateTwelveRowsNoStrings
+|  |     |  |  |     ├── TemplateTwelveRowsSixStrings
+|  |     |  |  |     └── TemplateTwelveRowsSixStringsWithLinks
+|  |     |  |  ├── Migrations
+|  |     |  |  ├── Seed
+|  |     |  |  └── UnitOfWork
+|  |     |  ├── Events
+|  |     |  ├── Exceptions
+|  |     |  ├── Extensions
+|  |     |  ├── Handlers
+|  |     |  |  ├── PanelLinks
+|  |     |  |  ├── Panels
+|  |     |  |  ├── Projects
+|  |     |  |  └── Strings
+|  |     |  ├── Mapping
+|  |     |  ├── Middleware
+|  |     |  ├── obj
+|  |     |  |  ├── Debug
+|  |     |  |  |  └── net7.0
+|  |     |  |  |     ├── ref
+|  |     |  |  |     └── refint
+|  |     |  |  └── Release
+|  |     |  |     └── net7.0
+|  |     |  |        ├── ref
+|  |     |  |        └── refint
+|  |     |  └── Repositories
+|  |     |     ├── AppUserProjects
+|  |     |     ├── PanelConfigs
+|  |     |     ├── PanelLinks
+|  |     |     ├── Panels
+|  |     |     ├── Projects
+|  |     |     ├── ProjectUsers
+|  |     |     └── Strings
+|  |     ├── Projects.Contracts
+|  |     |  ├── bin
+|  |     |  |  ├── Debug
+|  |     |  |  |  └── net7.0
+|  |     |  |  └── Release
+|  |     |  |     └── net7.0
+|  |     |  ├── Data
+|  |     |  ├── Events
+|  |     |  ├── obj
+|  |     |  |  ├── Debug
+|  |     |  |  |  └── net7.0
+|  |     |  |  |     ├── ref
+|  |     |  |  |     └── refint
+|  |     |  |  └── Release
+|  |     |  |     └── net7.0
+|  |     |  |        ├── ref
+|  |     |  |        └── refint
+|  |     |  ├── Requests
+|  |     |  |  ├── Admin
+|  |     |  |  ├── PanelLinks
+|  |     |  |  ├── Panels
+|  |     |  |  ├── ProjectItems
+|  |     |  |  ├── Projects
+|  |     |  |  └── Strings
+|  |     |  └── Responses
+|  |     |     ├── Admin
+|  |     |     └── Projects
+|  |     ├── Projects.Domain
+|  |     |  ├── bin
+|  |     |  |  ├── Debug
+|  |     |  |  |  └── net7.0
+|  |     |  |  └── Release
+|  |     |  |     └── net7.0
+|  |     |  ├── Common
+|  |     |  |  └── Errors
+|  |     |  ├── Entities
+|  |     |  └── obj
+|  |     |     ├── Debug
+|  |     |     |  └── net7.0
+|  |     |     |     ├── ref
+|  |     |     |     └── refint
+|  |     |     └── Release
+|  |     |        └── net7.0
+|  |     |           ├── ref
+|  |     |           └── refint
+|  |     └── Projects.SignalR
+|  |        ├── bin
+|  |        |  ├── Debug
+|  |        |  |  └── net7.0
+|  |        |  └── Release
+|  |        |     └── net7.0
+|  |        ├── Commands
+|  |        |  ├── PanelLinks
+|  |        |  ├── Panels
+|  |        |  ├── Projects
+|  |        |  └── Strings
+|  |        ├── Helpers
+|  |        ├── HubFilters
+|  |        ├── Hubs
+|  |        ├── Mapping
+|  |        ├── obj
+|  |        |  ├── Debug
+|  |        |  |  └── net7.0
+|  |        |  |     ├── ref
+|  |        |  |     └── refint
+|  |        |  └── Release
+|  |        |     └── net7.0
+|  |        |        ├── ref
+|  |        |        └── refint
+|  |        ├── Queries
+|  |        |  └── Projects
+|  |        └── Services
+|  └── WebUI
+|     ├── apps
+|     |  └── web-app
+|     |  |  └── src
+|     |  |     └── assets
+|     ├── conf
+|     ├── libs
+|     |  ├── app
+|     |  |  ├── app-component
+|     |  |  ├── config
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  |        └── interceptors
+|     |  |  ├── data-access
+|     |  |  |  ├── errors
+|     |  |  |  ├── signalr
+|     |  |  |  |  └── src
+|     |  |  |  |     └── lib
+|     |  |  |  |        ├── services
+|     |  |  |  |        ├── store
+|     |  |  |  |        ├── types
+|     |  |  |  |        └── utils
+|     |  |  |  └── src
+|     |  |  ├── errors
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  ├── feature
+|     |  |  |  ├── app-features
+|     |  |  |  ├── app-user-profile
+|     |  |  |  ├── chatrooms
+|     |  |  |  ├── friends
+|     |  |  |  ├── main-dialog
+|     |  |  |  ├── notifications
+|     |  |  |  ├── profile
+|     |  |  |  ├── recipient-user-profile
+|     |  |  |  ├── sidenav
+|     |  |  |  ├── user-settings
+|     |  |  |  ├── username-profile
+|     |  |  |  └── users-overlay
+|     |  |  ├── index
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  |        └── app-v2
+|     |  |  ├── routes
+|     |  |  ├── shared
+|     |  |  ├── signalr
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  |        └── utils
+|     |  |  ├── theme
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  |        ├── components
+|     |  |  |        └── services
+|     |  |  └── utils
+|     |  ├── auth
+|     |  |  ├── data-access
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  |        ├── api
+|     |  |  |        ├── contracts
+|     |  |  |        ├── effects
+|     |  |  |        ├── pipes
+|     |  |  |        ├── services
+|     |  |  |        ├── signalr
+|     |  |  |        └── store
+|     |  |  |           ├── auth
+|     |  |  |           ├── connections
+|     |  |  |           ├── group-chats
+|     |  |  |           |  ├── group-chats
+|     |  |  |           |  └── group-chats-messages
+|     |  |  |           ├── messages
+|     |  |  |           ├── messaging
+|     |  |  |           └── users
+|     |  |  ├── feature
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  |        ├── authenticated-page
+|     |  |  |        ├── google-sign-in
+|     |  |  |        ├── sign-in
+|     |  |  |        ├── sign-in-center
+|     |  |  |        ├── sign-in-dialog
+|     |  |  |        ├── sign-in-v2
+|     |  |  |        └── supabase-auth
+|     |  |  ├── guards
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  ├── interceptors
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  ├── shared
+|     |  |  |  ├── models
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  |        ├── backend-signalr-contracts
+|     |  |  |        |  └── responses
+|     |  |  |        ├── messages
+|     |  |  |        |  ├── data
+|     |  |  |        |  ├── requests
+|     |  |  |        |  └── responses
+|     |  |  |        ├── notifications
+|     |  |  |        ├── signalr
+|     |  |  |        └── users
+|     |  |  ├── ui
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  |        ├── auth-sign-out-button
+|     |  |  |        ├── auth-users-preview
+|     |  |  |        ├── auth-web-user
+|     |  |  |        └── auth-web-user-avatar
+|     |  |  └── utils
+|     |  |     └── src
+|     |  |        └── lib
+|     |  |           ├── auth
+|     |  |           ├── notifications
+|     |  |           └── users
+|     |  ├── canvas
+|     |  |  ├── app
+|     |  |  |  ├── data-access
+|     |  |  |  |  └── src
+|     |  |  |  |     └── lib
+|     |  |  |  |        ├── config
+|     |  |  |  |        ├── global
+|     |  |  |  |        ├── grid
+|     |  |  |  |        ├── services
+|     |  |  |  |        |  └── div-elements
+|     |  |  |  |        └── store
+|     |  |  |  └── feature
+|     |  |  |     └── src
+|     |  |  |        └── lib
+|     |  |  |           ├── directives
+|     |  |  |           ├── ui
+|     |  |  |           |  ├── loading-project-spinner
+|     |  |  |           |  └── mobile-open-side-ui-button
+|     |  |  |           └── utils
+|     |  |  ├── graphics
+|     |  |  |  └── data-access
+|     |  |  |     └── src
+|     |  |  |        └── lib
+|     |  |  |           └── store
+|     |  |  ├── keys
+|     |  |  |  └── data-access
+|     |  |  |     └── src
+|     |  |  |        └── lib
+|     |  |  |           ├── services
+|     |  |  |           ├── store
+|     |  |  |           └── types
+|     |  |  ├── object-positioning
+|     |  |  |  └── data-access
+|     |  |  |     └── src
+|     |  |  |        └── lib
+|     |  |  |           ├── services
+|     |  |  |           |  ├── dom-point
+|     |  |  |           |  ├── nearby
+|     |  |  |           |  ├── positioning
+|     |  |  |           |  └── rotating
+|     |  |  |           └── store
+|     |  |  ├── rendering
+|     |  |  |  └── data-access
+|     |  |  |     └── src
+|     |  |  |        └── lib
+|     |  |  |           ├── services
+|     |  |  |           |  ├── drag-box
+|     |  |  |           |  └── render
+|     |  |  |           ├── svgs
+|     |  |  |           └── types
+|     |  |  ├── selected
+|     |  |  |  └── data-access
+|     |  |  |     └── src
+|     |  |  |        └── lib
+|     |  |  |           ├── services
+|     |  |  |           └── store
+|     |  |  ├── shared
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  |        └── types
+|     |  |  ├── utils
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  |        ├── ctx
+|     |  |  |        └── lines
+|     |  |  └── view-positioning
+|     |  |     └── data-access
+|     |  |        └── src
+|     |  |           └── lib
+|     |  |              └── services
+|     |  |                 └── view-positioning
+|     |  ├── entities
+|     |  |  ├── data-access
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  |        ├── data-templates
+|     |  |  |        |  ├── strings-with-links
+|     |  |  |        |  └── strings-with-panels
+|     |  |  |        ├── json-data
+|     |  |  |        ├── local-storage
+|     |  |  |        ├── panel-configs
+|     |  |  |        |  ├── data
+|     |  |  |        |  └── store
+|     |  |  |        ├── panel-links
+|     |  |  |        |  ├── services
+|     |  |  |        |  |  └── utils
+|     |  |  |        |  └── store
+|     |  |  |        ├── panels
+|     |  |  |        |  ├── services
+|     |  |  |        |  └── store
+|     |  |  |        ├── projects
+|     |  |  |        |  ├── services
+|     |  |  |        |  └── store
+|     |  |  |        ├── shared
+|     |  |  |        |  ├── services
+|     |  |  |        |  └── store
+|     |  |  |        ├── signalr-events
+|     |  |  |        |  └── store
+|     |  |  |        |     └── utils
+|     |  |  |        └── strings
+|     |  |  |           ├── services
+|     |  |  |           └── store
+|     |  |  ├── shared
+|     |  |  |  └── src
+|     |  |  |     └── lib
+|     |  |  |        ├── backend-data
+|     |  |  |        ├── common
+|     |  |  |        ├── local-storage
+|     |  |  |        ├── panel-configs
+|     |  |  |        ├── panel-links
+|     |  |  |        ├── panels
+|     |  |  |        ├── projects
+|     |  |  |        |  └── data-templates
+|     |  |  |        |     ├── template__12-rows-6-strings
+|     |  |  |        |     ├── template__12-rows-6-strings-with-links
+|     |  |  |        |     ├── template__12-rows-no-strings
+|     |  |  |        |     └── template__blank
+|     |  |  |        └── strings
+|     |  |  └── utils
+|     |  |     └── src
+|     |  |        └── lib
+|     |  |           ├── local-storage
+|     |  |           ├── panel-links
+|     |  |           ├── panels
+|     |  |           |  ├── pipes
+|     |  |           |  └── utils
+|     |  |           ├── projects
+|     |  |           ├── shared-selectors
+|     |  |           ├── signalr-events
+|     |  |           └── strings
+|     |  |              ├── pipes
+|     |  |              └── utils
+|     |  ├── overlays
+|     |  |  ├── context-menus
+|     |  |  |  └── feature
+|     |  |  |     └── src
+|     |  |  |        └── lib
+|     |  |  |           ├── colour-picker-menu
+|     |  |  |           ├── context-menu-builder
+|     |  |  |           ├── context-menu-friend
+|     |  |  |           ├── context-menu-mode-picker
+|     |  |  |           ├── context-menu-project
+|     |  |  |           ├── context-menu-renderer
+|     |  |  |           ├── context-menu-template
+|     |  |  |           ├── context-menu-user-search-result
+|     |  |  |           ├── directives
+|     |  |  |           ├── multiple-panels-menu
+|     |  |  |           ├── panel-link-menu
+|     |  |  |           ├── single-panel-menu
+|     |  |  |           └── string-menu
+|     |  |  ├── dialogs
+|     |  |  |  └── feature
+|     |  |  |     └── src
+|     |  |  |        └── lib
+|     |  |  |           ├── app-settings-dialog
+|     |  |  |           |  ├── display-settings
+|     |  |  |           |  ├── graphics-settings
+|     |  |  |           |  └── key-map-settings
+|     |  |  |           ├── dialog-backdrop-template
+|     |  |  |           ├── dialog-command-palette-template
+|     |  |  |           ├── dialog-initial-visit-with-templates
+|     |  |  |           ├── dialog-renderer
+|     |  |  |           ├── messages
+|     |  |  |           |  └── dialog-messages
+|     |  |  |           ├── profile-settings-dialog
+|     |  |  |           ├── projects
+|     |  |  |           |  ├── dialog-change-string-colour
+|     |  |  |           |  ├── dialog-create-project
+|     |  |  |           |  ├── dialog-delete-project-warning
+|     |  |  |           |  ├── dialog-invite-to-project-confirm
+|     |  |  |           |  ├── dialog-project-member-options
+|     |  |  |           |  ├── dialog-search-for-projects
+|     |  |  |           |  ├── dialog-select-project
+|     |  |  |           |  ├── dialog-select-project-view
+|     |  |  |           |  ├── dialog-view-project-templates
+|     |  |  |           |  └── move-panels-to-string-dialog
+|     |  |  |           ├── shared
+|     |  |  |           |  ├── dialog-warning-template
+|     |  |  |           |  └── dialog-warning-template-inputs
+|     |  |  |           ├── sign-in-dialog
+|     |  |  |           └── users
+|     |  |  |              ├── dialog-search-for-users
+|     |  |  |              └── dialog-user-options
+|     |  |  ├── messages
+|     |  |  |  └── feature
+|     |  |  ├── notifications
+|     |  |  |  ├── data-access
+|     |  |  |  |  └── src
+|     |  |  |  |     └── lib
+|     |  |  |  |        ├── store
+|     |  |  |  |        └── types
+|     |  |  |  └── feature
+|     |  |  |     └── src
+|     |  |  |        └── lib
+|     |  |  |           ├── overlay-dynamic-notification
+|     |  |  |           └── overlay-notification-modal
+|     |  |  ├── side-uis
+|     |  |  |  └── feature
+|     |  |  |     └── src
+|     |  |  |        └── lib
+|     |  |  |           ├── projects
+|     |  |  |           |  ├── projects-list
+|     |  |  |           |  ├── selectors
+|     |  |  |           |  ├── shared
+|     |  |  |           |  ├── side-ui-demo-project-view
+|     |  |  |           |  └── side-ui-selected-project-view
+|     |  |  |           ├── settings
+|     |  |  |           |  └── side-ui-settings-view
+|     |  |  |           ├── shared
+|     |  |  |           |  └── ui
+|     |  |  |           ├── side-ui-auth-view
+|     |  |  |           ├── side-ui-base
+|     |  |  |           ├── side-ui-nav-bar
+|     |  |  |           ├── side-ui-notifications-view
+|     |  |  |           |  ├── notifications-view-notification-item
+|     |  |  |           |  └── notifications-view-notification-preview
+|     |  |  |           └── side-ui-users-view
+|     |  |  |              ├── users-view-user-preview
+|     |  |  |              └── users-view-web-user-item
+|     |  |  ├── toolbars
+|     |  |  |  └── feature
+|     |  |  |     └── src
+|     |  |  |        └── lib
+|     |  |  |           ├── mobile-bottom-toolbar
+|     |  |  |           ├── mobile-side-action-toolbar
+|     |  |  |           ├── overlay-tool-bar
+|     |  |  |           └── selected-string-tool-bar
+|     |  |  ├── ui-store
+|     |  |  |  └── data-access
+|     |  |  |     └── src
+|     |  |  |        └── lib
+|     |  |  └── windows
+|     |  |     ├── data-access
+|     |  |     |  └── src
+|     |  |     |     └── lib
+|     |  |     |        └── store
+|     |  |     └── feature
+|     |  |        └── src
+|     |  |           └── lib
+|     |  |              └── window
+|     |  └── shared
+|     |     ├── animations
+|     |     |  └── src
+|     |     |     └── lib
+|     |     ├── assets
+|     |     |  └── src
+|     |     |     └── lib
+|     |     |        ├── hero-icons
+|     |     |        |  ├── outline
+|     |     |        |  └── solid
+|     |     |        ├── imgs
+|     |     |        ├── svg-to-ts
+|     |     |        ├── svgs
+|     |     |        |  ├── arrows
+|     |     |        |  ├── bars
+|     |     |        |  ├── cursor
+|     |     |        |  ├── gen-logos
+|     |     |        |  ├── gifs
+|     |     |        |  ├── hero-icons-backup
+|     |     |        |  |  ├── outline
+|     |     |        |  |  └── solid
+|     |     |        |  ├── img
+|     |     |        |  ├── links
+|     |     |        |  ├── logo
+|     |     |        |  ├── menus
+|     |     |        |  ├── polarity
+|     |     |        |  ├── profile
+|     |     |        |  ├── projects
+|     |     |        |  ├── solar
+|     |     |        |  ├── toolbar
+|     |     |        |  ├── users
+|     |     |        |  └── window
+|     |     |        ├── ts-svgs
+|     |     |        |  └── build
+|     |     |        └── ts-svgs-utils
+|     |     ├── config
+|     |     |  └── src
+|     |     |     └── lib
+|     |     |        └── store-devtools
+|     |     ├── data-access
+|     |     |  ├── backend-types
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  ├── models
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  |        ├── auth
+|     |     |  |        ├── blog
+|     |     |  |        ├── canvas
+|     |     |  |        ├── colors
+|     |     |  |        ├── grid
+|     |     |  |        ├── group-chats
+|     |     |  |        ├── groups
+|     |     |  |        ├── home
+|     |     |  |        ├── images
+|     |     |  |        ├── json
+|     |     |  |        ├── keys
+|     |     |  |        ├── location
+|     |     |  |        ├── messages
+|     |     |  |        ├── mouse
+|     |     |  |        ├── notifications
+|     |     |  |        ├── object
+|     |     |  |        ├── platform
+|     |     |  |        ├── projects
+|     |     |  |        |  ├── block
+|     |     |  |        |  ├── interfaces
+|     |     |  |        |  ├── model
+|     |     |  |        |  ├── panel
+|     |     |  |        |  ├── panel-config
+|     |     |  |        |  ├── path
+|     |     |  |        |  ├── project
+|     |     |  |        |  └── string
+|     |     |  |        ├── responses
+|     |     |  |        ├── signalr
+|     |     |  |        |  └── projects
+|     |     |  |        ├── styles
+|     |     |  |        ├── ui
+|     |     |  |        ├── update
+|     |     |  |        ├── users
+|     |     |  |        └── window
+|     |     |  ├── router
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  ├── signalr
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  ├── store
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  └── types
+|     |     |     └── src
+|     |     |        └── lib
+|     |     ├── directives
+|     |     |  ├── on-destroy
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  └── src
+|     |     |     └── lib
+|     |     |        ├── center-this-element
+|     |     |        ├── console-log
+|     |     |        ├── css-toggle
+|     |     |        ├── div-init
+|     |     |        ├── expandable-absolute
+|     |     |        ├── messages
+|     |     |        └── svgs
+|     |     ├── environment
+|     |     |  └── src
+|     |     |     └── lib
+|     |     ├── interceptors
+|     |     |  └── src
+|     |     |     └── lib
+|     |     ├── logger
+|     |     |  └── src
+|     |     |     └── lib
+|     |     |        └── delayed-logger
+|     |     ├── pipes
+|     |     |  └── src
+|     |     |     └── lib
+|     |     |        ├── angles
+|     |     |        ├── arrays
+|     |     |        ├── date-time
+|     |     |        ├── friends
+|     |     |        ├── images
+|     |     |        ├── messages
+|     |     |        ├── numbers
+|     |     |        ├── projects
+|     |     |        ├── text
+|     |     |        └── types
+|     |     ├── svgs
+|     |     |  └── src
+|     |     |     └── lib
+|     |     |        ├── arrows
+|     |     |        ├── bars
+|     |     |        ├── cursor
+|     |     |        ├── gen-logos
+|     |     |        ├── gifs
+|     |     |        ├── hero-icons
+|     |     |        |  ├── outline
+|     |     |        |  └── solid
+|     |     |        ├── img
+|     |     |        ├── links
+|     |     |        ├── logo
+|     |     |        ├── menus
+|     |     |        ├── polarity
+|     |     |        ├── profile
+|     |     |        ├── solar
+|     |     |        ├── toolbar
+|     |     |        └── window
+|     |     ├── types
+|     |     |  └── src
+|     |     |     └── lib
+|     |     |        ├── ngrx
+|     |     |        └── tuples
+|     |     ├── ui
+|     |     |  ├── app-bar
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  ├── footer
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  ├── google-login-button
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  |        └── svgs
+|     |     |  ├── header
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  ├── logo
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  ├── modals
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  |        ├── cancel-modal
+|     |     |  |        └── success-modal
+|     |     |  ├── models
+|     |     |  |  └── src
+|     |     |  ├── nav-bars
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  |        ├── dark-nav-compact
+|     |     |  |        ├── dark-nav-overlap
+|     |     |  |        └── dark-nav-overlap-v2
+|     |     |  ├── not-found
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  |        ├── bg-not-found
+|     |     |  |        ├── simple-not-found
+|     |     |  |        └── split-image-not-found
+|     |     |  ├── notifications
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  |        ├── request-notification
+|     |     |  |        └── success-notification
+|     |     |  ├── route-breadcrumbs
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  |        └── route-breadcrumbs
+|     |     |  ├── show-hide
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  ├── sidebars
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  |        ├── narrow-mat-sidenav
+|     |     |  |        ├── narrow-sidebar-dark
+|     |     |  |        └── narrow-sidebar-purple
+|     |     |  ├── sidenav
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  ├── spinner
+|     |     |  |  └── src
+|     |     |  |     └── lib
+|     |     |  ├── src
+|     |     |  |  └── lib
+|     |     |  |     ├── buttons
+|     |     |  |     ├── menus
+|     |     |  |     ├── notifications
+|     |     |  |     |  ├── actions-notification
+|     |     |  |     |  ├── request-notification
+|     |     |  |     |  ├── success-notification
+|     |     |  |     |  └── undo-action-notification
+|     |     |  |     ├── spinner
+|     |     |  |     ├── svg-buttons
+|     |     |  |     |  ├── button-animated-down-up-arrow
+|     |     |  |     |  ├── button-animated-left-right-arrow
+|     |     |  |     |  └── button-context-menu
+|     |     |  |     ├── svgs
+|     |     |  |     └── tooltip
+|     |     |  └── statistics
+|     |     |     └── src
+|     |     |        └── lib
+|     |     └── utils
+|     |        └── src
+|     |           └── lib
+|     |              ├── arrays
+|     |              ├── builders
+|     |              ├── callbacks
+|     |              ├── canvas
+|     |              ├── colors
+|     |              ├── compare
+|     |              ├── components
+|     |              ├── dates
+|     |              ├── dialogs
+|     |              ├── div-elements
+|     |              ├── entities
+|     |              ├── environment
+|     |              ├── events
+|     |              ├── flowbite
+|     |              ├── gesture
+|     |              ├── helpers
+|     |              ├── html
+|     |              ├── ids
+|     |              ├── injections
+|     |              ├── local-storage
+|     |              ├── logging
+|     |              ├── mapping
+|     |              ├── matrices
+|     |              ├── mock-data
+|     |              ├── ngrx
+|     |              ├── null
+|     |              ├── numbers
+|     |              ├── objects
+|     |              ├── observables
+|     |              ├── profile-picture
+|     |              ├── promises
+|     |              ├── returns
+|     |              ├── strings
+|     |              ├── switches
+|     |              ├── tailwind
+|     |              ├── validation
+|     |              |  └── schemas
+|     |              ├── vectors
+|     |              ├── window
+|     |              └── zoom
+|     ├── packages
+|     ├── patches
+|     ├── ssl
+|     ├── tmp
+|     |  └── libs
+|     └── tools
+|        └── ngrx-generator
+|           └── src
+|              └── generators
+|                 └── ngrx-entity
+|                    └── files
+|                       └── store
+├── tests
+|  └── Services
+|     ├── Identity
+|     |  ├── Identity.API.Tests.Integration
+|     |  |  ├── bin
+|     |  |  |  └── Debug
+|     |  |  |     └── net7.0
+|     |  |  |        ├── cs
+|     |  |  |        ├── de
+|     |  |  |        ├── es
+|     |  |  |        ├── fr
+|     |  |  |        ├── it
+|     |  |  |        ├── ja
+|     |  |  |        ├── ko
+|     |  |  |        ├── Logs
+|     |  |  |        ├── pl
+|     |  |  |        ├── pt-BR
+|     |  |  |        ├── refs
+|     |  |  |        ├── ru
+|     |  |  |        ├── runtimes
+|     |  |  |        |  ├── alpine-x64
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── linux-arm
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── linux-arm64
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── linux-armel
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── linux-mips64
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── linux-musl-x64
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── linux-s390x
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── linux-x64
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── linux-x86
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── osx
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── osx-arm64
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── osx-x64
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── unix
+|     |  |  |        |  |  └── lib
+|     |  |  |        |  ├── win
+|     |  |  |        |  |  └── lib
+|     |  |  |        |  ├── win-arm
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── win-arm64
+|     |  |  |        |  |  └── native
+|     |  |  |        |  ├── win-x64
+|     |  |  |        |  |  └── native
+|     |  |  |        |  └── win-x86
+|     |  |  |        |     └── native
+|     |  |  |        ├── tr
+|     |  |  |        ├── zh-Hans
+|     |  |  |        └── zh-Hant
+|     |  |  ├── Endpoints
+|     |  |  |  └── Auth
+|     |  |  └── obj
+|     |  |     └── Debug
+|     |  |        └── net7.0
+|     |  |           ├── ref
+|     |  |           └── refint
+|     |  └── Identity.Application.Tests.Unit
+|     |     ├── bin
+|     |     |  └── Debug
+|     |     |     └── net7.0
+|     |     |        ├── cs
+|     |     |        ├── de
+|     |     |        ├── es
+|     |     |        ├── fr
+|     |     |        ├── it
+|     |     |        ├── ja
+|     |     |        ├── ko
+|     |     |        ├── pl
+|     |     |        ├── pt-BR
+|     |     |        ├── ru
+|     |     |        ├── tr
+|     |     |        ├── zh-Hans
+|     |     |        └── zh-Hant
+|     |     ├── Handlers
+|     |     |  └── AppUsers
+|     |     └── obj
+|     |        └── Debug
+|     |           └── net7.0
+|     |              ├── ref
+|     |              └── refint
+|     └── Identity.API.Tests.Integration
+|        └── obj
+└── vids-to-gif
+   └── frames
+
+directory: 8354
+
+ignored: directory (670)

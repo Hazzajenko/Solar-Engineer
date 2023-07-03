@@ -19,12 +19,17 @@
   <a href="#credits">Credits</a> •
   <a href="#license">License</a>
 </p>
+
+[//]: # (<p align="center">)
+
+[//]: # (<img src="./img/solar-engineer-v3.gif" width="80%"/>)
+
+[//]: # (</p>)
+
+
 <p align="center">
-<img src="./img/solar-engineer-v3.gif" width="80%"/>
+<img src="./img/home-demo-v2-small.gif" width="80%"/>
 </p>
-
-
-
 
 
 
