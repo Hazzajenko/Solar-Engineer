@@ -5,10 +5,8 @@ namespace Projects.SignalR.Services;
 
 public class ProjectsConnectionsService
 {
-
     private readonly Dictionary<Guid, HashSet<string>> _connections = new();
     public int ConnectedUsersCount => _connections.Count;
-
 
     public void Add(Guid key, string connectionId)
     {
@@ -18,7 +16,6 @@ public class ProjectsConnectionsService
             {
                 connections = new HashSet<string>();
                 _connections.Add(key, connections);
-                _connections.Keys.DumpObjectJson();
 
                 DiagnosticsConfig.SignalRConnectionCounter.Add(
                     1,

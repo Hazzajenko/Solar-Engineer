@@ -60,7 +60,7 @@ public class SearchForAppUserHandler
             webUser.IsOnline = connections.Any(c => c.AppUserId.ToString() == webUser.Id);
         }
 
-        userSearchResults.DumpObjectJson();
+
 
         var response = new SearchForAppUserResponse { Users = userSearchResults };
 

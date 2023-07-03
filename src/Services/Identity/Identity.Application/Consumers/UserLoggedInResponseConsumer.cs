@@ -32,7 +32,7 @@ public class UserLoggedInResponseConsumer : IConsumer<UserLoggedInResponse>
             UserName = context.Message.UserName,
             PhotoUrl = context.Message.PhotoUrl
         };
-        context.Message.DumpObjectJson();
+
         var user = await _appUsersRepository.GetByIdAsync(context.Message.Id);
         if (user is null)
         {

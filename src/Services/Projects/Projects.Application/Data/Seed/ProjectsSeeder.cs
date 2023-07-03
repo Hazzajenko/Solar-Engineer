@@ -26,4 +26,3 @@ public static class ProjectsSeeder
         }
     }
 }
-// await context.Database.ExecuteSqlAsync($"CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"");

@@ -16,7 +16,7 @@ public static class UserCreatedHandler
         IDocumentSession documentSession
     )
     {
-        message.DumpObjectJson();
+
         var dbMessage = session.Load<AppUserEventV2>(message.Id);
 
         if (dbMessage == null)
@@ -33,7 +33,7 @@ public static class UserCreatedHandler
             session.SaveChanges();*/
         }
 
-        dbMessage.DumpObjectJson();
+
         var queueRes = dbMessage.Queues.Find(x => x.Name == message.ServiceName.Name);
         if (queueRes == null)
         {

@@ -32,7 +32,6 @@ public class InvitedUsersToProjectConsumer : IConsumer<InvitedUsersToProject>
     public async Task Consume(ConsumeContext<InvitedUsersToProject> context)
     {
         _logger.LogInformation("InvitedUsersToProjectConsumer");
-        context.Message.DumpObjectJson();
 
         var appUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(context.Message.AppUserId);
         if (appUser is null)

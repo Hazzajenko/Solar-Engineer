@@ -28,7 +28,6 @@ public class UserRejectedInviteToProjectFailedConsumer
     public Task Consume(ConsumeContext<UserRejectedInviteToProjectFailed> context)
     {
         _logger.LogInformation("UserRejectedInviteToProjectFailedConsumer");
-        context.Message.DumpObjectJson();
         return Task.CompletedTask;
     }
 }

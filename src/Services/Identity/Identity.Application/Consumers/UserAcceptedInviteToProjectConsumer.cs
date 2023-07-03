@@ -33,7 +33,6 @@ public class UserAcceptedInviteToProjectConsumer : IConsumer<UserAcceptedInviteT
     public async Task Consume(ConsumeContext<UserAcceptedInviteToProject> context)
     {
         _logger.LogInformation("UserAcceptedInviteToProjectConsumer");
-        context.Message.DumpObjectJson();
 
         var appUserId = context.Message.AppUserId;
         var projectId = context.Message.ProjectId;

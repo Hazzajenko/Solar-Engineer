@@ -27,7 +27,6 @@ public class SendWebUiErrorEndpoint : Endpoint<SendAppErrorRequest>
         var appUser = await _userManager.GetUserAsync(User);
         var message = request.Message;
         var stackTrace = request.StackTrace;
-        request.DumpObjectJson();
         if (appUser is null)
         {
             Logger.LogError(

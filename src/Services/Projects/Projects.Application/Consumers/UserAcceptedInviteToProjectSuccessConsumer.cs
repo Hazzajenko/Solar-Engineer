@@ -27,7 +27,6 @@ public class UserAcceptedInviteToProjectSuccessConsumer : IConsumer<UserAccepted
     public Task Consume(ConsumeContext<UserAcceptedInviteToProjectSuccess> context)
     {
         _logger.LogInformation("UserAcceptedInviteToProjectSuccessConsumer");
-        context.Message.DumpObjectJson();
         return Task.CompletedTask;
     }
 }

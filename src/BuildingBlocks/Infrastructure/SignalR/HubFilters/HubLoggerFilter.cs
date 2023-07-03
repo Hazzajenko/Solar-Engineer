@@ -23,8 +23,7 @@ public class HubLoggerFilter : IHubFilter
                 .ToList()
                 .ForEach(arg =>
                 {
-                    if (arg != null)
-                        arg.DumpObjectJson();
+                    // if (arg != null)
                 });
         try
         {

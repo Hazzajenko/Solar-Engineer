@@ -47,7 +47,7 @@ public class CreateProjectHandler
         Guid appUserId = command.User.Id;
 
         CreateProjectRequest request = command.CreateProjectRequest;
-        request.DumpObjectJson();
+
         var appUserProject = AppUserProject.CreateAsOwner(appUserId, request.Name, request.Colour);
         await _unitOfWork.AppUserProjectsRepository.AddAsync(appUserProject);
         await _unitOfWork.SaveChangesAsync();

@@ -11,9 +11,7 @@ public class HubLoggerFilter : IHubFilter
         Func<HubInvocationContext, ValueTask<object?>> next
     )
     {
-        var userId = invocationContext.Context.GetGuidUserId();
-        // invocationContext.Context.Features.Get<IUserIdProvider>();
-        // invocationContext.HubMethodArguments.;
+        Guid userId = invocationContext.Context.GetGuidUserId();
         Log.Logger.Information(
             "User {UserId}: Calling hub method {HubMethodName}",
             userId,
@@ -22,9 +20,6 @@ public class HubLoggerFilter : IHubFilter
         if (invocationContext.HubMethodName == "SendProjectEvent")
         {
             var arguments = invocationContext.HubMethodArguments.ToArray();
-
-            // arguments[languageFilter.FilterArgument] = str;
-            // arguments[0].DumpObjectJson();
             Log.Logger.Information(
                 "User {UserId}: Calling hub method {HubMethodName} with argument {Argument}",
                 userId,
@@ -38,14 +33,8 @@ public class HubLoggerFilter : IHubFilter
                 .ToList()
                 .ForEach(arg =>
                 {
-                    if (arg != null)
-                        arg.DumpObjectJson();
-                    /*Log.Logger.Information(
-                        "User {UserId}: Calling hub method {HubMethodName} with argument {Argument}",
-                        userId,
-                        invocationContext.HubMethodName,
-                        arg
-                    );*/
+                    // if (arg != null)
+            
                 });
         /*Log.Logger.Information(
             "Calling hub method {HubMethodName}",

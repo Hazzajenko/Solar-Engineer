@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using ApplicationCore.Extensions;
 using Identity.Application.Data.UnitOfWork;
+using Identity.Domain;
 using Infrastructure.Extensions;
 using JasperFx.CodeGeneration.Frames;
 using Microsoft.AspNetCore.Builder;
@@ -33,7 +34,7 @@ public class LastActiveMiddleware
         }
         if (httpContext.User.Identity!.IsAuthenticated)
         {
-            Guid? userId = httpContext.User.TryParseGuidUserId();
+            var userId = httpContext.User.TryParseGuidUserId();
             if (userId is null)
             {
                 logger.LogInformation("User is not authenticated");
@@ -41,7 +42,7 @@ public class LastActiveMiddleware
                 return;
             }
 
-            var user = await unitOfWork.AppUsersRepository.GetByIdAsync((Guid)userId);
+            AppUser? user = await unitOfWork.AppUsersRepository.GetByIdAsync((Guid)userId);
             if (user != null)
             {
                 user.LastActiveTime = DateTime.UtcNow;

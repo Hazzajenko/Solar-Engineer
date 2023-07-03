@@ -27,7 +27,7 @@ public static partial class LoggingExtensions
     /// </summary>
     public static void DumpObjectJson(this object obj)
     {
-        var type = obj.GetType();
+        Type type = obj.GetType();
         var typeName = type.Name;
         var json = JsonSerializer.Serialize(
             obj,

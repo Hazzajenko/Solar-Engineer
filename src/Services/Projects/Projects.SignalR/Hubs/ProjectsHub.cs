@@ -4,6 +4,7 @@ using Infrastructure.Logging;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Projects.Contracts.Requests.Projects;
+using Projects.Domain.Common;
 using Projects.SignalR.Commands.Projects;
 using Projects.SignalR.Mapping;
 using Projects.SignalR.Queries.Projects;
@@ -117,8 +118,7 @@ public class ProjectsHub : Hub<IProjectsHub>
 
     public async Task SendProjectEvent(ProjectGridEvent projectGridEvent)
     {
-        projectGridEvent.DumpObjectJson();
-        var eventRequest = projectGridEvent.ToCommandObject(Context);
+        IProjectCommand eventRequest = projectGridEvent.ToCommandObject(Context);
         await _mediator.Send(eventRequest);
     }
 }

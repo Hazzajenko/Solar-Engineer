@@ -33,7 +33,7 @@ public class UserRejectedInviteToProjectConsumer : IConsumer<UserRejectedInviteT
     public async Task Consume(ConsumeContext<UserRejectedInviteToProject> context)
     {
         _logger.LogInformation("UserRejectedInviteToProjectConsumer");
-        context.Message.DumpObjectJson();
+
 
         var appUserId = context.Message.AppUserId;
         var projectId = context.Message.ProjectId;

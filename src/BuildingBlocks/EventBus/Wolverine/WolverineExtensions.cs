@@ -109,7 +109,6 @@ public static class WolverineExtensions
         string[] queues
     )
     {
-        queues.DumpObjectJson();
         foreach (var queueName in queues)
             transport.DeclareExchange(
                 queueName,

@@ -32,7 +32,7 @@ public static class ProjectEventsMapper
             Model = entity.GetType().Name,
             Data = toJson
         };
-        projectEventResponse.DumpObjectJson();
+
         return projectEventResponse;
     }
 
@@ -98,7 +98,7 @@ public static class ProjectEventsMapper
             ModelTwo = response2.Model,
             DataTwo = response2.Data
         };
-        projectEventResponse.DumpObjectJson();
+
         return projectEventResponse;
     }
 
@@ -130,7 +130,7 @@ public static class ProjectEventsMapper
             Data = toJson,
             Appending = appending
         };
-        projectEventResponse.DumpObjectJson();
+
         return projectEventResponse;
     }
 
@@ -157,7 +157,7 @@ public static class ProjectEventsMapper
             Model = typeof(TEntity).Name,
             Data = toJson
         };
-        projectEventResponse.DumpObjectJson();
+
         return projectEventResponse;
     }
 
@@ -183,7 +183,6 @@ public static class ProjectEventsMapper
             Model = typeof(TEntity).Name,
             Data = toJson
         };
-        projectEventResponse.DumpObjectJson();
         return projectEventResponse;
     }
 }

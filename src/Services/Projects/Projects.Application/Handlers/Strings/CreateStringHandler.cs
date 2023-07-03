@@ -51,7 +51,7 @@ public class CreateStringHandler : ICommandHandler<CreateStringCommand, bool>
         if (panelIds.Any())
             panelIdGuids = panelIds.Select(Guid.Parse);
         // IEnumerable<Panel>? panels = null;
-        command.Request.DumpObjectJson();
+
         var @string = String.Create(
             (command.Request.String.Id, command.Request.String.Name, command.Request.String.Colour),
             projectId,

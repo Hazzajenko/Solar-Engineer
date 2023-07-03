@@ -33,12 +33,11 @@ public class CreateProjectEndpoint
 
     public override async Task HandleAsync(CreateProjectRequest request, CancellationToken cT)
     {
-        request.DumpObjectJson();
+
         Response = await _mediator.Send(
             new CreateProjectCommand(User.ClaimsToAuthUser(), request),
             cT
         );
-        Response.DumpObjectJson();
         await SendOkAsync(Response, cT);
     }
 }
