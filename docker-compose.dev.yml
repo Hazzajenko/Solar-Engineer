@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.15.0
+    ports:
+      - "9901:9901"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./api-gateways/envoy/envoy.dev.yml:/etc/envoy/envoy.yaml
+      - ./https/solarengineer.net.crt:/etc/ssl/certs/solarengineer.net.crt
+      - ./https/solarengineer.net.rsa:/etc/ssl/certs/solarengineer.net.rsa
+
+  postgres:
+    image: postgres:14.0
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: SolarEngineer.Root
+    volumes:
+      - ./db-data/postgres/:/var/lib/postgresql/data/
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: "rabbitmq"
+    labels:
+      NAME: "rabbitmq"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  seq:
+    container_name: seq
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORDHASH=$SEQ_PS
+    volumes:
+      - ./seq-data/:/data/
+    ports:
+      - '5342:5342'
+    image: datalust/seq
+

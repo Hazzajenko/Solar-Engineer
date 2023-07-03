@@ -3,7 +3,7 @@ services:
     hostname: "web-ui"
     labels:
       NAME: "web-ui"
-    image: hazzajenko/solarengineer-web-ui:1.0.5
+    image: hazzajenko/solarengineer-web-ui:1.0.8.4
     ports:
       - 4200:80
 
@@ -11,7 +11,7 @@ services:
     hostname: "identity-api"
     labels:
       NAME: "identity-api"
-    image: hazzajenko/solarengineer-identity-api:1.0.5
+    image: hazzajenko/solarengineer-identity-api:1.0.8.4
     ports:
       - ${IDENTITY_HTTPS_PORT}:443
       - ${IDENTITY_HTTP_PORT}:80
@@ -32,6 +32,8 @@ services:
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      MICROSOFT_CLIENT_ID: ${MICROSOFT_CLIENT_ID}
+      MICROSOFT_CLIENT_SECRET: ${MICROSOFT_CLIENT_SECRET}
       ASPNETCORE_URLS: ${ASPNETCORE_URLS}
       ASPNETCORE_Kestrel__Certificates__Default__Password: ${ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PASSWORD}
       ASPNETCORE_Kestrel__Certificates__Default__Path: ${ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PATH}
@@ -44,9 +46,9 @@ services:
       AZURE_STORAGE_CONTAINER_NAME: ${AZURE_STORAGE_CONTAINER_NAME}
       AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
       DOCKER_HUB_API_BASE_URL: ${DOCKER_HUB_API_BASE_URL}
-      DOCKER_HUB_API_PASSWORD: ${DOCKER_HUB_API_PASSWORD}
       DOCKER_HUB_REPOSITORIES_URL: ${DOCKER_HUB_REPOSITORIES_URL}
-      DOCKER_HUB_USER_NAME: ${DOCKER_HUB_USER_NAME}
+      DOCKER_HUB_USERNAME: ${DOCKER_HUB_USERNAME}
+      DOCKER_HUB_PASSWORD: ${DOCKER_HUB_PASSWORD}
 
     volumes:
       - ./https:/https:ro
@@ -55,7 +57,7 @@ services:
     hostname: "projects-api"
     labels:
       NAME: "projects-api"
-    image: hazzajenko/solarengineer-projects-api:1.0.5
+    image: hazzajenko/solarengineer-projects-api:1.0.8.4
     ports:
       - ${PROJECTS_HTTPS_PORT}:443
       - ${PROJECTS_HTTP_PORT}:80
@@ -104,4 +106,3 @@ services:
     ports:
       - 6379:6379
     command: ["redis-server", "--bind", "redis", "--port", "6379"]
-
