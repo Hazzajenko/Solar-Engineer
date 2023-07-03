@@ -25,8 +25,8 @@ public static partial class LoggingExtensions
         if (appName is null)
             throw new ArgumentNullException(nameof(appName));
 
-        var environment = builder.Environment;
-        var config = builder.Configuration;
+        IWebHostEnvironment environment = builder.Environment;
+        ConfigurationManager config = builder.Configuration;
 
         _ = builder.Host.UseSerilog(
             (_, _, loggerConfig) =>
@@ -42,7 +42,9 @@ public static partial class LoggingExtensions
                     .AddApplicationInsightsLogging(config, environment)
                     .WriteTo.Console();
 
-                loggerConfig.WriteTo.Seq("http://localhost:5341");
+                var seqUrl = environment.IsDevelopment() ? "http://localhost:5341" : "http://seq";
+                // var seqUrl = environment.IsDevelopment() ? "http://localhost:5341" : "seq";
+                loggerConfig.WriteTo.Seq(seqUrl);
 
                 loggerConfig.MinimumLevel
                     .Override("Microsoft", LogEventLevel.Information)
@@ -70,16 +72,16 @@ public static partial class LoggingExtensions
         var applicationInsightsConnectionString = environment.IsDevelopment()
             ? config["Azure:ApplicationInsights:ConnectionString"]
             : GetEnvironmentVariable("AZURE_APPLICATION_INSIGHTS_CONNECTION_STRING");
-        var instrumentationKey = environment.IsDevelopment()
-            ? config["Azure:ApplicationInsights:InstrumentationKey"]
-            : GetEnvironmentVariable("AZURE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY");
-        TelemetryConfiguration telemetryConfiguration = new TelemetryConfiguration
-        {
-            ConnectionString = applicationInsightsConnectionString,
-            InstrumentationKey = instrumentationKey,
-        };
+        // var instrumentationKey = environment.IsDevelopment()
+        //     ? config["Azure:ApplicationInsights:InstrumentationKey"]
+        //     : GetEnvironmentVariable("AZURE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY");
+        // TelemetryConfiguration telemetryConfiguration = new TelemetryConfiguration
+        // {
+        //     ConnectionString = applicationInsightsConnectionString,
+        //     InstrumentationKey = instrumentationKey,
+        // };
         loggerConfiguration.WriteTo.ApplicationInsights(
-            telemetryConfiguration,
+            applicationInsightsConnectionString,
             TelemetryConverter.Traces
         );
 

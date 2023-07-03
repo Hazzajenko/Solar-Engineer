@@ -29,7 +29,7 @@ foreach ($service in $options[$selection]) {
         continue
     }
     $project = "${location}\src\Services\$($service)\$($service).API\$($service).API.csproj"
-    Write-Host "dotnet publish ${project} --os linux --arch x64 -c Release -p:ContainerImageTags=${version}"
+    Write-Host "dotnet publish ${project} --framework net7.0* --os linux --arch x64 -c Release -p:ContainerImageTags=${version}"
     dotnet publish ${project} --os linux --arch x64 -c Release -p:ContainerImageTag=${version}
 }
 

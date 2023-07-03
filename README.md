@@ -119,6 +119,28 @@ Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
 
 ## Key Features
 
+### Project Templates
+
+<p align="center">
+  <img src="./img/project-templates.png" width="80%" alt=""/>
+</p>
+
+### Action Bar
+
+<p align="center">
+  <img src="./img/desktop-action-bar.png" alt=""/>
+</p>
+
+#### From left to right:
+- Side UI Toggle
+- Link Mode Toggle
+- Change String Colour
+- Select String
+- Create String
+- Cancel Selection
+- Delete Selected Panels
+
+
 ### Projects
 - Create, update, and delete projects
 - View project details
