@@ -18,23 +18,6 @@ import { checkAuthFlow } from './check-auth-flow'
 	styles: [''],
 })
 export class AppComponent {
-	// private _http = inject(HttpClient)
 	title = 'solar-engineer'
-	// isAuthorizeQuery = provideIsAuthorizeQuery()
 	checkAuthFlow = checkAuthFlow()
-
-	// ngOnInit() {
-	/*	const query = this.isAuthorizeQuery()
-	 console.log(query)
-
-	 // if (query) {
-	 if (query === 'true') {
-	 this._http
-	 .post<AuthorizeResponse>('/auth/auth/authorize', {}, { withCredentials: true })
-	 .subscribe((res) => {
-	 console.log(res)
-	 })
-	 // this._http.get('/auth/user').subscribe(console.log)
-	 }*/
-	// }
 }

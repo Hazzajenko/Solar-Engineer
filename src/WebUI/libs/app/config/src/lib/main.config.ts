@@ -22,7 +22,7 @@ import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { DatePipe } from '@angular/common'
 import { JwtModule } from '@auth0/angular-jwt'
 import { onCLS, onFID, onLCP } from 'web-vitals'
-import { GlobalErrorHandler } from '@app/data-access/errors'
+import { GlobalErrorHandler } from '@app/errors'
 import { jwtInterceptor } from './interceptors'
 
 if (!environment.production) {
@@ -53,23 +53,17 @@ export const appConfig: ApplicationConfig = {
 }
 
 export function tokenGetter() {
-	return localStorage.getItem('access_token')
+	return localStorage.getItem('token')
 }
 
 function provideWebAppProviders() {
 	return makeEnvironmentProviders([
 		provideZoneChangeDetection({ eventCoalescing: true }),
 		provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
-		provideNgrx(), // provideHttpClient(),
-		// provideHttpClient(withInterceptors([authHttpInterceptorFn])),
+		provideNgrx(),
 		provideHttpClient(withInterceptors([jwtInterceptor()])),
 		provideAnimations(),
-		provideNoopAnimations() /*		provideAuth0({
-		 ...environment.auth0Config,
-		 httpInterceptor: {
-		 ...environment.httpInterceptor,
-		 },
-		 }),*/,
+		provideNoopAnimations(),
 		importProvidersFrom(
 			BrowserAnimationsModule,
 			BrowserModule,
