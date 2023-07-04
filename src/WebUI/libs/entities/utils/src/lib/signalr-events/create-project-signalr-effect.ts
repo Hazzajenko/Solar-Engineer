@@ -1,7 +1,7 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
 import { ProjectsSignalrService } from '@entities/data-access'
-import { map, tap } from 'rxjs'
+import { EMPTY, map, switchMap } from 'rxjs'
 import { GetActionParametersByAction } from '@shared/utils'
 import { ProjectId, SignalrEventRequest } from '@entities/shared'
 import { createAction } from '@ngrx/store'
@@ -31,10 +31,13 @@ export const createProjectSignalrEffect = <TAction extends Action>(
 					const params = actionResult as GetActionParametersByAction<TAction>
 					return mapFn(params, project.id)
 				}),
-				tap((request) => {
-					if (!request) return
-					projectsSignalr.invokeSignalrEvent(request)
-				}),
+				switchMap((request) => {
+					if (!request) return EMPTY
+					return projectsSignalr.invokeSignalrEvent(request)
+				}), // tap((request) => {
+				// 	if (!request) return
+				// 	projectsSignalr.invokeSignalrEvent(request)
+				// }),
 			)
 		},
 		{ functional: true, dispatch: false },

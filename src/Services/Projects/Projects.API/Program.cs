@@ -11,7 +11,11 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Projects.Application.Configuration;
 using Projects.Application.Data;
 using Projects.Application.Extensions;
+
+using Microsoft.AspNetCore.SignalR;
+using Projects.Application.HubFilters;
 using Projects.Contracts.Data;
+using Projects.SignalR.Hubs;
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
@@ -37,14 +41,28 @@ builder.Services.AddAuthorization();
 
 builder.Services.InitDbContext<ProjectsContext>(config, environment, "Projects.Application");
 
-builder.Services.ConfigureSignalRWithRedis(
-    environment,
-    options =>
+// builder.Services.ConfigureSignalRWithRedis(
+//     environment,
+//     options =>
+//     {
+//         options.PayloadSerializerOptions.Converters.Add(new ProjectTemplateKeyConverter());
+//     },
+//     new List<JsonConverter> { new ProjectTemplateKeyConverter() }
+// );
+builder.Services
+    .AddSignalR(options =>
     {
-        options.PayloadSerializerOptions.Converters.Add(new ProjectTemplateKeyConverter());
-    },
-    new List<JsonConverter> { new ProjectTemplateKeyConverter() }
-);
+        options.DisableImplicitFromServicesParameters = true;
+        if (environment.IsDevelopment())
+            options.EnableDetailedErrors = true;
+    })
+    .AddHubOptions<ProjectsHub>(options =>
+    {
+        options.AddFilter<ProjectsHubFilter>();
+    })
+    .InitStackExchangeRedis(builder.Services, environment);
+builder.Services.AddSingleton<ProjectsHubFilter>();
+
 builder.Services.InitCors("corsPolicy");
 
 builder.Services.AddFastEndpoints();

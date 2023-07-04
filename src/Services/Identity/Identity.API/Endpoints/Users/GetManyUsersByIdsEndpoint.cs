@@ -6,6 +6,7 @@ using Identity.Application.Queries.AppUsers;
 using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses;
+using Identity.Domain;
 using Infrastructure.Extensions;
 using Mediator;
 using MethodTimer;
@@ -41,7 +42,7 @@ public class GetManyUsersByIdsEndpoint
     [Time]
     public override async Task HandleAsync(GetManyUsersByIdsRequest request, CancellationToken cT)
     {
-        var appUser = await _mediator.Send(new GetAppUserQuery(User), cT);
+        AppUser? appUser = await _mediator.Send(new GetAppUserQuery(User), cT);
         if (appUser is null)
         {
             Logger.LogError("Unable to find user {UserId}", User.GetUserId());

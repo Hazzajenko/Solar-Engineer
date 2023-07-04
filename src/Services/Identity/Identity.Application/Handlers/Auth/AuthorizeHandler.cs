@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
+using ApplicationCore.Exceptions;
 using Identity.Application.Commands;
-using Identity.Application.Exceptions;
 using Identity.Application.Extensions;
 using Identity.Application.Mapping;
 using Identity.Domain;

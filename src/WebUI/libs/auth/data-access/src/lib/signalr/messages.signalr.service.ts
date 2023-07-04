@@ -141,10 +141,16 @@ export class MessagesSignalrService {
 		if (this.hubConnection.state !== 'Connected') throw new Error('Hub connection is not connected')
 
 		if (invoke && params) {
-			this.hubConnection.invoke(invoke, params).catch((err) => console.error(err, invoke, params))
+			this.hubConnection.invoke(invoke, params).catch((err) => {
+				console.error(err, invoke, params)
+				throw err
+			})
 		}
 		if (invoke && !params) {
-			this.hubConnection.invoke(invoke).catch((err) => console.error(err, invoke))
+			this.hubConnection.invoke(invoke).catch((err) => {
+				console.error(err, invoke)
+				throw err
+			})
 		}
 	}
 }

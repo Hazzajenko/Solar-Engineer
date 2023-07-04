@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Identity.Application.Exceptions;
+namespace ApplicationCore.Exceptions;
 
 public class UnauthorizedException : ApiException
 {

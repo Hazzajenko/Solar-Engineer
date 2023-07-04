@@ -6,6 +6,15 @@
 	"sourceRoot": "apps/web-app/src",
 	"tags": [],
 	"targets": {
+		"get-source-maps": {
+			"executor": "nx:run-commands",
+			"options": {
+				"commands": [
+					"nx build web-app --configuration=production --sourceMap=true"
+				],
+				"parallel": false
+			}
+		},
 		"deploy": {
 			"executor": "nx:run-commands",
 			"options": {
@@ -62,7 +71,7 @@
 							"maximumError": "4kb"
 						}
 					],
-					"outputHashing": "all",
+					"outputHashing": "none",
 					"fileReplacements": [
 						{
 							"replace": "libs/shared/environment/src/lib/environment.ts",

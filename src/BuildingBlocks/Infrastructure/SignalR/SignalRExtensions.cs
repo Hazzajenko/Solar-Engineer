@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 using ApplicationCore.Entities;
+using ApplicationCore.Exceptions;
 using ApplicationCore.Extensions;
 using Infrastructure.Extensions;
 using Infrastructure.SignalR.HubFilters;
@@ -81,20 +83,27 @@ public static class SignalRExtensions
 
     public static Guid GetGuidUserId(this HubCallerContext context)
     {
-        var user = context.User;
-        user.ThrowHubExceptionIfNull("User is not authenticated");
-        return user.TryGetGuidUserId(new HubException("User is not authenticated"));
+        ClaimsPrincipal? user = context.User;
+        if (user is null)
+        {
+            throw new NotAuthenticatedHubException(nameof(user));
+        }
+        return user.TryGetGuidUserId(new NotAuthenticatedHubException(nameof(user)));
+        // return user.TryGetGuidUserId(new HubException("User is not authenticated"));
     }
 
     public static string GetUserName(this HubCallerContext context)
     {
-        var user = ThrowHubExceptionIfNull(context.User, "User is not authenticated");
-        return user.GetUserName();
+        if (context.User is null)
+        {
+            throw new NotAuthenticatedHubException(nameof(context.User));
+        }
+        return context.User.GetUserName();
     }
 
     public static AuthUser ToAuthUser(this HubCallerContext context)
     {
-        var userId = context.GetGuidUserId();
+        Guid userId = context.GetGuidUserId();
         var userName = context.GetUserName();
         return AuthUser.Create(userId, userName, context.ConnectionId);
     }

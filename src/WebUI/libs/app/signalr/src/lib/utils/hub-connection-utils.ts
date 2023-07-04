@@ -1,12 +1,12 @@
 import * as signalR from '@microsoft/signalr'
-import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
 
 export type HubConnectionRequest = {
 	token: string
 	hubName: string
 	hubUrl: string
 }
-export const createHubConnection = (request: HubConnectionRequest) => {
+export const createHubConnection = (request: HubConnectionRequest, logger: signalR.ILogger) => {
 	const { token, hubName, hubUrl } = request
 	const hubConnection = new HubConnectionBuilder()
 		.withUrl(hubUrl, {
@@ -14,7 +14,7 @@ export const createHubConnection = (request: HubConnectionRequest) => {
 			skipNegotiation: true,
 			transport: signalR.HttpTransportType.WebSockets,
 		})
-		.configureLogging(LogLevel.Information)
+		.configureLogging(logger)
 		.withAutomaticReconnect()
 		.build()
 	hubConnection
@@ -24,6 +24,7 @@ export const createHubConnection = (request: HubConnectionRequest) => {
 		})
 		.catch((err) => {
 			console.error('Error while starting ' + hubName + ' Hub connection: ' + err)
+			throw err
 		})
 	return hubConnection
 }

@@ -11,9 +11,9 @@ export class MobileBottomToolbarDirective {
 	@Input() set currentContextMenuDiv(
 		currentContextMenuDiv: ElementRef<HTMLDivElement> | undefined,
 	) {
-		console.log(currentContextMenuDiv)
+		// console.log(currentContextMenuDiv)
 		if (!currentContextMenuDiv) {
-			console.log('currentContextMenuDiv is undefined', this.initialHeight)
+			// console.log('currentContextMenuDiv is undefined', this.initialHeight)
 			// console.log('currentContextMenuDiv is undefined')
 			this._renderer.setStyle(this._element, 'height', `${this.initialHeight}px`)
 			return

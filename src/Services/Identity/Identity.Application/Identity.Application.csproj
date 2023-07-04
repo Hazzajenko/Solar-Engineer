@@ -62,6 +62,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Exceptions\" />
       <Folder Include="Validation" />
     </ItemGroup>
 

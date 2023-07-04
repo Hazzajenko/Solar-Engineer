@@ -177,8 +177,12 @@ export const updateManyPanelLinksPaths$ = createEffect(
 				if (updatesWithLocation.length === 0) {
 					return PanelLinksActions.noop()
 				}
+
 				const panelIds = updatesWithLocation.map((update) => update.id) as PanelId[]
 				const linksForPanels = panelLinksStore.select.getByPanelIds(panelIds)
+				if (linksForPanels.length === 0) {
+					return PanelLinksActions.noop()
+				}
 				const updatedLinks = linksForPanels.map((panelLink) => {
 					const positivePanel = panelsStore.select.getById(panelLink.positivePanelId)
 					assertNotNull(positivePanel)

@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core'
-import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import { HubConnection } from '@microsoft/signalr'
+import { inject, Injectable } from '@angular/core'
+import { HubConnectionRequest } from '@app/data-access/signalr'
+import { HubConnection, ILogger, LogLevel } from '@microsoft/signalr'
 import {
 	AcceptInviteToProjectResponse,
 	AcceptProjectInviteRequest,
@@ -36,8 +36,10 @@ import { EntityUpdate } from '@shared/data-access/models'
 import { injectSignalrEventsStore } from '../../signalr-events'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { injectEntityStore } from '../../shared'
-import { camelCaseToPascaleCaseNested, retryCheck } from '@shared/utils'
+import { retryCheck } from '@shared/utils'
 import { injectAuthStore } from '@auth/data-access'
+import { createHubConnection } from '@app/signalr'
+import { ApplicationInsightsService } from '@app/logging'
 
 const hubName = 'Projects'
 const hubUrl = '/hubs/projects'
@@ -45,18 +47,51 @@ const hubUrl = '/hubs/projects'
 
 export type ProjectsHubConnection = HubConnection
 
+export class MyLogger implements ILogger {
+	log(logLevel: LogLevel, message: string) {
+		// Use `message` and `logLevel` to record the log message to your own system
+		console.log(logLevel, message)
+		if (logLevel === LogLevel.Error) {
+			console.error(logLevel, message)
+			if (message.includes('Not Authenticated')) {
+				throw new Error(message)
+				// retryCheck(() => {
+				// 	console.log('retrying')
+				// 	this.hubConnection?.start()
+				// })
+			}
+		}
+	}
+}
+
 @Injectable({
 	providedIn: 'root',
 })
-export class ProjectsSignalrService {
+export class ProjectsSignalrService implements ILogger {
 	private _projectsStore = injectProjectsStore()
 	private _entitiesStore = injectEntityStore()
 	private _signalrEventsStore = injectSignalrEventsStore()
+	private _insightsService = inject(ApplicationInsightsService)
 	private _authStore = injectAuthStore()
 
 	user = this._authStore.select.user
 
 	hubConnection: ProjectsHubConnection | undefined
+
+	log(logLevel: LogLevel, message: string) {
+		if (logLevel === LogLevel.Trace) return
+		const hubStart = '[ProjectsHubConnection]'
+		if (logLevel === LogLevel.Error) {
+			console.error(hubStart, message)
+			if (message.includes('Not Authenticated')) {
+				this._authStore.dispatch.signOut()
+				// throw new Error(message)
+			}
+			this._insightsService.logException(new Error(message))
+			return
+		}
+		console.log(hubStart, message)
+	}
 
 	init(token: string) {
 		const request: HubConnectionRequest = {
@@ -64,7 +99,27 @@ export class ProjectsSignalrService {
 			hubName,
 			hubUrl,
 		}
-		this.hubConnection = createHubConnection(request)
+		this.hubConnection = createHubConnection(request, this)
+		// const { token, hubName, hubUrl } = request
+		/*		this.hubConnection = new HubConnectionBuilder()
+		 .withUrl(hubUrl, {
+		 accessTokenFactory: () => token,
+		 skipNegotiation: true,
+		 transport: signalR.HttpTransportType.WebSockets,
+		 })
+		 .configureLogging(this)
+		 // .configureLogging(LogLevel.Information)
+		 .withAutomaticReconnect()
+		 .build()
+		 this.hubConnection
+		 .start()
+		 .then(() => {
+		 console.log(hubName + ' Hub Connection started')
+		 })
+		 .catch((err) => {
+		 console.error('Error while starting ' + hubName + ' Hub connection: ' + err)
+		 throw err
+		 })*/
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, (response: GetManyProjectsResponse) => {
 			console.log(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, response)
@@ -192,7 +247,10 @@ export class ProjectsSignalrService {
 		if (initial) {
 			retryCheck(async () => this.hubConnection?.state === 'Connected', 1000, 10)
 				.then(() => this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.GET_PROJECT_BY_ID, projectId))
-				.catch((err) => console.error(err))
+				.catch((err) => {
+					console.error(err)
+					throw err
+				})
 			return
 		}
 		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.GET_PROJECT_BY_ID, projectId)
@@ -236,14 +294,17 @@ export class ProjectsSignalrService {
 		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.DELETE_PROJECT, { projectId })
 	}
 
-	invokeSignalrEvent(request: Omit<SignalrEventRequest, 'timeStamp'>) {
+	async invokeSignalrEvent(request: Omit<SignalrEventRequest, 'timeStamp'>) {
 		this._signalrEventsStore.dispatch.invokeSignalrEvent(addTimeStamp(request))
 		console.log(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
-		const pascalCaseRequest = camelCaseToPascaleCaseNested(request)
+		// const pascalCaseRequest = camelCaseToPascaleCaseNested(request)
 		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
-		this.hubConnection
-			.invoke(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, pascalCaseRequest)
-			.catch((err) => console.error(err, request))
+		await this.hubConnection.invoke(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
+		// .catch((err) => {
+		// 	console.error(err, request)
+		// 	throw new Error("Unable to invoke 'sendProjectEvent' method")
+		// 	// throw err
+		// })
 	}
 
 	private receiveProjectEvent(event: SignalrEventResponse) {
@@ -301,10 +362,16 @@ export class ProjectsSignalrService {
 		if (invoke && params) {
 			// const pascalCaseRequest = camelCaseToPascaleCaseNested(params)
 			// console.log(invoke, pascalCaseRequest)
-			this.hubConnection.invoke(invoke, params).catch((err) => console.error(err, invoke, params))
+			this.hubConnection.invoke(invoke, params).catch((err) => {
+				console.error(err, invoke, params)
+				throw err
+			})
 		}
 		if (invoke && !params) {
-			this.hubConnection.invoke(invoke).catch((err) => console.error(err, invoke))
+			this.hubConnection.invoke(invoke).catch((err) => {
+				console.error(err, invoke)
+				throw err
+			})
 		}
 	}
 }

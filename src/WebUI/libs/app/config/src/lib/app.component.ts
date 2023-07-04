@@ -1,6 +1,7 @@
-import { Component } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
 import { checkAuthFlow } from './check-auth-flow'
+import { ApplicationInsightsService } from '../../../logging/src/lib/application-insights.service'
 
 @Component({
 	standalone: true,
@@ -18,6 +19,14 @@ import { checkAuthFlow } from './check-auth-flow'
 	styles: [''],
 })
 export class AppComponent {
+	private _insights = inject(ApplicationInsightsService)
 	title = 'solar-engineer'
 	checkAuthFlow = checkAuthFlow()
+
+	constructor() {
+		this._insights.logEvent('App Loaded')
+		this._insights.logMetric('App Loaded', 1)
+		this._insights.logPageView('App Loaded', 'App Loaded')
+		this._insights.logTrace('App Loaded')
+	}
 }

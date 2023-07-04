@@ -72,6 +72,8 @@
     "@angular/router": "^16.1.1",
     "@auth0/angular-jwt": "^5.1.2",
     "@auth0/auth0-angular": "2.1.0",
+    "@microsoft/applicationinsights-angularplugin-js": "^3.0.2",
+    "@microsoft/applicationinsights-web": "^3.0.2",
     "@microsoft/signalr": "7.0.4",
     "@microsoft/signalr-protocol-msgpack": "^7.0.5",
     "@ng-icons/core": "^25.0.1",

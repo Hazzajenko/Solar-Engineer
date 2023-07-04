@@ -22,8 +22,8 @@ import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { DatePipe } from '@angular/common'
 import { JwtModule } from '@auth0/angular-jwt'
 import { onCLS, onFID, onLCP } from 'web-vitals'
-import { GlobalErrorHandler } from '@app/errors'
 import { jwtInterceptor } from './interceptors'
+import { GlobalErrorHandler } from '@app/errors'
 
 if (!environment.production) {
 	onCLS(console.log)
@@ -81,5 +81,9 @@ function provideWebAppProviders() {
 			provide: ErrorHandler,
 			useClass: GlobalErrorHandler,
 		},
+		// {
+		// 	provide: ErrorHandler,
+		// 	useClass: ApplicationinsightsAngularpluginErrorService,
+		// },
 	])
 }

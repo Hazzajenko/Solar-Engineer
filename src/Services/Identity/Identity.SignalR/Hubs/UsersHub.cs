@@ -9,12 +9,14 @@ using Identity.SignalR.Commands.Notifications;
 using Identity.SignalR.Queries;
 using Infrastructure.SignalR;
 using Mediator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
 namespace Identity.SignalR.Hubs;
 
+[Authorize]
 public class UsersHub : Hub<IUsersHub>
 {
     private readonly ILogger<UsersHub> _logger;
@@ -31,12 +33,9 @@ public class UsersHub : Hub<IUsersHub>
     public override async Task OnConnectedAsync()
     {
         _logger.LogInformation("OnConnectedAsync");
-        var user = await _userManager.GetUserAsync(Context.User!);
-        _logger.LogInformation("User: {@User}", user);
         var authUser = Context.ToAuthUser();
         await _mediator.Send(new OnConnectedCommand(authUser));
         await _mediator.Send(new GetUserFriendsCommand(authUser));
-        // await _mediator.Send(new GetOnlineFriendsQuery(authUser));
         await _mediator.Send(new GetUserNotificationsCommand(authUser));
         await Clients.Caller.AppUserIsConnected();
         await base.OnConnectedAsync();
@@ -67,12 +66,7 @@ public class UsersHub : Hub<IUsersHub>
 
     public async Task SearchForAppUser(SearchForAppUserRequest request)
     {
-        await _mediator.Send(
-            new SearchForAppUserQuery(
-                Context.ToAuthUser(),
-                request
-            )
-        );
+        await _mediator.Send(new SearchForAppUserQuery(Context.ToAuthUser(), request));
     }
 
     public async Task SendFriendRequest(string recipientUserId)

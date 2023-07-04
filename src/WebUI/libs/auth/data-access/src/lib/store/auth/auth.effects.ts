@@ -7,6 +7,7 @@ import { Location } from '@angular/common'
 import { UsersSignalrService } from '../../signalr'
 import { DeviceDetectorService } from 'ngx-device-detector'
 import { DIALOG_COMPONENT, UiActions } from '@overlays/ui-store/data-access'
+import { ApplicationInsightsService } from '@app/logging'
 
 export const getRedirectForGoogleSignIn$ = createEffect(
 	(actions$ = inject(Actions)) => {
@@ -71,16 +72,19 @@ export const isReturningUser$ = createEffect(
 export const signInSuccess$ = createEffect(
 	(
 		actions$ = inject(Actions),
-		usersSignalr = inject(UsersSignalrService), // messagesSignalr = inject(MessagesSignalrService),
+		usersSignalr = inject(UsersSignalrService),
 		deviceService = inject(DeviceDetectorService),
+		appInsightsService = inject(ApplicationInsightsService),
 	) => {
 		return actions$.pipe(
 			ofType(AuthActions.signInSuccess),
-			tap(({ token }) => {
+			tap(({ user, token }) => {
 				localStorage.setItem('token', token)
 				const { device, deviceType, os } = deviceService.getDeviceInfo()
 				const deviceInfo = { device, deviceType, os }
 				usersSignalr.init(token, deviceInfo)
+				appInsightsService.setAuthenticatedUserContext(user.id)
+				appInsightsService.logEvent('User Signed In', { user: user.id })
 				// messagesSignalr.init(token)
 			}),
 			map(() => {

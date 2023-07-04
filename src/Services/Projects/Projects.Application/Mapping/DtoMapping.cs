@@ -70,27 +70,16 @@ public static class DtoMapping
         where TEntity : IProjectItem
     {
         var typeName = request.GetType().Name ?? throw new ArgumentNullException(nameof(request));
-        Log.Logger.Information("typeName: {TypeName}", typeName);
         return ScanForContracts(typeof(IProjectItemDto), $"{typeName}Dto");
-        /*var entityModel = request.GetType().Name.ToPascalCase();
-        var typeName = $"Projects.API.Contracts.Data.{entityModel}Dto";
-        return Type.GetType(typeName)
-               ?? throw new InvalidOperationException($"Could not find DTO type {entityModel}");*/
     }
 
     private static Type ToDtoType<TEntity>(this IEnumerable<TEntity> request)
         where TEntity : IProjectItem
     {
-        /*var entityModel =
-            request.FirstOrDefault()?.GetType().Name.ToPascalCase()
-            ?? throw new ArgumentNullException(nameof(request));
-        var typeName = $"Projects.API.Contracts.Data.{entityModel}Dto";*/
         var typeName =
             request.FirstOrDefault()?.GetType().Name
             ?? throw new ArgumentNullException(nameof(request));
         ;
         return ScanForContracts(typeof(IProjectItemDto), $"{typeName}Dto");
-        // return Type.GetType(typeName)
-        // ?? throw new InvalidOperationException($"Could not find DTO type {entityModel}");
     }
 }

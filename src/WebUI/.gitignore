@@ -7,6 +7,8 @@ supabase.ts
 supabase.js
 supabase.d.ts
 
+app-insights.ts
+
 azure-storage.ts
 
 auth0.ts

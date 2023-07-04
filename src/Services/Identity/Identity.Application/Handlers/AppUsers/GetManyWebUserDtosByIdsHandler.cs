@@ -1,5 +1,5 @@
-﻿using Identity.Application.Data.UnitOfWork;
-using Identity.Application.Exceptions;
+﻿using ApplicationCore.Exceptions;
+using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
 using Identity.Domain;
@@ -36,22 +36,23 @@ public class GetManyWebUserDtosByIdsHandler
         CancellationToken cT
     )
     {
-        var appUserId = query.AppUser.Id;
-        var appUser = query.AppUser;
+        Guid appUserId = query.AppUser.Id;
+        AppUser appUser = query.AppUser;
         var appUserLinks = new List<AppUserLink>();
 
-        foreach (var recipientId in query.WebUserIds)
+        foreach (Guid recipientId in query.WebUserIds)
         {
-            var appUserLink = await _unitOfWork.AppUserLinksRepository.GetByBothUserIdsAsync(
-                appUserId,
-                recipientId
-            );
+            AppUserLink? appUserLink =
+                await _unitOfWork.AppUserLinksRepository.GetByBothUserIdsAsync(
+                    appUserId,
+                    recipientId
+                );
             if (appUserLink is not null)
             {
                 appUserLinks.Add(appUserLink);
                 continue;
             }
-            var recipientUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(recipientId);
+            AppUser? recipientUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(recipientId);
             if (recipientUser is null)
             {
                 _logger.LogError("Unable to find user {UserId}", recipientId);
@@ -68,45 +69,12 @@ public class GetManyWebUserDtosByIdsHandler
             appUserLinks.Add(appUserLink);
         }
 
-        /*
-        if (_unitOfWork.HasChanges())
-        {
-            await _unitOfWork.SaveChangesAsync();
-        }*/
-
-        /*foreach (var queryWebUserId in query.WebUserIds)
-        {
-            
-        }
-        var appUserLinkTasks = query.WebUserIds.Select(async recipientId =>
-        {
-            var appUserLink = await _unitOfWork.AppUserLinksRepository.GetByBothUserIdsAsync(
-                appUserId,
-                recipientId
-            );
-            if (appUserLink is not null)
-            {
-                return appUserLink;
-            }
-            var recipientUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(recipientId);
-            if (recipientUser is null)
-            {
-                _logger.LogError("Unable to find user {UserId}", recipientId);
-                throw new NotFoundException($"Unable to find user {recipientId}");
-            }
-            appUserLink = AppUserLink.Create(appUser, recipientUser);
-            await _unitOfWork.AppUserLinksRepository.AddAsync(appUserLink);
-            return appUserLink;
-        });*/
-
-        // var appUserLinks = (await Task.WhenAll(appUserLinkTasks)).ToList();
-
         var webUserDtos = appUserLinks.Select(link =>
         {
-            var recipientAppUser =
+            AppUser recipientAppUser =
                 link.AppUserReceivedId == appUserId ? link.AppUserRequested : link.AppUserReceived;
             var isOnline = _connections.IsUserOnline(recipientAppUser.Id);
-            var lastActiveTime = isOnline
+            DateTime lastActiveTime = isOnline
                 ? _connections.GetLastActiveTime(recipientAppUser.Id)
                 : recipientAppUser.LastActiveTime;
             var webUserDto = new WebUserDto

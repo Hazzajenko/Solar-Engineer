@@ -1,6 +1,5 @@
-﻿// using Projects.API.Handlers;
-
-using Infrastructure.Logging;
+﻿using ApplicationCore.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Projects.Contracts.Requests.Projects;
@@ -11,6 +10,7 @@ using Projects.SignalR.Queries.Projects;
 
 namespace Projects.SignalR.Hubs;
 
+[Authorize]
 public class ProjectsHub : Hub<IProjectsHub>
 {
     private readonly ILogger<ProjectsHub> _logger;

@@ -52,6 +52,7 @@
 			"@app/feature/userName-profile": ["libs/app/feature/userName-profile/src/index.ts"],
 			"@app/feature/users-overlay": ["libs/app/feature/users-overlay/src/index.ts"],
 			"@app/index": ["libs/app/index/src/index.ts"],
+			"@app/logging": ["libs/app/logging/src/index.ts"],
 			"@app/routes": ["libs/app/routes/src/index.ts"],
 			"@app/shared": ["libs/app/shared/src/index.ts"],
 			"@app/signalr": ["libs/app/signalr/src/index.ts"],

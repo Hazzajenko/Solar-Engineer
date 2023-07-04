@@ -24,6 +24,7 @@ export const createHubConnection = (request: HubConnectionRequest) => {
 		})
 		.catch((err) => {
 			console.error('Error while starting ' + hubName + ' Hub connection: ' + err)
+			throw err
 		})
 	return hubConnection
 }

@@ -14,7 +14,7 @@ public static class CommandsMapping
         HubCallerContext context
     )
     {
-        var requestType = projectGridEvent.ToRequestType();
+        Type requestType = projectGridEvent.ToRequestType();
         var eventRequest = (IProjectEventRequest)
             JsonSerializer.Deserialize(
                 projectGridEvent.Data,
@@ -26,7 +26,7 @@ public static class CommandsMapping
                 }
             )!;
 
-        var commandType = projectGridEvent.ToCommandType();
+        Type commandType = projectGridEvent.ToCommandType();
         var command = Activator.CreateInstance(commandType)!;
 
         if (

@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using ApplicationCore.Entities;
+using ApplicationCore.Exceptions;
 
 namespace ApplicationCore.Extensions;
 
@@ -23,13 +24,17 @@ public static class ClaimsPrincipleExtensions
 
     public static string GetUserName(this ClaimsPrincipal user)
     {
-        var value = user.FindFirst("userName")?.Value;
-        if (value is null)
+        var userName = user.FindFirst("userName")?.Value;
+        if (userName is null)
         {
-            value = user.FindFirst(ClaimTypes.Name)?.Value;
+            userName = user.FindFirst(ClaimTypes.Name)?.Value;
         }
-        ArgumentNullException.ThrowIfNull(value);
-        return value;
+
+        if (userName is null)
+        {
+            throw new NotAuthenticatedHubException(nameof(userName));
+        }
+        return userName;
     }
 
     /// <summary>
@@ -66,7 +71,6 @@ public static class ClaimsPrincipleExtensions
         var value = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (value is null)
             throw exception;
-        // ArgumentNullException.ThrowIfNull(value);
         return value.TryToGuidOrThrow(exception);
     }
 

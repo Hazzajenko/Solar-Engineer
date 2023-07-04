@@ -1,11 +1,11 @@
-using System.Net;
+﻿using System.Net;
 
 namespace ApplicationCore.Exceptions;
 
-public class NotFoundException : CustomException
+public class NotFoundException : ApiException
 {
     public NotFoundException(string message)
-        : base(message, HttpStatusCode.NotFound)
+        : base(HttpStatusCode.NotFound, message)
     {
     }
 }

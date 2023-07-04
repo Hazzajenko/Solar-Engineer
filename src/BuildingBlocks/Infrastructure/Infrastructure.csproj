@@ -52,9 +52,12 @@
         <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />
         <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
         <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+        <PackageReference Include="Serilog.Exceptions.EntityFrameworkCore" Version="8.4.0" />
         <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
         <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
         <PackageReference Include="Serilog.Sinks.AwsCloudWatch" Version="4.0.171" />
+        <PackageReference Include="Serilog.Sinks.AzureAnalytics" Version="5.0.0" />
+        <PackageReference Include="Serilog.Sinks.AzureBlobStorage" Version="3.2.0" />
         <PackageReference Include="Serilog.Sinks.AzureTableStorage" Version="8.5.38" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
         <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2" />

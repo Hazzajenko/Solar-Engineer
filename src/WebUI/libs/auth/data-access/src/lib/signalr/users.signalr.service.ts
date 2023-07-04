@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
+import { createHubConnection, HubConnectionRequest } from '@app/signalr'
 import {
 	FriendRequestResponse,
 	GetOnlineFriendsResponse,
@@ -19,8 +19,8 @@ import {
 	USERS_SIGNALR_METHOD,
 	UsersSignalrEvent,
 } from '@auth/shared'
-import { injectConnectionsStore, injectUsersStore } from '../store'
-import { HubConnection } from '@microsoft/signalr'
+import { injectAuthStore, injectConnectionsStore, injectUsersStore } from '../store'
+import { HubConnection, ILogger, LogLevel } from '@microsoft/signalr'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
 import { DeviceInfoModel } from '@shared/data-access/models'
 
@@ -30,12 +30,27 @@ const hubUrl = '/hubs/users'
 @Injectable({
 	providedIn: 'root',
 })
-export class UsersSignalrService {
+export class UsersSignalrService implements ILogger {
 	private _usersStore = injectUsersStore()
 	private _notificationsStore = injectNotificationsStore()
 	private _connectionsStore = injectConnectionsStore()
+	private _authStore = injectAuthStore()
 
 	hubConnection: HubConnection | undefined
+
+	log(logLevel: LogLevel, message: string) {
+		if (logLevel === LogLevel.Trace) return
+		const hubStart = '[UsersHubConnection]'
+		if (logLevel === LogLevel.Error) {
+			console.error(hubStart, message)
+			if (message.includes('Not Authenticated')) {
+				this._authStore.dispatch.signOut()
+				throw new Error(message)
+			}
+			return
+		}
+		console.log(hubStart, message)
+	}
 
 	init(token: string, deviceInfo: DeviceInfoModel) {
 		const request: HubConnectionRequest = {
@@ -43,7 +58,7 @@ export class UsersSignalrService {
 			hubName,
 			hubUrl,
 		}
-		this.hubConnection = createHubConnection(request)
+		this.hubConnection = createHubConnection(request, this)
 
 		this.onHub(USERS_SIGNALR_EVENT.APP_USER_IS_CONNECTED, () => {
 			console.log(USERS_SIGNALR_EVENT.APP_USER_IS_CONNECTED)
@@ -194,10 +209,16 @@ export class UsersSignalrService {
 		if (this.hubConnection.state !== 'Connected') throw new Error('Hub connection is not connected')
 
 		if (invoke && params) {
-			this.hubConnection.invoke(invoke, params).catch((err) => console.error(err, invoke, params))
+			this.hubConnection.invoke(invoke, params).catch((err) => {
+				console.error(err, invoke, params)
+				throw err
+			})
 		}
 		if (invoke && !params) {
-			this.hubConnection.invoke(invoke).catch((err) => console.error(err, invoke))
+			this.hubConnection.invoke(invoke).catch((err) => {
+				console.error(err, invoke)
+				throw err
+			})
 		}
 	}
 }
