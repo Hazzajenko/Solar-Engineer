@@ -32,6 +32,7 @@ public interface IProjectsHub
     Task PanelsCreated(IEnumerable<PanelCreatedResponse> panels);
     Task NewProjectEvents(IEnumerable<ProjectEventResponse> projectEvents);
     Task ReceiveProjectEvents(IEnumerable<ProjectEventResponse> projectEvents);
+    Task ReceiveUserMousePosition(ReceiveUserMousePositionResponse response);
     Task ReceiveProjectEvent(ProjectEventResponse projectEvent);
     Task ReceiveCombinedProjectEvent(CombinedProjectEventResponse projectEvent);
 

@@ -39,6 +39,7 @@ import {
 	injectEntityStore,
 	isPointOverCurvedLineNoCtx,
 	PanelLinksService,
+	ProjectsSignalrService,
 } from '@entities/data-access'
 import { ViewPositioningService } from '@canvas/view-positioning/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
@@ -67,7 +68,11 @@ import {
 	singleTouchEventEndToPointLocation,
 	singleTouchEventToPointLocation,
 } from '@canvas/utils'
-import { isPanel, isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels } from '@entities/utils'
+import {
+	injectCurrentProjectId,
+	isPanel,
+	isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels,
+} from '@entities/utils'
 import {
 	ENTITY_TYPE,
 	EntityBase,
@@ -77,6 +82,7 @@ import {
 	UNDEFINED_STRING_ID,
 } from '@entities/shared'
 import { injectAppUser } from '@auth/data-access'
+import { throttle } from 'lodash'
 
 @Directive({
 	selector: '[appDesignCanvas]',
@@ -103,12 +109,14 @@ export class DesignCanvasDirective implements OnInit {
 	private _render = inject(RenderService)
 	private _entityStore = injectEntityStore()
 	private _uiStore = injectUiStore()
+	private _projectsSignalr = inject(ProjectsSignalrService)
 	// private _entities = injectEntityStore()
 	private _selected = inject(SelectedService)
+
+	// selectedProjectId = this._p
 	private _nearby = inject(NearbyService)
 	private _domPoint = inject(DomPointService)
 	private _keys = inject(KeyEventsService)
-
 	private mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
 	// private _divElements = inject(DivElementsService)
 	private mouseDownTimeOutForMove: ReturnType<typeof setTimeout> | undefined
@@ -150,6 +158,17 @@ export class DesignCanvasDirective implements OnInit {
 		return this._entityStore.strings.select.allStrings()
 	}
 
+	currentProjectId = injectCurrentProjectId()
+	private _mouseThrottled = throttle((point: Point) => {
+		const projectId = this.currentProjectId()
+		if (!projectId) return
+		const { x, y } = point
+		this._projectsSignalr.sendMousePosition({
+			projectId,
+			x,
+			y,
+		})
+	}, 50)
 	user = injectAppUser()
 
 	platform: Platform = getCurrentPlatform()
@@ -201,15 +220,7 @@ export class DesignCanvasDirective implements OnInit {
 		this.scaleElement = document.getElementById('scale-element') as HTMLDivElement
 		this._ngZone.runOutsideAngular(() => {
 			this.setupEventListenersBasedOnPlatform()
-			// this.setupEventListeners()
 		})
-		/*		this.canvasMenu = document.getElementById('canvas-menu') as HTMLDivElement
-		 this.mousePos = document.getElementById('mouse-pos') as HTMLDivElement
-		 this.transformedMousePos = document.getElementById('transformed-mouse-pos') as HTMLDivElement
-		 this.stringStats = document.getElementById('string-stats') as HTMLDivElement
-		 this.panelStats = document.getElementById('panel-stats') as HTMLDivElement
-		 this.menu = document.getElementById('menu') as HTMLDivElement
-		 this.keyMap = document.getElementById('key-map') as HTMLDivElement*/
 	}
 
 	/**
@@ -1195,6 +1206,7 @@ export class DesignCanvasDirective implements OnInit {
 					this.rawMousePos = eventToPointLocation(event)
 					this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 					this.onMouseMoveHandler(event, this.currentPoint)
+					this._mouseThrottled(this.currentPoint)
 				})
 				this._renderer.listen(this.canvas, ContextMenuEvent, (event: PointerEvent) => {
 					event.stopPropagation()

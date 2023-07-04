@@ -15,6 +15,7 @@ import {
 	PanelModel,
 	PanelSymbol,
 	StringModel,
+	UserPoint,
 } from '@entities/shared'
 import { GraphicsState } from '@canvas/graphics/data-access'
 import { AppState } from '@canvas/app/data-access'
@@ -89,6 +90,7 @@ export type CanvasRenderOptions = {
 		panel: PanelModel
 		nearbyPanelToLinkLine: PanelModel | undefined
 	}
+	userPoints: UserPoint[]
 }
 
 export type DrawPanelsOptions = {

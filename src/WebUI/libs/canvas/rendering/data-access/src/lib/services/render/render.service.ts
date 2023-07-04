@@ -11,6 +11,7 @@ import {
 	drawBoxWithOptionsCtx,
 	drawClickNearEntityBounds,
 	drawCreationDragBox,
+	drawCursor,
 	drawDisconnectionPointBox,
 	drawEntityCreationPreview,
 	drawLinkModeOrderNumbers,
@@ -26,7 +27,12 @@ import {
 import { effect, inject, Injectable } from '@angular/core'
 import { assertNotNull, shadeColor } from '@shared/utils'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
-import { injectEntityStore, injectProjectsStore, StringsStatsService } from '@entities/data-access'
+import {
+	injectEntityStore,
+	injectProjectsStore,
+	injectUserPointsStore,
+	StringsStatsService,
+} from '@entities/data-access'
 import { getNegativeSymbolLocation, getPositiveSymbolLocation, isPanel } from '@entities/utils'
 import { Point } from '@shared/data-access/models'
 import {
@@ -66,9 +72,10 @@ export class RenderService {
 	private _stringStats = inject(StringsStatsService)
 	private _projectsStore = injectProjectsStore()
 
-	// private _linkRender = new LinkPathRenderService()
-
+	private _userPointsStore = injectUserPointsStore()
 	private _throttleRender = false
+
+	// private _linkRender = new LinkPathRenderService()
 	private _renderOptions: Partial<CanvasRenderOptions> = {}
 	private lastRenderTime = performance.now()
 	private lastFrameTime = performance.now()
@@ -102,6 +109,15 @@ export class RenderService {
 		return this._previousFpsStats.reduce((a, b) => a + b) / this._previousFpsStats.length
 	}
 
+	_userPointsEffect = effect(() => {
+		const userPoints = this._userPointsStore.select.allPoints()
+		if (userPoints) {
+			this.renderCanvasApp({
+				userPoints,
+			})
+		}
+		this._userPointsStore.dispatch.deleteManyPoints(userPoints.map((p) => p.id))
+	})
 	offset = 0
 	throttledRenderCanvasApp = throttle(this.renderFn, 1000 / 60)
 
@@ -421,6 +437,15 @@ export class RenderService {
 					y: options?.transformedPoint.y - 50,
 				}
 				drawTooltipWithOptionsCtx(ctx, point, panelLink.id)
+			}
+
+			// * Draw the cursor for other users
+			if (options?.userPoints && options.userPoints.length > 0) {
+				for (const userPoint of options.userPoints) {
+					drawCursor(ctx, userPoint)
+				}
+				// const userPointIds = options.userPoints.map((userPoint) => userPoint.id)
+				// this._userPointsStore.dispatch.deleteManyPoints(userPointIds)
 			}
 
 			// * Draw the tooltip

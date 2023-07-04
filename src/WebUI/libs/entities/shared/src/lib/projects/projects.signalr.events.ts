@@ -15,6 +15,7 @@ export const PROJECTS_SIGNALR_METHOD = {
 	LEAVE_PROJECT: 'LeaveProject',
 	UPDATE_PROJECT_MEMBER: 'UpdateProjectMember',
 	KICK_PROJECT_MEMBER: 'KickProjectMember',
+	SEND_MOUSE_POSITION: 'SendMousePosition',
 } as const
 export type ProjectsSignalrMethod =
 	(typeof PROJECTS_SIGNALR_METHOD)[keyof typeof PROJECTS_SIGNALR_METHOD]
@@ -36,6 +37,7 @@ export const PROJECTS_SIGNALR_EVENT = {
 	PROJECT_MEMBER_UPDATED: 'ProjectMemberUpdated',
 	PROJECT_MEMBER_KICKED: 'ProjectMemberKicked',
 	KICKED_FROM_PROJECT: 'KickedFromProject',
+	RECEIVE_USER_MOUSE_POSITION: 'ReceiveUserMousePosition',
 } as const
 
 export type ProjectSignalrEvent =

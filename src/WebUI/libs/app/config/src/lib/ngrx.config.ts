@@ -4,6 +4,7 @@ import {
 	provideEntityStores,
 	provideProjectsFeature,
 	provideSignalrEventsFeature,
+	provideUserPointsFeature,
 } from '@entities/data-access'
 import { provideAppStateFeature } from '@canvas/app/data-access'
 import { provideState, provideStore } from '@ngrx/store'
@@ -35,6 +36,7 @@ export function provideNgrx() {
 		provideRouterStore(),
 		provideAuthFeature(),
 		provideHubsFeature(),
+		provideUserPointsFeature(),
 		provideConnectionsFeature(),
 		provideMessagesFeature(),
 		provideGroupChatsFeature(),

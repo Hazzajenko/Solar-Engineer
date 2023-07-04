@@ -83,13 +83,19 @@ public class CreateProjectHandler
             appUserProject.Project.Name
         );
 
+        Guid projectId = project.Id;
+        ProjectUser? projectUser = await _unitOfWork.ProjectUsersRepository.GetByIdAsync(appUserId);
+        ArgumentNullException.ThrowIfNull(projectUser, nameof(projectUser));
+        projectUser.SelectedProjectId = projectId;
+        await _unitOfWork.ProjectUsersRepository.UpdateAsync(projectUser);
+        await _unitOfWork.SaveChangesAsync();
+
         if (command.CreateProjectRequest.MemberIds.Any() is false)
         {
             return projectCreatedResponse;
         }
 
         var userIds = command.CreateProjectRequest.MemberIds;
-        Guid projectId = project.Id;
 
         _logger.LogInformation(
             "User {User} invited users {Users} to project {Project}",
@@ -111,12 +117,6 @@ public class CreateProjectHandler
             userIds
         );
         await _bus.Publish(invitedUsersToProjectMessage, cT);
-
-        ProjectUser? projectUser = await _unitOfWork.ProjectUsersRepository.GetByIdAsync(appUserId);
-        ArgumentNullException.ThrowIfNull(projectUser, nameof(projectUser));
-        projectUser.SelectedProjectId = projectId;
-        await _unitOfWork.ProjectUsersRepository.UpdateAsync(projectUser);
-        await _unitOfWork.SaveChangesAsync();
 
         return projectCreatedResponse;
     }

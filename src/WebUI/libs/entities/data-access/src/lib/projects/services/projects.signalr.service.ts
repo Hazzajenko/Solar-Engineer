@@ -23,8 +23,10 @@ import {
 	PROJECTS_SIGNALR_METHOD,
 	ProjectSignalrEvent,
 	ProjectUpdatedResponse,
+	ReceiveUserMousePositionResponse,
 	RejectInviteToProjectResponse,
 	RejectProjectInviteRequest,
+	SendMousePositionRequest,
 	SignalrEventRequest,
 	SignalrEventResponse,
 	UpdateProjectMemberRequest,
@@ -36,10 +38,11 @@ import { EntityUpdate } from '@shared/data-access/models'
 import { injectSignalrEventsStore } from '../../signalr-events'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { injectEntityStore } from '../../shared'
-import { retryCheck } from '@shared/utils'
+import { newGuid, retryCheck } from '@shared/utils'
 import { injectAuthStore } from '@auth/data-access'
 import { createHubConnection } from '@app/signalr'
 import { ApplicationInsightsService } from '@app/logging'
+import { injectUserPointsStore } from '../../points'
 
 const hubName = 'Projects'
 const hubUrl = '/hubs/projects'
@@ -73,6 +76,7 @@ export class ProjectsSignalrService implements ILogger {
 	private _signalrEventsStore = injectSignalrEventsStore()
 	private _insightsService = inject(ApplicationInsightsService)
 	private _authStore = injectAuthStore()
+	private _userPointsStore = injectUserPointsStore()
 
 	user = this._authStore.select.user
 
@@ -208,6 +212,24 @@ export class ProjectsSignalrService implements ILogger {
 			},
 		)
 
+		this.onHub(
+			PROJECTS_SIGNALR_EVENT.RECEIVE_USER_MOUSE_POSITION,
+			(response: ReceiveUserMousePositionResponse) => {
+				const selectedProjectId = this._projectsStore.select.selectedProjectId()
+				if (selectedProjectId !== response.projectId) {
+					return
+				}
+				console.log(PROJECTS_SIGNALR_EVENT.RECEIVE_USER_MOUSE_POSITION, response)
+				this._userPointsStore.dispatch.addPoint({
+					id: newGuid(),
+					userId: response.userId,
+					x: response.x,
+					y: response.y,
+					time: new Date().getTime(),
+				})
+			},
+		)
+
 		return this.hubConnection
 	}
 
@@ -270,14 +292,12 @@ export class ProjectsSignalrService implements ILogger {
 	async invokeSignalrEvent(request: Omit<SignalrEventRequest, 'timeStamp'>) {
 		this._signalrEventsStore.dispatch.invokeSignalrEvent(addTimeStamp(request))
 		console.log(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
-		// const pascalCaseRequest = camelCaseToPascaleCaseNested(request)
 		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
 		await this.hubConnection.invoke(PROJECTS_SIGNALR_METHOD.SEND_PROJECT_EVENT, request)
-		// .catch((err) => {
-		// 	console.error(err, request)
-		// 	throw new Error("Unable to invoke 'sendProjectEvent' method")
-		// 	// throw err
-		// })
+	}
+
+	sendMousePosition(request: SendMousePositionRequest) {
+		this.invokeHubConnection(PROJECTS_SIGNALR_METHOD.SEND_MOUSE_POSITION, request)
 	}
 
 	private receiveProjectEvent(event: SignalrEventResponse) {
@@ -337,10 +357,6 @@ export class ProjectsSignalrService implements ILogger {
 	) {
 		if (!this.hubConnection) throw new Error('Hub connection is not initialized')
 		this.hubConnection.on(event, callback)
-		/*		this.hubConnection.on(event, (response: T) => {
-		 const camelCase = pascalCaseToCamelCaseNested(response) as T
-		 callback(camelCase)
-		 })*/
 	}
 
 	private invokeHubConnection(invoke: string, params?: unknown) {
@@ -348,8 +364,6 @@ export class ProjectsSignalrService implements ILogger {
 		if (this.hubConnection.state !== 'Connected') throw new Error('Hub connection is not connected')
 
 		if (invoke && params) {
-			// const pascalCaseRequest = camelCaseToPascaleCaseNested(params)
-			// console.log(invoke, pascalCaseRequest)
 			this.hubConnection.invoke(invoke, params).catch((err) => {
 				console.error(err, invoke, params)
 				throw err

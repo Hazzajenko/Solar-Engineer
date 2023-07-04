@@ -116,6 +116,12 @@ public class ProjectsHub : Hub<IProjectsHub>
         await _mediator.Send(command);
     }
 
+    public async Task SendMousePosition(SendMousePositionRequest request)
+    {
+        var command = new SendMousePositionCommand(Context.ToAuthUser(), request);
+        await _mediator.Send(command);
+    }
+
     public async Task SendProjectEvent(ProjectGridEvent projectGridEvent)
     {
         IProjectCommand eventRequest = projectGridEvent.ToCommandObject(Context);

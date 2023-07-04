@@ -50,10 +50,13 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, GetProje
             projectIdGuid
         );
 
-        var panelConfigIds = panels.Select(p => p.PanelConfigId).Distinct().Select(x => x.ToGuid());
-        var panelConfigs = await _unitOfWork.PanelConfigsRepository.GetByPanelConfigIdsAsync(
-            panelConfigIds
-        );
+        // var panelConfigIds = panels.Select(p => p.PanelConfigId).Distinct().Select(x => x.ToGuid());
+        // var panelConfigs = await _unitOfWork.PanelConfigsRepository.GetByPanelConfigIdsAsync(
+        //     panelConfigIds
+        // );
+
+        var panelConfigDtos =
+            await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigDtosAsync();
 
         var projectDataDto = new ProjectDataDto
         {
@@ -65,7 +68,7 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, GetProje
             Strings = strings,
             Panels = panels,
             PanelLinks = panelLinks,
-            PanelConfigs = panelConfigs,
+            PanelConfigs = panelConfigDtos,
             Colour = project.Colour,
             MemberIds = project.MemberIds,
             Members = project.Members,

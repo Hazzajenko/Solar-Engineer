@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Repositories;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Projects.Application.Data;
 using Projects.Application.Mapping;
@@ -25,6 +26,11 @@ public sealed class PanelConfigsRepository
     public async Task<IEnumerable<PanelConfig>> GetDefaultPanelConfigsAsync()
     {
         return await Queryable.Where(x => x.Default).ToListAsync();
+    }
+
+    public async Task<IEnumerable<PanelConfigDto>> GetDefaultPanelConfigDtosAsync()
+    {
+        return await Queryable.Where(x => x.Default).ProjectToType<PanelConfigDto>().ToListAsync();
     }
 
     public async Task<PanelConfig> GetByFullNameAsync(string fullname)

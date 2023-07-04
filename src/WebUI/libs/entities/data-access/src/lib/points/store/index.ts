@@ -1,0 +1,5 @@
+export * from './user-points.actions'
+export * from './user-points.reducer'
+export * from './user-points.feature'
+export * from './user-points.selectors'
+export * from './user-points.store'

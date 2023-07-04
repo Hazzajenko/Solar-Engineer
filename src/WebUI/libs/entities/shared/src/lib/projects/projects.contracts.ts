@@ -75,6 +75,12 @@ export type KickProjectMemberRequest = {
 	memberId: string
 }
 
+export type SendMousePositionRequest = {
+	projectId: ProjectId
+	x: number
+	y: number
+}
+
 /**
  * * Responses
  */
@@ -155,4 +161,11 @@ export type ProjectMemberUpdatedResponse = {
 	projectId: ProjectId
 	memberId: string
 	changes: Partial<ProjectUserModel>
+}
+
+export type ReceiveUserMousePositionResponse = {
+	projectId: ProjectId
+	userId: string
+	x: number
+	y: number
 }
