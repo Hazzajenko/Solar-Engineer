@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
 import { checkAuthFlow } from './check-auth-flow'
 import { ApplicationInsightsService } from '../../../logging/src/lib/application-insights.service'
+import { WINDOW } from '@sentry/angular-ivy'
 
 @Component({
 	standalone: true,
@@ -24,9 +25,7 @@ export class AppComponent {
 	checkAuthFlow = checkAuthFlow()
 
 	constructor() {
-		this._insights.logEvent('App Loaded')
 		this._insights.logMetric('App Loaded', 1)
-		this._insights.logPageView('App Loaded', 'App Loaded')
-		this._insights.logTrace('App Loaded')
+		this._insights.logPageView('App Component', WINDOW.location.href)
 	}
 }

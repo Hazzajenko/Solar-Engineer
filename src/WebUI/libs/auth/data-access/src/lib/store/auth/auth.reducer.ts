@@ -5,6 +5,8 @@ import { AppUserModel, DeviceInfoModel } from '@shared/data-access/models'
 export interface AuthState {
 	user?: AppUserModel
 	deviceInfo?: DeviceInfoModel
+	signInTime?: Date
+	initialVisitTime?: Date
 	guest: boolean
 	error: string | null
 }
@@ -23,18 +25,21 @@ export const reducer = createReducer(
 		...state,
 		guest: true,
 		user: undefined,
+		initialVisitTime: new Date(),
 	})),
 
 	on(AuthActions.signInAsGuest, (state) => ({
 		...state,
 		guest: true,
 		user: undefined,
+		initialVisitTime: new Date(),
 	})),
 
 	on(AuthActions.signInSuccess, (state, { user }) => ({
 		...state,
 		user,
 		guest: false,
+		signInTime: new Date(),
 	})),
 
 	on(AuthActions.initializeApp, (state, { deviceInfo }) => ({

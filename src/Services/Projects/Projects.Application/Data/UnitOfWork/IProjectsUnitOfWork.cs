@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Data;
 using Projects.Application.Repositories.AppUserProjects;
+using Projects.Application.Repositories.AppUserSelectedProjects;
 using Projects.Application.Repositories.PanelConfigs;
 using Projects.Application.Repositories.PanelLinks;
 using Projects.Application.Repositories.Panels;
@@ -10,16 +11,11 @@ namespace Projects.Application.Data.UnitOfWork;
 
 public interface IProjectsUnitOfWork : IUnitOfWorkFactory
 {
-    // IProjectUsersRepository ProjectUsersRepository { get; }
     IProjectsRepository ProjectsRepository { get; }
     IAppUserProjectsRepository AppUserProjectsRepository { get; }
+    IAppUserSelectedProjectsRepository AppUserSelectedProjectsRepository { get; }
     IPanelsRepository PanelsRepository { get; }
     IPanelLinksRepository PanelLinksRepository { get; }
     IPanelConfigsRepository PanelConfigsRepository { get; }
     IStringsRepository StringsRepository { get; }
-    // new Task<bool> SaveChangesAsync();
-
-    /*IAppUserProjectsRepository AppUserProjectsRepository { get; }
-    IAppUserProjectsRepository AppUserProjectsRepository { get; }
-    IAppUserProjectsRepository AppUserProjectsRepository { get; }*/
 }

@@ -73,23 +73,12 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, GetProje
 
         var response = new GetProjectByIdResponse { Project = projectDataDto };
 
-        // var response = new GetProjectDataResponse
-        // {
-        //     Name = project.Name,
-        //     Id = project.Id,
-        //     CreatedTime = project.CreatedTime,
-        //     LastModifiedTime = project.LastModifiedTime,
-        //     CreatedById = project.CreatedById,
-        //     Strings = strings,
-        //     Panels = panels,
-        //     PanelLinks = panelLinks,
-        //     PanelConfigs = panelConfigs
-        // };
+        await _unitOfWork.AppUserSelectedProjectsRepository.AddOrUpdateAsync(
+            appUserIdGuid,
+            projectIdGuid
+        );
 
-
-        // ! Changing from signalr to http
-        // await _hubContext.Clients.User(request.User.Id.ToString()).GetProject(response);
-        /*// await _hubContext.Clients.Client(request.User.ConnectionId).GetProject(response);*/
+        await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation(
             "User {User} get project data {Project}",

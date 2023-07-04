@@ -85,7 +85,6 @@ export class ProjectsSignalrService implements ILogger {
 			console.error(hubStart, message)
 			if (message.includes('Not Authenticated')) {
 				this._authStore.dispatch.signOut()
-				// throw new Error(message)
 			}
 			this._insightsService.logException(new Error(message))
 			return
@@ -100,26 +99,6 @@ export class ProjectsSignalrService implements ILogger {
 			hubUrl,
 		}
 		this.hubConnection = createHubConnection(request, this)
-		// const { token, hubName, hubUrl } = request
-		/*		this.hubConnection = new HubConnectionBuilder()
-		 .withUrl(hubUrl, {
-		 accessTokenFactory: () => token,
-		 skipNegotiation: true,
-		 transport: signalR.HttpTransportType.WebSockets,
-		 })
-		 .configureLogging(this)
-		 // .configureLogging(LogLevel.Information)
-		 .withAutomaticReconnect()
-		 .build()
-		 this.hubConnection
-		 .start()
-		 .then(() => {
-		 console.log(hubName + ' Hub Connection started')
-		 })
-		 .catch((err) => {
-		 console.error('Error while starting ' + hubName + ' Hub connection: ' + err)
-		 throw err
-		 })*/
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, (response: GetManyProjectsResponse) => {
 			console.log(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, response)
@@ -128,9 +107,6 @@ export class ProjectsSignalrService implements ILogger {
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.PROJECT_CREATED, (response: ProjectCreatedResponse) => {
 			console.log(PROJECTS_SIGNALR_EVENT.PROJECT_CREATED, response)
-			// this._projectsStore.dispatch.addProject(response.project)
-			// this._projectsStore.dispatch.selectProject(response.project.id)
-			// this._entitiesStore.strings.dispatch.loadStrings([re])
 		})
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.PROJECT_UPDATED, (response: ProjectUpdatedResponse) => {
@@ -157,14 +133,6 @@ export class ProjectsSignalrService implements ILogger {
 			console.log(PROJECTS_SIGNALR_EVENT.RECEIVE_PROJECT_EVENT, response)
 			this.receiveProjectEvent(response)
 		})
-		/*
-		 this.onHub(
-		 PROJECTS_SIGNALR_EVENT.RECEIVE_COMBINED_PROJECT_EVENT,
-		 (response: CombinedProjectEventResponse) => {
-		 console.log(PROJECTS_SIGNALR_EVENT.RECEIVE_COMBINED_PROJECT_EVENT, response)
-		 this.receiveProjectEvent(response)
-		 },
-		 )*/
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.GET_PROJECT, (response: GetProjectDataResponse) => {
 			console.log(PROJECTS_SIGNALR_EVENT.GET_PROJECT, response)
@@ -308,6 +276,14 @@ export class ProjectsSignalrService implements ILogger {
 	}
 
 	private receiveProjectEvent(event: SignalrEventResponse) {
+		const selectedProjectId = this._projectsStore.select.selectedProjectId()
+		if (selectedProjectId !== event.projectId) {
+			console.warn(
+				`ProjectId mismatch. Selected project id: ${selectedProjectId}. Event projectId: ${event.projectId}`,
+			)
+			return
+		}
+
 		const existingEvent = this._signalrEventsStore.select.getById(event.requestId)
 		if (!existingEvent) {
 			this._signalrEventsStore.dispatch.addSignalrEvent(event)
@@ -322,6 +298,13 @@ export class ProjectsSignalrService implements ILogger {
 			new Date(event.serverTime).getTime() - new Date(existingEvent.timeStamp).getTime()
 
 		console.log('timeDiff', timeDiff)
+		this._insightsService.logEvent('signalrEvent', {
+			action: event.action,
+			model: event.model,
+			timeDiff,
+		})
+
+		this._insightsService.logMetric('signalrEventTimeDiff', timeDiff)
 
 		if (event.appending) {
 			const appendedUpdate = {

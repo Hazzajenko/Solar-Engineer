@@ -1,6 +1,5 @@
 import {
 	PANEL_MODEL,
-	PANEL_MODEL_UPDATE,
 	PanelId,
 	PanelModel,
 	SIGNALR_EVENT_ACTION,
@@ -79,9 +78,16 @@ const parsePanelArray = (data: string): PanelModel[] => {
 }
 
 const parsePanelUpdateArray = (data: string): UpdateStr<PanelModel>[] => {
-	const parsed = PANEL_MODEL_UPDATE.array().safeParse(JSON.parse(data))
+	const parsed = PANEL_MODEL.array().safeParse(JSON.parse(data))
+	// const parsed = PANEL_MODEL_UPDATE.array().safeParse(JSON.parse(data))
 	if (!parsed.success) throw new Error(parsed.error.message)
-	return parsed.data as UpdateStr<PanelModel>[]
+	const updates = parsed.data.map((panel) => {
+		return {
+			id: panel.id,
+			changes: panel,
+		}
+	})
+	return updates as UpdateStr<PanelModel>[]
 }
 
 const parsePanelId = (data: string): PanelId => {

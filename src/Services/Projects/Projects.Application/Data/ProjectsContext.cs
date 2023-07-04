@@ -12,6 +12,7 @@ public class ProjectsContext : DbContext, IDataContext
 
     public DbSet<Project> Projects { get; set; } = default!;
     public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
+    public DbSet<AppUserSelectedProject> AppUserSelectedProjects { get; set; } = default!;
     public DbSet<String> Strings { get; set; } = default!;
     public DbSet<Panel> Panels { get; set; } = default!;
     public DbSet<PanelLink> PanelLinks { get; set; } = default!;

@@ -2,6 +2,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
 import {
 	AuthActions,
+	injectAuthStore,
 	injectConnectionsStore,
 	injectUsersStore,
 	UsersSignalrService,
@@ -19,10 +20,12 @@ import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
 import { injectObjectPositioningStore } from '@canvas/object-positioning/data-access'
 import { injectNotificationsStore } from '@overlays/notifications/data-access'
 import { ApplicationInsightsService } from '@app/logging'
+import { assertNotNull } from '@shared/utils'
 
 export const onSignOut$ = createEffect(
 	(
 		actions$ = inject(Actions),
+		authStore = injectAuthStore(),
 		usersStore = injectUsersStore(),
 		connectionsStore = injectConnectionsStore(),
 		projectsStore = injectProjectsStore(),
@@ -40,6 +43,21 @@ export const onSignOut$ = createEffect(
 		return actions$.pipe(
 			ofType(AuthActions.signOut),
 			tap(() => {
+				const userIdAndSignInTime = authStore.select.userIdAndSignInTime()
+				assertNotNull(userIdAndSignInTime)
+
+				const { userId, signInTime } = userIdAndSignInTime
+
+				insightsService.logEvent('signOut', {
+					userId,
+					signInTime,
+					duration: Date.now() - signInTime.getTime(),
+				})
+
+				insightsService.logMetric('loggedInDuration', Date.now() - signInTime.getTime())
+
+				insightsService.clearAuthenticatedUserContext()
+
 				localStorage.removeItem('token')
 				usersStore.dispatch.clearUsersState()
 				connectionsStore.dispatch.clearConnectionsState()
@@ -56,8 +74,7 @@ export const onSignOut$ = createEffect(
 				notificationsStore.dispatch.clearNotificationsState()
 				usersSignalrService.hubConnection?.stop()
 				projectsSignalrService.hubConnection?.stop()
-				insightsService.logEvent('signOut')
-				insightsService.clearAuthenticatedUserContext()
+
 				uiStore.dispatch.openDialog({
 					component: DIALOG_COMPONENT.INITIAL_VISIT_WITH_TEMPLATES,
 				})

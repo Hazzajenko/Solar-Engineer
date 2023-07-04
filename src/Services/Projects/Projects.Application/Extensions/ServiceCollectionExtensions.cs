@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Repositories.AppUserProjects;
+using Projects.Application.Repositories.AppUserSelectedProjects;
 using Projects.Application.Repositories.Projects;
 using Projects.Application.Repositories.ProjectUsers;
 
@@ -15,15 +16,22 @@ namespace Projects.Application.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
-        IConfiguration config, IWebHostEnvironment environment)
+    public static IServiceCollection AddApplicationServices(
+        this IServiceCollection services,
+        IConfiguration config,
+        IWebHostEnvironment environment
+    )
     {
         services.AddSingleton<IUserIdProvider, HubsUserIdProvider>();
         services.AddScoped<IProjectsUnitOfWork, ProjectsUnitOfWork>();
         services.AddScoped<IProjectsRepository, ProjectsRepository>();
         services.AddScoped<IAppUserProjectsRepository, AppUserProjectsRepository>();
-        services.AddScoped<IProjectUsersRepository, ProjectUsersRepository>();
-        services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
+        services.AddScoped<IAppUserSelectedProjectsRepository, AppUserSelectedProjectsRepository>();
+        // services.AddScoped<IProjectUsersRepository, ProjectUsersRepository>();
+        services.AddMediator(options =>
+        {
+            options.ServiceLifetime = ServiceLifetime.Transient;
+        });
         services.InitMassTransit(environment);
         services.AddMappings();
 

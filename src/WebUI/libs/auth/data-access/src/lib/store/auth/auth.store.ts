@@ -1,5 +1,5 @@
 import { Signal } from '@angular/core'
-import { AuthActions, authFeature, AuthState } from '@auth/data-access'
+import { AuthActions, authFeature, AuthState, selectUserIdAndSignInTime } from '@auth/data-access'
 import { Store } from '@ngrx/store'
 import { AppUserModel } from '@shared/data-access/models'
 import { createRootServiceInjector } from '@shared/utils'
@@ -39,6 +39,11 @@ function authStoreFactory(store: Store) {
 		state,
 		user,
 		guest,
+		signInTime: store.selectSignal(feature.selectSignInTime) as Signal<Date | undefined>,
+		initialVisitTime: store.selectSignal(feature.selectInitialVisitTime) as Signal<
+			Date | undefined
+		>,
+		userIdAndSignInTime: store.selectSignal(selectUserIdAndSignInTime),
 	}
 
 	const dispatch = {

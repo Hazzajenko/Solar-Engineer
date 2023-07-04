@@ -9,11 +9,20 @@ import { AUTH_FEATURE_KEY, authReducer } from './auth.reducer'
 export const authFeature = createFeature({
 	name: AUTH_FEATURE_KEY,
 	reducer: authReducer,
-	extraSelectors: ({ selectAuthState, selectUser, selectGuest, selectError }) => ({
+	extraSelectors: ({
 		selectAuthState,
 		selectUser,
 		selectGuest,
 		selectError,
+		selectSignInTime,
+		selectInitialVisitTime,
+	}) => ({
+		selectAuthState,
+		selectUser,
+		selectGuest,
+		selectError,
+		selectSignInTime,
+		selectInitialVisitTime,
 	}),
 })
 
