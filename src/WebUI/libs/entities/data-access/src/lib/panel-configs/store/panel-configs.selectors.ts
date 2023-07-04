@@ -32,3 +32,8 @@ export const selectPanelConfigsByIdArray = (props: { ids: string[] }) =>
 	createSelector(selectAllPanelConfigs, (panelConfigs: PanelConfigModel[]) =>
 		panelConfigs.filter((panel) => props.ids.includes(panel.id)),
 	)
+
+export const selectSelectedPanelConfigId = createSelector(
+	selectPanelConfigsState,
+	(state: PanelConfigsState) => state.selectedPanelConfigId,
+)

@@ -148,6 +148,8 @@ export class ProjectsSignalrService implements ILogger {
 		this.onHub(PROJECTS_SIGNALR_EVENT.INVITED_TO_PROJECT, (response: InvitedToProjectResponse) => {
 			console.log(PROJECTS_SIGNALR_EVENT.INVITED_TO_PROJECT, response)
 			this._projectsStore.dispatch.addProject(response.project)
+			// Auto select the project when accepting invite
+			this._projectsStore.dispatch.selectProject(response.project.id)
 		})
 
 		this.onHub(

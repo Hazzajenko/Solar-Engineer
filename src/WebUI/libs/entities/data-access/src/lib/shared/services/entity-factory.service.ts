@@ -18,10 +18,11 @@ export class EntityFactoryService {
 	private _selectedStore = injectSelectedStore()
 	private _nearby = inject(NearbyService)
 	private _render = inject(RenderService)
-	private _entities = injectEntityStore()
+	private _entityStore = injectEntityStore()
 	private user = injectAppUser()
 
 	createEntity(event: PointerEvent, currentPoint: TransformedPoint) {
+		const selectedPanelConfigId = this._entityStore.panelConfigs.select.selectedPanelConfigId()
 		const previewAxisState = this._appStore.select.previewAxis()
 		if (previewAxisState === 'AxisCreatePreviewInProgress') {
 			if (!event.altKey || !this._nearby.axisPreviewRect) {
@@ -38,13 +39,10 @@ export class EntityFactoryService {
 
 			const selectedStringId =
 				this._selectedStore.select.selectedStringId() ??
-				this._entities.strings.select.undefinedStringId()
-			// const undefinedString = this._entities.strings.select.getById(UNDEFINED_STRING_ID)
-			const entity = createPanel(previewRectLocation, selectedStringId)
-			/*		const entity = selectedStringId
-			 ? createPanel(previewRectLocation, selectedStringId)
-			 : createPanel(previewRectLocation)*/
-			this._entities.panels.dispatch.addPanel(entity)
+				this._entityStore.strings.select.undefinedStringId()
+
+			const entity = createPanel(previewRectLocation, selectedStringId, selectedPanelConfigId)
+			this._entityStore.panels.dispatch.addPanel(entity)
 			this._nearby.axisPreviewRect = undefined
 			this._appStore.dispatch.setPreviewAxisState('None')
 
@@ -56,21 +54,18 @@ export class EntityFactoryService {
 			currentPoint,
 			SizeByType[ENTITY_TYPE.PANEL],
 		)
-		// const selectedStringId = this._selectedStore.select.selectedStringId()
 
 		const selectedStringId =
 			this._selectedStore.select.selectedStringId() ??
-			this._entities.strings.select.undefinedStringId()
-		const entity = createPanel(location, selectedStringId)
-		/*		const entity = selectedStringId
-		 ? createPanel(location, selectedStringId)
-		 : createPanel(location)*/
-		this._entities.panels.dispatch.addPanel(entity)
+			this._entityStore.strings.select.undefinedStringId()
+		const entity = createPanel(location, selectedStringId, selectedPanelConfigId)
+		this._entityStore.panels.dispatch.addPanel(entity)
 
 		this._render.renderCanvasApp()
 	}
 
 	createEntityFromTouch(event: TouchEvent, currentPoint: TransformedPoint) {
+		const selectedPanelConfigId = this._entityStore.panelConfigs.select.selectedPanelConfigId()
 		const previewAxisState = this._appStore.select.previewAxis()
 		if (previewAxisState === 'AxisCreatePreviewInProgress') {
 			if (!event.altKey || !this._nearby.axisPreviewRect) {
@@ -87,14 +82,9 @@ export class EntityFactoryService {
 
 			const selectedStringId =
 				this._selectedStore.select.selectedStringId() ??
-				this._entities.strings.select.undefinedStringId()
-			const entity = createPanel(previewRectLocation, selectedStringId)
-			this._entities.panels.dispatch.addPanel(entity)
-			/*			const selectedStringId = this._selectedStore.select.selectedStringId()
-			 const entity = selectedStringId
-			 ? createPanel(previewRectLocation, selectedStringId)
-			 : createPanel(previewRectLocation)
-			 this._entities.panels.dispatch.addPanel(entity)*/
+				this._entityStore.strings.select.undefinedStringId()
+			const entity = createPanel(previewRectLocation, selectedStringId, selectedPanelConfigId)
+			this._entityStore.panels.dispatch.addPanel(entity)
 			this._nearby.axisPreviewRect = undefined
 			this._appStore.dispatch.setPreviewAxisState('None')
 
@@ -108,25 +98,20 @@ export class EntityFactoryService {
 		)
 		const selectedStringId =
 			this._selectedStore.select.selectedStringId() ??
-			this._entities.strings.select.undefinedStringId()
-		const entity = createPanel(location, selectedStringId)
-		this._entities.panels.dispatch.addPanel(entity)
-		/*		const selectedStringId = this._selectedStore.select.selectedStringId()
-		 const entity = selectedStringId
-		 ? createPanel(location, selectedStringId)
-		 : createPanel(location)
-		 this._entities.panels.dispatch.addPanel(entity)*/
+			this._entityStore.strings.select.undefinedStringId()
+		const entity = createPanel(location, selectedStringId, selectedPanelConfigId)
+		this._entityStore.panels.dispatch.addPanel(entity)
 
 		this._render.renderCanvasApp()
 	}
 
 	private getSelectedStringId() {
 		if (!this.user()) {
-			return this._entities.strings.select.undefinedStringId()
+			return this._entityStore.strings.select.undefinedStringId()
 		}
 		return (
 			this._selectedStore.select.selectedStringId() ??
-			this._entities.strings.select.undefinedStringId()
+			this._entityStore.strings.select.undefinedStringId()
 		)
 	}
 }

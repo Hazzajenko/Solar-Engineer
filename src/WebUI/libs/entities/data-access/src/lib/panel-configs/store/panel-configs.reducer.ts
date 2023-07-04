@@ -1,11 +1,12 @@
 import { PanelConfigsActions } from './panel-configs.actions'
-import { PanelConfigModel } from '@entities/shared'
+import { PanelConfigId, PanelConfigModel } from '@entities/shared'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
 
 export const PANEL_CONFIGS_FEATURE_KEY = 'panelConfigs'
 
 export interface PanelConfigsState extends EntityState<PanelConfigModel> {
+	selectedPanelConfigId: PanelConfigId
 	loaded: boolean
 	error?: string | null
 }
@@ -37,6 +38,7 @@ export const initialPanelConfigsState: PanelConfigsState = panelConfigsAdapter.g
 			weight: 27.2,
 		},
 	},
+	selectedPanelConfigId: 'Longi-Himo555m' as PanelConfigId,
 })
 
 const reducer = createReducer(
@@ -44,14 +46,21 @@ const reducer = createReducer(
 	on(PanelConfigsActions.loadNewState, (state, { panelConfigs }) => {
 		let newState = panelConfigsAdapter.removeAll(state)
 		newState = panelConfigsAdapter.setAll(panelConfigs, newState)
-		return { ...newState, loaded: true }
+		const selectedPanelConfigId = panelConfigs[0].id
+		return { ...newState, loaded: true, selectedPanelConfigId }
 	}),
-	on(PanelConfigsActions.loadLocalStoragePanelConfigs, (state, { panelConfigs }) =>
-		panelConfigsAdapter.addMany(panelConfigs, state),
-	),
-	on(PanelConfigsActions.loadPanelConfigs, (state, { panelConfigs }) =>
-		panelConfigsAdapter.setMany(panelConfigs, state),
-	),
+	on(PanelConfigsActions.loadLocalStoragePanelConfigs, (state, { panelConfigs }) => {
+		let newState = panelConfigsAdapter.removeAll(state)
+		newState = panelConfigsAdapter.setAll(panelConfigs, newState)
+		const selectedPanelConfigId = panelConfigs[0].id
+		return { ...newState, loaded: true, selectedPanelConfigId }
+	}),
+	on(PanelConfigsActions.loadPanelConfigs, (state, { panelConfigs }) => {
+		let newState = panelConfigsAdapter.removeAll(state)
+		newState = panelConfigsAdapter.setAll(panelConfigs, newState)
+		const selectedPanelConfigId = panelConfigs[0].id
+		return { ...newState, loaded: true, selectedPanelConfigId }
+	}),
 	on(PanelConfigsActions.addPanelConfig, (state, { panelConfig }) =>
 		panelConfigsAdapter.addOne(panelConfig, state),
 	),

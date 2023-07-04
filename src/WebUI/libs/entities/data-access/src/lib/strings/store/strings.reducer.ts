@@ -7,7 +7,7 @@ import { newGuid, newGuidT } from '@shared/utils'
 export const STRINGS_FEATURE_KEY = 'strings'
 
 export interface StringsState extends EntityState<StringModel> {
-	undefinedStringId: StringId | undefined
+	undefinedStringId: StringId
 	loaded: boolean
 	error?: string | null
 }

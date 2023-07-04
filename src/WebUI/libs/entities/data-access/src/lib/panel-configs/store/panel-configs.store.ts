@@ -1,5 +1,9 @@
 import { Store } from '@ngrx/store'
-import { selectAllPanelConfigs, selectPanelConfigsEntities } from './panel-configs.selectors'
+import {
+	selectAllPanelConfigs,
+	selectPanelConfigsEntities,
+	selectSelectedPanelConfigId,
+} from './panel-configs.selectors'
 import { createRootServiceInjector, isNotNull } from '@shared/utils'
 import { PanelConfigId, PanelConfigModel } from '@entities/shared'
 import { PanelConfigsActions } from './panel-configs.actions'
@@ -23,6 +27,7 @@ export function panelConfigsStoreFactory(store: Store) {
 		allPanelConfigs,
 		getById: (id: PanelConfigId) => entities()[id],
 		getByIds: (ids: PanelConfigId[]) => ids.map((id) => entities()[id]).filter(isNotNull),
+		selectedPanelConfigId: store.selectSignal(selectSelectedPanelConfigId),
 	}
 
 	const dispatch = {

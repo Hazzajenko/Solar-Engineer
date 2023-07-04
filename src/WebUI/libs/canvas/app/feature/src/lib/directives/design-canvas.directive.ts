@@ -101,7 +101,7 @@ export class DesignCanvasDirective implements OnInit {
 	private _entityFactory = inject(EntityFactoryService)
 	private _view = inject(ViewPositioningService)
 	private _render = inject(RenderService)
-	private _entities = injectEntityStore()
+	private _entityStore = injectEntityStore()
 	private _uiStore = injectUiStore()
 	// private _entities = injectEntityStore()
 	private _selected = inject(SelectedService)
@@ -143,11 +143,11 @@ export class DesignCanvasDirective implements OnInit {
 	}
 
 	private get allPanels() {
-		return this._entities.panels.select.allPanels()
+		return this._entityStore.panels.select.allPanels()
 	}
 
 	private get allStrings() {
-		return this._entities.strings.select.allStrings()
+		return this._entityStore.strings.select.allStrings()
 	}
 
 	user = injectAppUser()
@@ -341,7 +341,7 @@ export class DesignCanvasDirective implements OnInit {
 				event,
 				currentPoint,
 				dragBox.start,
-				this._entities.panels.select.allPanels(),
+				this._entityStore.panels.select.allPanels(),
 				this._appStore,
 			)
 			if (renderOptions) this._render.renderCanvasApp(renderOptions)
@@ -374,20 +374,20 @@ export class DesignCanvasDirective implements OnInit {
 			const panelLinkUnderMouse = this.isMouseOverLinkPath(currentPoint)
 			if (panelLinkUnderMouse) {
 				const existingPanelLinkUnderMouse =
-					this._entities.panelLinks.select.hoveringOverPanelLinkInApp()
+					this._entityStore.panelLinks.select.hoveringOverPanelLinkInApp()
 				if (
 					existingPanelLinkUnderMouse &&
 					existingPanelLinkUnderMouse.id === panelLinkUnderMouse.id
 				)
 					return
-				this._entities.panelLinks.dispatch.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
+				this._entityStore.panelLinks.dispatch.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
 				this._render.renderCanvasApp({
 					transformedPoint: currentPoint,
 				})
 				return
 			}
-			if (this._entities.panelLinks.select.hoveringOverPanelLinkInApp()) {
-				this._entities.panelLinks.dispatch.clearHoveringOverPanelLinkInApp()
+			if (this._entityStore.panelLinks.select.hoveringOverPanelLinkInApp()) {
+				this._entityStore.panelLinks.dispatch.clearHoveringOverPanelLinkInApp()
 				this._render.renderCanvasApp()
 				return
 			}
@@ -466,7 +466,7 @@ export class DesignCanvasDirective implements OnInit {
 			selectionBoxMouseUp(
 				currentPoint,
 				dragBox.start,
-				this._entities.panels.select.allPanels(),
+				this._entityStore.panels.select.allPanels(),
 				this._appStore,
 				this._selectedStore,
 			)
@@ -474,13 +474,19 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		if (dragBox.state === 'CreationBoxInProgress') {
+			const selectedPanelConfigId = this._entityStore.panelConfigs.select.selectedPanelConfigId()
+			const selectedStringId =
+				this._selectedStore.select.selectedStringId() ??
+				this._entityStore.strings.select.undefinedStringId()
 			creationBoxMouseUp(
 				currentPoint,
 				dragBox.start,
-				this._entities.panels.select.allPanels(),
+				this._entityStore.panels.select.allPanels(),
 				this._appStore,
-				this._entities.panels,
+				this._entityStore.panels,
 				this.isLoggedIn,
+				selectedPanelConfigId,
+				selectedStringId,
 			)
 			return
 		}
@@ -624,12 +630,13 @@ export class DesignCanvasDirective implements OnInit {
 			 }*/
 		}
 
-		if (this._entities.panelLinks.select.requestingLink()) {
+		if (this._entityStore.panelLinks.select.requestingLink()) {
 			this._panelLinks.clearPanelLinkRequest()
 			return
 		}
 
-		const hoveringOverPanelLinkInApp = this._entities.panelLinks.select.hoveringOverPanelLinkInApp()
+		const hoveringOverPanelLinkInApp =
+			this._entityStore.panelLinks.select.hoveringOverPanelLinkInApp()
 		if (hoveringOverPanelLinkInApp) {
 			this._selectedStore.dispatch.selectPanelLink(hoveringOverPanelLinkInApp.id)
 			return
@@ -697,11 +704,11 @@ export class DesignCanvasDirective implements OnInit {
 
 			if (
 				entityUnderMouse.stringId === UNDEFINED_STRING_ID ||
-				entityUnderMouse.stringId === this._entities.strings.select.undefinedStringId()
+				entityUnderMouse.stringId === this._entityStore.strings.select.undefinedStringId()
 			)
 				return
 			const selectedStringId = this._selectedStore.select.selectedStringId()
-			const belongsToString = this._entities.strings.select.getById(entityUnderMouse.stringId)
+			const belongsToString = this._entityStore.strings.select.getById(entityUnderMouse.stringId)
 
 			if (!belongsToString) return
 			this._selectedStore.dispatch.selectStringId(belongsToString.id)
@@ -780,7 +787,7 @@ export class DesignCanvasDirective implements OnInit {
 		const selectedStringId = this._selectedStore.select.selectedStringId()
 		if (selectedStringId) {
 			const selectedStringPanels =
-				this._entities.panels.select.getByStringId(selectedStringId) ?? []
+				this._entityStore.panels.select.getByStringId(selectedStringId) ?? []
 			const pointInsideSelectedStringPanels =
 				isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels(
 					selectedStringPanels,
@@ -804,7 +811,7 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		if (this._selectedStore.select.multipleSelectedPanelIds().length > 0) {
-			const selectedPanels = this._entities.panels.select.getByIds(
+			const selectedPanels = this._entityStore.panels.select.getByIds(
 				this._selectedStore.select.multipleSelectedPanelIds(),
 			)
 			const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
@@ -1017,7 +1024,7 @@ export class DesignCanvasDirective implements OnInit {
 				event,
 				currentPoint,
 				start,
-				this._entities.panels.select.allPanels(),
+				this._entityStore.panels.select.allPanels(),
 				this._appStore,
 			)
 			if (renderOptions) {
@@ -1053,14 +1060,21 @@ export class DesignCanvasDirective implements OnInit {
 		const dragBox = this._appStore.select.dragBox()
 		const currentPoint = this.currentPoint
 		if (dragBox.state !== 'NoDragBox') {
+			const selectedPanelConfigId = this._entityStore.panelConfigs.select.selectedPanelConfigId()
+			const selectedStringId =
+				this._selectedStore.select.selectedStringId() ??
+				this._entityStore.strings.select.undefinedStringId()
+
 			dragBoxOnMouseUpHandler(
 				currentPoint,
 				dragBox.start,
-				this._entities.panels.select.allPanels(),
+				this._entityStore.panels.select.allPanels(),
 				this._appStore,
 				this._selectedStore,
-				this._entities.panels,
+				this._entityStore.panels,
 				this.isLoggedIn,
+				selectedPanelConfigId,
+				selectedStringId,
 			)
 			this.clearGesture()
 			this.touchHolding = false
@@ -1146,7 +1160,8 @@ export class DesignCanvasDirective implements OnInit {
 	private isPointInsideSelectedBox(point: Point, currentPoint: TransformedPoint) {
 		const multipleSelectedPanelIds = this._selectedStore.select.multipleSelectedPanelIds()
 		if (multipleSelectedPanelIds.length > 0) {
-			const multipleSelectedPanels = this._entities.panels.select.getByIds(multipleSelectedPanelIds)
+			const multipleSelectedPanels =
+				this._entityStore.panels.select.getByIds(multipleSelectedPanelIds)
 			const selectionBoxBoundsBox = getDefaultBoundsBoxFromMultipleEntities(multipleSelectedPanels)
 			return isPointInsideBounds(currentPoint, selectionBoxBoundsBox)
 		}
@@ -1397,11 +1412,12 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const panelLinks = this._entities.panelLinks.select.getByStringId(selectedStringId)
+		const panelLinks = this._entityStore.panelLinks.select.getByStringId(selectedStringId)
 		if (!panelLinks.length) {
 			return
 		}
-		const panelLinkIdPointsTuple = this._entities.panelLinks.select.selectedStringCircuitLinkLines()
+		const panelLinkIdPointsTuple =
+			this._entityStore.panelLinks.select.selectedStringCircuitLinkLines()
 		assertNotNull(panelLinkIdPointsTuple)
 
 		const panelLinkIdForPoint = isPointOverCurvedLineNoCtx(panelLinkIdPointsTuple, currentPoint)

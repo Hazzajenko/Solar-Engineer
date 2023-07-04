@@ -5,7 +5,7 @@ import {
 	getAllAvailableEntitySpotsBetweenTwoPoints,
 	getAllEntitiesBetweenTwoPoints,
 } from '@canvas/utils'
-import { PanelModel } from '@entities/shared'
+import { PanelConfigId, PanelModel, StringId } from '@entities/shared'
 import { SelectedStore } from '@canvas/selected/data-access'
 import { createPanel } from '@entities/utils'
 import { PanelsStore } from '@entities/data-access'
@@ -59,6 +59,8 @@ export const dragBoxOnMouseUpHandler = (
 	_selectedStore: SelectedStore,
 	_panelsStore: PanelsStore,
 	isLoggedIn: boolean,
+	selectedPanelConfigId: PanelConfigId,
+	selectedStringId: StringId,
 ) => {
 	switch (_appStore.select.mode()) {
 		case MODE_STATE.SELECT_MODE:
@@ -73,6 +75,8 @@ export const dragBoxOnMouseUpHandler = (
 				_appStore,
 				_panelsStore,
 				isLoggedIn,
+				selectedPanelConfigId,
+				selectedStringId,
 			)
 	}
 }
@@ -152,6 +156,8 @@ export const creationBoxMouseUp = (
 	_appStore: AppStateStore,
 	_panelsStore: PanelsStore,
 	isLoggedIn: boolean,
+	selectedPanelConfigId: PanelConfigId,
+	selectedStringId: StringId,
 ) => {
 	const spots = getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint, panels)
 	if (!spots || !spots.length) return
@@ -166,7 +172,9 @@ export const creationBoxMouseUp = (
 		})
 		return
 	}
-	const newPanels = spots.map((spot) => createPanel({ x: spot.x, y: spot.y }))
+	const newPanels = spots.map((spot) =>
+		createPanel({ x: spot.x, y: spot.y }, selectedStringId, selectedPanelConfigId),
+	)
 	_panelsStore.dispatch.addManyPanels(newPanels)
 	_appStore.dispatch.setDragBoxState({
 		state: 'NoDragBox',
