@@ -13,4 +13,5 @@ public interface IAppUserProjectsRepository : IEntityToEntityRepository<AppUserP
     Task<AppUserProject?> GetByAppUserIdAndProjectIdAsync(Guid appUserId, Guid projectId);
     Task<ProjectDto?> GetProjectByAppUserAndProjectIdAsync(Guid appUserId, Guid projectId);
     Task<IEnumerable<string>> GetProjectMemberIdsByProjectId(Guid projectId);
+    Task<IEnumerable<string>> GetActiveProjectMemberIdsByProjectId(Guid projectId);
 }

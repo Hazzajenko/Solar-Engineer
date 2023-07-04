@@ -30,12 +30,12 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, GetProje
     }
 
     public async ValueTask<GetProjectByIdResponse> Handle(
-        GetProjectByIdQuery request,
+        GetProjectByIdQuery query,
         CancellationToken cT
     )
     {
-        Guid appUserIdGuid = request.User.Id;
-        var projectIdGuid = request.ProjectId.ToGuid();
+        Guid appUserIdGuid = query.User.Id;
+        var projectIdGuid = query.ProjectId.ToGuid();
         ProjectDto? project =
             await _unitOfWork.AppUserProjectsRepository.GetProjectByAppUserAndProjectIdAsync(
                 appUserIdGuid,
@@ -84,7 +84,7 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, GetProje
 
         _logger.LogInformation(
             "User {User} get project data {Project}",
-            appUserIdGuid.ToString(),
+            query.User.ToAuthUserLog(),
             projectIdGuid.ToString()
         );
 

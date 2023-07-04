@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Contracts.Data;
 using Projects.Contracts.Responses.Projects;
+using Projects.Domain.Entities;
 using Projects.SignalR.Hubs;
 using Projects.SignalR.Queries.Projects;
 
@@ -26,11 +27,17 @@ public class GetUserProjectsHandler : IQueryHandler<GetUserProjectsQuery, IEnume
     }
 
     public async ValueTask<IEnumerable<ProjectDto>> Handle(
-        GetUserProjectsQuery request,
+        GetUserProjectsQuery query,
         CancellationToken cT
     )
     {
-        var appUserId = request.User.Id;
+        Guid appUserId = query.User.Id;
+
+        ProjectUser? projectUser = await _unitOfWork.ProjectUsersRepository.GetByIdAsync(appUserId);
+        projectUser.ThrowHubExceptionIfNull($"{appUserId.ToString()} project user not found");
+
+        var selectedProjectId = projectUser.SelectedProjectId;
+
         var projects =
             await _unitOfWork.AppUserProjectsRepository.GetProjectsWithMembersByAppUserIdAsync(
                 appUserId
@@ -38,11 +45,14 @@ public class GetUserProjectsHandler : IQueryHandler<GetUserProjectsQuery, IEnume
 
         var getManyProjectsResponse = new GetManyProjectsResponse
         {
-            Projects = projects
+            Projects = projects,
+            SelectedProjectId = selectedProjectId.ToString()
         };
 
-        await _hubContext.Clients.User(appUserId.ToString()).GetManyProjects(getManyProjectsResponse);
-        _logger.LogInformation("User {User} get projects", appUserId.ToString());
+        await _hubContext.Clients
+            .User(appUserId.ToString())
+            .GetManyProjects(getManyProjectsResponse);
+        _logger.LogInformation("User {User} get projects", query.User.ToAuthUserLog());
 
         return projects;
     }

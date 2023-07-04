@@ -65,7 +65,6 @@ public class CreateProjectHandler
         await _unitOfWork.StringsRepository.AddAsync(undefinedString);
         await _unitOfWork.SaveChangesAsync();
 
-        // var projectDto = appUserProject.Adapt<ProjectDto>();
         var defaultPanelConfigs =
             await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigsAsync();
         ProjectDataDto dataDto = await GetProjectDataDto(
@@ -78,42 +77,23 @@ public class CreateProjectHandler
 
         var projectCreatedResponse = new ProjectCreatedWithTemplateResponse() { Project = dataDto };
 
-        // ! Changing to http
-        // await _hubContext.Clients.User(appUserId.ToString()).ProjectCreated(projectCreatedResponse);
-
-
-
         _logger.LogInformation(
             "User {User} created project {Project}",
-            appUserId,
+            command.User.ToAuthUserLog(),
             appUserProject.Project.Name
         );
 
         if (command.CreateProjectRequest.MemberIds.Any() is false)
         {
             return projectCreatedResponse;
-            // return project.Id;
         }
 
         var userIds = command.CreateProjectRequest.MemberIds;
         Guid projectId = project.Id;
-        // var projectMemberIds =
-        //     await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(projectId);
-        //
-        // var newProjectMembers = new UsersSentInviteToProjectResponse
-        // {
-        //     ProjectId = projectId.ToString(),
-        //     InvitedByUserId = appUserId.ToString(),
-        //     InvitedUserIds = userIds
-        // };
-        //
-        // await _hubContext.Clients
-        //     .Users(projectMemberIds)
-        //     .UsersSentInviteToProject(newProjectMembers);
 
         _logger.LogInformation(
             "User {User} invited users {Users} to project {Project}",
-            appUserId,
+            command.User.ToAuthUserLog(),
             userIds,
             appUserProject.Project.Name
         );
@@ -132,8 +112,13 @@ public class CreateProjectHandler
         );
         await _bus.Publish(invitedUsersToProjectMessage, cT);
 
+        ProjectUser? projectUser = await _unitOfWork.ProjectUsersRepository.GetByIdAsync(appUserId);
+        ArgumentNullException.ThrowIfNull(projectUser, nameof(projectUser));
+        projectUser.SelectedProjectId = projectId;
+        await _unitOfWork.ProjectUsersRepository.UpdateAsync(projectUser);
+        await _unitOfWork.SaveChangesAsync();
+
         return projectCreatedResponse;
-        // return appUserProject.Project.Id;
     }
 
     private async Task<ProjectDataDto> GetProjectDataDto(

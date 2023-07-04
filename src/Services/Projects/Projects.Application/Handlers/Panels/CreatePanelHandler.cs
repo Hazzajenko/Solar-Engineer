@@ -100,7 +100,7 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 
         _logger.LogInformation(
             "User {User} created panel {Panel} in project {Project}",
-            appUserId.ToString(),
+            command.User.ToAuthUserLog(),
             panel.Id.ToString(),
             appUserProject.Project.Id.ToString()
         );

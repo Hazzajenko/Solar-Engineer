@@ -148,7 +148,7 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
         {
             _logger.LogError(
                 "Unable to login user {User}, {Provider}",
-                appUser.Id,
+                appUser.ToAppUserLog(),
                 externalLogin.LoginProvider
             );
             throw new UnauthorizedException();
