@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
 import { checkAuthFlow } from './check-auth-flow'
-import { ApplicationInsightsService } from '../../../logging/src/lib/application-insights.service'
+import { ApplicationInsightsService } from '@app/logging'
 import { WINDOW } from '@sentry/angular-ivy'
 
 @Component({

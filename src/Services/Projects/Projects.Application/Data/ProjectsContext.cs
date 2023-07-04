@@ -17,6 +17,7 @@ public class ProjectsContext : DbContext, IDataContext
     public DbSet<Panel> Panels { get; set; } = default!;
     public DbSet<PanelLink> PanelLinks { get; set; } = default!;
     public DbSet<PanelConfig> PanelConfigs { get; set; } = default!;
+    public DbSet<ProjectUser> ProjectUsers { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options) { }
 

@@ -102,7 +102,10 @@ export class ProjectsSignalrService implements ILogger {
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, (response: GetManyProjectsResponse) => {
 			console.log(PROJECTS_SIGNALR_EVENT.GET_MANY_PROJECTS, response)
-			this._projectsStore.dispatch.loadUserProjectsSuccess(response.projects)
+			this._projectsStore.dispatch.loadUserProjectsSuccess(
+				response.projects,
+				response.selectedProjectId,
+			)
 		})
 
 		this.onHub(PROJECTS_SIGNALR_EVENT.PROJECT_CREATED, (response: ProjectCreatedResponse) => {

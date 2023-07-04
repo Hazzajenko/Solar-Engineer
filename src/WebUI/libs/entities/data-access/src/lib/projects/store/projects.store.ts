@@ -57,8 +57,8 @@ export function projectsStoreFactory(store: Store) {
 		createProjectSignalr: (request: CreateProjectRequest) =>
 			store.dispatch(ProjectsActions.createProjectSignalr({ request })),
 		loadUserProjects: () => store.dispatch(ProjectsActions.loadUserProjects()),
-		loadUserProjectsSuccess: (projects: ProjectModel[]) =>
-			store.dispatch(ProjectsActions.loadUserProjectsSuccess({ projects })),
+		loadUserProjectsSuccess: (projects: ProjectModel[], selectedProjectId: ProjectId | undefined) =>
+			store.dispatch(ProjectsActions.loadUserProjectsSuccess({ projects, selectedProjectId })),
 		selectProject: (projectId: ProjectId) =>
 			store.dispatch(ProjectsActions.selectProject({ projectId })),
 		inviteUsersToProject: (request: InviteToProjectRequest) =>

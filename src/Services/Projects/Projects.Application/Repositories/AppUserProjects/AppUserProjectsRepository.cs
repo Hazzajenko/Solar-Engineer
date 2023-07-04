@@ -39,12 +39,6 @@ public sealed class AppUserProjectsRepository
         return await Queryable
             .Include(x => x.Project)
             .SingleOrDefaultAsync(x => x.AppUserId == appUserId && x.ProjectId == projectId);
-        /*return await Queryable
-            .Include(x => x.Project)
-            .ThrowHubExceptionIfNullSingleOrDefaultAsync(
-                x => x.AppUserId == appUserId && x.ProjectId == projectId,
-                "User is not apart of this project"
-            );*/
     }
 
     public async Task<ProjectDto?> GetProjectByAppUserAndProjectIdAsync(
@@ -63,6 +57,16 @@ public sealed class AppUserProjectsRepository
     {
         return await Queryable
             .Where(x => x.ProjectId == projectId)
+            .Select(x => x.AppUserId.ToString())
+            .ToArrayAsync();
+    }
+
+    public async Task<IEnumerable<string>> GetActiveProjectMemberIdsByProjectId(Guid projectId)
+    {
+        return await Queryable
+            .Where(x => x.ProjectId == projectId)
+            .Include(x => x.ProjectUser)
+            .Where(x => x.ProjectUser.SelectedProjectId == projectId)
             .Select(x => x.AppUserId.ToString())
             .ToArrayAsync();
     }

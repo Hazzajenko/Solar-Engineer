@@ -15,8 +15,6 @@ namespace Projects.Application.Handlers.Panels;
 
 public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 {
-    // private const string DefaultPanelConfigId = "Longi-Himo555m";
-    // private const string UndefinedStringId = "UNDEFINED_STRING_ID";
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<CreatePanelHandler> _logger;
     private readonly IMapper _mapper;
@@ -87,7 +85,7 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 
         await _unitOfWork.PanelsRepository.AddAsync(panel);
         await _unitOfWork.SaveChangesAsync();
-        
+
         panel = await _unitOfWork.PanelsRepository.GetByIdAsync(panel.Id);
         panel.ThrowExceptionIfNull(new HubException("Panel does not exist"));
 

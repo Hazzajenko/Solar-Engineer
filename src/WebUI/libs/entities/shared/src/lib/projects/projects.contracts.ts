@@ -85,6 +85,7 @@ export type GetUserProjectsResponse = {
 
 export type GetManyProjectsResponse = {
 	projects: ProjectModel[]
+	selectedProjectId: ProjectId | undefined
 }
 
 export type UsersSentInviteToProjectResponse = {

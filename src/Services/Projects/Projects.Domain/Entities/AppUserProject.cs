@@ -55,7 +55,7 @@ public class AppUserProject : IEntityToEntity, IProjectItem
 
     public Guid AppUserId { get; set; }
 
-    // public ProjectUser ProjectUser { get; set; } = default!;
+    public ProjectUser ProjectUser { get; set; } = default!;
     public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
     public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;
     public Guid ProjectId { get; set; }

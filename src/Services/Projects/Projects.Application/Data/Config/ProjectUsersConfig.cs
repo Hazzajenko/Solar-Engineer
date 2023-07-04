@@ -1,11 +1,15 @@
-﻿namespace Projects.Application.Data.Config;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Projects.Domain.Entities;
 
-/*public class ProjectUsersConfig : IEntityTypeConfiguration<ProjectUser>
+namespace Projects.Application.Data.Config;
+
+public class ProjectUsersConfig : IEntityTypeConfiguration<ProjectUser>
 {
     public void Configure(EntityTypeBuilder<ProjectUser> builder)
     {
-        builder.Property(x => x.Id).HasDefaultValueSql("uuid_generate_v4()");
-
+        builder.Property(x => x.Id).IsRequired();
+        builder.Property(x => x.SelectedProjectId).IsRequired(false);
         builder
             .HasMany(u => u.AppUserProjects)
             .WithOne(m => m.ProjectUser)
@@ -13,4 +17,4 @@
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
     }
-}*/
+}

@@ -283,20 +283,13 @@ export const userLeftProject$ = createEffect(
  )*/
 
 export const selectUserProjectOnLoad$ = createEffect(
-	(
-		actions$ = inject(Actions),
-		projectsHttp = inject(ProjectsHttpService), // uiStore = injectUiStore(),
-	) => {
+	(actions$ = inject(Actions), projectsHttp = inject(ProjectsHttpService)) => {
 		return actions$.pipe(
-			ofType(ProjectsActions.loadUserProjectsSuccess), // map(({ projects }) => {
-			// 	if (projects.length > 0) {
-			// 		return ProjectsActions.selectProjectInitial({ projectId: projects[0].id })
-			// 	}
-			// 	return ProjectsActions.userProjectsEmpty()
-			// }),
-			switchMap(({ projects }) => {
+			ofType(ProjectsActions.loadUserProjectsSuccess),
+			switchMap(({ projects, selectedProjectId }) => {
 				if (projects.length > 0) {
-					return projectsHttp.getProjectById(projects[0].id).pipe(
+					const projectIdToSelect = selectedProjectId || projects[0].id
+					return projectsHttp.getProjectById(projectIdToSelect).pipe(
 						map((response) => ProjectsActions.getProjectSuccess({ response })),
 						catchError((error) => {
 							console.error(error)

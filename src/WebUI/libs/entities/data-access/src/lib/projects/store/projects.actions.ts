@@ -61,6 +61,7 @@ export const ProjectsActions = createActionGroup({
 		'Load User Projects': emptyProps(),
 		'Load User Projects Success': props<{
 			projects: ProjectModel[]
+			selectedProjectId: ProjectId | undefined
 		}>(),
 		'Load User Projects Failure': props<{
 			error: string | null

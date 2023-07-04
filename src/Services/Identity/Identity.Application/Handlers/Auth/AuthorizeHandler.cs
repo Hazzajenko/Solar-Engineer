@@ -1,9 +1,11 @@
 ﻿using System.Security.Claims;
+using ApplicationCore.Events.AppUsers;
 using ApplicationCore.Exceptions;
 using Identity.Application.Commands;
 using Identity.Application.Extensions;
 using Identity.Application.Mapping;
 using Identity.Domain;
+using MassTransit;
 using Mediator;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -17,18 +19,21 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
     private readonly IMediator _mediator;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly UserManager<AppUser> _userManager;
+    private readonly IBus _bus;
 
     public AuthorizeHandler(
         UserManager<AppUser> userManager,
         ILogger<AuthorizeHandler> logger,
         SignInManager<AppUser> signInManager,
-        IMediator mediator
+        IMediator mediator,
+        IBus bus
     )
     {
         _userManager = userManager;
         _logger = logger;
         _signInManager = signInManager;
         _mediator = mediator;
+        _bus = bus;
     }
 
     public async ValueTask<ExternalSigninResponse> Handle(
@@ -86,6 +91,16 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
             Console.WriteLine(e);
             throw new UnauthorizedException();
         }
+
+        await _bus.Publish(
+            new UserLoggedIn(
+                existingAppUser.Id,
+                existingAppUser.UserName,
+                existingAppUser.DisplayName,
+                existingAppUser.PhotoUrl
+            )
+        );
+
         return new() { AppUser = existingAppUser, LoginProvider = externalLogin.LoginProvider };
     }
 
@@ -145,6 +160,11 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
 
         appUser.PhotoUrl = uploadPhotoResponse.PhotoUrl;
         await _userManager.UpdateAsync(appUser);
+
+        await _bus.Publish(
+            new UserRegistered(appUser.Id, appUser.UserName, appUser.DisplayName, appUser.PhotoUrl)
+        );
+
         return new() { AppUser = appUser, LoginProvider = externalLogin.LoginProvider };
     }
 }

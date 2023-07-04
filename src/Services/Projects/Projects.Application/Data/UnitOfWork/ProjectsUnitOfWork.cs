@@ -6,6 +6,7 @@ using Projects.Application.Repositories.PanelConfigs;
 using Projects.Application.Repositories.PanelLinks;
 using Projects.Application.Repositories.Panels;
 using Projects.Application.Repositories.Projects;
+using Projects.Application.Repositories.ProjectUsers;
 using Projects.Application.Repositories.Strings;
 using Projects.Domain.Common;
 using Projects.Domain.Entities;
@@ -30,6 +31,8 @@ public class ProjectsUnitOfWork : UnitOfWorkFactory<ProjectsContext>, IProjectsU
     public IPanelLinksRepository PanelLinksRepository => new PanelLinksRepository(Context);
     public IPanelConfigsRepository PanelConfigsRepository => new PanelConfigsRepository(Context);
     public IStringsRepository StringsRepository => new StringsRepository(Context);
+
+    public IProjectUsersRepository ProjectUsersRepository => new ProjectUsersRepository(Context);
 
     public new async Task<bool> SaveChangesAsync()
     {

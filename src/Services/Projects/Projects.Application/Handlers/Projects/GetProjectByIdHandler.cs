@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Contracts.Data;
 using Projects.Contracts.Responses.Projects;
+using Projects.Domain.Entities;
 using Projects.SignalR.Hubs;
 using Projects.SignalR.Queries.Projects;
 
@@ -73,11 +74,12 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, GetProje
 
         var response = new GetProjectByIdResponse { Project = projectDataDto };
 
-        await _unitOfWork.AppUserSelectedProjectsRepository.AddOrUpdateAsync(
-            appUserIdGuid,
-            projectIdGuid
+        ProjectUser? projectUser = await _unitOfWork.ProjectUsersRepository.GetByIdAsync(
+            appUserIdGuid
         );
-
+        ArgumentNullException.ThrowIfNull(projectUser, nameof(projectUser));
+        projectUser.SelectedProjectId = projectIdGuid;
+        await _unitOfWork.ProjectUsersRepository.UpdateAsync(projectUser);
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation(
