@@ -1,7 +1,5 @@
 using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using Projects.Application.Repositories.AppUserProjects;
-using Projects.Application.Repositories.AppUserSelectedProjects;
 using Projects.Application.Repositories.PanelConfigs;
 using Projects.Application.Repositories.PanelLinks;
 using Projects.Application.Repositories.Panels;
@@ -23,9 +21,6 @@ public class ProjectsUnitOfWork : UnitOfWorkFactory<ProjectsContext>, IProjectsU
 
     public IAppUserProjectsRepository AppUserProjectsRepository =>
         new AppUserProjectsRepository(Context);
-
-    public IAppUserSelectedProjectsRepository AppUserSelectedProjectsRepository =>
-        new AppUserSelectedProjectsRepository(Context);
 
     public IPanelsRepository PanelsRepository => new PanelsRepository(Context);
     public IPanelLinksRepository PanelLinksRepository => new PanelLinksRepository(Context);

@@ -7,7 +7,10 @@ namespace Projects.Application.Repositories.Panels;
 public interface IPanelsRepository : IGenericRepository<Panel>
 {
     Task<IEnumerable<PanelDto>> GetPanelsByProjectIdAsync(Guid projectId);
+
+    Task<IEnumerable<PanelDto>> GetManyPanelDtosAsync(Guid projectId, IEnumerable<Guid> panelIds);
     Task<Panel?> GetPanelByIdAndProjectIdAsync(Guid id, Guid projectId);
+
     Task<PanelDto?> GetPanelByLocationAsync(Guid id, Guid projectId, Panel.Point location);
 
     Task<IEnumerable<Panel>> GetManyPanelsAsync(Guid projectId, IEnumerable<Guid> panelIds);

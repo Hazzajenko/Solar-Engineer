@@ -93,7 +93,7 @@ public class UpdateManyPanelLinksHandler : ICommandHandler<UpdateManyPanelLinksC
 
         _logger.LogInformation(
             "User {User} created {Amount} {PanelLinks} in project {Project}",
-            appUserId.ToString(),
+            command.User.ToAuthUserLog(),
             panelLinks.Count(),
             panelLinks.Count() == 1 ? "Panel Link" : "Panel Links",
             appUserProject.Project.Id.ToString()

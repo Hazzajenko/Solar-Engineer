@@ -43,7 +43,7 @@ public class LeaveProjectHandler : ICommandHandler<LeaveProjectCommand, bool>
         {
             _logger.LogError(
                 "User {User} tried to delete project {Project} without being a member",
-                appUserId,
+                command.User.ToAuthUserLog(),
                 projectId
             );
             var message = "You are not a member of this project";
@@ -55,7 +55,7 @@ public class LeaveProjectHandler : ICommandHandler<LeaveProjectCommand, bool>
         {
             _logger.LogError(
                 "User {User} tried to delete project {Project} without project existing",
-                appUserId,
+                command.User.ToAuthUserLog(),
                 projectId
             );
             var message = "Project doesnt exist";

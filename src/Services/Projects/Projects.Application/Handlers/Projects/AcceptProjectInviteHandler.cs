@@ -55,9 +55,8 @@ public class AcceptProjectInviteHandler : ICommandHandler<AcceptProjectInviteCom
         if (existingAppUserProject is not null)
         {
             _logger.LogError(
-                "User {UserUserId} - {UserUserName} tried to accept a project invite to project {ProjectId} but is already apart of the project",
-                appUser.Id,
-                appUser.UserName,
+                "User {User} tried to accept a project invite to project {ProjectId} but is already apart of the project",
+                appUser.ToAuthUserLog(),
                 projectIdGuid
             );
             var message = $"User {appUser.Id} is already apart of project {projectIdGuid}";
@@ -79,9 +78,8 @@ public class AcceptProjectInviteHandler : ICommandHandler<AcceptProjectInviteCom
         appUserProject.ThrowHubExceptionIfNull();
 
         _logger.LogInformation(
-            "User {UserUserId} - {UserUserName} accepted a project invite to project {ProjectId}",
-            appUser.Id,
-            appUser.UserName,
+            "User {User} accepted a project invite to project {ProjectId}",
+            appUser.ToAuthUserLog(),
             projectIdGuid
         );
 

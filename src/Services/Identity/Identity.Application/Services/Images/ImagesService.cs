@@ -28,7 +28,7 @@ public class ImagesService : IImagesService
         var result = ConvertBitmapToPng(bitmap);
         _logger.LogInformation(
             "Image Dp generated for User: {User} initials: {Initials}",
-            appUser.GetLoggingString(),
+            appUser.ToAppUserLog(),
             initials
         );
         return result;

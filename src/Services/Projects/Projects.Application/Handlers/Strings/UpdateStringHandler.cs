@@ -72,7 +72,7 @@ public class UpdateStringHandler : ICommandHandler<UpdateStringCommand, bool>
 
         _logger.LogInformation(
             "User {User} updated panel {String} in project {Project}",
-            appUserId.ToString(),
+            command.User.ToAuthUserLog(),
             @string.Id.ToString(),
             appUserProject.Project.Name
         );

@@ -141,13 +141,10 @@ public static class ProjectEventsMapper
     )
         where TEntity : IProjectItem
     {
-        // var response = new { Id = entityId };
-
         var toJson = JsonSerializer.Serialize(
             entityId,
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
         );
-        // var toJson = JsonSerializer.Serialize(response);
         var projectEventResponse = new ProjectEventResponse
         {
             RequestId = command.RequestId,
@@ -168,8 +165,6 @@ public static class ProjectEventsMapper
     )
         where TEntity : IProjectItem
     {
-        // var response = entityIds.Select(id => new { Id = id });
-
         var toJson = JsonSerializer.Serialize(
             entityIds,
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }

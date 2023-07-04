@@ -42,19 +42,14 @@ public class DeletePanelLinkHandler : ICommandHandler<DeletePanelLinkCommand, bo
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
         var panelLinkId = command.Request.PanelLinkId.ToGuid();
-        var deleteResult =
-        /*await _unitOfWork.PanelLinksRepository.DeletePanelLinkByProjectIdAndIdAsync(
-            projectId,
-            panelLinkId
-        );*/
-        await _unitOfWork.PanelLinksRepository.ExecuteDeleteAsync(
+        var deleteResult = await _unitOfWork.PanelLinksRepository.ExecuteDeleteAsync(
             x => x.ProjectId == projectId && x.Id == panelLinkId
         );
         if (deleteResult > 1)
         {
             _logger.LogWarning(
                 "User {User} deleted {DeleteResult} Panel Links in project {Project}",
-                appUserId.ToString(),
+                command.User.ToAuthUserLog(),
                 deleteResult.ToString(),
                 appUserProject.Project.Id.ToString()
             );
@@ -76,7 +71,7 @@ public class DeletePanelLinkHandler : ICommandHandler<DeletePanelLinkCommand, bo
 
         _logger.LogInformation(
             "User {User} deleted Panel Link {PanelLink} in project {Project}",
-            appUserId.ToString(),
+            command.User.ToAuthUserLog(),
             panelLinkIdString,
             appUserProject.Project.Id.ToString()
         );

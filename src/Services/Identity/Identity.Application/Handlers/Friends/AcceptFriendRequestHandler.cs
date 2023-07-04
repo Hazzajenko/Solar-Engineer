@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Extensions;
 using Identity.Application.Data.UnitOfWork;
+using Identity.Application.Extensions;
 using Identity.Application.Handlers.Notifications;
 using Identity.Application.Mapping;
 using Identity.Application.Services.Connections;
@@ -58,15 +59,15 @@ public class AcceptFriendRequestHandler : ICommandHandler<AcceptFriendRequestCom
         {
             _logger.LogError(
                 "AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived} not found. Cannot accept friend request. Creating new AppUserLink...",
-                appUser.UserName,
-                recipientUser.UserName
+                appUser.ToAppUserLog(),
+                recipientUser.ToAppUserLog()
             );
             appUserLink = new AppUserLink(appUser, recipientUser);
             await _unitOfWork.AppUserLinksRepository.AddAsync(appUserLink);
             _logger.LogInformation(
                 "Created new AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived}",
-                appUser.UserName,
-                recipientUser.UserName
+                appUser.ToAppUserLog(),
+                recipientUser.ToAppUserLog()
             );
             return await _unitOfWork.SaveChangesAsync();
         }
@@ -125,64 +126,11 @@ public class AcceptFriendRequestHandler : ICommandHandler<AcceptFriendRequestCom
             .UpdateNotification(updateNotificationResponse);
 
         _logger.LogInformation(
-            "Friend request accepted from AppUserRequested: {AppUserRequestedId} - {AppUserRequestedUserName}, AppUserReceived: {AppUserReceived} - {AppUserReceivedUserName}",
-            appUser.Id,
-            appUser.UserName,
-            recipientUser.Id,
-            recipientUser.UserName
+            "Friend request accepted from AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived}",
+            appUser.ToAppUserLog(),
+            recipientUser.ToAppUserLog()
         );
 
         return true;
-
-        /*
-        var response = new FriendRequestResponse(
-            appUser.Id,
-            appUser.UserName,
-            FriendRequestResponse.Status.Accepted
-        );
-        await _hubContext.Clients
-            .User(recipientUser.Id.ToString())
-            .ReceiveFriendRequestEvent(response);
-
-        var notification = new Notification(
-            recipientUser,
-            appUser,
-            NotificationType.FriendRequestAccepted
-        );
-
-        await _unitOfWork.NotificationsRepository.AddAsync(notification);
-        await _unitOfWork.SaveChangesAsync();
-
-        var originalSenderId = recipientUser.Id;
-        var notificationFromSender =
-            await _unitOfWork.NotificationsRepository.GetNotificationFromSenderToAppUserByTypeAsync(
-                originalSenderId,
-                appUser.Id,
-                NotificationType.FriendRequestReceived
-            );
-        notificationFromSender.ThrowHubExceptionIfNull();
-
-        notificationFromSender.SetNotificationCompleted();
-        await _unitOfWork.NotificationsRepository.UpdateAsync(notificationFromSender);
-        await _unitOfWork.SaveChangesAsync();
-
-        var notificationDto = await _unitOfWork.NotificationsRepository.GetNotificationDtoByIdAsync(
-            notification.Id
-        );
-        notificationDto.ThrowHubExceptionIfNull();
-
-        await _hubContext.Clients
-            .User(recipientUser.Id.ToString())
-            .ReceiveNotification(notificationDto);
-
-        _logger.LogInformation(
-            "Friend request accepted from AppUserRequested: {AppUserRequestedId} - {AppUserRequestedUserName}, AppUserReceived: {AppUserReceived} - {AppUserReceivedUserName}",
-            appUser.Id,
-            appUser.UserName,
-            recipientUser.Id,
-            recipientUser.UserName
-        );
-
-        return true;*/
     }
 }

@@ -44,9 +44,8 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
                 return true;
             _connections.Add(userId, command.AuthUser.ConnectionId!);
             _logger.LogInformation(
-                "User {AppUserId} - {AppUserUserName} connected with ConnectionId: {ConnectionId}",
-                userId,
-                user.UserName,
+                "User {UserId} connected with ConnectionId: {ConnectionId}",
+                user.ToAuthUserLog(),
                 command.AuthUser.ConnectionId
             );
             return true;
@@ -54,22 +53,10 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
 
         _connections.Add(userId, command.AuthUser.ConnectionId!);
         _logger.LogInformation(
-            "User {AppUserId} - {AppUserUserName} connected with ConnectionId: {ConnectionId}",
-            userId,
-            user.UserName,
+            "User {User} connected with ConnectionId: {ConnectionId}",
+            user.ToAuthUserLog(),
             command.AuthUser.ConnectionId
         );
-
-        /*
-        var appUserConnection = _connections.GetAppUserConnectionByAppUserId(userId);
-        appUserConnection.ThrowHubExceptionIfNull();
-
-        var userIsOnlineResponse = new UserIsOnlineResponse
-        {
-            AppUserConnection = appUserConnection
-        };
-
-        await _hubContext.Clients.AllExcept(userId.ToString()).UserIsOnline(userIsOnlineResponse);*/
 
         var allAppUserConnections = _connections.GetAllUserConnections();
 
@@ -79,8 +66,6 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
         };
 
         await _hubContext.Clients.User(userId.ToString()).GetOnlineUsers(getOnlineUsersResponse);
-
-        _logger.LogInformation("User {U} connected", userId);
 
         var appUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(userId);
         appUser.ThrowHubExceptionIfNull();

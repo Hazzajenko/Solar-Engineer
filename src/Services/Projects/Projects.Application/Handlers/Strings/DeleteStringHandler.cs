@@ -64,7 +64,7 @@ public class DeleteStringHandler : ICommandHandler<DeleteStringCommand, bool>
 
         _logger.LogInformation(
             "User {User} deleted string {String} in project {Project}",
-            appUserId.ToString(),
+            command.User.ToAuthUserLog(),
             stringIdString,
             projectId.ToString()
         );

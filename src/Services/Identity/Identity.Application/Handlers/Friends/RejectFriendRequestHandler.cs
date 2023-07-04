@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Extensions;
 using Identity.Application.Data.UnitOfWork;
+using Identity.Application.Extensions;
 using Identity.Application.Handlers.Notifications;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Friends;
@@ -51,15 +52,15 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
         {
             _logger.LogError(
                 "AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived} not found. Cannot accept reject request. Creating new AppUserLink...",
-                appUser.UserName,
-                recipientUser.UserName
+                appUser.ToAppUserLog(),
+                recipientUser.ToAppUserLog()
             );
             appUserLink = new AppUserLink(appUser, recipientUser);
             await _unitOfWork.AppUserLinksRepository.AddAsync(appUserLink);
             _logger.LogInformation(
                 "Created new AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived}",
-                appUser.UserName,
-                recipientUser.UserName
+                appUser.ToAppUserLog(),
+                recipientUser.ToAppUserLog()
             );
             return await _unitOfWork.SaveChangesAsync();
         }
@@ -68,13 +69,6 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
         _unitOfWork.DetachAllEntities();
         await _unitOfWork.AppUserLinksRepository.UpdateAsync(appUserLink);
         await _unitOfWork.SaveChangesAsync();
-
-        // var notificationCommand = new DispatchNotificationCommand(
-        //     appUser,
-        //     recipientUser,
-        //     NotificationType.FriendRequestReceived
-        // );
-        // await _mediator.Send(notificationCommand, cT);
 
         var originalSenderId = recipientUser.Id;
         var friendRequestNotification =
@@ -102,11 +96,9 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
             .UpdateNotification(updateNotificationResponse);
 
         _logger.LogInformation(
-            "Friend request rejected from AppUserRequested: {AppUserRequestedId} - {AppUserRequestedUserName}, AppUserReceived: {AppUserReceived} - {AppUserReceivedUserName}",
-            appUser.Id,
-            appUser.UserName,
-            recipientUser.Id,
-            recipientUser.UserName
+            "Friend request rejected from AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived}",
+            appUser.ToAppUserLog(),
+            recipientUser.ToAppUserLog()
         );
 
         return true;

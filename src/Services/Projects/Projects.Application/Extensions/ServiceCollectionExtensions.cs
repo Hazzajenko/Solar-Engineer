@@ -8,9 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Repositories.AppUserProjects;
-using Projects.Application.Repositories.AppUserSelectedProjects;
 using Projects.Application.Repositories.Projects;
-using Projects.Application.Repositories.ProjectUsers;
 
 namespace Projects.Application.Extensions;
 
@@ -26,8 +24,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProjectsUnitOfWork, ProjectsUnitOfWork>();
         services.AddScoped<IProjectsRepository, ProjectsRepository>();
         services.AddScoped<IAppUserProjectsRepository, AppUserProjectsRepository>();
-        services.AddScoped<IAppUserSelectedProjectsRepository, AppUserSelectedProjectsRepository>();
-        // services.AddScoped<IProjectUsersRepository, ProjectUsersRepository>();
         services.AddMediator(options =>
         {
             options.ServiceLifetime = ServiceLifetime.Transient;

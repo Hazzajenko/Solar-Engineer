@@ -1,4 +1,5 @@
 ﻿using Identity.Application.Data.UnitOfWork;
+using Identity.Application.Extensions;
 using Identity.Contracts.Responses.Notifications;
 using Identity.SignalR.Commands.Notifications;
 using Identity.SignalR.Hubs;
@@ -47,9 +48,8 @@ public class CompleteManyNotificationsHandler
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation(
-            "Many notifications marked read by {AppUserId} - {AppUserUserName}",
-            appUser.Id.ToString(),
-            appUser.UserName
+            "Many notifications marked read by {AppUser}",
+            appUser.ToAppUserLog()
         );
 
         return true;

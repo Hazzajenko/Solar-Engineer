@@ -46,9 +46,8 @@ public class RejectProjectInviteHandler : ICommandHandler<RejectProjectInviteCom
         var projectIdGuid = command.Request.ProjectId.ToGuid();
 
         _logger.LogInformation(
-            "User {UserUserId} - {UserUserName} rejected a project invite to project {ProjectId}",
-            appUser.Id,
-            appUser.UserName,
+            "User {User} rejected a project invite to project {ProjectId}",
+            command.User.ToAuthUserLog(),
             projectIdGuid.ToString()
         );
 

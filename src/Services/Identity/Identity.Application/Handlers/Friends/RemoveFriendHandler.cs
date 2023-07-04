@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Extensions;
 using Identity.Application.Data.UnitOfWork;
+using Identity.Application.Extensions;
 using Identity.Application.Handlers.Notifications;
 using Identity.Contracts.Responses.Friends;
 using Identity.Domain;
@@ -48,15 +49,15 @@ public class RemoveFriendHandler : ICommandHandler<RemoveFriendCommand, bool>
         {
             _logger.LogError(
                 "AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived} not found. Cannot accept reject request. Creating new AppUserLink...",
-                appUser.UserName,
-                recipientUser.UserName
+                appUser.ToAppUserLog(),
+                recipientUser.ToAppUserLog()
             );
             appUserLink = new AppUserLink(appUser, recipientUser);
             await _unitOfWork.AppUserLinksRepository.AddAsync(appUserLink);
             _logger.LogInformation(
                 "Created new AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived}",
-                appUser.UserName,
-                recipientUser.UserName
+                appUser.ToAppUserLog(),
+                recipientUser.ToAppUserLog()
             );
             return await _unitOfWork.SaveChangesAsync();
         }
@@ -74,11 +75,9 @@ public class RemoveFriendHandler : ICommandHandler<RemoveFriendCommand, bool>
             .FriendRemoved(new FriendRemovedResponse { AppUserId = appUser.Id.ToString() });
 
         _logger.LogInformation(
-            "AppUser: {AppUserRequestedId} - {AppUserRequestedUserName} Removed Friend {AppUserReceived} - {AppUserReceivedUserName}",
-            appUser.Id,
-            appUser.UserName,
-            recipientUser.Id,
-            recipientUser.UserName
+            "AppUser: {AppUserRequested} Removed Friend {AppUserReceived}",
+            appUser.ToAppUserLog(),
+            recipientUser.ToAppUserLog()
         );
 
         return true;

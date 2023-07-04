@@ -42,7 +42,7 @@ public class DeleteProjectHandler : ICommandHandler<DeleteProjectCommand, bool>
         {
             _logger.LogError(
                 "User {User} tried to delete project {Project} without being a member",
-                appUserId,
+                command.User.ToAuthUserLog(),
                 projectId
             );
             var message = "You are not a member of this project";
@@ -53,7 +53,7 @@ public class DeleteProjectHandler : ICommandHandler<DeleteProjectCommand, bool>
         {
             _logger.LogError(
                 "User {User} tried to delete project {Project} without having delete permissions",
-                appUserId,
+                command.User.ToAuthUserLog(),
                 projectId
             );
             var message = "You do not have delete permissions in this project";
@@ -65,7 +65,7 @@ public class DeleteProjectHandler : ICommandHandler<DeleteProjectCommand, bool>
         {
             _logger.LogError(
                 "User {User} tried to delete project {Project} without project existing",
-                appUserId,
+                command.User.ToAuthUserLog(),
                 projectId
             );
             var message = "Project doesnt exist";
@@ -81,7 +81,11 @@ public class DeleteProjectHandler : ICommandHandler<DeleteProjectCommand, bool>
         var response = new ProjectDeletedResponse { ProjectId = projectId.ToString() };
 
         await _hubContext.Clients.Users(projectMembers).ProjectDeleted(response);
-        _logger.LogInformation("User {User} deleted project {Project}", appUserId, projectId);
+        _logger.LogInformation(
+            "User {User} deleted project {Project}",
+            command.User.ToAuthUserLog(),
+            projectId
+        );
 
         return true;
     }

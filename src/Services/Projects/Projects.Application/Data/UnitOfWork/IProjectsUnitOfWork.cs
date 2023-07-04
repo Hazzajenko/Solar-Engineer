@@ -1,6 +1,5 @@
 ﻿using Infrastructure.Data;
 using Projects.Application.Repositories.AppUserProjects;
-using Projects.Application.Repositories.AppUserSelectedProjects;
 using Projects.Application.Repositories.PanelConfigs;
 using Projects.Application.Repositories.PanelLinks;
 using Projects.Application.Repositories.Panels;
@@ -14,7 +13,6 @@ public interface IProjectsUnitOfWork : IUnitOfWorkFactory
 {
     IProjectsRepository ProjectsRepository { get; }
     IAppUserProjectsRepository AppUserProjectsRepository { get; }
-    IAppUserSelectedProjectsRepository AppUserSelectedProjectsRepository { get; }
     IPanelsRepository PanelsRepository { get; }
     IPanelLinksRepository PanelLinksRepository { get; }
     IPanelConfigsRepository PanelConfigsRepository { get; }

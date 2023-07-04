@@ -11,8 +11,8 @@ public static class AppUserExtensions
             initials += user.LastName[0].ToString().ToUpper();
         return initials;
     }
-    
-    public static string GetLoggingString(this AppUser user)
+
+    public static string ToAppUserLog(this AppUser user)
     {
         return $"User: {user.UserName} ({user.Id})";
     }

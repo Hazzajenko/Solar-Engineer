@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Extensions;
 using Identity.Application.Data.UnitOfWork;
+using Identity.Application.Extensions;
 using Identity.Application.Handlers.Notifications;
 using Identity.Contracts.Responses.Friends;
 using Identity.Domain;
@@ -55,8 +56,8 @@ public class SendFriendRequestHandler : ICommandHandler<SendFriendRequestCommand
             await _unitOfWork.AppUserLinksRepository.AddAsync(appUserLink);
             _logger.LogInformation(
                 "Created new AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived}",
-                appUser.UserName,
-                recipientUser.UserName
+                appUser.ToAppUserLog(),
+                recipientUser.ToAppUserLog()
             );
             await _unitOfWork.SaveChangesAsync().ConfigureAwait(false);
             await _mediator.Send(notificationCommand, cT);
@@ -71,11 +72,9 @@ public class SendFriendRequestHandler : ICommandHandler<SendFriendRequestCommand
         await _mediator.Send(notificationCommand, cT);
 
         _logger.LogInformation(
-            "Friend request sent from AppUserRequested: {AppUserRequestedId} - {AppUserRequestedUserName}, AppUserReceived: {AppUserReceived} - {AppUserReceivedUserName}",
-            appUser.Id,
-            appUser.UserName,
-            recipientUser.Id,
-            recipientUser.UserName
+            "Friend request sent from AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived}",
+            appUser.ToAppUserLog(),
+            recipientUser.ToAppUserLog()
         );
 
         return true;

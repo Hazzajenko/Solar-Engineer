@@ -95,7 +95,7 @@ public class UpdateManyPanelsHandler : ICommandHandler<UpdateManyPanelsCommand, 
 
         _logger.LogInformation(
             "User {User} created {Amount} {Panels} in project {Project}",
-            appUserId.ToString(),
+            command.User.ToAuthUserLog(),
             panels.Count(),
             panels.Count() == 1 ? "panel" : "panels",
             appUserProject.Project.Id.ToString()

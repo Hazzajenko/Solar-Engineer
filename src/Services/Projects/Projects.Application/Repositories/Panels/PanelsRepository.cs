@@ -54,6 +54,17 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<PanelDto>> GetManyPanelDtosAsync(
+        Guid projectId,
+        IEnumerable<Guid> panelIds
+    )
+    {
+        return await Queryable
+            .Where(x => x.ProjectId == projectId && panelIds.Contains(x.Id))
+            .ProjectToType<PanelDto>()
+            .ToListAsync();
+    }
+
     /*public async Task<bool> ArePanelLocationsUniqueAsync(
         Guid projectId,
         IEnumerable<Panel.Point> locations

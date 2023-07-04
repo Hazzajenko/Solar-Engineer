@@ -56,12 +56,6 @@ public class DeleteManyPanelsHandler : ICommandHandler<DeleteManyPanelsCommand, 
                 appUserProject.ProjectId
             );
         var panelIds = panels.Select(x => x.Id.ToString()).ToList();
-        /*var response = panelIds.ToProjectEventResponseWithStringListV3(
-            command,
-            ActionType.DeleteMany,
-            projectId.ToString(),
-            typeof(Panel)
-        );*/
         var response = panelIds.ToProjectEventResponseFromIdList<Panel>(
             command,
             ActionType.DeleteMany
@@ -70,7 +64,7 @@ public class DeleteManyPanelsHandler : ICommandHandler<DeleteManyPanelsCommand, 
 
         _logger.LogInformation(
             "User {User} deleted {Amount} {Panels} in project {Project}",
-            appUserId.ToString(),
+            command.User.ToAuthUserLog(),
             panels.Count(),
             panels.Count() == 1 ? "panel" : "panels",
             appUserProject.Project.Id.ToString()

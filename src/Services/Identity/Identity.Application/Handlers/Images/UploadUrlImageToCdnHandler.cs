@@ -41,7 +41,7 @@ public class UploadUrlImageToCdnHandler
         {
             _logger.LogError(
                 "{User} failed to upload image to blob storage",
-                appUser.GetLoggingString()
+                appUser.ToAppUserLog()
             );
             throw new Exception("Error uploading image to blob storage");
         }
@@ -51,14 +51,14 @@ public class UploadUrlImageToCdnHandler
         {
             _logger.LogError(
                 "{User} failed to upload image to blob storage",
-                appUser.GetLoggingString()
+                appUser.ToAppUserLog()
             );
 
             throw new Exception("Error uploading image to blob storage");
         }
         _logger.LogInformation(
             "{User} uploaded image to blob storage: {Uri}",
-            appUser.GetLoggingString(),
+            appUser.ToAppUserLog(),
             photoUrl
         );
 

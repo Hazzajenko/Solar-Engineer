@@ -5,13 +5,15 @@ using Identity.Contracts.Responses.Friends;
 using Identity.Domain;
 using Identity.SignalR.Commands.Friends;
 using Identity.SignalR.Hubs;
+using Infrastructure.SignalR;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
 namespace Identity.Application.Handlers.Friends;
 
-public class GetOnlineFriendsHandler : IQueryHandler<GetOnlineFriendsQuery, GetOnlineFriendsResponse>
+public class GetOnlineFriendsHandler
+    : IQueryHandler<GetOnlineFriendsQuery, GetOnlineFriendsResponse>
 {
     private readonly IConnectionsService _connections;
     private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
@@ -21,7 +23,9 @@ public class GetOnlineFriendsHandler : IQueryHandler<GetOnlineFriendsQuery, GetO
     public GetOnlineFriendsHandler(
         ILogger<GetOnlineFriendsHandler> logger,
         IIdentityUnitOfWork unitOfWork,
-        IHubContext<UsersHub, IUsersHub> hubContext, IConnectionsService connections)
+        IHubContext<UsersHub, IUsersHub> hubContext,
+        IConnectionsService connections
+    )
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
@@ -29,21 +33,27 @@ public class GetOnlineFriendsHandler : IQueryHandler<GetOnlineFriendsQuery, GetO
         _connections = connections;
     }
 
-    public async ValueTask<GetOnlineFriendsResponse> Handle(GetOnlineFriendsQuery request, CancellationToken cT)
+    public async ValueTask<GetOnlineFriendsResponse> Handle(
+        GetOnlineFriendsQuery request,
+        CancellationToken cT
+    )
     {
         var authUser = request.AuthUser;
 
-        var userFriendIds = await _unitOfWork.AppUserLinksRepository.GetUserFriendIdsAsync(authUser.Id);
+        var userFriendIds = await _unitOfWork.AppUserLinksRepository.GetUserFriendIdsAsync(
+            authUser.Id
+        );
         if (!userFriendIds.Any())
         {
             var noFriendsResponse = new GetOnlineFriendsResponse
             {
                 OnlineFriends = new List<AppUserConnectionDto>()
             };
-            await _hubContext.Clients.User(authUser.Id.ToString()).GetOnlineFriends(noFriendsResponse);
+            await _hubContext.Clients
+                .User(authUser.Id.ToString())
+                .GetOnlineFriends(noFriendsResponse);
             return noFriendsResponse;
         }
-
 
         var onlineFriendConnections = _connections.GetUserConnectionsByIds(userFriendIds);
         var response = new GetOnlineFriendsResponse
@@ -53,11 +63,7 @@ public class GetOnlineFriendsHandler : IQueryHandler<GetOnlineFriendsQuery, GetO
 
         await _hubContext.Clients.User(authUser.Id.ToString()).GetOnlineFriends(response);
 
-        _logger.LogInformation(
-            "User {UserId}-{UserName} get online friends",
-            authUser.Id.ToString(),
-            authUser.UserName
-        );
+        _logger.LogInformation("User {User} get online friends", authUser.ToAuthUserLog());
 
         return response;
     }

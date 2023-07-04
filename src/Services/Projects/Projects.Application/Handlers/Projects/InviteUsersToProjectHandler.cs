@@ -57,7 +57,7 @@ public class InviteUsersToProjectHandler
         {
             _logger.LogError(
                 "User {User} tried to invite to project {Project} without a App User Project Link",
-                appUserId,
+                command.User.ToAuthUserLog(),
                 projectId
             );
 
@@ -70,7 +70,7 @@ public class InviteUsersToProjectHandler
         {
             _logger.LogError(
                 "User {User} tried to invite to project {Project} but they do not have permission",
-                appUserId,
+                command.User.ToAuthUserLog(),
                 projectId
             );
             var message = "User does not have invite permissions in project";
@@ -100,7 +100,7 @@ public class InviteUsersToProjectHandler
 
         _logger.LogInformation(
             "User {User} invited users {Users} to project {Project}",
-            appUserId,
+            command.User.ToAuthUserLog(),
             userIds,
             appUserProject.Project.Name
         );

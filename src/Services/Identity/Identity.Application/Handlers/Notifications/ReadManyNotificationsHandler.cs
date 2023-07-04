@@ -1,4 +1,5 @@
 ﻿using Identity.Application.Data.UnitOfWork;
+using Identity.Application.Extensions;
 using Identity.Contracts.Responses.Notifications;
 using Identity.SignalR.Commands.Notifications;
 using Identity.SignalR.Hubs;
@@ -31,14 +32,6 @@ public class ReadManyNotificationsHandler : ICommandHandler<ReadManyNotification
 
         var notificationIds = command.NotificationIds.Select(Guid.Parse);
 
-        var notifications =
-            await _unitOfWork.NotificationsRepository.GetManyNotificationsByIdsAsync(
-                notificationIds
-            );
-        // Parallel.ForEach(notifications, notification => notification.SetSeenByAppUser());
-
-        // await _unitOfWork.NotificationsRepository.UpdateRangeAsync(notifications);
-
         await _unitOfWork.NotificationsRepository.ExecuteUpdateAsync(
             notification => notificationIds.Contains(notification.Id),
             notification =>
@@ -50,9 +43,8 @@ public class ReadManyNotificationsHandler : ICommandHandler<ReadManyNotification
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation(
-            "Many notifications marked read by {AppUserId} - {AppUserUserName}",
-            appUser.Id.ToString(),
-            appUser.UserName
+            "Many notifications marked read by {AppUser}",
+            appUser.ToAppUserLog()
         );
 
         return true;

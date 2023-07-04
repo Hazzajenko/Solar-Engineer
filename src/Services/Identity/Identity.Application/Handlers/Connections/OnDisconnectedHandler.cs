@@ -31,15 +31,15 @@ public class OnDisconnectedHandler : ICommandHandler<OnDisconnectedCommand, bool
         _unitOfWork = unitOfWork;
     }
 
-    public async ValueTask<bool> Handle(OnDisconnectedCommand request, CancellationToken cT)
+    public async ValueTask<bool> Handle(OnDisconnectedCommand command, CancellationToken cT)
     {
-        var userId = request.AuthUser.Id;
+        var userId = command.AuthUser.Id;
         var userConnections = _connections.GetConnections(userId);
 
         if (userConnections.Any() is false)
             return true;
 
-        _connections.Remove(userId, request.AuthUser.ConnectionId!);
+        _connections.Remove(userId, command.AuthUser.ConnectionId!);
 
         var existingConnections = _connections.GetConnections(userId);
         if (existingConnections.Any())
@@ -49,7 +49,7 @@ public class OnDisconnectedHandler : ICommandHandler<OnDisconnectedCommand, bool
 
         await _hubContext.Clients.AllExcept(userId.ToString()).UserIsOffline(userIsOfflineResponse);
 
-        _logger.LogInformation("User {U} disconnected", userId);
+        _logger.LogInformation("User {User} disconnected", command.AuthUser.ToAuthUserLog());
 
         var appUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(userId);
         appUser.ThrowHubExceptionIfNull();

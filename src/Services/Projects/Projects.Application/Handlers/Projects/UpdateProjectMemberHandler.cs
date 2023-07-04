@@ -45,7 +45,7 @@ public class UpdateProjectMemberHandler : ICommandHandler<UpdateProjectMemberCom
         {
             _logger.LogError(
                 "User {User} tried to update project {Project} without a App User Project Link",
-                appUserId,
+                command.User.ToAuthUserLog(),
                 projectId
             );
             var message = $"User {appUserId} is not apart of project {projectId}";
@@ -56,7 +56,7 @@ public class UpdateProjectMemberHandler : ICommandHandler<UpdateProjectMemberCom
         {
             _logger.LogError(
                 "User {User} tried to update project {Project} without permission",
-                appUserId,
+                command.User.ToAuthUserLog(),
                 projectId
             );
             var message =
@@ -76,7 +76,7 @@ public class UpdateProjectMemberHandler : ICommandHandler<UpdateProjectMemberCom
         {
             _logger.LogError(
                 "User {User} tried to update project {Project} for user {Recipient} without a App User Project Link",
-                appUserId,
+                command.User.ToAuthUserLog(),
                 projectId,
                 recipientUserId
             );
@@ -93,7 +93,7 @@ public class UpdateProjectMemberHandler : ICommandHandler<UpdateProjectMemberCom
             {
                 _logger.LogError(
                     "User {User} tried to update project {Project} with invalid role {Role}",
-                    appUserId,
+                    command.User.ToAuthUserLog(),
                     projectId,
                     changes.Role
                 );

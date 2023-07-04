@@ -88,17 +88,6 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
             command,
             ActionType.Create
         );
-        // var panelLinkResponse = panelLink.ToProjectEventResponseV3(command, ActionType.Create);
-        /*
-        var positiveToPanelResponse = positiveToPanel.ToProjectEventResponseV3(
-            command,
-            ActionType.Update
-        );
-        var negativeToPanelResponse = negativeToPanel.ToProjectEventResponseV3(
-            command,
-            ActionType.Update
-        );
-        */
 
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
@@ -106,16 +95,10 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
             );
 
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(panelLinkResponse);
-        /*await _hubContext.Clients
-            .Users(projectMembers)
-            .ReceiveProjectEvent(positiveToPanelResponse);
-        await _hubContext.Clients
-            .Users(projectMembers)
-            .ReceiveProjectEvent(negativeToPanelResponse);*/
 
         _logger.LogInformation(
             "User {User} created panel link {Panel} in project {Project}",
-            appUserIdGuid.ToString(),
+            command.User.ToAuthUserLog(),
             panelLink.Id.ToString(),
             appUserProject.Project.Id.ToString()
         );

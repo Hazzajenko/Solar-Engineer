@@ -43,7 +43,6 @@ public class SendDeviceInfoHandler : ICommandHandler<SendDeviceInfoCommand, bool
 
         var connectionIds = _connections.GetConnections(user.Id);
         await _hubContext.Clients.AllExcept(connectionIds).UserIsOnline(userIsOnlineResponse);
-        // await _hubContext.Clients.AllExcept(user.Id.ToString()).UserIsOnline(userIsOnlineResponse);
         return true;
     }
 }

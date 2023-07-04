@@ -78,7 +78,7 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
 
         _logger.LogInformation(
             "User {User} updated panel {Panel} in project {Project}",
-            appUserId.ToString(),
+            command.User.ToAuthUserLog(),
             panel.Id.ToString(),
             appUserProject.Project.Name
         );

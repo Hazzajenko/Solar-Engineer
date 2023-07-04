@@ -20,8 +20,6 @@ public class CreateDpImageHandler : ICommandHandler<CreateDpImageCommand, Create
     )
     {
         SKBitmap bitmap = GenerateBitmap(command.Initials);
-
-        // var result = await Task.Run(() => ConvertBitmapToPng(bitmap), cT);
         var result = ConvertBitmapToPng(bitmap);
 
         _logger.LogInformation("Image generated for initials: {Initials}", command.Initials);

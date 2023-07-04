@@ -1,4 +1,5 @@
 ﻿using Identity.Application.Data.UnitOfWork;
+using Identity.Application.Extensions;
 using Identity.Contracts.Responses.Notifications;
 using Identity.SignalR.Commands.Notifications;
 using Identity.SignalR.Hubs;
@@ -38,9 +39,8 @@ public class GetUserNotificationsHandler : ICommandHandler<GetUserNotificationsC
         var response = new ReceiveAppUserNotificationsResponse { Notifications = notifications };
 
         _logger.LogInformation(
-            "Sending notifications to AppUser: {AppUserId} - {AppUserUserName}",
-            appUser.Id,
-            appUser.UserName
+            "Sending notifications to AppUser: {AppUser}",
+            appUser.ToAppUserLog()
         );
 
         await _hubContext.Clients.User(appUser.Id.ToString()).ReceiveAppUserNotifications(response);
