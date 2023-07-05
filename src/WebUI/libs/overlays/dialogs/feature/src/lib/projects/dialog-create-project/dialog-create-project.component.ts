@@ -177,4 +177,18 @@ export class DialogCreateProjectComponent {
 	submitSelectedTemplate() {
 		this.closeTemplateDialog()
 	}
+
+	createEmptyIfNoProjectsExist() {
+		const projects = this._projects.select.allProjects()
+		if (projects.length > 0) {
+			return
+		}
+
+		this._projects.dispatch.createProjectSignalr({
+			name: 'My First Project',
+			colour: TAILWIND_COLOUR_500.blue,
+			memberIds: [],
+			templateType: 'Blank',
+		})
+	}
 }

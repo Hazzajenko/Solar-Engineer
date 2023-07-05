@@ -72,7 +72,6 @@ export class ContextMenuFriendComponent {
 			component: DIALOG_COMPONENT.WARNING_TEMPLATE,
 			data,
 		})
-		// this._usersStore.dispatch.removeFriend(this.contextMenu.data.userId)
 	}
 
 	openInviteToProjectDialog(project: ProjectModel) {

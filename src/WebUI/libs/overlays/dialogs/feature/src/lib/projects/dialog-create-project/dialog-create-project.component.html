@@ -1,4 +1,4 @@
-<dialog-backdrop-template-component #dialog>
+<dialog-backdrop-template-component #dialog (backdropClick)="createEmptyIfNoProjectsExist()">
 	<div class="p-8">
 		<h5
 			class="inline-flex items-center mb-6 text-sm font-semibold text-gray-500 uppercase dark:text-gray-400"
