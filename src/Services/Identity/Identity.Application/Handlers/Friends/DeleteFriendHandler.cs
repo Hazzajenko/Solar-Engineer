@@ -14,15 +14,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Identity.Application.Handlers.Friends;
 
-public class RemoveFriendHandler : ICommandHandler<RemoveFriendCommand, bool>
+public class DeleteFriendHandler : ICommandHandler<DeleteFriendCommand, bool>
 {
-    private readonly ILogger<RemoveFriendHandler> _logger;
+    private readonly ILogger<DeleteFriendHandler> _logger;
     private readonly IIdentityUnitOfWork _unitOfWork;
     private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
     private readonly IMediator _mediator;
 
-    public RemoveFriendHandler(
-        ILogger<RemoveFriendHandler> logger,
+    public DeleteFriendHandler(
+        ILogger<DeleteFriendHandler> logger,
         IIdentityUnitOfWork unitOfWork,
         IHubContext<UsersHub, IUsersHub> hubContext,
         IMediator mediator
@@ -34,7 +34,7 @@ public class RemoveFriendHandler : ICommandHandler<RemoveFriendCommand, bool>
         _mediator = mediator;
     }
 
-    public async ValueTask<bool> Handle(RemoveFriendCommand request, CancellationToken cT)
+    public async ValueTask<bool> Handle(DeleteFriendCommand request, CancellationToken cT)
     {
         var appUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(request.AuthUser.Id);
         var recipientUserId = request.RecipientUserId.ToGuid();
@@ -48,7 +48,7 @@ public class RemoveFriendHandler : ICommandHandler<RemoveFriendCommand, bool>
         if (appUserLink is null)
         {
             _logger.LogError(
-                "AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived} not found. Cannot accept reject request. Creating new AppUserLink...",
+                "AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived} not found. Cannot remove friend. Creating new AppUserLink...",
                 appUser.ToAppUserLog(),
                 recipientUser.ToAppUserLog()
             );

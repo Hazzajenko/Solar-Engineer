@@ -84,9 +84,9 @@ public class UsersHub : Hub<IUsersHub>
         await _mediator.Send(new RejectFriendRequestCommand(Context.ToAuthUser(), senderUserId));
     }
 
-    public async Task RemoveFriend(string recipientUserId)
+    public async Task DeleteFriend(string recipientUserId)
     {
-        await _mediator.Send(new RemoveFriendCommand(Context.ToAuthUser(), recipientUserId));
+        await _mediator.Send(new DeleteFriendCommand(Context.ToAuthUser(), recipientUserId));
     }
 
     public async Task ReceiveNotification(string notificationId)

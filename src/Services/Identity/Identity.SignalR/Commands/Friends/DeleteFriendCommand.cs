@@ -5,5 +5,5 @@ using Mediator;
 
 namespace Identity.SignalR.Commands.Friends;
 
-public sealed record RemoveFriendCommand(AuthUser AuthUser, string RecipientUserId)
+public sealed record DeleteFriendCommand(AuthUser AuthUser, string RecipientUserId)
     : ICommand<bool>;

@@ -1,7 +1,6 @@
 ﻿using ApplicationCore.Interfaces;
 using Ardalis.SmartEnum;
 
-
 namespace Identity.Domain;
 
 public class AppUserLink : IEntityToEntity
@@ -87,13 +86,13 @@ public class AppUserLink : IEntityToEntity
         {
             TransitionRequestedTo(FriendRequestStatus.SentRemoval);
             TransitionReceivedTo(FriendRequestStatus.ReceivedRemoval);
+            Friends = false;
             return;
         }
 
         TransitionRequestedTo(FriendRequestStatus.ReceivedRemoval);
         TransitionReceivedTo(FriendRequestStatus.SentRemoval);
         Friends = false;
-        // BecameFriendsTime = DateTime.UtcNow;
     }
 
     private void TransitionRequestedTo(FriendRequestStatus status)
