@@ -1206,7 +1206,8 @@ export class DesignCanvasDirective implements OnInit {
 					this.rawMousePos = eventToPointLocation(event)
 					this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 					this.onMouseMoveHandler(event, this.currentPoint)
-					this._mouseThrottled(this.currentPoint)
+					// * Sending mouse move events to signalR
+					// this._mouseThrottled(this.currentPoint)
 				})
 				this._renderer.listen(this.canvas, ContextMenuEvent, (event: PointerEvent) => {
 					event.stopPropagation()

@@ -8,6 +8,7 @@ export const USERS_SIGNALR_EVENT = {
 	RECEIVE_FRIEND: 'ReceiveFriend',
 	RECEIVE_SEARCH_FOR_APP_USER_BY_USER_NAME_RESPONSE: 'ReceiveSearchForAppUserByUserNameResponse',
 	RECEIVE_FRIEND_REQUEST_EVENT: 'ReceiveFriendRequestEvent',
+	FRIEND_REMOVED: 'FriendRemoved',
 	NOTIFICATION_UPDATED: 'NotificationUpdated',
 	RECEIVE_NOTIFICATION: 'ReceiveNotification',
 	UPDATE_NOTIFICATION: 'UpdateNotification',

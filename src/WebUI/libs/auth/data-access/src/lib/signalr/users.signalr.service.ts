@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { createHubConnection, HubConnectionRequest } from '@app/signalr'
 import {
+	FriendRemovedResponse,
 	FriendRequestResponse,
 	GetOnlineFriendsResponse,
 	GetOnlineUsersResponse,
@@ -95,6 +96,16 @@ export class UsersSignalrService implements ILogger {
 			this._usersStore.dispatch.receiveFriend(response.friend)
 		})
 
+		this.onHub(USERS_SIGNALR_EVENT.FRIEND_REMOVED, (response: FriendRemovedResponse) => {
+			console.log(USERS_SIGNALR_EVENT.FRIEND_REMOVED, response)
+			this._usersStore.dispatch.updateUser({
+				id: response.appUserId,
+				changes: {
+					isFriend: false,
+				},
+			})
+		})
+
 		this.onHub(
 			USERS_SIGNALR_EVENT.RECEIVE_SEARCH_FOR_APP_USER_BY_USER_NAME_RESPONSE,
 			(response: SearchForUserResponse) => {
@@ -174,10 +185,8 @@ export class UsersSignalrService implements ILogger {
 		this.invokeHub(USERS_SIGNALR_METHOD.REJECT_FRIEND_REQUEST, appUserId)
 	}
 
-	removeFriend(appUserId: string) {
-		// TODO: implement
-		console.log('removeFriend', appUserId)
-		// this.invokeHubConnection(USERS_SIGNALR_METHOD.REMOVE_FRIEND, appUserId)
+	deleteFriend(appUserId: string) {
+		this.invokeHub(USERS_SIGNALR_METHOD.DELETE_FRIEND, appUserId)
 	}
 
 	readManyNotifications(notificationIds: string[]) {

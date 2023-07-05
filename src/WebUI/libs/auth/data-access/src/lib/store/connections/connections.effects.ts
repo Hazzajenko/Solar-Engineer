@@ -1,13 +1,12 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
 import { map, of, switchMap } from 'rxjs'
-import { WebUserModel } from '@auth/shared'
+import { DynamicNotificationModel, WebUserModel } from '@auth/shared'
 import { Store } from '@ngrx/store'
 import { HttpClient } from '@angular/common/http'
 import { NotificationsActions } from '@overlays/notifications/data-access'
 import { ConnectionsActions } from './connections.actions'
 import { selectUserById, UsersActions } from '../users'
-import { createLocalNotification } from '@auth/utils'
 
 export const userIsOnlineDispatchNotification$ = createEffect(
 	(actions$ = inject(Actions), http = inject(HttpClient), store = inject(Store)) => {
@@ -31,11 +30,25 @@ export const userIsOnlineDispatchNotification$ = createEffect(
 						map((userOrAction) => {
 							const user = 'type' in userOrAction ? userOrAction.user : userOrAction
 							if (user.isOnline && user.isFriend) {
-								return NotificationsActions.addLocalNotification({
-									localNotification: createLocalNotification.userIsOnline(user),
+								const dynamicNotification: DynamicNotificationModel = {
+									id: user.id,
+									title: user.displayName,
+									subtitle: `${user.displayName} is online`,
+									photoUrl: user.photoUrl,
+									dismissButton: {
+										text: 'Dismiss',
+										onClick: undefined,
+									},
+									actionButton: undefined,
+									message: undefined,
+								}
+								return NotificationsActions.addDynamicNotification({
+									dynamicNotification,
 								})
+								// return NotificationsActions.addLocalNotification({
+								// 	localNotification: createLocalNotification.userIsOnline(user),
+								// })
 							}
-							// const localNotification = createLocalNotification.userIsOnline(user)
 							return NotificationsActions.noop()
 						}),
 					)

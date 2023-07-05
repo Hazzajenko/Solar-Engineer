@@ -10,15 +10,6 @@ import { AuthActions } from '../auth'
 import { injectUsersStore } from './users.store'
 import { ConnectionsActions } from '../connections'
 
-/*export const initializeUsersHub$ = createEffect(
- (actions$ = inject(Actions), usersSignalr = inject(UsersSignalrService)) => {
- return actions$.pipe(
- ofType(AuthActions.initializeApp),
- tap(({ token, deviceInfo }) => usersSignalr.init(token, deviceInfo)),
- )
- },
- { functional: true, dispatch: false },
- )*/
 export const addAppUserToUsersStore$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(
@@ -50,20 +41,6 @@ export const searchForAppUsers$ = createEffect(
 	},
 	{ functional: true, dispatch: false },
 )
-/*
-
- export const searchForUsers$ = createEffect(
- (actions$ = inject(Actions), usersSignalr = inject(UsersSignalrService)) => {
- return actions$.pipe(
- ofType(UsersActions.searchForAppUserByUserName),
- tap(({ query }) => {
- usersSignalr.searchForAppUserByUserName(query)
- }),
- )
- },
- { functional: true, dispatch: false },
- )
- */
 
 export const sendFriendRequest$ = createEffect(
 	(actions$ = inject(Actions), usersSignalr = inject(UsersSignalrService)) => {
@@ -106,7 +83,7 @@ export const removeFriend$ = createEffect(
 		return actions$.pipe(
 			ofType(UsersActions.removeFriend),
 			tap(({ userId }) => {
-				usersSignalr.removeFriend(userId)
+				usersSignalr.deleteFriend(userId)
 			}),
 		)
 	},

@@ -1,0 +1,213 @@
+<div class="pointer-events-none fixed inset-0 flex px-4 py-6 sm:items-start sm:p-6 z-50">
+	<div class="flex w-full flex-col items-center space-y-4 sm:items-end">
+		<ng-container *ngFor="let notification of notifications()">
+			<ng-container [ngSwitch]="notification.componentType">
+				<ng-container *ngSwitchCase="NOTIFICATION_COMPONENT_TYPE.SIGNALR">
+					<ng-container
+						*ngTemplateOutlet="signalrNotification; context: { notification: notification }"
+					/>
+				</ng-container>
+				<ng-container *ngSwitchCase="NOTIFICATION_COMPONENT_TYPE.LOCAL">
+					<ng-container
+						*ngTemplateOutlet="localNotification; context: { notification: notification }"
+					/>
+				</ng-container>
+			</ng-container>
+		</ng-container>
+	</div>
+</div>
+
+<ng-template #signalrNotification let-notification="notification">
+	<ng-container *ngIf="notification | isSignalrNotification as notification">
+		<div
+			*ngIf="!notification.seenByAppUser"
+			@notificationAnimation
+			[id]="notification.id"
+			class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
+		>
+			<div class="p-4">
+				<div class="flex items-start">
+					<div class="flex-shrink-0 pt-0.5">
+						<img
+							[ngSrc]="notification.senderAppUserPhotoUrl"
+							alt=""
+							class="h-10 w-10 rounded-full"
+							height="40"
+							width="40"
+						/>
+					</div>
+					<div class="ml-3 w-0 flex-1">
+						<p class="text-sm font-medium text-gray-900">
+							{{ notification.senderAppUserDisplayName }}
+						</p>
+						<p class="text-xs text-gray-900">
+							{{ notification.senderAppUserUserName }}
+						</p>
+						<div class="flex flex-row items-center justify-between space-x-3">
+							<p class="mt-1 text-sm text-gray-500">
+								{{ notification | getNotificationContentMessageBasedOnType }}
+							</p>
+							<div class="flex items-center justify-center">
+								<ng-container
+									*ngIf="
+										notification.notificationType === NOTIFICATION_TYPE.FRIEND_REQUEST_RECEIVED ||
+										notification.notificationType === NOTIFICATION_TYPE.PROJECT_INVITE_RECEIVED
+									"
+								>
+									<button
+										(click)="acceptNotification(notification)"
+										class="inline-flex items-center rounded-md bg-indigo-600 p-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										type="button"
+									>
+										Accept
+									</button>
+									<button
+										(click)="declineNotification(notification)"
+										class="ml-3 inline-flex items-center rounded-md bg-white p-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+										type="button"
+									>
+										Decline
+									</button>
+								</ng-container>
+								<ng-container
+									*ngIf="
+										notification.notificationType === NOTIFICATION_TYPE.FRIEND_REQUEST_ACCEPTED ||
+										notification.notificationType === NOTIFICATION_TYPE.PROJECT_INVITE_ACCEPTED
+									"
+								>
+									<button
+										(click)="dismissNotification(notification)"
+										class="inline-flex items-center rounded-md bg-indigo-600 p-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										type="button"
+									>
+										Dismiss
+									</button>
+								</ng-container>
+								<ng-container
+									*ngIf="notification.notificationType === NOTIFICATION_TYPE.MESSAGE_RECEIVED"
+								>
+									<button
+										(click)="replyToMessage(notification)"
+										class="inline-flex items-center rounded-md bg-indigo-600 p-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										type="button"
+									>
+										Reply
+									</button>
+									<button
+										(click)="dismissNotification(notification)"
+										class="inline-flex items-center rounded-md bg-indigo-600 p-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										type="button"
+									>
+										Dismiss
+									</button>
+								</ng-container>
+							</div>
+						</div>
+					</div>
+					<div class="ml-4 flex flex-shrink-0">
+						<button
+							class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+							type="button"
+						>
+							<span class="sr-only">Close</span>
+							<svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+								<path
+									d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"
+								/>
+							</svg>
+						</button>
+					</div>
+				</div>
+			</div>
+			<div
+				#progressBar
+				[id]="'progressBar-' + notification.id"
+				class="relative bottom-0 left-0 h-1 bg-gray-300"
+			></div>
+		</div>
+	</ng-container>
+</ng-template>
+
+<ng-template #localNotification let-notification="notification">
+	<ng-container *ngIf="notification | isLocalNotification as notification">
+		<div
+			*ngIf="notification"
+			@notificationAnimation
+			[id]="notification.id"
+			class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
+		>
+			<div class="p-4">
+				<div class="flex items-start">
+					<div *ngIf="notification.photoUrl" class="flex-shrink-0 pt-0.5">
+						<img
+							[ngSrc]="notification.photoUrl"
+							alt=""
+							class="h-10 w-10 rounded-full"
+							height="40"
+							width="40"
+						/>
+					</div>
+					<div class="ml-3 w-0 flex-1">
+						<p class="text-sm font-medium text-gray-900">
+							{{ notification.title }}
+						</p>
+						<p *ngIf="notification.subtitle" class="text-xs text-gray-900">
+							{{ notification.subtitle }}
+						</p>
+						<div class="flex flex-row items-center justify-between space-x-3">
+							<p class="mt-1 text-sm text-gray-500">
+								{{ notification.message }}
+							</p>
+							<div class="flex items-center justify-center">
+								<ng-container *ngIf="notification.actionButton; else noActionButton">
+									<button
+										(click)="dispatchNotificationAction(notification)"
+										class="inline-flex items-center rounded-md bg-indigo-600 p-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										type="button"
+									>
+										{{ notification.actionButton.text }}
+									</button>
+									<button
+										(click)="dismissNotification(notification)"
+										class="ml-3 inline-flex items-center rounded-md bg-white p-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+										type="button"
+									>
+										{{ notification.dismissButton.text }}
+									</button>
+								</ng-container>
+								<ng-template #noActionButton>
+									<button
+										(click)="dismissNotification(notification)"
+										class="inline-flex items-center rounded-md bg-indigo-600 p-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										type="button"
+									>
+										{{ notification.dismissButton.text }}
+									</button>
+								</ng-template>
+							</div>
+						</div>
+					</div>
+					<div class="ml-4 flex flex-shrink-0">
+						<button
+							(click)="dismissNotification(notification)"
+							class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+							type="button"
+						>
+							<span class="sr-only">Close</span>
+							<svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+								<path
+									d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"
+								/>
+							</svg>
+						</button>
+					</div>
+				</div>
+			</div>
+			<div
+				#progressBar
+				[id]="'progressBar-' + notification.id"
+				class="relative bottom-0 left-0 h-1 bg-gray-300"
+			></div>
+		</div>
+	</ng-container>
+</ng-template>

@@ -19,6 +19,8 @@ import {
 	ContextMenuItemComponent,
 	ContextMenuSubHeadingComponent,
 } from '../context-menu-builder'
+import { DialogWarningTemplateInput } from '@overlays/dialogs/feature'
+import { assertNotNull } from '@shared/utils'
 
 @Component({
 	selector: 'context-menu-friend',
@@ -56,7 +58,21 @@ export class ContextMenuFriendComponent {
 	}
 
 	removeFriend() {
-		this._usersStore.dispatch.removeFriend(this.contextMenu.data.userId)
+		const user = this._usersStore.select.getById(this.contextMenu.data.userId)()
+		assertNotNull(user, 'user')
+		const data: DialogWarningTemplateInput = {
+			title: `Remove Friend ${user.displayName}`,
+			message: `Are you sure you want to remove ${user.displayName} as a friend?`,
+			buttonText: 'Remove Friend',
+			buttonAction: () => {
+				this._usersStore.dispatch.removeFriend(this.contextMenu.data.userId)
+			},
+		}
+		this._uiStore.dispatch.openDialog({
+			component: DIALOG_COMPONENT.WARNING_TEMPLATE,
+			data,
+		})
+		// this._usersStore.dispatch.removeFriend(this.contextMenu.data.userId)
 	}
 
 	openInviteToProjectDialog(project: ProjectModel) {

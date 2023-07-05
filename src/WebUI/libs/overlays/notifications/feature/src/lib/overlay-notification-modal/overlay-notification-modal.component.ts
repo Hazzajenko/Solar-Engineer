@@ -150,7 +150,6 @@ export class OverlayNotificationModalComponent implements AfterViewInit {
 	}
 
 	triggerNotificationTimer(notification: NotificationModel, progressBar: HTMLDivElement) {
-		// this.notificationStartTimeMap.set(notification.id, Date.now())
 		const duration = DEFAULT_NOTIFICATION_DURATION
 		setTimeout(() => {
 			this._notificationsStore.dispatch.updateNotification({

@@ -112,6 +112,8 @@
 				"libs/overlays/notifications/data-access/src/index.ts"
 			],
 			"@overlays/notifications/feature": ["libs/overlays/notifications/feature/src/index.ts"],
+			"@overlays/notifications/shared": ["libs/overlays/notifications/shared/src/index.ts"],
+			"@overlays/notifications/utils": ["libs/overlays/notifications/utils/src/index.ts"],
 			"@overlays/side-uis/feature": ["libs/overlays/side-uis/feature/src/index.ts"],
 			"@overlays/toolbars/feature": ["libs/overlays/toolbars/feature/src/index.ts"],
 			"@overlays/ui-store/data-access": ["libs/overlays/ui-store/data-access/src/index.ts"],

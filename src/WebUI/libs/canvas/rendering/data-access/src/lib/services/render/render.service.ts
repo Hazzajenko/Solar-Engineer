@@ -109,15 +109,16 @@ export class RenderService {
 		return this._previousFpsStats.reduce((a, b) => a + b) / this._previousFpsStats.length
 	}
 
-	_userPointsEffect = effect(() => {
-		const userPoints = this._userPointsStore.select.allPoints()
-		if (userPoints) {
-			this.renderCanvasApp({
-				userPoints,
-			})
-		}
-		this._userPointsStore.dispatch.deleteManyPoints(userPoints.map((p) => p.id))
-	})
+	// * For rendering mouse cursors for other users in same project
+	// _userPointsEffect = effect(() => {
+	// 	const userPoints = this._userPointsStore.select.allPoints()
+	// 	if (userPoints) {
+	// 		this.renderCanvasApp({
+	// 			userPoints,
+	// 		})
+	// 	}
+	// 	this._userPointsStore.dispatch.deleteManyPoints(userPoints.map((p) => p.id))
+	// })
 	offset = 0
 	throttledRenderCanvasApp = throttle(this.renderFn, 1000 / 60)
 
