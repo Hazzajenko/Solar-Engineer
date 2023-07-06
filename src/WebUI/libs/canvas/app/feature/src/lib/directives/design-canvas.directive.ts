@@ -10,7 +10,7 @@ import {
 	selectionBoxMouseUp,
 	setupCanvas,
 } from '../utils'
-import { Directive, ElementRef, inject, NgZone, OnInit, Renderer2 } from '@angular/core'
+import { computed, Directive, ElementRef, inject, NgZone, OnInit, Renderer2 } from '@angular/core'
 import {
 	ContextMenuEvent,
 	CURSOR_TYPE,
@@ -37,6 +37,7 @@ import { injectSelectedStore, SelectedService } from '@canvas/selected/data-acce
 import {
 	EntityFactoryService,
 	injectEntityStore,
+	injectProjectsStore,
 	isPointOverCurvedLineNoCtx,
 	PanelLinksService,
 	ProjectsSignalrService,
@@ -110,6 +111,7 @@ export class DesignCanvasDirective implements OnInit {
 	private _entityStore = injectEntityStore()
 	private _uiStore = injectUiStore()
 	private _projectsSignalr = inject(ProjectsSignalrService)
+	private _projectsStore = injectProjectsStore()
 	// private _entities = injectEntityStore()
 	private _selected = inject(SelectedService)
 
@@ -170,6 +172,9 @@ export class DesignCanvasDirective implements OnInit {
 		})
 	}, 50)
 	user = injectAppUser()
+	isEmptyProjectState = computed(() => {
+		return !!this.user() && this._projectsStore.select.allProjects().length === 0
+	})
 
 	platform: Platform = getCurrentPlatform()
 	currentTransformedCursor!: TransformedPoint
@@ -1186,6 +1191,7 @@ export class DesignCanvasDirective implements OnInit {
 				this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_UP, (event: PointerEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
+					if (this.isEmptyProjectState()) return
 					console.log('mouse up', event)
 					this.rawMousePos = eventToPointLocation(event)
 					this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
@@ -1195,6 +1201,7 @@ export class DesignCanvasDirective implements OnInit {
 				this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_DOWN, (event: PointerEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
+					if (this.isEmptyProjectState()) return
 					console.log('mouse down', event)
 					this.rawMousePos = eventToPointLocation(event)
 					this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
@@ -1203,6 +1210,7 @@ export class DesignCanvasDirective implements OnInit {
 				this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
+					if (this.isEmptyProjectState()) return
 					this.rawMousePos = eventToPointLocation(event)
 					this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 					this.onMouseMoveHandler(event, this.currentPoint)
@@ -1212,6 +1220,7 @@ export class DesignCanvasDirective implements OnInit {
 				this._renderer.listen(this.canvas, ContextMenuEvent, (event: PointerEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
+					if (this.isEmptyProjectState()) return
 					this.rawMousePos = eventToPointLocation(event)
 					console.log('context menu', event)
 					this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
@@ -1220,6 +1229,7 @@ export class DesignCanvasDirective implements OnInit {
 				this._renderer.listen(this.canvas, DoubleClickEvent, (event: PointerEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
+					if (this.isEmptyProjectState()) return
 					this.rawMousePos = eventToPointLocation(event)
 					this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 					this.doubleClickHandler(event, this.currentPoint)
@@ -1228,10 +1238,12 @@ export class DesignCanvasDirective implements OnInit {
 					event.stopPropagation()
 					event.preventDefault()
 					this.wheelScrollHandler(event)
+					if (this.isEmptyProjectState()) return
 				}) // { passive: false } is required to prevent default
 				this._renderer.listen(window, 'resize', (event: Event) => {
 					event.stopPropagation()
 					event.preventDefault()
+					if (this.isEmptyProjectState()) return
 					this.ctx.canvas.width = window.innerWidth
 					this.ctx.canvas.height = window.innerHeight
 					this._renderer.setStyle(this.canvas, 'width', '100%')
@@ -1245,6 +1257,7 @@ export class DesignCanvasDirective implements OnInit {
 				this._renderer.listen(window, EVENT_TYPE.KEY_UP, (event: KeyboardEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
+					if (this.isEmptyProjectState()) return
 					console.log('keyup menu', event)
 					this._keys.keyUpHandlerV4(event, this.rawMousePos, this.currentPoint)
 				})
@@ -1254,29 +1267,34 @@ export class DesignCanvasDirective implements OnInit {
 				this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_UP, (event: PointerEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
+					if (this.isEmptyProjectState()) return
 					console.log('POINTER_UP start', event)
 				})
 				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_START, (event: TouchEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
+					if (this.isEmptyProjectState()) return
 					console.log('touch start', event)
 					this.onTouchStartHandler(event)
 				})
 				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_MOVE, (event: TouchEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
+					if (this.isEmptyProjectState()) return
 					// console.log('touch move', event)
 					this.onTouchMoveHandler(event)
 				})
 				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_END, (event: TouchEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
+					if (this.isEmptyProjectState()) return
 					console.log('touch end', event)
 					this.onTouchEndHandler(event)
 				})
 				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_CANCEL, (event: TouchEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
+					if (this.isEmptyProjectState()) return
 					console.log('touch cancel', event)
 					// this.onTouchCancelHandler(event)
 				})

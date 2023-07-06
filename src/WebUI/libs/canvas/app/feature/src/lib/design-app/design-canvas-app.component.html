@@ -13,6 +13,8 @@
 	<svg-input class="w-6 h-6" svgName="SvgBars3BottomLeft" />
 </button>
 
+<app-empty-project-state *ngIf="isEmptyProjectState()" />
+
 <!--<button
 	(click)="clearLocalStorage()"
 	*ngIf="!user() && isDevelopment"
@@ -50,13 +52,10 @@
 <side-ui-nav-bar />
 
 <overlay-tool-bar-component class="hidden md:block" />
-<!--<overlay-selected-string-tool-bar *ngIf="stringIsSelected()" />-->
 <overlay-mobile-bottom-toolbar class="md:hidden" />
 <overlay-mobile-side-action-toolbar class="md:hidden" />
 
 <overlay-notification />
-<!--<overlay-notification-modal />-->
-<!--<overlay-dynamic-notification />-->
 
 <div
 	class="absolute bottom-0 left-2 font-medium tracking-tight z-50 text-2xs text-gray-700 font-consolas"

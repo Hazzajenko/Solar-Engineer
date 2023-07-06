@@ -53,6 +53,7 @@ import { injectAuthStore } from '@auth/data-access'
 import { LoadingProjectSpinnerComponent } from '../ui/loading-project-spinner/loading-project-spinner.component'
 import { DefaultHoverEffectsDirective } from '@shared/directives'
 import { environment } from '@shared/environment'
+import { EmptyProjectStateComponent } from '../ui/empty-project-state/empty-project-state.component'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -82,6 +83,7 @@ import { environment } from '@shared/environment'
 		InputSvgComponent,
 		OverlayDynamicNotificationComponent,
 		OverlayNotificationComponent,
+		EmptyProjectStateComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
@@ -108,6 +110,10 @@ export class DesignCanvasAppComponent implements AfterViewInit {
 
 	showProjectSpinner = computed(() => {
 		return !this.isProjectReadyToRender() && !!this.user() && this.userProjects().length > 0
+	})
+
+	isEmptyProjectState = computed(() => {
+		return !!this.user() && this.userProjects().length === 0
 	})
 
 	version = signal('1.0.8')

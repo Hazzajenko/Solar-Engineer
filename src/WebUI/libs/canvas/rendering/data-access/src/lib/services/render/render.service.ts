@@ -24,7 +24,7 @@ import {
 	drawTooltipWithOptionsCtx,
 	handleCustomEntitiesBeforeLinkRender,
 } from './render-fns'
-import { effect, inject, Injectable } from '@angular/core'
+import { computed, effect, inject, Injectable } from '@angular/core'
 import { assertNotNull, shadeColor } from '@shared/utils'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import {
@@ -46,7 +46,7 @@ import {
 } from '@entities/shared'
 import { throttle } from 'lodash'
 import { ObjectPositioningStoreService } from '@canvas/object-positioning/data-access'
-import { injectAuthStore } from '@auth/data-access'
+import { injectAppUser, injectAuthStore } from '@auth/data-access'
 import { injectUiStore } from '@overlays/ui-store/data-access'
 
 @Injectable({
@@ -122,11 +122,24 @@ export class RenderService {
 	offset = 0
 	throttledRenderCanvasApp = throttle(this.renderFn, 1000 / 60)
 
+	user = injectAppUser()
+	isEmptyProjectState = computed(() => {
+		return !!this.user() && this._projectsStore.select.allProjects().length === 0
+	})
+
 	constructor() {
 		this.checkFps()
 		effect(() => {
 			if (this.isProjectReadyToRender) {
 				this.renderCanvasApp()
+			}
+		})
+		effect(() => {
+			const isEmptyProjectState = this.isEmptyProjectState()
+			if (isEmptyProjectState) {
+				if (this.ctx) {
+					this.clearCanvas(this.ctx)
+				}
 			}
 		})
 	}
@@ -174,6 +187,7 @@ export class RenderService {
 	}
 
 	renderCanvasApp(options?: Partial<CanvasRenderOptions>) {
+		if (this.isEmptyProjectState()) return
 		if (!this.isProjectReadyToRender) return
 		if (this._throttleRender) {
 			this.throttledRenderCanvasApp(options)
@@ -185,7 +199,7 @@ export class RenderService {
 		this.renderFn(options)
 	}
 
-	renderFn(options?: Partial<CanvasRenderOptions>) {
+	private renderFn(options?: Partial<CanvasRenderOptions>) {
 		this.render((ctx) => {
 			ctx.save()
 			ctx.strokeStyle = PANEL_STROKE_STYLE.DEFAULT
@@ -630,6 +644,14 @@ export class RenderService {
 			}
 			ctx.restore()
 		}
+	}
+
+	private clearCanvas(ctx: CanvasRenderingContext2D) {
+		ctx.save()
+		ctx.strokeStyle = PANEL_STROKE_STYLE.DEFAULT
+		ctx.setTransform(1, 0, 0, 1, 0, 0)
+		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+		ctx.restore()
 	}
 }
 
