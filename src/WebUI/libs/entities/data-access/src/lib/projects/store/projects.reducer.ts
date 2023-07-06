@@ -106,14 +106,18 @@ const reducer = createReducer(
 	),
 	on(ProjectsActions.deleteProjectNoSignalr, (state, { projectId }) => {
 		const newState = projectsAdapter.removeOne(projectId, state)
-		if (projectId === state.selectedProjectId) {
-			return {
-				...newState,
-				selectedProjectId: undefined,
-			}
-		}
+		// if (projectId === state.selectedProjectId) {
+		// 	return {
+		// 		...newState,
+		// 		selectedProjectId: undefined,
+		// 	}
+		// }
 		return newState
 	}),
+	on(ProjectsActions.setSelectedProjectToNull, (state) => ({
+		...state,
+		selectedProjectId: undefined,
+	})),
 	on(ProjectsActions.clearProjectsState, () => initialProjectsState),
 )
 

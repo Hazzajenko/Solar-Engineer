@@ -48,6 +48,8 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
     public override async Task HandleAsync(CancellationToken cT)
     {
+        // await SendUnauthorizedAsync(cT);
+        // await SendRedirectAsync("/?authorize=false", cancellation: cT);
         var appUser = await _userManager.GetUserAsync(User);
         if (appUser is null)
         {

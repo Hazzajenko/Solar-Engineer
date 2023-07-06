@@ -307,3 +307,26 @@ export const rejectProjectInvite$ = createEffect(
 	},
 	{ functional: true, dispatch: false },
 )
+
+export const selectNewProjectOnDelete$ = createEffect(
+	(actions$ = inject(Actions), projectsStore = injectProjectsStore()) => {
+		return actions$.pipe(
+			ofType(ProjectsActions.deleteProjectNoSignalr),
+			map(({ projectId }) => {
+				const selectedProjectId = projectsStore.select.selectedProjectId()
+				if (selectedProjectId === projectId) {
+					const projects = projectsStore.select.allProjects()
+					const projectIds = projects.map((project) => project.id).filter((id) => id !== projectId)
+					const projectIdToSelect = projectIds.length > 0 ? projectIds[0] : null
+					if (projectIdToSelect) {
+						return ProjectsActions.selectProject({ projectId: projectIdToSelect })
+					} else {
+						return ProjectsActions.setSelectedProjectToNull()
+					}
+				}
+				return ProjectsActions.noop()
+			}),
+		)
+	},
+	{ functional: true },
+)

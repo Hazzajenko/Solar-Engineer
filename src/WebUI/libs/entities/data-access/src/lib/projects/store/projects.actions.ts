@@ -49,6 +49,7 @@ export const ProjectsActions = createActionGroup({
 		'Select Project': props<{
 			projectId: ProjectId
 		}>(),
+		'Set Selected Project To Null': emptyProps(),
 		'Get Project Success': props<{
 			response: GetProjectByIdResponse
 		}>(),

@@ -13,20 +13,11 @@ export const getRedirectForGoogleSignIn$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(
 			ofType(AuthActions.signInWithGoogle),
+			tap(() => {
+				localStorage.setItem('provider', 'google')
+			}),
 			map(() => {
 				window.location.href = '/auth/login/google'
-			}),
-		)
-	},
-	{ functional: true, dispatch: false },
-)
-
-export const getRedirectForGithubSignIn$ = createEffect(
-	(actions$ = inject(Actions)) => {
-		return actions$.pipe(
-			ofType(AuthActions.signInWithGithub),
-			map(() => {
-				window.location.href = '/auth/login/github'
 			}),
 		)
 	},
@@ -37,6 +28,9 @@ export const getRedirectForMicrosoftSignIn$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(
 			ofType(AuthActions.signInWithMicrosoft),
+			tap(() => {
+				localStorage.setItem('provider', 'microsoft')
+			}),
 			map(() => {
 				window.location.href = '/auth/login/microsoft'
 			}),
@@ -68,6 +62,34 @@ export const isReturningUser$ = createEffect(
 	},
 	{ functional: true },
 )
+
+/*export const isReturningUserError$ = createEffect(
+ (actions$ = inject(Actions)) => {
+ return actions$.pipe(
+ ofType(AuthActions.isReturningUserError),
+ tap(() => {
+ const provider = localStorage.getItem('provider')
+ if (!provider) {
+ return
+ // return AuthActions.signInError({ error: 'No provider found' })
+ }
+ switch (provider) {
+ case 'google':
+ window.location.href = '/auth/login/google'
+ break
+ // return AuthActions.signInWithGoogle()
+ case 'microsoft':
+ window.location.href = '/auth/login/microsoft'
+ break
+ // return AuthActions.signInWithMicrosoft()
+ // default:
+ // 	return AuthActions.signInError({ error: 'No provider found' })
+ }
+ }),
+ )
+ },
+ { functional: true, dispatch: false },
+ )*/
 
 export const signInSuccess$ = createEffect(
 	(

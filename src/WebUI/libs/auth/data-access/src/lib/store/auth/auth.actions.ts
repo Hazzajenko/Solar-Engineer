@@ -11,6 +11,9 @@ export const AuthActions = createActionGroup({
 		'Sign In With Microsoft': emptyProps(),
 		'Sign In With Github': emptyProps(),
 		'Is Returning User': emptyProps(),
+		'Is Returning User Error': props<{
+			error: string | null
+		}>(),
 		'Authorize Request': emptyProps(),
 		'Sign In Success': props<{
 			token: string
