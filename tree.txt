@@ -10,38 +10,6 @@ C:\Users\jenki\source\app\solar-engineer
 |     ├── conf.d
 |     ├── configuration
 |     └── letsencrypt
-├── db-data
-|  └── postgres
-|     ├── base
-|     |  ├── 1
-|     |  ├── 13756
-|     |  ├── 13757
-|     |  ├── 16384
-|     |  ├── 24857
-|     |  ├── 24869
-|     |  ├── 24996
-|     |  └── 25285
-|     ├── global
-|     ├── pg_commit_ts
-|     ├── pg_dynshmem
-|     ├── pg_logical
-|     |  ├── mappings
-|     |  └── snapshots
-|     ├── pg_multixact
-|     |  ├── members
-|     |  └── offsets
-|     ├── pg_notify
-|     ├── pg_replslot
-|     ├── pg_serial
-|     ├── pg_snapshots
-|     ├── pg_stat
-|     ├── pg_stat_tmp
-|     ├── pg_subtrans
-|     ├── pg_tblspc
-|     ├── pg_twophase
-|     ├── pg_wal
-|     |  └── archive_status
-|     └── pg_xact
 ├── docker
 |  └── open_telementry
 |     └── output
@@ -68,11 +36,6 @@ C:\Users\jenki\source\app\solar-engineer
 ├── src
 |  ├── BuildingBlocks
 |  |  ├── ApplicationCore
-|  |  |  ├── bin
-|  |  |  |  ├── Debug
-|  |  |  |  |  └── net7.0
-|  |  |  |  └── Release
-|  |  |  |     └── net7.0
 |  |  |  ├── Contracts
 |  |  |  |  ├── Data
 |  |  |  |  ├── Request
@@ -83,38 +46,10 @@ C:\Users\jenki\source\app\solar-engineer
 |  |  |  |  └── Projects
 |  |  |  ├── Exceptions
 |  |  |  ├── Extensions
-|  |  |  ├── Interfaces
-|  |  |  └── obj
-|  |  |     ├── Debug
-|  |  |     |  └── net7.0
-|  |  |     |     ├── ref
-|  |  |     |     └── refint
-|  |  |     └── Release
-|  |  |        └── net7.0
-|  |  |           ├── ref
-|  |  |           └── refint
+|  |  |  └── Interfaces
 |  |  ├── Domain
-|  |  |  ├── bin
-|  |  |  |  ├── Debug
-|  |  |  |  |  └── net7.0
-|  |  |  |  └── Release
-|  |  |  |     └── net7.0
-|  |  |  ├── Entities
-|  |  |  └── obj
-|  |  |     ├── Debug
-|  |  |     |  └── net7.0
-|  |  |     |     ├── ref
-|  |  |     |     └── refint
-|  |  |     └── Release
-|  |  |        └── net7.0
-|  |  |           ├── ref
-|  |  |           └── refint
+|  |  |  └── Entities
 |  |  ├── EventBus
-|  |  |  ├── bin
-|  |  |  |  ├── Debug
-|  |  |  |  |  └── net7.0
-|  |  |  |  └── Release
-|  |  |  |     └── net7.0
 |  |  |  ├── Common
 |  |  |  ├── Domain
 |  |  |  |  ├── AppUserEvents
@@ -123,26 +58,12 @@ C:\Users\jenki\source\app\solar-engineer
 |  |  |  |  ├── AppUserEventsV2
 |  |  |  |  └── ProjectsEvents
 |  |  |  ├── Mapping
-|  |  |  ├── obj
-|  |  |  |  ├── Debug
-|  |  |  |  |  └── net7.0
-|  |  |  |  |     ├── ref
-|  |  |  |  |     └── refint
-|  |  |  |  └── Release
-|  |  |  |     └── net7.0
-|  |  |  |        ├── ref
-|  |  |  |        └── refint
 |  |  |  ├── Services
 |  |  |  └── Wolverine
 |  |  └── Infrastructure
 |  |     ├── Authentication
 |  |     ├── Azure
 |  |     ├── Behaviours
-|  |     ├── bin
-|  |     |  ├── Debug
-|  |     |  |  └── net7.0
-|  |     |  └── Release
-|  |     |     └── net7.0
 |  |     ├── Common
 |  |     |  ├── Behaviours
 |  |     |  └── User
@@ -157,15 +78,6 @@ C:\Users\jenki\source\app\solar-engineer
 |  |     ├── Logging
 |  |     ├── Mapping
 |  |     ├── Mediator
-|  |     ├── obj
-|  |     |  ├── Debug
-|  |     |  |  └── net7.0
-|  |     |  |     ├── ref
-|  |     |  |     └── refint
-|  |     |  └── Release
-|  |     |     └── net7.0
-|  |     |        ├── ref
-|  |     |        └── refint
 |  |     ├── OpenTelemetry
 |  |     ├── redis-data
 |  |     |  └── redis
@@ -177,229 +89,28 @@ C:\Users\jenki\source\app\solar-engineer
 |  |     ├── Swagger
 |  |     ├── Validation
 |  |     └── Web
-|  ├── db-data
-|  |  └── postgres
-|  |     ├── base
-|  |     |  ├── 1
-|  |     |  ├── 13756
-|  |     |  ├── 13757
-|  |     |  ├── 16384
-|  |     |  ├── 16385
-|  |     |  ├── 16386
-|  |     |  ├── 40963
-|  |     |  ├── 73732
-|  |     |  └── 82495
-|  |     ├── global
-|  |     ├── pg_commit_ts
-|  |     ├── pg_dynshmem
-|  |     ├── pg_logical
-|  |     |  ├── mappings
-|  |     |  └── snapshots
-|  |     ├── pg_multixact
-|  |     |  ├── members
-|  |     |  └── offsets
-|  |     ├── pg_notify
-|  |     ├── pg_replslot
-|  |     ├── pg_serial
-|  |     ├── pg_snapshots
-|  |     ├── pg_stat
-|  |     ├── pg_stat_tmp
-|  |     ├── pg_subtrans
-|  |     ├── pg_tblspc
-|  |     ├── pg_twophase
-|  |     ├── pg_wal
-|  |     |  └── archive_status
-|  |     └── pg_xact
 |  ├── Serverless
 |  |  └── Application.AzureFunctions
-|  |     ├── bin
-|  |     |  ├── Debug
-|  |     |  |  └── net7.0
-|  |     |  |     ├── bin
-|  |     |  |     |  └── runtimes
-|  |     |  |     |     └── win
-|  |     |  |     |        └── lib
-|  |     |  |     └── runtimes
-|  |     |  |        └── win
-|  |     |  |           └── lib
-|  |     |  |              └── netcoreapp2.0
-|  |     |  ├── output
-|  |     |  |  └── runtimes
-|  |     |  |     └── win
-|  |     |  |        └── lib
-|  |     |  |           └── netcoreapp2.0
-|  |     |  └── publish
-|  |     |     └── runtimes
-|  |     |        └── win
-|  |     |           └── lib
-|  |     |              └── netcoreapp2.0
 |  |     ├── GetApplicationVersion
 |  |     |  ├── Contracts
 |  |     |  └── Function
-|  |     ├── obj
-|  |     |  ├── Debug
-|  |     |  |  └── net7.0
-|  |     |  |     ├── ref
-|  |     |  |     └── refint
-|  |     |  └── release
-|  |     |     └── net7.0
-|  |     |        ├── ref
-|  |     |        └── refint
 |  |     └── Properties
 |  ├── Services
 |  |  ├── Identity
 |  |  |  ├── Identity.API
 |  |  |  |  ├── Auth
-|  |  |  |  ├── bin
-|  |  |  |  |  ├── Debug
-|  |  |  |  |  |  ├── net6.0
-|  |  |  |  |  |  └── net7.0
-|  |  |  |  |  |     ├── cs
-|  |  |  |  |  |     ├── de
-|  |  |  |  |  |     ├── es
-|  |  |  |  |  |     ├── fr
-|  |  |  |  |  |     ├── it
-|  |  |  |  |  |     ├── ja
-|  |  |  |  |  |     ├── ko
-|  |  |  |  |  |     ├── Logs
-|  |  |  |  |  |     ├── pl
-|  |  |  |  |  |     ├── pt-BR
-|  |  |  |  |  |     ├── ru
-|  |  |  |  |  |     ├── runtimes
-|  |  |  |  |  |     |  ├── alpine-x64
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── linux-arm
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── linux-arm64
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── linux-armel
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── linux-mips64
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── linux-musl-x64
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── linux-s390x
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── linux-x64
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── linux-x86
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── osx
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── osx-arm64
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── osx-x64
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── unix
-|  |  |  |  |  |     |  |  └── lib
-|  |  |  |  |  |     |  ├── win
-|  |  |  |  |  |     |  |  └── lib
-|  |  |  |  |  |     |  ├── win-arm
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── win-arm64
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  ├── win-x64
-|  |  |  |  |  |     |  |  └── native
-|  |  |  |  |  |     |  └── win-x86
-|  |  |  |  |  |     |     └── native
-|  |  |  |  |  |     ├── tr
-|  |  |  |  |  |     ├── zh-Hans
-|  |  |  |  |  |     └── zh-Hant
-|  |  |  |  |  └── Release
-|  |  |  |  |     └── net7.0
-|  |  |  |  |        └── linux-x64
-|  |  |  |  |           ├── cs
-|  |  |  |  |           ├── de
-|  |  |  |  |           ├── es
-|  |  |  |  |           ├── fr
-|  |  |  |  |           ├── it
-|  |  |  |  |           ├── ja
-|  |  |  |  |           ├── ko
-|  |  |  |  |           ├── Logs
-|  |  |  |  |           ├── pl
-|  |  |  |  |           ├── pt-BR
-|  |  |  |  |           ├── publish
-|  |  |  |  |           |  ├── cs
-|  |  |  |  |           |  ├── de
-|  |  |  |  |           |  ├── es
-|  |  |  |  |           |  ├── fr
-|  |  |  |  |           |  ├── it
-|  |  |  |  |           |  ├── ja
-|  |  |  |  |           |  ├── ko
-|  |  |  |  |           |  ├── Logs
-|  |  |  |  |           |  ├── pl
-|  |  |  |  |           |  ├── pt-BR
-|  |  |  |  |           |  ├── ru
-|  |  |  |  |           |  ├── tr
-|  |  |  |  |           |  ├── zh-Hans
-|  |  |  |  |           |  └── zh-Hant
-|  |  |  |  |           ├── ru
-|  |  |  |  |           ├── tr
-|  |  |  |  |           ├── zh-Hans
-|  |  |  |  |           └── zh-Hant
 |  |  |  |  ├── Config
-|  |  |  |  ├── db-data
-|  |  |  |  |  └── postgres
-|  |  |  |  |     ├── base
-|  |  |  |  |     |  ├── 1
-|  |  |  |  |     |  ├── 13756
-|  |  |  |  |     |  ├── 13757
-|  |  |  |  |     |  └── 16384
-|  |  |  |  |     ├── global
-|  |  |  |  |     ├── pg_commit_ts
-|  |  |  |  |     ├── pg_dynshmem
-|  |  |  |  |     ├── pg_logical
-|  |  |  |  |     |  ├── mappings
-|  |  |  |  |     |  └── snapshots
-|  |  |  |  |     ├── pg_multixact
-|  |  |  |  |     |  ├── members
-|  |  |  |  |     |  └── offsets
-|  |  |  |  |     ├── pg_notify
-|  |  |  |  |     ├── pg_replslot
-|  |  |  |  |     ├── pg_serial
-|  |  |  |  |     ├── pg_snapshots
-|  |  |  |  |     ├── pg_stat
-|  |  |  |  |     ├── pg_stat_tmp
-|  |  |  |  |     ├── pg_subtrans
-|  |  |  |  |     ├── pg_tblspc
-|  |  |  |  |     ├── pg_twophase
-|  |  |  |  |     ├── pg_wal
-|  |  |  |  |     |  └── archive_status
-|  |  |  |  |     └── pg_xact
 |  |  |  |  ├── Endpoints
 |  |  |  |  |  ├── App
 |  |  |  |  |  ├── Auth
 |  |  |  |  |  ├── Connections
 |  |  |  |  |  └── Users
 |  |  |  |  ├── Extensions
-|  |  |  |  ├── obj
-|  |  |  |  |  ├── Debug
-|  |  |  |  |  |  ├── net6.0
-|  |  |  |  |  |  |  ├── ref
-|  |  |  |  |  |  |  ├── refint
-|  |  |  |  |  |  |  └── staticwebassets
-|  |  |  |  |  |  └── net7.0
-|  |  |  |  |  |     ├── Proto
-|  |  |  |  |  |     ├── ref
-|  |  |  |  |  |     ├── refint
-|  |  |  |  |  |     └── staticwebassets
-|  |  |  |  |  └── Release
-|  |  |  |  |     └── net7.0
-|  |  |  |  |        └── linux-x64
-|  |  |  |  |           ├── ref
-|  |  |  |  |           ├── refint
-|  |  |  |  |           └── staticwebassets
 |  |  |  |  ├── Properties
 |  |  |  |  ├── Queues
 |  |  |  |  └── Swagger
 |  |  |  ├── Identity.API.Tests.Integration
-|  |  |  |  └── obj
 |  |  |  ├── Identity.Application
-|  |  |  |  ├── bin
-|  |  |  |  |  ├── Debug
-|  |  |  |  |  |  └── net7.0
-|  |  |  |  |  └── Release
-|  |  |  |  |     └── net7.0
 |  |  |  |  ├── Commands
 |  |  |  |  ├── Consumers
 |  |  |  |  ├── Data
@@ -422,15 +133,6 @@ C:\Users\jenki\source\app\solar-engineer
 |  |  |  |  ├── Mapping
 |  |  |  |  ├── Middleware
 |  |  |  |  ├── Models
-|  |  |  |  ├── obj
-|  |  |  |  |  ├── Debug
-|  |  |  |  |  |  └── net7.0
-|  |  |  |  |  |     ├── ref
-|  |  |  |  |  |     └── refint
-|  |  |  |  |  └── Release
-|  |  |  |  |     └── net7.0
-|  |  |  |  |        ├── ref
-|  |  |  |  |        └── refint
 |  |  |  |  ├── Queries
 |  |  |  |  |  └── AppUsers
 |  |  |  |  ├── Repositories
@@ -446,21 +148,7 @@ C:\Users\jenki\source\app\solar-engineer
 |  |  |  |  ├── Settings
 |  |  |  |  └── Validation
 |  |  |  ├── Identity.Contracts
-|  |  |  |  ├── bin
-|  |  |  |  |  ├── Debug
-|  |  |  |  |  |  └── net7.0
-|  |  |  |  |  └── Release
-|  |  |  |  |     └── net7.0
 |  |  |  |  ├── Data
-|  |  |  |  ├── obj
-|  |  |  |  |  ├── Debug
-|  |  |  |  |  |  └── net7.0
-|  |  |  |  |  |     ├── ref
-|  |  |  |  |  |     └── refint
-|  |  |  |  |  └── Release
-|  |  |  |  |     └── net7.0
-|  |  |  |  |        ├── ref
-|  |  |  |  |        └── refint
 |  |  |  |  ├── Requests
 |  |  |  |  |  ├── Errors
 |  |  |  |  |  └── Users
@@ -470,26 +158,7 @@ C:\Users\jenki\source\app\solar-engineer
 |  |  |  |     ├── Notifications
 |  |  |  |     └── Users
 |  |  |  ├── Identity.Domain
-|  |  |  |  ├── bin
-|  |  |  |  |  ├── Debug
-|  |  |  |  |  |  └── net7.0
-|  |  |  |  |  └── Release
-|  |  |  |  |     └── net7.0
-|  |  |  |  └── obj
-|  |  |  |     ├── Debug
-|  |  |  |     |  └── net7.0
-|  |  |  |     |     ├── ref
-|  |  |  |     |     └── refint
-|  |  |  |     └── Release
-|  |  |  |        └── net7.0
-|  |  |  |           ├── ref
-|  |  |  |           └── refint
 |  |  |  └── Identity.SignalR
-|  |  |     ├── bin
-|  |  |     |  ├── Debug
-|  |  |     |  |  └── net7.0
-|  |  |     |  └── Release
-|  |  |     |     └── net7.0
 |  |  |     ├── Commands
 |  |  |     |  ├── AppUsers
 |  |  |     |  ├── Connections
@@ -497,82 +166,12 @@ C:\Users\jenki\source\app\solar-engineer
 |  |  |     |  └── Notifications
 |  |  |     ├── Hubs
 |  |  |     ├── Mapping
-|  |  |     ├── obj
-|  |  |     |  ├── Debug
-|  |  |     |  |  └── net7.0
-|  |  |     |  |     ├── ref
-|  |  |     |  |     └── refint
-|  |  |     |  └── Release
-|  |  |     |     └── net7.0
-|  |  |     |        ├── ref
-|  |  |     |        └── refint
 |  |  |     └── Queries
 |  |  ├── Messages
 |  |  |  ├── Messages.API
-|  |  |  |  ├── bin
-|  |  |  |  |  └── Debug
-|  |  |  |  |     └── net7.0
-|  |  |  |  |        ├── cs
-|  |  |  |  |        ├── de
-|  |  |  |  |        ├── es
-|  |  |  |  |        ├── fr
-|  |  |  |  |        ├── it
-|  |  |  |  |        ├── ja
-|  |  |  |  |        ├── ko
-|  |  |  |  |        ├── Logs
-|  |  |  |  |        ├── pl
-|  |  |  |  |        ├── pt-BR
-|  |  |  |  |        ├── ru
-|  |  |  |  |        ├── runtimes
-|  |  |  |  |        |  ├── alpine-x64
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── linux-arm
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── linux-arm64
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── linux-armel
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── linux-mips64
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── linux-musl-x64
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── linux-s390x
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── linux-x64
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── linux-x86
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── osx-arm64
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── osx-x64
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── unix
-|  |  |  |  |        |  |  └── lib
-|  |  |  |  |        |  ├── win
-|  |  |  |  |        |  |  └── lib
-|  |  |  |  |        |  ├── win-arm
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── win-arm64
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  ├── win-x64
-|  |  |  |  |        |  |  └── native
-|  |  |  |  |        |  └── win-x86
-|  |  |  |  |        |     └── native
-|  |  |  |  |        ├── tr
-|  |  |  |  |        ├── zh-Hans
-|  |  |  |  |        └── zh-Hant
 |  |  |  |  ├── Endpoints
-|  |  |  |  ├── obj
-|  |  |  |  |  └── Debug
-|  |  |  |  |     └── net7.0
-|  |  |  |  |        ├── ref
-|  |  |  |  |        ├── refint
-|  |  |  |  |        └── staticwebassets
 |  |  |  |  └── Properties
 |  |  |  ├── Messages.Application
-|  |  |  |  ├── bin
-|  |  |  |  |  └── Debug
-|  |  |  |  |     └── net7.0
 |  |  |  |  ├── Converters
 |  |  |  |  ├── Data
 |  |  |  |  |  ├── Config
@@ -585,11 +184,6 @@ C:\Users\jenki\source\app\solar-engineer
 |  |  |  |  |  ├── Messages
 |  |  |  |  |  └── UserMessages
 |  |  |  |  ├── Mapping
-|  |  |  |  ├── obj
-|  |  |  |  |  └── Debug
-|  |  |  |  |     └── net7.0
-|  |  |  |  |        ├── ref
-|  |  |  |  |        └── refint
 |  |  |  |  └── Repositories
 |  |  |  |     ├── AppUserGroupChats
 |  |  |  |     ├── GroupChatMessages
@@ -598,164 +192,27 @@ C:\Users\jenki\source\app\solar-engineer
 |  |  |  |     ├── Mapping
 |  |  |  |     └── Messages
 |  |  |  ├── Messages.Contracts
-|  |  |  |  ├── bin
-|  |  |  |  |  └── Debug
-|  |  |  |  |     └── net7.0
 |  |  |  |  ├── Data
-|  |  |  |  ├── obj
-|  |  |  |  |  └── Debug
-|  |  |  |  |     └── net7.0
-|  |  |  |  |        ├── ref
-|  |  |  |  |        └── refint
 |  |  |  |  ├── Requests
 |  |  |  |  └── Responses
 |  |  |  ├── Messages.Domain
-|  |  |  |  ├── bin
-|  |  |  |  |  └── Debug
-|  |  |  |  |     └── net7.0
-|  |  |  |  ├── Entities
-|  |  |  |  └── obj
-|  |  |  |     └── Debug
-|  |  |  |        └── net7.0
-|  |  |  |           ├── ref
-|  |  |  |           └── refint
+|  |  |  |  └── Entities
 |  |  |  └── Messages.SignalR
-|  |  |     ├── bin
-|  |  |     |  └── Debug
-|  |  |     |     └── net7.0
 |  |  |     ├── Commands
 |  |  |     |  └── GroupChats
 |  |  |     ├── Hubs
-|  |  |     ├── obj
-|  |  |     |  └── Debug
-|  |  |     |     └── net7.0
-|  |  |     |        ├── ref
-|  |  |     |        └── refint
 |  |  |     └── Queries
 |  |  |        ├── GroupChats
 |  |  |        ├── Messages
 |  |  |        └── UserMessages
 |  |  └── Projects
 |  |     ├── Projects.API
-|  |     |  ├── bin
-|  |     |  |  ├── Debug
-|  |     |  |  |  └── net7.0
-|  |     |  |  |     ├── cs
-|  |     |  |  |     ├── Data
-|  |     |  |  |     |  └── Json
-|  |     |  |  |     |     └── ProjectTemplates
-|  |     |  |  |     ├── de
-|  |     |  |  |     ├── es
-|  |     |  |  |     ├── fr
-|  |     |  |  |     ├── it
-|  |     |  |  |     ├── ja
-|  |     |  |  |     ├── ko
-|  |     |  |  |     ├── Logs
-|  |     |  |  |     ├── pl
-|  |     |  |  |     ├── pt-BR
-|  |     |  |  |     ├── ru
-|  |     |  |  |     ├── runtimes
-|  |     |  |  |     |  ├── alpine-x64
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── linux-arm
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── linux-arm64
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── linux-armel
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── linux-mips64
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── linux-musl-x64
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── linux-s390x
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── linux-x64
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── linux-x86
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── osx-arm64
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── osx-x64
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── unix
-|  |     |  |  |     |  |  └── lib
-|  |     |  |  |     |  ├── win
-|  |     |  |  |     |  |  └── lib
-|  |     |  |  |     |  ├── win-arm
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── win-arm64
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  ├── win-x64
-|  |     |  |  |     |  |  └── native
-|  |     |  |  |     |  └── win-x86
-|  |     |  |  |     |     └── native
-|  |     |  |  |     ├── tr
-|  |     |  |  |     ├── zh-Hans
-|  |     |  |  |     └── zh-Hant
-|  |     |  |  └── Release
-|  |     |  |     └── net7.0
-|  |     |  |        └── linux-x64
-|  |     |  |           ├── cs
-|  |     |  |           ├── Data
-|  |     |  |           |  └── Json
-|  |     |  |           ├── de
-|  |     |  |           ├── es
-|  |     |  |           ├── fr
-|  |     |  |           ├── it
-|  |     |  |           ├── ja
-|  |     |  |           ├── ko
-|  |     |  |           ├── Logs
-|  |     |  |           ├── pl
-|  |     |  |           ├── pt-BR
-|  |     |  |           ├── publish
-|  |     |  |           |  ├── cs
-|  |     |  |           |  ├── Data
-|  |     |  |           |  ├── de
-|  |     |  |           |  ├── es
-|  |     |  |           |  ├── fr
-|  |     |  |           |  ├── it
-|  |     |  |           |  ├── ja
-|  |     |  |           |  ├── ko
-|  |     |  |           |  ├── Logs
-|  |     |  |           |  ├── pl
-|  |     |  |           |  ├── pt-BR
-|  |     |  |           |  ├── ru
-|  |     |  |           |  ├── tr
-|  |     |  |           |  ├── zh-Hans
-|  |     |  |           |  └── zh-Hant
-|  |     |  |           ├── ru
-|  |     |  |           ├── tr
-|  |     |  |           ├── zh-Hans
-|  |     |  |           └── zh-Hant
 |  |     |  ├── Endpoints
 |  |     |  ├── Logs
-|  |     |  ├── obj
-|  |     |  |  ├── Debug
-|  |     |  |  |  └── net7.0
-|  |     |  |  |     ├── ref
-|  |     |  |  |     ├── refint
-|  |     |  |  |     └── staticwebassets
-|  |     |  |  └── Release
-|  |     |  |     └── net7.0
-|  |     |  |        └── linux-x64
-|  |     |  |           ├── ref
-|  |     |  |           ├── refint
-|  |     |  |           └── staticwebassets
 |  |     |  ├── PostProcessors
 |  |     |  ├── Properties
 |  |     |  └── Queues
 |  |     ├── Projects.Application
-|  |     |  ├── bin
-|  |     |  |  ├── Debug
-|  |     |  |  |  └── net7.0
-|  |     |  |  |     └── Data
-|  |     |  |  |        └── Json
-|  |     |  |  |           └── ProjectTemplates
-|  |     |  |  └── Release
-|  |     |  |     └── net7.0
-|  |     |  |        └── Data
-|  |     |  |           └── Json
-|  |     |  |              └── ProjectTemplates
 |  |     |  ├── Configuration
 |  |     |  ├── Consumers
 |  |     |  ├── Data
@@ -777,17 +234,9 @@ C:\Users\jenki\source\app\solar-engineer
 |  |     |  |  ├── Panels
 |  |     |  |  ├── Projects
 |  |     |  |  └── Strings
+|  |     |  ├── HubFilters
 |  |     |  ├── Mapping
 |  |     |  ├── Middleware
-|  |     |  ├── obj
-|  |     |  |  ├── Debug
-|  |     |  |  |  └── net7.0
-|  |     |  |  |     ├── ref
-|  |     |  |  |     └── refint
-|  |     |  |  └── Release
-|  |     |  |     └── net7.0
-|  |     |  |        ├── ref
-|  |     |  |        └── refint
 |  |     |  └── Repositories
 |  |     |     ├── AppUserProjects
 |  |     |     ├── PanelConfigs
@@ -797,22 +246,8 @@ C:\Users\jenki\source\app\solar-engineer
 |  |     |     ├── ProjectUsers
 |  |     |     └── Strings
 |  |     ├── Projects.Contracts
-|  |     |  ├── bin
-|  |     |  |  ├── Debug
-|  |     |  |  |  └── net7.0
-|  |     |  |  └── Release
-|  |     |  |     └── net7.0
 |  |     |  ├── Data
 |  |     |  ├── Events
-|  |     |  ├── obj
-|  |     |  |  ├── Debug
-|  |     |  |  |  └── net7.0
-|  |     |  |  |     ├── ref
-|  |     |  |  |     └── refint
-|  |     |  |  └── Release
-|  |     |  |     └── net7.0
-|  |     |  |        ├── ref
-|  |     |  |        └── refint
 |  |     |  ├── Requests
 |  |     |  |  ├── Admin
 |  |     |  |  ├── PanelLinks
@@ -824,29 +259,10 @@ C:\Users\jenki\source\app\solar-engineer
 |  |     |     ├── Admin
 |  |     |     └── Projects
 |  |     ├── Projects.Domain
-|  |     |  ├── bin
-|  |     |  |  ├── Debug
-|  |     |  |  |  └── net7.0
-|  |     |  |  └── Release
-|  |     |  |     └── net7.0
 |  |     |  ├── Common
 |  |     |  |  └── Errors
-|  |     |  ├── Entities
-|  |     |  └── obj
-|  |     |     ├── Debug
-|  |     |     |  └── net7.0
-|  |     |     |     ├── ref
-|  |     |     |     └── refint
-|  |     |     └── Release
-|  |     |        └── net7.0
-|  |     |           ├── ref
-|  |     |           └── refint
+|  |     |  └── Entities
 |  |     └── Projects.SignalR
-|  |        ├── bin
-|  |        |  ├── Debug
-|  |        |  |  └── net7.0
-|  |        |  └── Release
-|  |        |     └── net7.0
 |  |        ├── Commands
 |  |        |  ├── PanelLinks
 |  |        |  ├── Panels
@@ -856,15 +272,6 @@ C:\Users\jenki\source\app\solar-engineer
 |  |        ├── HubFilters
 |  |        ├── Hubs
 |  |        ├── Mapping
-|  |        ├── obj
-|  |        |  ├── Debug
-|  |        |  |  └── net7.0
-|  |        |  |     ├── ref
-|  |        |  |     └── refint
-|  |        |  └── Release
-|  |        |     └── net7.0
-|  |        |        ├── ref
-|  |        |        └── refint
 |  |        ├── Queries
 |  |        |  └── Projects
 |  |        └── Services
@@ -911,6 +318,9 @@ C:\Users\jenki\source\app\solar-engineer
 |     |  |  |  └── src
 |     |  |  |     └── lib
 |     |  |  |        └── app-v2
+|     |  |  ├── logging
+|     |  |  |  └── src
+|     |  |  |     └── lib
 |     |  |  ├── routes
 |     |  |  ├── shared
 |     |  |  ├── signalr
@@ -1000,6 +410,7 @@ C:\Users\jenki\source\app\solar-engineer
 |     |  |  |        └── lib
 |     |  |  |           ├── directives
 |     |  |  |           ├── ui
+|     |  |  |           |  ├── empty-project-state
 |     |  |  |           |  ├── loading-project-spinner
 |     |  |  |           |  └── mobile-open-side-ui-button
 |     |  |  |           └── utils
@@ -1074,6 +485,8 @@ C:\Users\jenki\source\app\solar-engineer
 |     |  |  |        ├── panels
 |     |  |  |        |  ├── services
 |     |  |  |        |  └── store
+|     |  |  |        ├── points
+|     |  |  |        |  └── store
 |     |  |  |        ├── projects
 |     |  |  |        |  ├── services
 |     |  |  |        |  └── store
@@ -1095,6 +508,7 @@ C:\Users\jenki\source\app\solar-engineer
 |     |  |  |        ├── panel-configs
 |     |  |  |        ├── panel-links
 |     |  |  |        ├── panels
+|     |  |  |        ├── points
 |     |  |  |        ├── projects
 |     |  |  |        |  └── data-templates
 |     |  |  |        |     ├── template__12-rows-6-strings
@@ -1175,11 +589,18 @@ C:\Users\jenki\source\app\solar-engineer
 |     |  |  |  |     └── lib
 |     |  |  |  |        ├── store
 |     |  |  |  |        └── types
-|     |  |  |  └── feature
+|     |  |  |  ├── feature
+|     |  |  |  |  └── src
+|     |  |  |  |     └── lib
+|     |  |  |  |        ├── overlay-dynamic-notification
+|     |  |  |  |        ├── overlay-notification
+|     |  |  |  |        └── overlay-notification-modal
+|     |  |  |  ├── shared
+|     |  |  |  |  └── src
+|     |  |  |  |     └── lib
+|     |  |  |  └── utils
 |     |  |  |     └── src
 |     |  |  |        └── lib
-|     |  |  |           ├── overlay-dynamic-notification
-|     |  |  |           └── overlay-notification-modal
 |     |  |  ├── side-uis
 |     |  |  |  └── feature
 |     |  |  |     └── src
@@ -1488,6 +909,7 @@ C:\Users\jenki\source\app\solar-engineer
 |     |              ├── numbers
 |     |              ├── objects
 |     |              ├── observables
+|     |              ├── points
 |     |              ├── profile-picture
 |     |              ├── promises
 |     |              ├── returns
@@ -1515,97 +937,15 @@ C:\Users\jenki\source\app\solar-engineer
 |  └── Services
 |     ├── Identity
 |     |  ├── Identity.API.Tests.Integration
-|     |  |  ├── bin
-|     |  |  |  └── Debug
-|     |  |  |     └── net7.0
-|     |  |  |        ├── cs
-|     |  |  |        ├── de
-|     |  |  |        ├── es
-|     |  |  |        ├── fr
-|     |  |  |        ├── it
-|     |  |  |        ├── ja
-|     |  |  |        ├── ko
-|     |  |  |        ├── Logs
-|     |  |  |        ├── pl
-|     |  |  |        ├── pt-BR
-|     |  |  |        ├── refs
-|     |  |  |        ├── ru
-|     |  |  |        ├── runtimes
-|     |  |  |        |  ├── alpine-x64
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── linux-arm
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── linux-arm64
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── linux-armel
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── linux-mips64
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── linux-musl-x64
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── linux-s390x
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── linux-x64
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── linux-x86
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── osx
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── osx-arm64
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── osx-x64
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── unix
-|     |  |  |        |  |  └── lib
-|     |  |  |        |  ├── win
-|     |  |  |        |  |  └── lib
-|     |  |  |        |  ├── win-arm
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── win-arm64
-|     |  |  |        |  |  └── native
-|     |  |  |        |  ├── win-x64
-|     |  |  |        |  |  └── native
-|     |  |  |        |  └── win-x86
-|     |  |  |        |     └── native
-|     |  |  |        ├── tr
-|     |  |  |        ├── zh-Hans
-|     |  |  |        └── zh-Hant
-|     |  |  ├── Endpoints
+|     |  |  └── Endpoints
 |     |  |  |  └── Auth
-|     |  |  └── obj
-|     |  |     └── Debug
-|     |  |        └── net7.0
-|     |  |           ├── ref
-|     |  |           └── refint
 |     |  └── Identity.Application.Tests.Unit
-|     |     ├── bin
-|     |     |  └── Debug
-|     |     |     └── net7.0
-|     |     |        ├── cs
-|     |     |        ├── de
-|     |     |        ├── es
-|     |     |        ├── fr
-|     |     |        ├── it
-|     |     |        ├── ja
-|     |     |        ├── ko
-|     |     |        ├── pl
-|     |     |        ├── pt-BR
-|     |     |        ├── ru
-|     |     |        ├── tr
-|     |     |        ├── zh-Hans
-|     |     |        └── zh-Hant
-|     |     ├── Handlers
+|     |     └── Handlers
 |     |     |  └── AppUsers
-|     |     └── obj
-|     |        └── Debug
-|     |           └── net7.0
-|     |              ├── ref
-|     |              └── refint
 |     └── Identity.API.Tests.Integration
-|        └── obj
 └── vids-to-gif
    └── frames
 
-directory: 8354
+directory: 8232
 
-ignored: directory (670)
+ignored: directory (808)
