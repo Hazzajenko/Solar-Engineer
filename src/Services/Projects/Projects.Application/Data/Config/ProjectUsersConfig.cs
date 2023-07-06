@@ -10,6 +10,14 @@ public class ProjectUsersConfig : IEntityTypeConfiguration<ProjectUser>
     {
         builder.Property(x => x.Id).IsRequired();
         builder.Property(x => x.SelectedProjectId).IsRequired(false);
+
+        builder
+            .HasOne(x => x.SelectedProject)
+            .WithMany(x => x.UsersSelectedProject)
+            .HasForeignKey(x => x.SelectedProjectId)
+            .OnDelete(DeleteBehavior.SetNull)
+            .IsRequired(false);
+
         builder
             .HasMany(u => u.AppUserProjects)
             .WithOne(m => m.ProjectUser)

@@ -15,6 +15,8 @@ public class Project : IEntity, IUserObject, IProject
     public Project() { }
 
     public string Name { get; set; } = default!;
+
+    public ICollection<ProjectUser> UsersSelectedProject { get; set; } = default!;
     public ICollection<AppUserProject> AppUserProjects { get; set; } = default!;
     public ICollection<String> Strings { get; set; } = default!;
 
