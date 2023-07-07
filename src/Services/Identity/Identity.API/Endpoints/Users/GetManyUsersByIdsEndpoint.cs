@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Extensions;
 using FastEndpoints;
 using Identity.Application.Handlers.AppUsers;
+using Identity.Application.Logging;
 using Identity.Application.Mapping;
 using Identity.Application.Queries.AppUsers;
 using Identity.Application.Services.Connections;
@@ -39,13 +40,12 @@ public class GetManyUsersByIdsEndpoint
         AuthSchemes("bearer");
     }
 
-    [Time]
     public override async Task HandleAsync(GetManyUsersByIdsRequest request, CancellationToken cT)
     {
         AppUser? appUser = await _mediator.Send(new GetAppUserQuery(User), cT);
         if (appUser is null)
         {
-            Logger.LogError("Unable to find user {UserId}", User.GetUserId());
+            Logger.LogUserNotFound(User.GetUserId(), User.GetUserName());
             await SendUnauthorizedAsync(cT);
             return;
         }
@@ -55,6 +55,8 @@ public class GetManyUsersByIdsEndpoint
             new GetManyWebUserDtosByIdsQuery(appUser, queryUserIds),
             cT
         );
+
+        Logger.LogInformation("Found {Count} users", userByQuery.Count());
 
         Response.AppUsers = userByQuery;
         await SendOkAsync(Response, cT);

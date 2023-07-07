@@ -31,7 +31,7 @@ builder.Services.AddAuthorization();
 builder.Services.InitDbContext<MessagesContext>(config, environment, "Messages.Application");
 
 builder.Services.ConfigureSignalRWithRedis(builder.Environment);
-builder.Services.InitCors("corsPolicy");
+builder.Services.InitCors();
 builder.Services.AddFastEndpoints();
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {

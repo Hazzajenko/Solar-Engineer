@@ -1,5 +1,7 @@
 ﻿using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
+using Identity.Domain;
+using Infrastructure.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.SignalR;
 using Serilog;
@@ -13,20 +15,21 @@ public class UsersHubFilter : IHubFilter
         Func<HubInvocationContext, ValueTask<object?>> next
     )
     {
-        Log.Logger.Information("UsersHubFilter");
+        var authUser = invocationContext.Context.ToAuthUser();
+        Log.Logger.Information(
+            "User {UserName} - ({UserId}): Calling hub method {HubMethodName}",
+            authUser.UserName,
+            authUser.Id,
+            invocationContext.HubMethodName
+        );
         var unitOfWork = invocationContext.ServiceProvider.GetService<IIdentityUnitOfWork>();
         if (unitOfWork is null)
         {
             Log.Logger.Error("IdentityUnitOfWork is null");
             return await HandleNext(invocationContext, next);
         }
-        var appUser = await unitOfWork.AppUsersRepository.GetCurrentUserAsync(
+        AppUser appUser = await unitOfWork.AppUsersRepository.GetCurrentUserAsync(
             invocationContext.Context
-        );
-        Log.Logger.Information(
-            "UsersHubFilter, AppUser: {AppUserId} - {AppUserUserName}",
-            appUser.Id,
-            appUser.UserName
         );
         appUser.LastActiveTime = DateTime.UtcNow;
         await unitOfWork.AppUsersRepository.UpdateAsync(appUser);

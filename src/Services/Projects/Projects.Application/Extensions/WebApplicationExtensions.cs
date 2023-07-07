@@ -1,8 +1,11 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using FastEndpoints;
+using Infrastructure.Logging;
 using Infrastructure.Validation;
+using Infrastructure.Web;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -54,8 +57,8 @@ public static class WebApplicationExtensions
             });
         }
 
-        app.UseSerilogRequestLogging();
-        app.UseCors("corsPolicy");
+        app.ConfigureSerilogRequestLogging();
+        app.UseCors(CorsConfig.CorsPolicy);
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseHttpsRedirection();

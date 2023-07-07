@@ -4,16 +4,18 @@ namespace ApplicationCore.Entities;
 
 public class AuthUser
 {
-    private AuthUser(Guid id)
+
+    private AuthUser(Guid id, string userName)
     {
         Id = id;
+        UserName = userName;
     }
 
     private AuthUser(Guid id, string userName, string connectionId)
     {
         Id = id;
-        ConnectionId = connectionId;
         UserName = userName;
+        ConnectionId = connectionId;
     }
 
     public AuthUser() { }
@@ -22,14 +24,14 @@ public class AuthUser
     public string UserName { get; set; } = null!;
     public string? ConnectionId { get; set; }
 
-    public static AuthUser Create(Guid id)
+    public static AuthUser Create(Guid id, string userName)
     {
-        return new AuthUser(id);
+        return new AuthUser(id, userName);
     }
 
-    public static AuthUser Create(string id)
+    public static AuthUser Create(string id, string userName)
     {
-        return new AuthUser(id.ToGuid());
+        return new AuthUser(id.ToGuid(), userName);
     }
 
     public static AuthUser Create(Guid id, string userName, string connectionId)

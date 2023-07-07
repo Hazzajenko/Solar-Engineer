@@ -18,13 +18,13 @@ public class HubLoggerFilter : IHubFilter
             invocationContext.HubMethodName
         );
 
-        if (invocationContext.HubMethodArguments.Any())
-            invocationContext.HubMethodArguments
-                .ToList()
-                .ForEach(arg =>
-                {
-                    // if (arg != null)
-                });
+        // if (invocationContext.HubMethodArguments.Any())
+        //     invocationContext.HubMethodArguments
+        //         .ToList()
+        //         .ForEach(arg =>
+        //         {
+        //             // if (arg != null)
+        //         });
         try
         {
             return await next(invocationContext);

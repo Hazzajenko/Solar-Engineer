@@ -31,7 +31,7 @@ public class GetUserProjectsEndpoint : EndpointWithoutRequest<GetUserProjectsRes
     public override async Task HandleAsync(CancellationToken cT)
     {
         Response.Projects = await _mediator.Send(
-            new GetUserProjectsQuery(User.ClaimsToAuthUser()),
+            new GetUserProjectsQuery(User.ToAuthUser()),
             cT
         );
 

@@ -131,6 +131,8 @@ public static class AppUserMapper
             LastActiveTime = request.LastModifiedTime
         };
     }
+
+    public static AppUserDto ToDto(this AppUser request) => request.Adapt<AppUserDto>();
 }
 
 public class AppUserMappingConfig : IRegister

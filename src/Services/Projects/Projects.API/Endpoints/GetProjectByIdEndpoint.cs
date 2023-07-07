@@ -33,7 +33,7 @@ public class GetProjectByIdEndpoint : Endpoint<GetProjectByIdRequest, GetProject
     public override async Task HandleAsync(GetProjectByIdRequest request, CancellationToken cT)
     {
         Response = await _mediator.Send(
-            new GetProjectByIdQuery(User.ClaimsToAuthUser(), request.ProjectId),
+            new GetProjectByIdQuery(User.ToAuthUser(), request.ProjectId),
             cT
         );
 

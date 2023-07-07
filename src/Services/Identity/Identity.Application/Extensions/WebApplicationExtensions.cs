@@ -1,11 +1,15 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ApplicationCore.Extensions;
+using ApplicationCore.Middleware;
 using FastEndpoints;
 using Identity.Application.Data.Seed;
 using Identity.Application.Middleware;
 using Identity.SignalR.Hubs;
+using Infrastructure.Logging;
 using Infrastructure.Validation;
+using Infrastructure.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -58,9 +62,9 @@ public static partial class WebApplicationExtensions
             IdentityModelEventSource.ShowPII = true;
         }
 
-        app.UseSerilogRequestLogging();
+        app.ConfigureSerilogRequestLogging();
 
-        app.UseCors("corsPolicy");
+        app.UseCors(CorsConfig.CorsPolicy);
         app.UseHttpsRedirection();
 
         app.UseAuthentication();
@@ -70,6 +74,7 @@ public static partial class WebApplicationExtensions
         app.MapHub<UsersHub>("hubs/users");
 
         app.UseMiddleware<ValidationMappingMiddleware>();
+        app.UseHttpRequestLoggingMiddleware();
         app.UseLastActiveMiddleware();
 
         IdentityContextSeed.InitializeDatabase(app);

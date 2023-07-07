@@ -4,7 +4,12 @@ using ApplicationCore.Exceptions;
 using Identity.Application.Commands;
 using Identity.Application.Extensions;
 using Identity.Application.Mapping;
+using Identity.Application.Models;
+using Identity.Application.Services.AzureStorage;
+using Identity.Contracts.Data;
 using Identity.Domain;
+using Infrastructure.Logging;
+using Infrastructure.Mapping;
 using MassTransit;
 using Mediator;
 using Microsoft.AspNetCore.Authentication;
@@ -16,24 +21,24 @@ namespace Identity.Application.Handlers.Auth;
 public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSigninResponse>
 {
     private readonly ILogger<AuthorizeHandler> _logger;
-    private readonly IMediator _mediator;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly UserManager<AppUser> _userManager;
     private readonly IBus _bus;
+    private readonly IAzureStorage _azureStorage;
 
     public AuthorizeHandler(
         UserManager<AppUser> userManager,
         ILogger<AuthorizeHandler> logger,
         SignInManager<AppUser> signInManager,
-        IMediator mediator,
-        IBus bus
+        IBus bus,
+        IAzureStorage azureStorage
     )
     {
         _userManager = userManager;
         _logger = logger;
         _signInManager = signInManager;
-        _mediator = mediator;
         _bus = bus;
+        _azureStorage = azureStorage;
     }
 
     public async ValueTask<ExternalSigninResponse> Handle(
@@ -41,56 +46,55 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
         CancellationToken cT
     )
     {
-        var user = request.HttpContext.User;
-        var externalLogin = user.GetLogin();
+        ClaimsPrincipal user = request.HttpContext.User;
+        ExternalLogin externalLogin = user.GetLogin();
 
-        var existingAppUser = await _userManager.FindByLoginAsync(
+        AppUser? existingAppUser = await _userManager.FindByLoginAsync(
             externalLogin.LoginProvider,
             externalLogin.ProviderKey
         );
 
-        var info = await _signInManager.GetExternalLoginInfoAsync();
+        ExternalLoginInfo? info = await _signInManager.GetExternalLoginInfoAsync();
         ArgumentNullException.ThrowIfNull(info);
         ArgumentNullException.ThrowIfNull(info.AuthenticationTokens);
 
         if (existingAppUser is not null)
-            return await HandleExistingUserSignIn(existingAppUser, info);
+            return await HandleExistingUserSignIn(existingAppUser, info, cT);
 
-        return await HandleNewUserSignIn(user, info);
+        return await HandleNewUserSignIn(user, info, cT);
     }
 
     private async Task<ExternalSigninResponse> HandleExistingUserSignIn(
         AppUser existingAppUser,
-        ExternalLoginInfo externalLogin
+        ExternalLoginInfo externalLogin,
+        CancellationToken cT
     )
     {
         var props = new AuthenticationProperties();
         props.StoreTokens(externalLogin.AuthenticationTokens!);
         props.IsPersistent = false;
-        try
+        SignInResult externalLoginSignInResult = await _signInManager.ExternalLoginSignInAsync(
+            externalLogin.LoginProvider,
+            externalLogin.ProviderKey,
+            false,
+            true
+        );
+        if (externalLoginSignInResult.Succeeded is false)
         {
-            var externalLoginSignInResult = await _signInManager.ExternalLoginSignInAsync(
-                externalLogin.LoginProvider,
-                externalLogin.ProviderKey,
-                false,
-                true
+            _logger.LogError(
+                "User {UserName}: Unable to login User {@User}, {Provider}",
+                existingAppUser.UserName,
+                existingAppUser.ToDto(),
+                externalLogin.LoginProvider
             );
-            if (externalLoginSignInResult.Succeeded is false)
-            {
-                _logger.LogError(
-                    "Unable to login user {User}, {Provider}",
-                    existingAppUser.Id,
-                    externalLogin.LoginProvider
-                );
-                throw new UnauthorizedException();
-                // throw new UnauthorizedException();
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
             throw new UnauthorizedException();
         }
+
+        _logger.LogInformation(
+            "User {UserName}: Logged in with {Provider}",
+            existingAppUser.UserName,
+            externalLogin.LoginProvider
+        );
 
         await _bus.Publish(
             new UserLoggedIn(
@@ -98,7 +102,8 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
                 existingAppUser.UserName,
                 existingAppUser.DisplayName,
                 existingAppUser.PhotoUrl
-            )
+            ),
+            cT
         );
 
         return new() { AppUser = existingAppUser, LoginProvider = externalLogin.LoginProvider };
@@ -106,7 +111,8 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
 
     private async Task<ExternalSigninResponse> HandleNewUserSignIn(
         ClaimsPrincipal user,
-        ExternalLoginInfo externalLogin
+        ExternalLoginInfo externalLogin,
+        CancellationToken cT
     )
     {
         var appUser = user.ToAppUser(externalLogin);
@@ -116,14 +122,15 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
         if (!createUserResult.Succeeded)
         {
             _logger.LogError(
-                "Unable to create user {@User}, {@Errors}",
-                user,
+                "User {UserName}: Unable to create User {@User}, {@Errors}",
+                appUser.UserName,
+                appUser.ToDto(),
                 createUserResult.Errors
             );
             throw new UnauthorizedException();
         }
 
-        var addLoginResult = await _userManager.AddLoginAsync(
+        IdentityResult addLoginResult = await _userManager.AddLoginAsync(
             appUser,
             new UserLoginInfo(externalLogin.LoginProvider, externalLogin.ProviderKey, appUser.Email)
         );
@@ -131,14 +138,15 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
         if (!addLoginResult.Succeeded)
         {
             _logger.LogError(
-                "Unable to add login provider to AppUser {User}, {@Errors}",
-                appUser.Id,
+                "User {UserName}: Unable to add login provider to User {@User}, {@Errors}",
+                appUser.UserName,
+                appUser.ToDto(),
                 createUserResult.Errors
             );
             throw new UnauthorizedException();
         }
 
-        var createdUserLoginResult = await _signInManager.ExternalLoginSignInAsync(
+        SignInResult createdUserLoginResult = await _signInManager.ExternalLoginSignInAsync(
             externalLogin.LoginProvider,
             externalLogin.ProviderKey,
             false,
@@ -147,24 +155,73 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
         if (!createdUserLoginResult.Succeeded)
         {
             _logger.LogError(
-                "Unable to login user {User}, {Provider}",
-                appUser.ToAppUserLog(),
-                externalLogin.LoginProvider
+                "User {UserName}: Unable to login User {@User}, {Provider}, {@Errors}",
+                appUser.UserName,
+                appUser.ToDto(),
+                externalLogin.LoginProvider,
+                createUserResult.Errors
             );
             throw new UnauthorizedException();
         }
 
-        UploadUrlImageToCdnResponse uploadPhotoResponse = await _mediator.Send(
-            new UploadUrlImageToCdnCommand(appUser)
-        );
+        UploadUrlImageToCdnResponse uploadPhotoResponse = await UpdateUrlImageToCdn(appUser, cT);
 
         appUser.PhotoUrl = uploadPhotoResponse.PhotoUrl;
         await _userManager.UpdateAsync(appUser);
 
+        _logger.LogInformation(
+            "User {UserName}: Registered {@User} logged in with {Provider}",
+            appUser.UserName,
+            appUser.ToDto(),
+            externalLogin.LoginProvider
+        );
+
         await _bus.Publish(
-            new UserRegistered(appUser.Id, appUser.UserName, appUser.DisplayName, appUser.PhotoUrl)
+            new UserRegistered(appUser.Id, appUser.UserName, appUser.DisplayName, appUser.PhotoUrl),
+            cT
         );
 
         return new() { AppUser = appUser, LoginProvider = externalLogin.LoginProvider };
+    }
+
+    private async Task<UploadUrlImageToCdnResponse> UpdateUrlImageToCdn(
+        AppUser appUser,
+        CancellationToken cT = default
+    )
+    {
+        using var httpClient = new HttpClient();
+        var imageBytes = await httpClient.GetByteArrayAsync(appUser.PhotoUrl, cT);
+        BlobResponseDto result = await _azureStorage.UploadImageToBlobStorage(
+            imageBytes,
+            appUser.Id.ToString()
+        );
+
+        if (result is null)
+        {
+            _logger.LogError(
+                "User {UserName}: User {@User} failed to upload image to blob storage",
+                appUser.UserName,
+                appUser.ToDto()
+            );
+            throw new Exception("Error uploading image to blob storage");
+        }
+
+        var photoUrl = result.Blob.Uri;
+        if (photoUrl is null)
+        {
+            _logger.LogError(
+                "User {UserName}: User {@User} failed to upload image to blob storage",
+                appUser.UserName,
+                appUser.ToDto()
+            );
+            throw new Exception("Error uploading image to blob storage");
+        }
+        _logger.LogInformation(
+            "User {UserName}: Uploaded image dp to blob storage: {Uri}",
+            appUser.UserName,
+            photoUrl
+        );
+
+        return new UploadUrlImageToCdnResponse { PhotoUrl = photoUrl };
     }
 }

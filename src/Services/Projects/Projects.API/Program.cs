@@ -63,7 +63,7 @@ builder.Services
     .InitStackExchangeRedis(builder.Services, environment);
 builder.Services.AddSingleton<ProjectsHubFilter>();
 
-builder.Services.InitCors("corsPolicy");
+builder.Services.InitCors();
 
 builder.Services.AddFastEndpoints();
 

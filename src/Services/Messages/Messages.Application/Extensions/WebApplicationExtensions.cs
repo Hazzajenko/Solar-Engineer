@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Infrastructure.Validation;
+using Infrastructure.Web;
 using Messages.SignalR.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -51,7 +52,7 @@ public static class WebApplicationExtensions
         }
 
         app.UseSerilogRequestLogging();
-        app.UseCors("corsPolicy");
+        app.UseCors(CorsConfig.CorsPolicy);
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseHttpsRedirection();

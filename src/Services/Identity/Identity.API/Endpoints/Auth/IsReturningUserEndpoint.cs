@@ -6,10 +6,12 @@ using Identity.Contracts.Data;
 using Identity.Contracts.Responses;
 using Identity.Domain;
 using Infrastructure.Extensions;
+using Infrastructure.Logging;
 using Mapster;
 using MassTransit;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
+using Serilog.Core;
 
 namespace Identity.API.Endpoints.Auth;
 
@@ -48,13 +50,19 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        // await SendUnauthorizedAsync(cT);
-        // await SendRedirectAsync("/?authorize=false", cancellation: cT);
-        var appUser = await _userManager.GetUserAsync(User);
+        AppUser? appUser = await _userManager.GetUserAsync(User);
         if (appUser is null)
         {
-            Logger.LogError("Unable to find user {UserId}", User.GetUserId());
-            await SendRedirectAsync("/auth/login/google", cancellation: cT);
+            var id = User.TryGetUserId();
+            var userName = User.TryGetUserName();
+            Logger.LogError(
+                "User {UserName}: Unable to find user {Id} {@Context}",
+                userName,
+                id,
+                HttpContext
+            );
+            await SendUnauthorizedAsync(cT);
+            // await SendRedirectAsync("/auth/login/google", cancellation: cT);
             return;
         }
 
@@ -69,6 +77,12 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         await _bus.Publish(message, cT);
 
         var user = appUser.Adapt<AppUserDto>();
+
+        Logger.LogInformation(
+            "User {UserName}: Returning User signed in {Id}",
+            user.UserName,
+            user.Id
+        );
 
         Response.Token = token;
         Response.User = user;

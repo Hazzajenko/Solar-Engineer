@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
+using System.Security.Principal;
 using ApplicationCore.Entities;
 using ApplicationCore.Exceptions;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ApplicationCore.Extensions;
 
@@ -22,7 +24,32 @@ public static class ClaimsPrincipleExtensions
         return value;
     }
 
+    public static string? TryGetUserId(this ClaimsPrincipal user)
+    {
+        var value = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return value;
+    }
+
     public static string GetUserName(this ClaimsPrincipal user)
+    {
+        var userName = user.FindFirst("userName")?.Value;
+        if (userName is null)
+        {
+            userName = user.FindFirst(ClaimTypes.Name)?.Value;
+            // userName = user.FindFirst(ClaimTypes.Name)?.Value;
+            // [1]
+            // http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name: jenkinsh1
+            // userName = user.FindFirst(ClaimTypes.Name)?.Value;
+        }
+
+        if (userName is null)
+        {
+            throw new NotAuthenticatedHubException(nameof(userName));
+        }
+        return userName;
+    }
+
+    public static string? TryGetUserName(this ClaimsPrincipal user)
     {
         var userName = user.FindFirst("userName")?.Value;
         if (userName is null)
@@ -30,10 +57,6 @@ public static class ClaimsPrincipleExtensions
             userName = user.FindFirst(ClaimTypes.Name)?.Value;
         }
 
-        if (userName is null)
-        {
-            throw new NotAuthenticatedHubException(nameof(userName));
-        }
         return userName;
     }
 
@@ -74,6 +97,25 @@ public static class ClaimsPrincipleExtensions
         return value.TryToGuidOrThrow(exception);
     }
 
+    public static Guid GetGuidUserId(this HubCallerContext context)
+    {
+        var user = context.User;
+        if (user is null)
+        {
+            throw new NotAuthenticatedHubException(nameof(user));
+        }
+        return user.TryGetGuidUserId(new NotAuthenticatedHubException(nameof(user)));
+    }
+
+    public static string GetUserName(this HubCallerContext context)
+    {
+        if (context.User is null)
+        {
+            throw new NotAuthenticatedHubException(nameof(context.User));
+        }
+        return context.User.GetUserName();
+    }
+
     /*public static ClaimsPrincipal AppUser(this HubCallerContext context)
     {
         if (context.User is not null)
@@ -83,17 +125,13 @@ public static class ClaimsPrincipleExtensions
         throw new HubException(message);
     }*/
 
-    /// <summary>
-    ///     Get the user id as a Guid.
-    ///     If the user id is not a Guid, then throw an exception.
-    /// </summary>
-    public static AuthUser ClaimsToAuthUser(this ClaimsPrincipal context)
+    /*public static AuthUser ClaimsToAuthUser(this ClaimsPrincipal context)
     {
-        // check if in development mode
-        if (context.Identity?.Name is null)
-            return AuthUser.Create(Guid.Parse("23424c3b-a5aa-49a1-bb70-36451b07532f"));
+        // // check if in development mode
+        // if (context.Identity?.Name is null)
+        //     return AuthUser.Create(Guid.Parse("23424c3b-a5aa-49a1-bb70-36451b07532f"));
 
         var userId = context.GetGuidUserId();
         return AuthUser.Create(userId);
-    }
+    }*/
 }

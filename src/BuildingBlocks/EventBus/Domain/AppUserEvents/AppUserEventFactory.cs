@@ -10,7 +10,8 @@ public class AppUserEventFactory : EventBase
 {
     public AppUserEventFactory(IAppUser appUser)
     {
-        UserDto = appUser.ToDto();
+        UserDto = new UserDto();
+        // UserDto = appUser.ToDto();
         Queues = new List<string> { "messages", "projects" };
     }
 

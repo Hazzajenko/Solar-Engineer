@@ -1,14 +1,15 @@
 ﻿using ApplicationCore.Extensions;
 using FastEndpoints;
+using Identity.Application.Logging;
 using Identity.Application.Mapping;
 using Identity.Application.Queries.AppUsers;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses;
+using Identity.Domain;
 using Infrastructure.Extensions;
 using Mediator;
 
 namespace Identity.API.Endpoints.Users;
-
 public class GetUserByIdEndpoint : EndpointWithoutRequest<AppUserDto>
 {
     private readonly IMediator _mediator;
@@ -26,10 +27,10 @@ public class GetUserByIdEndpoint : EndpointWithoutRequest<AppUserDto>
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        var appUser = await _mediator.Send(new GetAppUserQuery(User), cT);
+        AppUser? appUser = await _mediator.Send(new GetAppUserQuery(User), cT);
         if (appUser is null)
         {
-            Logger.LogError("Unable to find user {UserId}", User.GetUserId());
+            Logger.LogUserNotFound(User.GetUserId(), User.GetUserName());
             await SendUnauthorizedAsync(cT);
             return;
         }
@@ -38,14 +39,15 @@ public class GetUserByIdEndpoint : EndpointWithoutRequest<AppUserDto>
         if (userQueryId is null)
         {
             Logger.LogError("Unable to find appUserId in route");
+            ThrowError("Unable to find appUserId in route");
             await SendNoContentAsync(cT);
             return;
         }
 
-        var userByQuery = await _mediator.Send(new GetAppUserDtoByIdQuery(userQueryId.ToGuid()), cT);
+        AppUserDto? userByQuery = await _mediator.Send(new GetAppUserDtoByIdQuery(userQueryId.ToGuid()), cT);
         if (userByQuery is null)
         {
-            Logger.LogError("Unable to find appUser {AppUserId}", userQueryId);
+            Logger.LogUserNotFound(userQueryId);
             await SendNoContentAsync(cT);
             return;
         }

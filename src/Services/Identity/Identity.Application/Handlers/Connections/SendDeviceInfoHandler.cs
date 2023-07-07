@@ -8,6 +8,7 @@ using Infrastructure.SignalR;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Identity.Application.Handlers.Connections;
 
@@ -43,6 +44,12 @@ public class SendDeviceInfoHandler : ICommandHandler<SendDeviceInfoCommand, bool
 
         var connectionIds = _connections.GetConnections(user.Id);
         await _hubContext.Clients.AllExcept(connectionIds).UserIsOnline(userIsOnlineResponse);
+
+        Log.Logger.Information(
+            "SendDeviceInfoHandler, AppUser: {AppUserId} - {AppUserUserName}",
+            user.Id,
+            user.UserName
+        );
         return true;
     }
 }

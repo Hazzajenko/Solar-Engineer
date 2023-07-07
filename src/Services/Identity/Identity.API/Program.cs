@@ -48,13 +48,7 @@ builder.Services.InitAuthentication(config, environment, jwtSettings);
 builder.Services.InitAuthorization(config);
 builder.Services.AddScoped<ApiKeyAuthFilter>();
 
-/*builder.Services.ConfigureSignalRWithRedis(
-    builder.Environment,
-    options =>
-    {
-        options.AddFilter<UsersHubFilter>();
-    }
-);*/
+// builder.Services.ConfigureSignalRWithRedis(builder.Environment);
 
 builder.Services
     .AddSignalR(options =>
@@ -68,14 +62,15 @@ builder.Services
         options.AddFilter<UsersHubFilter>();
     })
     .InitStackExchangeRedis(builder.Services, environment);
-builder.Services.AddSingleton<UsersHubFilter>();
+
+// builder.Services.AddSingleton<UsersHubFilter>();
 
 builder.Services.InitDbContext<IdentityContext>(
     config,
     builder.Environment,
     "Identity.Application"
 );
-builder.Services.InitCors("corsPolicy");
+builder.Services.InitCors();
 
 builder.Services.AddFastEndpoints();
 
@@ -157,10 +152,8 @@ loginEndpoints.MapGet(
     {
         const string provider = "microsoft";
         const string redirectUrl = "/?authorize=true";
-        AuthenticationProperties properties = signInManager.ConfigureExternalAuthenticationProperties(
-            provider,
-            redirectUrl
-        );
+        AuthenticationProperties properties =
+            signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
         properties.AllowRefresh = true;
         return Results.Challenge(properties, new List<string> { "microsoft" });
     }

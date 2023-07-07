@@ -24,7 +24,7 @@ public static class UserMapper
         };
     }
 
-    public static UserDto ToDto<T>(this T request)
+    /*public static UserDto ToDto<T>(this T request)
         where T : IAppUser
     {
         return new UserDto
@@ -39,5 +39,5 @@ public static class UserMapper
             LastModifiedTime = request.LastModifiedTime
             // LastActiveTime = request.LastActiveTime
         };
-    }
+    }*/
 }

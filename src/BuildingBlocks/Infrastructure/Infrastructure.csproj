@@ -60,6 +60,7 @@
         <PackageReference Include="Serilog.Sinks.AzureBlobStorage" Version="3.2.0" />
         <PackageReference Include="Serilog.Sinks.AzureTableStorage" Version="8.5.38" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+        <PackageReference Include="Serilog.Sinks.OpenTelemetry" Version="1.0.0" />
         <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2" />
         <PackageReference Include="System.Linq.Async" Version="6.0.1" />
         <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="0.9.15" />

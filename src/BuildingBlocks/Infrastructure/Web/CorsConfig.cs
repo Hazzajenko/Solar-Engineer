@@ -4,12 +4,14 @@ namespace Infrastructure.Web;
 
 public static class CorsConfig
 {
-    public static IServiceCollection InitCors(this IServiceCollection services, string corsPolicy)
+    public const string CorsPolicy = "CorsPolicy";
+
+    public static IServiceCollection InitCors(this IServiceCollection services)
     {
         services.AddCors(options =>
         {
             options.AddPolicy(
-                corsPolicy,
+                CorsPolicy,
                 policy =>
                     policy
                         .WithOrigins(

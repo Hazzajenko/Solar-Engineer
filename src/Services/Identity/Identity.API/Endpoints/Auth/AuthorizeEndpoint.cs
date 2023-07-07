@@ -1,15 +1,15 @@
 ﻿using ApplicationCore.Extensions;
 using FastEndpoints;
 using Identity.Application.Commands;
+using Identity.Application.Mapping;
 using Identity.Application.Queries.AppUsers;
 using Identity.Application.Services.Jwt;
+using Identity.Contracts.Data;
 using Identity.Contracts.Responses;
 using Identity.Domain;
 using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
-
-// using GetTokenCommand = Identity.API.Handlers.GetTokenCommand;
 
 namespace Identity.API.Endpoints.Auth;
 
@@ -45,16 +45,12 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        var externalSigninResponse = await _mediator.Send(new AuthorizeCommand(HttpContext), cT);
-        var appUser = externalSigninResponse.AppUser;
-        var loginProvider = externalSigninResponse.LoginProvider;
-
-        Logger.LogInformation(
-            "User {UserId} - {UserName} logged in with {LoginProvider}",
-            appUser.Id,
-            appUser.UserName,
-            loginProvider
+        ExternalSigninResponse externalSigninResponse = await _mediator.Send(
+            new AuthorizeCommand(HttpContext),
+            cT
         );
+        AppUser appUser = externalSigninResponse.AppUser;
+        var loginProvider = externalSigninResponse.LoginProvider;
 
         var token = _jwtTokenGenerator.GenerateToken(appUser.Id.ToString(), appUser.UserName);
 
@@ -66,27 +62,31 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         if (storedToken is not null)
             await _userManager.RemoveAuthenticationTokenAsync(appUser, loginProvider, "token");
 
-        var tokenResult = await _userManager.SetAuthenticationTokenAsync(
+        IdentityResult tokenResult = await _userManager.SetAuthenticationTokenAsync(
             appUser,
             loginProvider,
             "token",
             token
         );
         if (!tokenResult.Succeeded)
-            foreach (var tokenResultError in tokenResult.Errors)
+            foreach (IdentityError tokenResultError in tokenResult.Errors)
                 Logger.LogError("{@E}", tokenResultError);
 
-        var user = await _mediator.Send(new GetAppUserDtoByIdQuery(appUser.Id), cT);
+        AppUserDto? user = await _mediator.Send(new GetAppUserDtoByIdQuery(appUser.Id), cT);
         if (user is null)
         {
-            Logger.LogError("Unable to find user {UserId}", User.GetUserId());
+            Logger.LogError(
+                "User {UserName}: Unable to find user {UserId}, {@User}",
+                appUser.UserName,
+                appUser.Id.ToString(),
+                appUser.ToDto()
+            );
             await SendUnauthorizedAsync(cT);
             return;
         }
 
         Logger.LogInformation(
-            "User {UserId} - {UserName} logged in with {LoginProvider}",
-            user.Id,
+            "User {UserName}: Authenticated in with {LoginProvider}",
             user.UserName,
             loginProvider
         );

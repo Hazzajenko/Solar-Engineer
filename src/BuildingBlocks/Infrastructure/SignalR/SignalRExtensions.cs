@@ -89,7 +89,6 @@ public static class SignalRExtensions
             throw new NotAuthenticatedHubException(nameof(user));
         }
         return user.TryGetGuidUserId(new NotAuthenticatedHubException(nameof(user)));
-        // return user.TryGetGuidUserId(new HubException("User is not authenticated"));
     }
 
     public static string GetUserName(this HubCallerContext context)

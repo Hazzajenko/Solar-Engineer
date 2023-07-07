@@ -35,7 +35,7 @@ public class CreateProjectEndpoint
     {
 
         Response = await _mediator.Send(
-            new CreateProjectCommand(User.ClaimsToAuthUser(), request),
+            new CreateProjectCommand(User.ToAuthUser(), request),
             cT
         );
         await SendOkAsync(Response, cT);
