@@ -20,6 +20,7 @@ public class SendWebUiErrorEndpoint : Endpoint<SendAppErrorRequest>
     {
         Post("/error");
         AllowAnonymous();
+        Throttle(hitLimit: 20, durationSeconds: 60);
     }
 
     public override async Task HandleAsync(SendAppErrorRequest request, CancellationToken cT)

@@ -1,6 +1,8 @@
-﻿using ApplicationCore.Events.AppUsers;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Events.AppUsers;
 using ApplicationCore.Extensions;
 using FastEndpoints;
+using Identity.Application.Logging;
 using Identity.Application.Services.Jwt;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses;
@@ -53,16 +55,9 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         AppUser? appUser = await _userManager.GetUserAsync(User);
         if (appUser is null)
         {
-            var id = User.TryGetUserId();
-            var userName = User.TryGetUserName();
-            Logger.LogError(
-                "User {UserName}: Unable to find user {Id} {@Context}",
-                userName,
-                id,
-                HttpContext
-            );
+            NonAuthenticatedUser nonAuthUser = User.TryGetUserIdAndName();
+            Logger.LogUserNotFound(nonAuthUser.UserId, nonAuthUser.UserName);
             await SendUnauthorizedAsync(cT);
-            // await SendRedirectAsync("/auth/login/google", cancellation: cT);
             return;
         }
 
@@ -79,7 +74,7 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         var user = appUser.Adapt<AppUserDto>();
 
         Logger.LogInformation(
-            "User {UserName}: Returning User signed in {Id}",
+            "User {UserName} - ({UserId}): Returning User signed in",
             user.UserName,
             user.Id
         );

@@ -164,9 +164,9 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
             throw new UnauthorizedException();
         }
 
-        UploadUrlImageToCdnResponse uploadPhotoResponse = await UpdateUrlImageToCdn(appUser, cT);
+        var photoUrl = await UpdateUrlImageToCdn(appUser, cT);
 
-        appUser.PhotoUrl = uploadPhotoResponse.PhotoUrl;
+        appUser.PhotoUrl = photoUrl;
         await _userManager.UpdateAsync(appUser);
 
         _logger.LogInformation(
@@ -184,10 +184,7 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
         return new() { AppUser = appUser, LoginProvider = externalLogin.LoginProvider };
     }
 
-    private async Task<UploadUrlImageToCdnResponse> UpdateUrlImageToCdn(
-        AppUser appUser,
-        CancellationToken cT = default
-    )
+    private async Task<string> UpdateUrlImageToCdn(AppUser appUser, CancellationToken cT = default)
     {
         using var httpClient = new HttpClient();
         var imageBytes = await httpClient.GetByteArrayAsync(appUser.PhotoUrl, cT);
@@ -222,6 +219,6 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
             photoUrl
         );
 
-        return new UploadUrlImageToCdnResponse { PhotoUrl = photoUrl };
+        return photoUrl;
     }
 }

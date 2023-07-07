@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Extensions;
 using FastEndpoints;
 using Identity.Application.Commands;
+using Identity.Application.Logging;
 using Identity.Application.Mapping;
 using Identity.Application.Queries.AppUsers;
 using Identity.Application.Services.Jwt;
@@ -75,12 +76,7 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         AppUserDto? user = await _mediator.Send(new GetAppUserDtoByIdQuery(appUser.Id), cT);
         if (user is null)
         {
-            Logger.LogError(
-                "User {UserName}: Unable to find user {UserId}, {@User}",
-                appUser.UserName,
-                appUser.Id.ToString(),
-                appUser.ToDto()
-            );
+            Logger.LogUserNotFound(appUser.Id.ToString(), appUser.UserName);
             await SendUnauthorizedAsync(cT);
             return;
         }

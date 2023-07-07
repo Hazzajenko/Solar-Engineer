@@ -1,4 +1,5 @@
-﻿using Identity.Application.Data.UnitOfWork;
+﻿using ApplicationCore.Entities;
+using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Connections;
@@ -28,13 +29,15 @@ public class SendDeviceInfoHandler : ICommandHandler<SendDeviceInfoCommand, bool
 
     public async ValueTask<bool> Handle(SendDeviceInfoCommand command, CancellationToken cT)
     {
-        var user = command.AuthUser;
+        AuthUser user = command.AuthUser;
         _connections.AddDeviceInfoToUserIdAndConnectionId(
             user.Id,
             user.ConnectionId!,
             command.DeviceInfoDto
         );
-        var appUserConnection = _connections.GetAppUserConnectionByAppUserId(user.Id);
+        AppUserConnectionDto? appUserConnection = _connections.GetAppUserConnectionByAppUserId(
+            user.Id
+        );
         appUserConnection.ThrowHubExceptionIfNull();
 
         var userIsOnlineResponse = new UserIsOnlineResponse
@@ -44,12 +47,6 @@ public class SendDeviceInfoHandler : ICommandHandler<SendDeviceInfoCommand, bool
 
         var connectionIds = _connections.GetConnections(user.Id);
         await _hubContext.Clients.AllExcept(connectionIds).UserIsOnline(userIsOnlineResponse);
-
-        Log.Logger.Information(
-            "SendDeviceInfoHandler, AppUser: {AppUserId} - {AppUserUserName}",
-            user.Id,
-            user.UserName
-        );
         return true;
     }
 }

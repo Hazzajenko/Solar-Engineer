@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Extensions;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Extensions;
 using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
@@ -39,7 +40,7 @@ public class GetUserFriendsHandler : ICommandHandler<GetUserFriendsCommand, GetU
         CancellationToken cT
     )
     {
-        var authUser = command.AuthUser;
+        AuthUser authUser = command.AuthUser;
 
         var userFriends = await _unitOfWork.AppUserLinksRepository.GetUserFriendsAsWebUserDtoAsync(
             authUser.Id
@@ -57,7 +58,7 @@ public class GetUserFriendsHandler : ICommandHandler<GetUserFriendsCommand, GetU
         var userFriendIds = userFriends.Select(f => f.Id.ToGuid()).ToList();
         var onlineFriendConnections = _connections.GetUserConnectionsByIds(userFriendIds);
 
-        foreach (var friend in userFriends)
+        foreach (WebUserDto friend in userFriends)
         {
             friend.IsOnline = onlineFriendConnections.Any(c => c.AppUserId.ToString() == friend.Id);
         }
@@ -67,8 +68,8 @@ public class GetUserFriendsHandler : ICommandHandler<GetUserFriendsCommand, GetU
         await _hubContext.Clients.User(authUser.Id.ToString()).GetUserFriends(response);
 
         _logger.LogInformation(
-            "User {User} get {Friends} friends, {OnlineFriends} online",
-            authUser.ToAuthUserLog(),
+            "User {UserName}: Get {FriendsCount} friends, {OnlineFriendsCount} online",
+            authUser.UserName,
             response.Friends.Count(),
             response.Friends.Count(f => f.IsOnline)
         );

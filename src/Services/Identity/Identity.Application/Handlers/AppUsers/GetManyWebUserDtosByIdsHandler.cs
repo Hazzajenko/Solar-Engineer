@@ -30,7 +30,6 @@ public class GetManyWebUserDtosByIdsHandler
         _connections = connections;
     }
 
-    [Time]
     public async ValueTask<IEnumerable<WebUserDto>> Handle(
         GetManyWebUserDtosByIdsQuery query,
         CancellationToken cT

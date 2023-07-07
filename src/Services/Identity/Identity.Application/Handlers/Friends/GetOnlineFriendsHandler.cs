@@ -1,4 +1,5 @@
-﻿using Identity.Application.Data.UnitOfWork;
+﻿using ApplicationCore.Entities;
+using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Friends;
@@ -38,7 +39,7 @@ public class GetOnlineFriendsHandler
         CancellationToken cT
     )
     {
-        var authUser = request.AuthUser;
+        AuthUser authUser = request.AuthUser;
 
         var userFriendIds = await _unitOfWork.AppUserLinksRepository.GetUserFriendIdsAsync(
             authUser.Id

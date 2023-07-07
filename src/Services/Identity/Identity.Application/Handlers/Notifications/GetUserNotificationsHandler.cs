@@ -39,8 +39,9 @@ public class GetUserNotificationsHandler : ICommandHandler<GetUserNotificationsC
         var response = new ReceiveAppUserNotificationsResponse { Notifications = notifications };
 
         _logger.LogInformation(
-            "Sending notifications to AppUser: {AppUser}",
-            appUser.ToAppUserLog()
+            "User {UserName}: Received {NotificationCount} notifications",
+            appUser.UserName,
+            notifications.Count()
         );
 
         await _hubContext.Clients.User(appUser.Id.ToString()).ReceiveAppUserNotifications(response);

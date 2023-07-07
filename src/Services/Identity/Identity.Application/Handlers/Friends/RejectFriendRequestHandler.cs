@@ -2,6 +2,7 @@
 using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Extensions;
 using Identity.Application.Handlers.Notifications;
+using Identity.Application.Logging;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Friends;
 using Identity.Contracts.Responses.Notifications;
@@ -39,28 +40,28 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
 
     public async ValueTask<bool> Handle(RejectFriendRequestCommand request, CancellationToken cT)
     {
-        var appUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(request.AuthUser.Id);
+        AppUser? appUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(request.AuthUser.Id);
         var recipientUserId = request.RecipientUserId.ToGuid();
-        var recipientUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(recipientUserId);
+        AppUser? recipientUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(recipientUserId);
         appUser.ThrowHubExceptionIfNull();
         recipientUser.ThrowHubExceptionIfNull();
-        var appUserLink = await _unitOfWork.AppUserLinksRepository.GetByBothUserIdsAsync(
+        AppUserLink? appUserLink = await _unitOfWork.AppUserLinksRepository.GetByBothUserIdsAsync(
             request.AuthUser.Id,
             recipientUserId
         );
         if (appUserLink is null)
         {
-            _logger.LogError(
-                "AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived} not found. Cannot accept reject request. Creating new AppUserLink...",
-                appUser.ToAppUserLog(),
-                recipientUser.ToAppUserLog()
+            _logger.LogAppUserLinkNotFound(
+                appUser.UserName,
+                appUser.UserName,
+                recipientUser.UserName
             );
             appUserLink = new AppUserLink(appUser, recipientUser);
             await _unitOfWork.AppUserLinksRepository.AddAsync(appUserLink);
-            _logger.LogInformation(
-                "Created new AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived}",
-                appUser.ToAppUserLog(),
-                recipientUser.ToAppUserLog()
+            _logger.LogAppUserLinkCreated(
+                appUser.UserName,
+                appUser.UserName,
+                recipientUser.UserName
             );
             return await _unitOfWork.SaveChangesAsync();
         }
@@ -70,8 +71,8 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
         await _unitOfWork.AppUserLinksRepository.UpdateAsync(appUserLink);
         await _unitOfWork.SaveChangesAsync();
 
-        var originalSenderId = recipientUser.Id;
-        var friendRequestNotification =
+        Guid originalSenderId = recipientUser.Id;
+        Notification? friendRequestNotification =
             await _unitOfWork.NotificationsRepository.GetNotificationFromSenderToAppUserByTypeAsync(
                 originalSenderId,
                 appUser.Id,
@@ -96,9 +97,10 @@ public class RejectFriendRequestHandler : ICommandHandler<RejectFriendRequestCom
             .UpdateNotification(updateNotificationResponse);
 
         _logger.LogInformation(
-            "Friend request rejected from AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived}",
-            appUser.ToAppUserLog(),
-            recipientUser.ToAppUserLog()
+            "User {UserName}: Friend request rejected from AppUserRequested: {AppUserRequestedUserName}, AppUserReceived: {AppUserReceivedUserName}",
+            appUser.UserName,
+            appUser.UserName,
+            recipientUser.UserName
         );
 
         return true;

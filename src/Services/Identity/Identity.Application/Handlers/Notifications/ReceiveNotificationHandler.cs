@@ -39,9 +39,10 @@ public class ReceiveNotificationHandler : ICommandHandler<ReceiveNotificationCom
         if (notification.AppUserId != appUserId)
         {
             _logger.LogError(
-                "Notification {NotificationId} not received by {AppUser}",
+                "User {UserName}: Notification {NotificationId} not received by {AppUserUserName}",
+                command.AuthUser.UserName,
                 notification.Id.ToString(),
-                command.AuthUser.ToAuthUserLog()
+                command.AuthUser.UserName
             );
         }
 
@@ -50,8 +51,9 @@ public class ReceiveNotificationHandler : ICommandHandler<ReceiveNotificationCom
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation(
-            "Notification received by {AppUser}",
-            command.AuthUser.ToAuthUserLog
+            "User {UserName}: Notification {NotificationId} received",
+            command.AuthUser.UserName,
+            notification.Id.ToString()
         );
 
         return true;

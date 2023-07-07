@@ -32,15 +32,7 @@ public static class ClaimsPrincipleExtensions
 
     public static string GetUserName(this ClaimsPrincipal user)
     {
-        var userName = user.FindFirst("userName")?.Value;
-        if (userName is null)
-        {
-            userName = user.FindFirst(ClaimTypes.Name)?.Value;
-            // userName = user.FindFirst(ClaimTypes.Name)?.Value;
-            // [1]
-            // http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name: jenkinsh1
-            // userName = user.FindFirst(ClaimTypes.Name)?.Value;
-        }
+        var userName = user.FindFirst("userName")?.Value ?? user.FindFirst(ClaimTypes.Name)?.Value;
 
         if (userName is null)
         {
@@ -51,11 +43,7 @@ public static class ClaimsPrincipleExtensions
 
     public static string? TryGetUserName(this ClaimsPrincipal user)
     {
-        var userName = user.FindFirst("userName")?.Value;
-        if (userName is null)
-        {
-            userName = user.FindFirst(ClaimTypes.Name)?.Value;
-        }
+        var userName = user.FindFirst("userName")?.Value ?? user.FindFirst(ClaimTypes.Name)?.Value;
 
         return userName;
     }
@@ -114,6 +102,20 @@ public static class ClaimsPrincipleExtensions
             throw new NotAuthenticatedHubException(nameof(context.User));
         }
         return context.User.GetUserName();
+    }
+
+    public static NonAuthenticatedUser TryGetUserIdAndName(this ClaimsPrincipal context)
+    {
+        var userId = context.TryGetUserId() ?? "NullUserId";
+        var userName = context.TryGetUserName() ?? "NullUserName";
+        return new NonAuthenticatedUser(userId, userName);
+    }
+
+    public static NonAuthenticatedUser TryGetUserIdAndName(this HubCallerContext context)
+    {
+        var userId = context.User?.TryGetUserId() ?? "NullUserId";
+        var userName = context.User?.TryGetUserName() ?? "NullUserName";
+        return new NonAuthenticatedUser(userId, userName);
     }
 
     /*public static ClaimsPrincipal AppUser(this HubCallerContext context)

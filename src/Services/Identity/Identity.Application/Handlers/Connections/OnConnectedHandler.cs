@@ -1,7 +1,9 @@
-﻿using Identity.Application.Data.UnitOfWork;
+﻿using ApplicationCore.Entities;
+using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses.Connections;
+using Identity.Domain;
 using Identity.SignalR.Commands.Connections;
 using Identity.SignalR.Hubs;
 using Infrastructure.SignalR;
@@ -16,25 +18,22 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
     private readonly IConnectionsService _connections;
     private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
     private readonly ILogger<OnConnectedHandler> _logger;
-    private readonly IIdentityUnitOfWork _unitOfWork;
 
     public OnConnectedHandler(
         ILogger<OnConnectedHandler> logger,
         IHubContext<UsersHub, IUsersHub> hubContext,
-        IConnectionsService connections,
-        IIdentityUnitOfWork unitOfWork
+        IConnectionsService connections
     )
     {
         _logger = logger;
         _hubContext = hubContext;
         _connections = connections;
-        _unitOfWork = unitOfWork;
     }
 
     public async ValueTask<bool> Handle(OnConnectedCommand command, CancellationToken cT)
     {
-        var user = command.AuthUser;
-        var userId = user.Id;
+        AuthUser user = command.AuthUser;
+        Guid userId = user.Id;
         var userConnections = _connections.GetConnections(userId);
 
         if (userConnections.Any())
@@ -43,18 +42,20 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
             if (connectionIdExists)
                 return true;
             _connections.Add(userId, command.AuthUser.ConnectionId!);
+            var connectionsCount = userConnections.Count();
             _logger.LogInformation(
-                "User {UserId} connected with ConnectionId: {ConnectionId}",
-                user.ToAuthUserLog(),
-                command.AuthUser.ConnectionId
+                "User {UserName} connected with ConnectionId: {ConnectionId}. Total connections: {ConnectionsCount}",
+                user.UserName,
+                command.AuthUser.ConnectionId,
+                connectionsCount
             );
             return true;
         }
 
         _connections.Add(userId, command.AuthUser.ConnectionId!);
         _logger.LogInformation(
-            "User {User} connected with ConnectionId: {ConnectionId}",
-            user.ToAuthUserLog(),
+            "User {UserName} connected with ConnectionId: {ConnectionId}",
+            user.UserName,
             command.AuthUser.ConnectionId
         );
 
@@ -66,12 +67,6 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
         };
 
         await _hubContext.Clients.User(userId.ToString()).GetOnlineUsers(getOnlineUsersResponse);
-
-        var appUser = await _unitOfWork.AppUsersRepository.GetByIdAsync(userId);
-        appUser.ThrowHubExceptionIfNull();
-        appUser.LastActiveTime = DateTime.UtcNow;
-        await _unitOfWork.AppUsersRepository.UpdateAsync(appUser);
-        await _unitOfWork.SaveChangesAsync();
 
         return true;
     }

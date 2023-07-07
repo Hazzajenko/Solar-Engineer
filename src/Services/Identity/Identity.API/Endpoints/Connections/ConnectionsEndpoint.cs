@@ -29,6 +29,7 @@ public class ConnectionsEndpoint : EndpointWithoutRequest<AllConnectedUsersRespo
             x.Response<AllConnectedUsersResponse>(200, "Success");
             x.Response(401, "Unauthorized");
         });
+        Throttle(hitLimit: 20, durationSeconds: 60);
     }
 
     public override async Task HandleAsync(CancellationToken cT)

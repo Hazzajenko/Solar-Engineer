@@ -2,6 +2,7 @@
 using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Extensions;
 using Identity.Application.Handlers.Notifications;
+using Identity.Application.Logging;
 using Identity.Contracts.Responses.Friends;
 using Identity.Domain;
 using Identity.SignalR.Commands.Friends;
@@ -47,17 +48,17 @@ public class DeleteFriendHandler : ICommandHandler<DeleteFriendCommand, bool>
         );
         if (appUserLink is null)
         {
-            _logger.LogError(
-                "AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived} not found. Cannot remove friend. Creating new AppUserLink...",
-                appUser.ToAppUserLog(),
-                recipientUser.ToAppUserLog()
+            _logger.LogAppUserLinkNotFound(
+                appUser.UserName,
+                appUser.UserName,
+                recipientUser.UserName
             );
             appUserLink = new AppUserLink(appUser, recipientUser);
             await _unitOfWork.AppUserLinksRepository.AddAsync(appUserLink);
-            _logger.LogInformation(
-                "Created new AppUserLink with AppUserRequested: {AppUserRequested}, AppUserReceived: {AppUserReceived}",
-                appUser.ToAppUserLog(),
-                recipientUser.ToAppUserLog()
+            _logger.LogAppUserLinkCreated(
+                appUser.UserName,
+                appUser.UserName,
+                recipientUser.UserName
             );
             return await _unitOfWork.SaveChangesAsync();
         }
@@ -75,9 +76,10 @@ public class DeleteFriendHandler : ICommandHandler<DeleteFriendCommand, bool>
             .FriendRemoved(new FriendRemovedResponse { AppUserId = appUser.Id.ToString() });
 
         _logger.LogInformation(
-            "AppUser: {AppUserRequested} Removed Friend {AppUserReceived}",
-            appUser.ToAppUserLog(),
-            recipientUser.ToAppUserLog()
+            "User {UserName}: AppUserRequested {AppUserRequestedUserName} Removed Friend AppUserReceived {AppUserReceivedUserName}",
+            appUser.UserName,
+            appUser.UserName,
+            recipientUser.UserName
         );
 
         return true;

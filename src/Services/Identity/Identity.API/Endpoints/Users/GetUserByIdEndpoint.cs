@@ -1,22 +1,31 @@
-﻿using ApplicationCore.Extensions;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Extensions;
 using FastEndpoints;
 using Identity.Application.Logging;
 using Identity.Application.Mapping;
 using Identity.Application.Queries.AppUsers;
+using Identity.Application.Repositories.AppUsers;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses;
 using Identity.Domain;
 using Infrastructure.Extensions;
 using Mediator;
+using Microsoft.AspNetCore.Identity;
 
 namespace Identity.API.Endpoints.Users;
+
 public class GetUserByIdEndpoint : EndpointWithoutRequest<AppUserDto>
 {
-    private readonly IMediator _mediator;
+    private readonly UserManager<AppUser> _userManager;
+    private readonly IAppUsersRepository _appUsersRepository;
 
-    public GetUserByIdEndpoint(IMediator mediator)
+    public GetUserByIdEndpoint(
+        UserManager<AppUser> userManager,
+        IAppUsersRepository appUsersRepository
+    )
     {
-        _mediator = mediator;
+        _userManager = userManager;
+        _appUsersRepository = appUsersRepository;
     }
 
     public override void Configure()
@@ -27,10 +36,11 @@ public class GetUserByIdEndpoint : EndpointWithoutRequest<AppUserDto>
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        AppUser? appUser = await _mediator.Send(new GetAppUserQuery(User), cT);
+        AppUser? appUser = await _userManager.GetUserAsync(User);
         if (appUser is null)
         {
-            Logger.LogUserNotFound(User.GetUserId(), User.GetUserName());
+            NonAuthenticatedUser nonAuthUser = User.TryGetUserIdAndName();
+            Logger.LogUserNotFound(nonAuthUser.UserId, nonAuthUser.UserName);
             await SendUnauthorizedAsync(cT);
             return;
         }
@@ -44,13 +54,23 @@ public class GetUserByIdEndpoint : EndpointWithoutRequest<AppUserDto>
             return;
         }
 
-        AppUserDto? userByQuery = await _mediator.Send(new GetAppUserDtoByIdQuery(userQueryId.ToGuid()), cT);
+        AppUserDto? userByQuery = await _appUsersRepository.GetAppUserDtoByIdAsync(
+            userQueryId.ToGuid()
+        );
         if (userByQuery is null)
         {
             Logger.LogUserNotFound(userQueryId);
             await SendNoContentAsync(cT);
             return;
         }
+
+        Logger.LogTrace(
+            "User {UserName} - ({UserId}): Queried user {QueryUserId} - {QueryUserName}",
+            appUser.UserName,
+            appUser.Id,
+            userByQuery.Id,
+            userByQuery.UserName
+        );
 
         Response = userByQuery;
         await SendOkAsync(Response, cT);

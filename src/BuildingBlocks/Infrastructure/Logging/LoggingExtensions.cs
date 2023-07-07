@@ -72,10 +72,6 @@ public static partial class LoggingExtensions
                         "Microsoft.AspNetCore.SignalR",
                         LogEventLevel.Information
                     )
-                    // .MinimumLevel.Override(
-                    //     "Microsoft.AspNetCore.Cors.Infrastructure.CorsService",
-                    //     LogEventLevel.Debug
-                    // )
                     .MinimumLevel.Override(
                         "Microsoft.AspNetCore.Http.Connections",
                         LogEventLevel.Information

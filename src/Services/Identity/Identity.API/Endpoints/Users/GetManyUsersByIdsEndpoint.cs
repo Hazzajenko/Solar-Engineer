@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Extensions;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Extensions;
 using FastEndpoints;
 using Identity.Application.Handlers.AppUsers;
 using Identity.Application.Logging;
@@ -45,7 +46,8 @@ public class GetManyUsersByIdsEndpoint
         AppUser? appUser = await _mediator.Send(new GetAppUserQuery(User), cT);
         if (appUser is null)
         {
-            Logger.LogUserNotFound(User.GetUserId(), User.GetUserName());
+            NonAuthenticatedUser nonAuthUser = User.TryGetUserIdAndName();
+            Logger.LogUserNotFound(nonAuthUser.UserId, nonAuthUser.UserName);
             await SendUnauthorizedAsync(cT);
             return;
         }
@@ -56,7 +58,12 @@ public class GetManyUsersByIdsEndpoint
             cT
         );
 
-        Logger.LogInformation("Found {Count} users", userByQuery.Count());
+        Logger.LogTrace(
+            "User {UserName} - ({UserId}) requested {UserCount} users",
+            appUser.Id,
+            appUser.UserName,
+            userByQuery.Count()
+        );
 
         Response.AppUsers = userByQuery;
         await SendOkAsync(Response, cT);

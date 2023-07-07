@@ -48,8 +48,9 @@ public class CompleteManyNotificationsHandler
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation(
-            "Many notifications marked read by {AppUser}",
-            appUser.ToAppUserLog()
+            "User {UserName}: Completed {NotificationCount} notifications",
+            appUser.UserName,
+            notificationIds.Count()
         );
 
         return true;
