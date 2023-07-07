@@ -5,7 +5,9 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Responses;
 using Projects.Domain.Common;
+using Projects.Domain.Entities;
 using Projects.SignalR.Commands.PanelLinks;
 using Projects.SignalR.Hubs;
 
@@ -30,14 +32,14 @@ public class UpdateManyPanelLinksHandler : ICommandHandler<UpdateManyPanelLinksC
 
     public async ValueTask<bool> Handle(UpdateManyPanelLinksCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
-        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
+        appUserProject.ThrowHubExceptionIfNull("User is not apart of this project");
 
         var updates = command.Request.Updates;
         var panelLinkIds = updates.Select(x => x.Id.ToGuid());
@@ -50,24 +52,26 @@ public class UpdateManyPanelLinksHandler : ICommandHandler<UpdateManyPanelLinksC
         if (panelLinks.Count() != updates.Count())
             throw new HubException("One or more panels do not exist");
 
-        foreach (var panel in panelLinks)
+        foreach (PanelLink panel in panelLinks)
         {
-            var changes = updates.FirstOrDefault(x => x.Id == panel.Id.ToString())!.Changes;
+            PanelLinkChanges changes = updates
+                .FirstOrDefault(x => x.Id == panel.Id.ToString())!
+                .Changes;
             if (changes.PanelNegativeToId is not null)
             {
-                var negativePanel = await _unitOfWork.PanelsRepository.GetByIdAsync(
+                Panel? negativePanel = await _unitOfWork.PanelsRepository.GetByIdAsync(
                     changes.PanelNegativeToId.ToGuid()
                 );
-                negativePanel.ThrowExceptionIfNull(new HubException("Panel not found"));
+                negativePanel.ThrowHubExceptionIfNull("Panel not found");
                 panel.NegativePanelId = negativePanel.Id;
             }
 
             if (changes.PanelPositiveToId is not null)
             {
-                var positivePanel = await _unitOfWork.PanelsRepository.GetByIdAsync(
+                Panel? positivePanel = await _unitOfWork.PanelsRepository.GetByIdAsync(
                     changes.PanelPositiveToId.ToGuid()
                 );
-                positivePanel.ThrowExceptionIfNull(new HubException("Panel not found"));
+                positivePanel.ThrowHubExceptionIfNull("Panel not found");
                 panel.PositivePanelId = positivePanel.Id;
             }
 
@@ -85,18 +89,17 @@ public class UpdateManyPanelLinksHandler : ICommandHandler<UpdateManyPanelLinksC
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
                 appUserProject.ProjectId
             );
-        var response = panelLinks.ToProjectEventResponseFromEntityList(
+        ProjectEventResponse response = panelLinks.ToProjectEventResponseFromEntityList(
             command,
             ActionType.UpdateMany
         );
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(
-            "User {User} created {Amount} {PanelLinks} in project {Project}",
+            "User {UserName}: Created {PanelLinkAmount} Panel Links in Project {ProjectName}",
             command.User.ToAuthUserLog(),
             panelLinks.Count(),
-            panelLinks.Count() == 1 ? "Panel Link" : "Panel Links",
-            appUserProject.Project.Id.ToString()
+            appUserProject.Project.Name
         );
 
         return true;

@@ -6,6 +6,7 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Responses;
 using Projects.Domain.Common;
 using Projects.Domain.Entities;
 using Projects.SignalR.Commands.PanelLinks;
@@ -32,14 +33,14 @@ public class DeletePanelLinkHandler : ICommandHandler<DeletePanelLinkCommand, bo
 
     public async ValueTask<bool> Handle(DeletePanelLinkCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
-        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
+        appUserProject.ThrowHubExceptionIfNull("User is not apart of this project");
 
         var panelLinkId = command.Request.PanelLinkId.ToGuid();
         var deleteResult = await _unitOfWork.PanelLinksRepository.ExecuteDeleteAsync(
@@ -48,16 +49,16 @@ public class DeletePanelLinkHandler : ICommandHandler<DeletePanelLinkCommand, bo
         if (deleteResult > 1)
         {
             _logger.LogWarning(
-                "User {User} deleted {DeleteResult} Panel Links in project {Project}",
-                command.User.ToAuthUserLog(),
+                "User {UserName}: Deleted {DeleteResult} Panel Links in Project {Project}",
+                command.User.UserName,
                 deleteResult.ToString(),
-                appUserProject.Project.Id.ToString()
+                appUserProject.Project.Name
             );
             throw new HubException("Deleted more than one Panel Link");
         }
 
         var panelLinkIdString = panelLinkId.ToString();
-        var response = panelLinkIdString.ToProjectEventResponseFromId<PanelLink>(
+        ProjectEventResponse response = panelLinkIdString.ToProjectEventResponseFromId<PanelLink>(
             command,
             ActionType.Delete
         );
@@ -70,10 +71,10 @@ public class DeletePanelLinkHandler : ICommandHandler<DeletePanelLinkCommand, bo
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(
-            "User {User} deleted Panel Link {PanelLink} in project {Project}",
-            command.User.ToAuthUserLog(),
+            "User {UserName}: Deleted Panel Link {PanelLinkId} in Project {ProjectName}",
+            command.User.UserName,
             panelLinkIdString,
-            appUserProject.Project.Id.ToString()
+            appUserProject.Project.Name
         );
 
         return true;

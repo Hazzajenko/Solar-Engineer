@@ -23,6 +23,11 @@ public sealed class PanelConfigsRepository
         );
     }*/
 
+    public async Task<IEnumerable<PanelConfig>> GetPanelConfigsByIdsAsync(IEnumerable<Guid> ids)
+    {
+        return await Queryable.Where(x => ids.Contains(x.Id)).ToListAsync();
+    }
+
     public async Task<IEnumerable<PanelConfig>> GetDefaultPanelConfigsAsync()
     {
         return await Queryable.Where(x => x.Default).ToListAsync();

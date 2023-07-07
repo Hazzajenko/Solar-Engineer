@@ -5,7 +5,9 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Responses;
 using Projects.Domain.Common;
+using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Strings;
 using Projects.SignalR.Hubs;
 
@@ -30,24 +32,24 @@ public class UpdateStringHandler : ICommandHandler<UpdateStringCommand, bool>
 
     public async ValueTask<bool> Handle(UpdateStringCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.Request.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
-        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
+        appUserProject.ThrowHubExceptionIfNull("User is not apart of this project");
 
         var stringId = command.Request.Update.Id.ToGuid();
 
-        var @string = await _unitOfWork.StringsRepository.GetByIdAndProjectIdAsync(
+        String @string = await _unitOfWork.StringsRepository.GetByIdAndProjectIdAsync(
             stringId,
             projectId
         );
-        @string.ThrowExceptionIfNull(new HubException("String not found"));
+        @string.ThrowHubExceptionIfNull("String not found");
 
-        var changes = command.Request.Update.Changes;
+        StringChanges changes = command.Request.Update.Changes;
 
         _unitOfWork.Attach(@string);
         if (changes.Name is not null)
@@ -67,13 +69,16 @@ public class UpdateStringHandler : ICommandHandler<UpdateStringCommand, bool>
                 appUserProject.ProjectId
             );
 
-        var response = @string.ToProjectEventResponseFromEntity(command, ActionType.Update);
+        ProjectEventResponse response = @string.ToProjectEventResponseFromEntity(
+            command,
+            ActionType.Update
+        );
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(
-            "User {User} updated panel {String} in project {Project}",
-            command.User.ToAuthUserLog(),
-            @string.Id.ToString(),
+            "User {UserName}: Updated String {StringName} in Project {ProjectName}",
+            command.User.UserName,
+            @string.Name,
             appUserProject.Project.Name
         );
 

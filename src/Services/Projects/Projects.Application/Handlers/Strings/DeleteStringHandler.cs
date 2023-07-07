@@ -5,7 +5,9 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Responses;
 using Projects.Domain.Common;
+using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Strings;
 using Projects.SignalR.Hubs;
 
@@ -30,14 +32,14 @@ public class DeleteStringHandler : ICommandHandler<DeleteStringCommand, bool>
 
     public async ValueTask<bool> Handle(DeleteStringCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
-        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
+        appUserProject.ThrowHubExceptionIfNull("User is not apart of this project");
 
         var stringId = command.Request.StringId.ToGuid();
 
@@ -50,7 +52,7 @@ public class DeleteStringHandler : ICommandHandler<DeleteStringCommand, bool>
 
         var stringIdString = stringId.ToString();
 
-        var response = stringIdString.ToProjectEventResponseFromId<String>(
+        ProjectEventResponse response = stringIdString.ToProjectEventResponseFromId<String>(
             command,
             ActionType.Delete
         );
@@ -63,10 +65,10 @@ public class DeleteStringHandler : ICommandHandler<DeleteStringCommand, bool>
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(
-            "User {User} deleted string {String} in project {Project}",
+            "User {UserName}: Deleted String {StringId} in Project {ProjectName}",
             command.User.ToAuthUserLog(),
-            stringIdString,
-            projectId.ToString()
+            stringId,
+            appUserProject.Project.Name
         );
 
         return true;

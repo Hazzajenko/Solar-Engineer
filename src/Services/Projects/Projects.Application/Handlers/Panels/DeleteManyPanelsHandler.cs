@@ -5,6 +5,7 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Responses;
 using Projects.Domain.Common;
 using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Panels;
@@ -31,14 +32,14 @@ public class DeleteManyPanelsHandler : ICommandHandler<DeleteManyPanelsCommand, 
 
     public async ValueTask<bool> Handle(DeleteManyPanelsCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
-        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
+        appUserProject.ThrowHubExceptionIfNull("User is not apart of this project");
 
         var panelIdGuids = command.Request.PanelIds.Select(x => x.ToGuid()).ToList();
 
@@ -56,18 +57,17 @@ public class DeleteManyPanelsHandler : ICommandHandler<DeleteManyPanelsCommand, 
                 appUserProject.ProjectId
             );
         var panelIds = panels.Select(x => x.Id.ToString()).ToList();
-        var response = panelIds.ToProjectEventResponseFromIdList<Panel>(
+        ProjectEventResponse response = panelIds.ToProjectEventResponseFromIdList<Panel>(
             command,
             ActionType.DeleteMany
         );
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(
-            "User {User} deleted {Amount} {Panels} in project {Project}",
-            command.User.ToAuthUserLog(),
+            "User {UserName}: Deleted {PanelsAmount} Panels in Project {ProjectName}",
+            command.User.UserName,
             panels.Count(),
-            panels.Count() == 1 ? "panel" : "panels",
-            appUserProject.Project.Id.ToString()
+            appUserProject.Project.Name
         );
 
         return true;

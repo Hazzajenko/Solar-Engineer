@@ -6,6 +6,7 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Responses;
 using Projects.Domain.Common;
 using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Panels;
@@ -35,19 +36,19 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 
     public async ValueTask<bool> Handle(CreatePanelCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.Request.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
-        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
+        appUserProject.ThrowHubExceptionIfNull("User is not apart of this project");
 
         var panelStringId = command.Request.Panel.StringId;
         var panelHasString = panelStringId.Equals(String.UndefinedStringId) is false;
 
-        var panelString = panelHasString
+        String? panelString = panelHasString
             ? await _unitOfWork.StringsRepository.GetByIdAndProjectIdAsync(
                 panelStringId.ToGuid(),
                 projectId
@@ -64,14 +65,14 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             await _unitOfWork.SaveChangesAsync();
         }
 
-        panelString.ThrowExceptionIfNull(new HubException("String does not exist"));
+        panelString.ThrowHubExceptionIfNull("String does not exist");
 
         var panelConfigId = command.Request.Panel.PanelConfigId;
-        var panelConfig = panelConfigId.Equals(PanelConfig.DefaultPanelConfigId)
+        PanelConfig? panelConfig = panelConfigId.Equals(PanelConfig.DefaultPanelConfigId)
             ? await _unitOfWork.PanelConfigsRepository.GetByBrandAndModelAsync("Longi", "Himo555m")
             : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());
 
-        panelConfig.ThrowExceptionIfNull(new HubException("Panel config does not exist"));
+        panelConfig.ThrowHubExceptionIfNull("Panel config does not exist");
 
         var panel = Panel.Create(
             command.Request.Panel.Id.ToGuid(),
@@ -87,9 +88,12 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
         await _unitOfWork.SaveChangesAsync();
 
         panel = await _unitOfWork.PanelsRepository.GetByIdAsync(panel.Id);
-        panel.ThrowExceptionIfNull(new HubException("Panel does not exist"));
+        panel.ThrowHubExceptionIfNull("Panel does not exist");
 
-        var response = panel.ToProjectEventResponseFromEntity(command, ActionType.Create);
+        ProjectEventResponse response = panel.ToProjectEventResponseFromEntity(
+            command,
+            ActionType.Create
+        );
 
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
@@ -99,10 +103,10 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(
-            "User {User} created panel {Panel} in project {Project}",
-            command.User.ToAuthUserLog(),
-            panel.Id.ToString(),
-            appUserProject.Project.Id.ToString()
+            "User {UserName}: Created Panel {PanelId} in Project {ProjectName}",
+            command.User.UserName,
+            panel.Id,
+            appUserProject.Project.Name
         );
 
         return true;

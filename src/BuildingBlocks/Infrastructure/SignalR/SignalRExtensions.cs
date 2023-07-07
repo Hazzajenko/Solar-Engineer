@@ -116,8 +116,8 @@ public static class SignalRExtensions
     {
         if (item is not null)
             return item;
-        StackTrace stackTrace = new StackTrace();
-        var previousFrame = stackTrace.GetFrame(1);
+        var stackTrace = new StackTrace();
+        StackFrame? previousFrame = stackTrace.GetFrame(1);
         var callingClassName = previousFrame?.GetMethod()?.DeclaringType?.Name;
         var callingMethodName = previousFrame?.GetMethod()?.Name;
         Log.Logger.Error(

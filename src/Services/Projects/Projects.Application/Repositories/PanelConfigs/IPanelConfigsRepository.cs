@@ -14,4 +14,5 @@ public interface IPanelConfigsRepository : IGenericRepository<PanelConfig>
 
     Task<PanelConfig> GetByBrandAndModelAsync(string brand, string model);
     Task<IEnumerable<PanelConfigDto>> GetByPanelConfigIdsAsync(IEnumerable<Guid> panelConfigIds);
+    Task<IEnumerable<PanelConfig>> GetPanelConfigsByIdsAsync(IEnumerable<Guid> ids);
 }

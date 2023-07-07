@@ -5,6 +5,7 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Responses;
 using Projects.Domain.Common;
 using Projects.Domain.Entities;
 using Projects.SignalR.Commands.PanelLinks;
@@ -32,37 +33,37 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
 
     public async ValueTask<bool> Handle(CreatePanelLinkCommand command, CancellationToken cT)
     {
-        var appUserIdGuid = command.User.Id;
+        Guid appUserIdGuid = command.User.Id;
         var projectIdGuid = command.Request.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserIdGuid,
                 projectIdGuid
             );
-        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
+        appUserProject.ThrowHubExceptionIfNull("User is not apart of this project");
 
         var panelLinkIdGuid = command.Request.PanelLink.Id.ToGuid();
         var positiveToIdGuid = command.Request.PanelLink.PositivePanelId.ToGuid();
         var negativeToIdGuid = command.Request.PanelLink.NegativePanelId.ToGuid();
         var stringIdGuid = command.Request.PanelLink.StringId.ToGuid();
 
-        var positiveToPanel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
+        Panel? positiveToPanel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
             positiveToIdGuid,
             projectIdGuid
         );
-        positiveToPanel.ThrowExceptionIfNull(new HubException("PositiveTo panel does not exist"));
+        positiveToPanel.ThrowHubExceptionIfNull("PositiveTo panel does not exist");
 
-        var negativeToPanel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
+        Panel? negativeToPanel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
             negativeToIdGuid,
             projectIdGuid
         );
-        negativeToPanel.ThrowExceptionIfNull(new HubException("NegativeTo panel does not exist"));
+        negativeToPanel.ThrowHubExceptionIfNull("NegativeTo panel does not exist");
 
-        var existingStringId = await _unitOfWork.StringsRepository.GetByIdAndProjectIdAsync(
+        String existingStringId = await _unitOfWork.StringsRepository.GetByIdAndProjectIdAsync(
             stringIdGuid,
             projectIdGuid
         );
-        existingStringId.ThrowExceptionIfNull(new HubException("String does not exist"));
+        existingStringId.ThrowHubExceptionIfNull("String does not exist");
 
         var linePoints = command.Request.PanelLink.LinePoints;
 
@@ -84,7 +85,7 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
         await _unitOfWork.PanelsRepository.UpdateAndSaveChangesAsync(positiveToPanel);
         await _unitOfWork.PanelsRepository.UpdateAndSaveChangesAsync(negativeToPanel);
 
-        var panelLinkResponse = panelLink.ToProjectEventResponseFromEntity(
+        ProjectEventResponse panelLinkResponse = panelLink.ToProjectEventResponseFromEntity(
             command,
             ActionType.Create
         );
@@ -97,10 +98,10 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(panelLinkResponse);
 
         _logger.LogInformation(
-            "User {User} created panel link {Panel} in project {Project}",
-            command.User.ToAuthUserLog(),
-            panelLink.Id.ToString(),
-            appUserProject.Project.Id.ToString()
+            "User {UserName}: Created Panel Link {PanelLinkId} in Project {ProjectName}",
+            command.User.UserName,
+            panelLink.Id,
+            appUserProject.Project.Name
         );
 
         return true;

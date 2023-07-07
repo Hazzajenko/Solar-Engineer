@@ -5,7 +5,9 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Responses;
 using Projects.Domain.Common;
+using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Panels;
 using Projects.SignalR.Hubs;
 
@@ -30,14 +32,14 @@ public class UpdateManyPanelsHandler : ICommandHandler<UpdateManyPanelsCommand, 
 
     public async ValueTask<bool> Handle(UpdateManyPanelsCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
-        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
+        appUserProject.ThrowHubExceptionIfNull("User is not apart of this project");
 
         var updates = command.Request.Updates;
         var panelIds = updates.Select(x => x.Id.ToGuid());
@@ -46,42 +48,23 @@ public class UpdateManyPanelsHandler : ICommandHandler<UpdateManyPanelsCommand, 
         if (panels.Count() != updates.Count())
             throw new HubException("One or more panels do not exist");
 
+        var newConfigIds = updates
+            .Where(x => x.Changes?.PanelConfigId is not null)
+            .Select(x => x.Changes.PanelConfigId!)
+            .Distinct()
+            .Select(Guid.Parse)
+            .ToList();
+
+        var panelConfigs = await _unitOfWork.PanelConfigsRepository.GetPanelConfigsByIdsAsync(
+            newConfigIds
+        );
+
+        var panelConfigIds = panelConfigs.Select(x => x.Id).ToHashSet();
+
         HashSet<string> panelStringIds = new();
-        foreach (var panel in panels)
+        foreach (Panel panel in panels)
         {
-            var changes = updates.FirstOrDefault(x => x.Id == panel.Id.ToString())!.Changes;
-            if (changes.Location is not null)
-                panel.Location = changes.Location;
-
-            if (changes.Angle is not null)
-                panel.Angle = (int)changes.Angle;
-
-            if (changes.PanelConfigId is not null)
-            {
-                var panelConfig = await _unitOfWork.PanelConfigsRepository.GetByIdAsync(
-                    changes.PanelConfigId.ToGuid()
-                );
-                panelConfig.ThrowHubExceptionIfNull();
-                panel.PanelConfigId = panelConfig.Id;
-            }
-
-            if (changes.StringId is null)
-                continue;
-            var stringId = changes.StringId.ToGuid();
-            var getFromHashset = panelStringIds.Contains(changes.StringId);
-            if (getFromHashset)
-            {
-                panel.StringId = stringId;
-                continue;
-            }
-
-            var panelString = await _unitOfWork.StringsRepository.GetByIdAndProjectIdAsync(
-                stringId,
-                projectId
-            );
-            panelString.ThrowExceptionIfNull(new HubException("String not found"));
-            panelStringIds.Add(panelString.Id.ToString());
-            panel.StringId = stringId;
+            MakePanelChanges(updates, panel, panelStringIds, panelConfigIds);
         }
 
         panels = await _unitOfWork.PanelsRepository.UpdateManyAndSaveChangesAsync(panels);
@@ -90,17 +73,53 @@ public class UpdateManyPanelsHandler : ICommandHandler<UpdateManyPanelsCommand, 
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
                 appUserProject.ProjectId
             );
-        var response = panels.ToProjectEventResponseFromEntityList(command, ActionType.UpdateMany);
+        ProjectEventResponse response = panels.ToProjectEventResponseFromEntityList(
+            command,
+            ActionType.UpdateMany
+        );
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(
-            "User {User} created {Amount} {Panels} in project {Project}",
-            command.User.ToAuthUserLog(),
+            "User {UserName}: Updated {PanelAmount} Panels in Project {ProjectName}",
+            command.User.UserName,
             panels.Count(),
-            panels.Count() == 1 ? "panel" : "panels",
-            appUserProject.Project.Id.ToString()
+            appUserProject.Project.Name
         );
 
         return true;
+    }
+
+    private static void MakePanelChanges(
+        IEnumerable<ProjectItemUpdateRequest<PanelChanges>> updates,
+        Panel panel,
+        ISet<string> panelStringIds,
+        IReadOnlySet<Guid> panelConfigIds
+    )
+    {
+        PanelChanges changes = updates.FirstOrDefault(x => x.Id == panel.Id.ToString())!.Changes;
+        if (changes.Location is not null)
+            panel.Location = changes.Location;
+
+        if (changes.Angle is not null)
+            panel.Angle = (int)changes.Angle;
+
+        if (changes.PanelConfigId is not null)
+        {
+            if (!panelConfigIds.Contains(changes.PanelConfigId.ToGuid()))
+                throw new HubException("PanelConfig does not exist");
+            panel.PanelConfigId = changes.PanelConfigId.ToGuid();
+        }
+
+        if (changes.StringId is null)
+            return;
+        var stringId = changes.StringId.ToGuid();
+        var getFromHashset = panelStringIds.Contains(changes.StringId);
+        if (getFromHashset)
+        {
+            panel.StringId = stringId;
+            return;
+        }
+        panelStringIds.Add(changes.StringId);
+        panel.StringId = stringId;
     }
 }

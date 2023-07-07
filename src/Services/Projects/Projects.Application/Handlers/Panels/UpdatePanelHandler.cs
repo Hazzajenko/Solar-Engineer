@@ -5,7 +5,9 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Responses;
 using Projects.Domain.Common;
+using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Panels;
 using Projects.SignalR.Hubs;
 
@@ -30,24 +32,24 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
 
     public async ValueTask<bool> Handle(UpdatePanelCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.Request.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
-        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
+        appUserProject.ThrowHubExceptionIfNull("User is not apart of this project");
 
         var panelId = command.Request.Update.Id.ToGuid();
 
-        var panel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
+        Panel? panel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
             panelId,
             projectId
         );
-        panel.ThrowExceptionIfNull(new HubException("Panel not found"));
+        panel.ThrowHubExceptionIfNull("Panel not found");
 
-        var changes = command.Request.Update.Changes;
+        PanelChanges changes = command.Request.Update.Changes;
 
         _unitOfWork.Attach(panel);
         if (changes.Location is not null)
@@ -58,7 +60,7 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
 
         if (changes.PanelConfigId is not null)
         {
-            var panelConfig = await _unitOfWork.PanelConfigsRepository.GetByIdAsync(
+            PanelConfig? panelConfig = await _unitOfWork.PanelConfigsRepository.GetByIdAsync(
                 changes.PanelConfigId.ToGuid()
             );
             panelConfig.ThrowHubExceptionIfNull();
@@ -73,13 +75,16 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
                 appUserProject.ProjectId
             );
 
-        var response = panel.ToProjectEventResponseFromEntity(command, ActionType.Update);
+        ProjectEventResponse response = panel.ToProjectEventResponseFromEntity(
+            command,
+            ActionType.Update
+        );
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(
-            "User {User} updated panel {Panel} in project {Project}",
-            command.User.ToAuthUserLog(),
-            panel.Id.ToString(),
+            "User {UserName}: Updated Panel {PanelId} in Project {ProjectName}",
+            command.User.UserName,
+            panel.Id,
             appUserProject.Project.Name
         );
 

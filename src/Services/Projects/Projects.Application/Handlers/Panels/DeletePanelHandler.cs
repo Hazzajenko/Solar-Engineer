@@ -6,6 +6,7 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
+using Projects.Contracts.Responses;
 using Projects.Domain.Common;
 using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Panels;
@@ -17,32 +18,29 @@ public class DeletePanelHandler : ICommandHandler<DeletePanelCommand, bool>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<DeletePanelHandler> _logger;
-    private readonly IMapper _mapper;
     private readonly IProjectsUnitOfWork _unitOfWork;
 
     public DeletePanelHandler(
         ILogger<DeletePanelHandler> logger,
         IProjectsUnitOfWork unitOfWork,
-        IHubContext<ProjectsHub, IProjectsHub> hubContext,
-        IMapper mapper
+        IHubContext<ProjectsHub, IProjectsHub> hubContext
     )
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
         _hubContext = hubContext;
-        _mapper = mapper;
     }
 
     public async ValueTask<bool> Handle(DeletePanelCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
-        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
+        appUserProject.ThrowHubExceptionIfNull("User is not apart of this project");
 
         var panelId = command.Request.PanelId.ToGuid();
         var deleteResult = await _unitOfWork.PanelsRepository.DeletePanelByIdAndProjectIdAsync(
@@ -53,7 +51,7 @@ public class DeletePanelHandler : ICommandHandler<DeletePanelCommand, bool>
             throw new HubException("Panel not found");
 
         var panelIdString = panelId.ToString();
-        var response = panelIdString.ToProjectEventResponseFromId<Panel>(
+        ProjectEventResponse response = panelIdString.ToProjectEventResponseFromId<Panel>(
             command,
             ActionType.Delete
         );
@@ -66,10 +64,10 @@ public class DeletePanelHandler : ICommandHandler<DeletePanelCommand, bool>
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(
-            "User {User} deleted panel {Panel} in project {Project}",
-            command.User.ToAuthUserLog(),
+            "User {UserName}: Deleted Panel {PanelId} in Project {ProjectName}",
+            command.User.UserName,
             panelIdString,
-            appUserProject.Project.Id.ToString()
+            appUserProject.Project.Name
         );
 
         return true;
