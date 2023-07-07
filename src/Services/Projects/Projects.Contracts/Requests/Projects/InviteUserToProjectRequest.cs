@@ -3,7 +3,7 @@ using Infrastructure.Extensions;
 
 namespace Projects.Contracts.Requests.Projects;
 
-public class InviteUserToProjectRequest
+public class InviteUserToProjectRequest : IProjectRequest
 {
     public string ProjectId { get; set; } = default!;
 

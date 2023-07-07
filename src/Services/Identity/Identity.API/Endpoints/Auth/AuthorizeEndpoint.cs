@@ -82,7 +82,7 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         }
 
         Logger.LogInformation(
-            "User {UserName}: Authenticated in with {LoginProvider}",
+            "User {UserName}: Authenticated With {LoginProvider}",
             user.UserName,
             loginProvider
         );

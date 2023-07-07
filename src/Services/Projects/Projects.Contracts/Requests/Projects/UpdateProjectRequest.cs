@@ -1,6 +1,6 @@
 ﻿namespace Projects.Contracts.Requests.Projects;
 
-public class UpdateProjectRequest
+public class UpdateProjectRequest : IProjectRequest
 {
     public required string ProjectId { get; set; }
     public required ProjectChanges Changes { get; set; }

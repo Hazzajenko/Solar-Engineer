@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Projects.Application.Data.Seed;
+using Projects.Application.Middleware;
 using Projects.Contracts.Data;
 using Projects.SignalR.Hubs;
 using Serilog;
@@ -57,7 +58,7 @@ public static class WebApplicationExtensions
             });
         }
 
-        app.ConfigureSerilogRequestLogging();
+        // app.ConfigureSerilogRequestLogging();
         app.UseCors(CorsConfig.CorsPolicy);
         app.UseAuthentication();
         app.UseAuthorization();
@@ -66,6 +67,7 @@ public static class WebApplicationExtensions
 
         app.MapHub<ProjectsHub>("hubs/projects");
         app.UseMiddleware<ValidationMappingMiddleware>();
+        app.UseMiddleware<ProjectRequestLoggingMiddleware>();
 
         ProjectsSeeder.InitializeDatabase(app);
 

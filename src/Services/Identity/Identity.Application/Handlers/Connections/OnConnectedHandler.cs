@@ -44,7 +44,7 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
             _connections.Add(userId, command.AuthUser.ConnectionId!);
             var connectionsCount = userConnections.Count();
             _logger.LogInformation(
-                "User {UserName} connected with ConnectionId: {ConnectionId}. Total connections: {ConnectionsCount}",
+                "User {UserName} Connected To UsersHub With ConnectionId: {ConnectionId}. Total Connections: {ConnectionsCount}",
                 user.UserName,
                 command.AuthUser.ConnectionId,
                 connectionsCount
@@ -54,7 +54,7 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
 
         _connections.Add(userId, command.AuthUser.ConnectionId!);
         _logger.LogInformation(
-            "User {UserName} connected with ConnectionId: {ConnectionId}",
+            "User {UserName}: Connected To UsersHub With ConnectionId: {ConnectionId}",
             user.UserName,
             command.AuthUser.ConnectionId
         );

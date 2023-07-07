@@ -16,9 +16,7 @@ public static class ExceptionExtensions
         if (projectItem is not null)
             return projectItem;
         Log.Logger.Error("{Message}", exception.Message);
-        // Log.Logger.Error("{StackTrace}", exception.StackTrace);
         Log.Logger.Error("{StackTrace}", exception.GetExceptionMessageWithStackTraceAndData());
-        // Log.Logger.Error("{StackTrace}", GetExceptionMessageWithStackTraceAndData(exception));
         throw exception;
     }
 

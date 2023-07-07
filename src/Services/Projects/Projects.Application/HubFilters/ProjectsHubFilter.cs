@@ -1,7 +1,12 @@
-﻿using Infrastructure.Logging;
+﻿using ApplicationCore.Entities;
+using Infrastructure.Logging;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using Projects.Application.Data.UnitOfWork;
+using Projects.Domain.Common;
+using Projects.Domain.Entities;
 using Serilog;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Projects.Application.HubFilters;
 
@@ -12,87 +17,86 @@ public class ProjectsHubFilter : IHubFilter
         Func<HubInvocationContext, ValueTask<object?>> next
     )
     {
-        Log.Logger.Information(
-            "ProjectsHubFilter, {HubMethodName}",
+        var logger = invocationContext.ServiceProvider.GetService<ILogger<ProjectsHubFilter>>()!;
+        var authUser = invocationContext.Context.ToAuthUser();
+        logger.LogInformation(
+            "User {UserName}: Calling hub method {HubMethodName}",
+            authUser.UserName,
             invocationContext.HubMethodName
         );
-        var hubMethodName = invocationContext.HubMethodName;
-        if (hubMethodName.Equals("SendProjectEvent")) { }
-        return await HandleNext(invocationContext, next);
-    }
+        var unitOfWork = invocationContext.ServiceProvider.GetService<IProjectsUnitOfWork>()!;
+        ProjectUser? projectUser = await unitOfWork.ProjectUsersRepository.GetByIdAsync(
+            authUser.Id
+        );
+        if (projectUser is null)
+        {
+            logger.LogError("User {UserName}: ProjectUser is null", authUser.UserName);
+            return await HandleNextNoProject(invocationContext, next, authUser, "null", logger);
+        }
 
-    private async ValueTask<object?> HandleNextSendProjectEvent(
-        HubInvocationContext invocationContext,
-        Func<HubInvocationContext, ValueTask<object?>> next
-    )
-    {
-        try
+        var selectedProjectId = projectUser.SelectedProjectId.ToString() ?? "null";
+
+        var hubMethodArguments = invocationContext.HubMethodArguments;
+        if (hubMethodArguments.Any() is false)
+            return await HandleNextNoProject(
+                invocationContext,
+                next,
+                authUser,
+                selectedProjectId,
+                logger
+            );
+
+        object? argument = invocationContext.HubMethodArguments[0];
+        if (argument is not IProjectRequest projectRequest)
+            return await HandleNextNoProject(
+                invocationContext,
+                next,
+                authUser,
+                selectedProjectId,
+                logger
+            );
+        var projectId = projectRequest.ProjectId;
+
+        using (
+            logger.BeginScope(
+                new Dictionary<string, object>
+                {
+                    ["UserId"] = authUser.Id,
+                    ["UserName"] = authUser.UserName,
+                    ["ConnectionId"] = invocationContext.Context.ConnectionId,
+                    ["HubMethodName"] = invocationContext.HubMethodName,
+                    ["ProjectId"] = projectId,
+                    ["SelectedProjectId"] = projectUser.SelectedProjectId.ToString() ?? "null"
+                }
+            )
+        )
         {
             return await next(invocationContext);
         }
-        catch (Exception ex)
-        {
-            if (invocationContext.HubMethodArguments.Any() is false)
-            {
-                Log.Logger.Error(
-                    ex,
-                    "Exception calling hub method {HubMethodName} with no arguments",
-                    invocationContext.HubMethodName
-                );
-
-                throw;
-            }
-
-            invocationContext.HubMethodArguments
-                .ToList()
-                .ForEach(arg =>
-                {
-                    arg?.DumpObjectJson();
-                    Log.Logger.Error(
-                        ex,
-                        "Exception calling hub method {HubMethodName} with argument {HubMethodArgument}",
-                        invocationContext.HubMethodName,
-                        arg
-                    );
-                });
-            Log.Logger.Error(
-                ex,
-                "Exception calling hub method {HubMethodName}",
-                invocationContext.HubMethodName
-            );
-
-            throw;
-        }
     }
 
-    private async ValueTask<object?> HandleNext(
+    private async ValueTask<object?> HandleNextNoProject(
         HubInvocationContext invocationContext,
         Func<HubInvocationContext, ValueTask<object?>> next,
-        Guid? userId = null
+        AuthUser authUser,
+        string selectedProjectId,
+        ILogger logger
     )
     {
-        try
+        using (
+            logger.BeginScope(
+                new Dictionary<string, object>
+                {
+                    ["UserId"] = authUser.Id,
+                    ["UserName"] = authUser.UserName,
+                    ["ConnectionId"] = invocationContext.Context.ConnectionId,
+                    ["HubMethodName"] = invocationContext.HubMethodName,
+                    ["SelectedProjectId"] = selectedProjectId
+                }
+            )
+        )
         {
             return await next(invocationContext);
-        }
-        catch (Exception ex)
-        {
-            if (userId is null)
-            {
-                Log.Logger.Error(
-                    ex,
-                    "Unauthenticated User: Exception calling hub method {HubMethodName}",
-                    invocationContext.HubMethodName
-                );
-                throw;
-            }
-            Log.Logger.Error(
-                ex,
-                "User {UserId}: Exception calling hub method {HubMethodName}",
-                userId,
-                invocationContext.HubMethodName
-            );
-            throw;
         }
     }
 }

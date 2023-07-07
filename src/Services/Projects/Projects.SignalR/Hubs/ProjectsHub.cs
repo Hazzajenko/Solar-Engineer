@@ -26,10 +26,9 @@ public class ProjectsHub : Hub<IProjectsHub>
     {
         var user = Context.ToAuthUser();
         _logger.LogInformation(
-            "Connected: {ConnectionId} - {UserId} - {UserName}",
-            Context.ConnectionId,
-            user.Id,
-            user.UserName
+            "User {UserName}: Connected To ProjectsHub. {ConnectionId}",
+            user.UserName,
+            Context.ConnectionId
         );
         await GetUserProjects();
         await base.OnConnectedAsync();
@@ -39,10 +38,9 @@ public class ProjectsHub : Hub<IProjectsHub>
     {
         var user = Context.ToAuthUser();
         _logger.LogInformation(
-            "Disconnected: {ConnectionId} - {UserId} - {UserName}",
-            Context.ConnectionId,
-            user.Id,
-            user.UserName
+            "User {UserName}: Disconnected From ProjectsHub. {ConnectionId}",
+            user.UserName,
+            Context.ConnectionId
         );
         await base.OnDisconnectedAsync(exception);
     }

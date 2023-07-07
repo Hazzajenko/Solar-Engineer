@@ -1,6 +1,6 @@
 ﻿namespace Projects.Contracts.Requests.Projects;
 
-public class LeaveProjectRequest
+public class LeaveProjectRequest : IProjectRequest
 {
     public string ProjectId { get; set; } = default!;
 }

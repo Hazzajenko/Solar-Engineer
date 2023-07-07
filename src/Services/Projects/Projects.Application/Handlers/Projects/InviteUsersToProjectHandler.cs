@@ -56,8 +56,8 @@ public class InviteUsersToProjectHandler
         if (appUserProject is null)
         {
             _logger.LogError(
-                "User {User} tried to invite to project {Project} without a App User Project Link",
-                command.User.ToAuthUserLog(),
+                "User {UserName}: Tried To Invite To Project {ProjectId} Without A App User Project Link",
+                command.User.UserName,
                 projectId
             );
 
@@ -69,9 +69,9 @@ public class InviteUsersToProjectHandler
         if (appUserProject.CanInvite is false)
         {
             _logger.LogError(
-                "User {User} tried to invite to project {Project} but they do not have permission",
-                command.User.ToAuthUserLog(),
-                projectId
+                "User {UserName}: Tried To Invite To Project {ProjectName} But They Do Not Have Permission",
+                command.User.UserName,
+                appUserProject.Project.Name
             );
             var message = "User does not have invite permissions in project";
             var errors = new ValidationFailure(nameof(AppUserProject), message).ToArray();
@@ -91,16 +91,11 @@ public class InviteUsersToProjectHandler
             InvitedUserIds = userIds
         };
 
-        /*var projectDto = appUserProject.Project.ToDto();
-
-        var invitedToProjectResponse = new InvitedToProjectResponse { Project = projectDto };
-
-        await _hubContext.Clients.Users(userIds).InvitedToProject(invitedToProjectResponse);*/
         await _hubContext.Clients.Users(projectMembers).UsersSentInviteToProject(newProjectMembers);
 
         _logger.LogInformation(
-            "User {User} invited users {Users} to project {Project}",
-            command.User.ToAuthUserLog(),
+            "User {UserName}: Invited Users {Users} To Project {ProjectName}",
+            command.User.UserName,
             userIds,
             appUserProject.Project.Name
         );

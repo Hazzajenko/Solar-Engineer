@@ -1,10 +1,11 @@
-﻿using Identity.Application.Data.UnitOfWork;
+﻿using ApplicationCore.Entities;
+using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
 using Identity.Domain;
 using Infrastructure.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.SignalR;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace Identity.Application.HubFilters;
 
@@ -15,18 +16,18 @@ public class UsersHubFilter : IHubFilter
         Func<HubInvocationContext, ValueTask<object?>> next
     )
     {
+        var logger = invocationContext.ServiceProvider.GetService<ILogger<UsersHubFilter>>()!;
         var authUser = invocationContext.Context.ToAuthUser();
-        Log.Logger.Information(
-            "User {UserName} - ({UserId}): Calling hub method {HubMethodName}",
+        logger.LogInformation(
+            "User {UserName}: Calling hub method {HubMethodName}",
             authUser.UserName,
-            authUser.Id,
             invocationContext.HubMethodName
         );
         var unitOfWork = invocationContext.ServiceProvider.GetService<IIdentityUnitOfWork>();
         if (unitOfWork is null)
         {
-            Log.Logger.Error("IdentityUnitOfWork is null");
-            return await HandleNext(invocationContext, next);
+            logger.LogError("IdentityUnitOfWork is null");
+            return await HandleNext(invocationContext, next, authUser, logger);
         }
         AppUser appUser = await unitOfWork.AppUsersRepository.GetCurrentUserAsync(
             invocationContext.Context
@@ -39,43 +40,36 @@ public class UsersHubFilter : IHubFilter
             invocationContext.ServiceProvider.GetService<IConnectionsService>();
         if (connectionsService is null)
         {
-            Log.Logger.Error("ConnectionsService is null");
-            return await HandleNext(invocationContext, next);
+            logger.LogError("ConnectionsService is null");
+            return await HandleNext(invocationContext, next, authUser, logger);
         }
 
         connectionsService.UpdateLastActiveTime(appUser.Id);
 
-        return await HandleNext(invocationContext, next);
+        return await HandleNext(invocationContext, next, authUser, logger);
     }
 
     private async ValueTask<object?> HandleNext(
         HubInvocationContext invocationContext,
         Func<HubInvocationContext, ValueTask<object?>> next,
-        Guid? userId = null
+        AuthUser authUser,
+        ILogger logger
     )
     {
-        try
+        using (
+            logger.BeginScope(
+                new Dictionary<string, object>
+                {
+                    ["UserId"] = authUser.Id,
+                    ["UserName"] = authUser.UserName,
+                    ["IsAuthenticated"] = true,
+                    ["ConnectionId"] = invocationContext.Context.ConnectionId,
+                    ["HubMethodName"] = invocationContext.HubMethodName,
+                }
+            )
+        )
         {
             return await next(invocationContext);
-        }
-        catch (Exception ex)
-        {
-            if (userId is null)
-            {
-                Log.Logger.Error(
-                    ex,
-                    "Unauthenticated User: Exception calling hub method {HubMethodName}",
-                    invocationContext.HubMethodName
-                );
-                throw;
-            }
-            Log.Logger.Error(
-                ex,
-                "User {UserId}: Exception calling hub method {HubMethodName}",
-                userId,
-                invocationContext.HubMethodName
-            );
-            throw;
         }
     }
 }

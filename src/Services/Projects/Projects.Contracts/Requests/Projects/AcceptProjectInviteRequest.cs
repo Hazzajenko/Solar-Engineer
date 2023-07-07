@@ -2,7 +2,7 @@
 
 namespace Projects.Contracts.Requests.Projects;
 
-public class AcceptProjectInviteRequest
+public class AcceptProjectInviteRequest : IProjectRequest
 {
     public string ProjectId { get; set; } = default!;
 

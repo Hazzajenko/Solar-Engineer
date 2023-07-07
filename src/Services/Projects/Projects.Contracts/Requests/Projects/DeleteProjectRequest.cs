@@ -1,6 +1,6 @@
 ﻿namespace Projects.Contracts.Requests.Projects;
 
-public class DeleteProjectRequest
+public class DeleteProjectRequest : IProjectRequest
 {
     public string ProjectId { get; set; } = default!;
 }

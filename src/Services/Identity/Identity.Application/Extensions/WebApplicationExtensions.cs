@@ -62,7 +62,7 @@ public static partial class WebApplicationExtensions
             IdentityModelEventSource.ShowPII = true;
         }
 
-        app.ConfigureSerilogRequestLogging();
+        // app.ConfigureSerilogRequestLogging();
 
         app.UseCors(CorsConfig.CorsPolicy);
         app.UseHttpsRedirection();
@@ -74,8 +74,8 @@ public static partial class WebApplicationExtensions
         app.MapHub<UsersHub>("hubs/users");
 
         app.UseMiddleware<ValidationMappingMiddleware>();
-        app.UseHttpRequestLoggingMiddleware();
-        app.UseLastActiveMiddleware();
+        app.UseMiddleware<HttpRequestLoggingMiddleware>();
+        app.UseMiddleware<LastActiveMiddleware>();
 
         IdentityContextSeed.InitializeDatabase(app);
 

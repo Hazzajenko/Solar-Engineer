@@ -6,6 +6,7 @@ using Projects.Contracts.Requests.Projects;
 using Projects.Contracts.Responses;
 using Projects.Contracts.Responses.Projects;
 using Projects.SignalR.Queries.Projects;
+using Serilog;
 
 namespace Projects.API.Endpoints;
 
@@ -32,9 +33,13 @@ public class GetProjectByIdEndpoint : Endpoint<GetProjectByIdRequest, GetProject
 
     public override async Task HandleAsync(GetProjectByIdRequest request, CancellationToken cT)
     {
-        Response = await _mediator.Send(
-            new GetProjectByIdQuery(User.ToAuthUser(), request.ProjectId),
-            cT
+        var authUser = User.ToAuthUser();
+        Response = await _mediator.Send(new GetProjectByIdQuery(authUser, request.ProjectId), cT);
+
+        Logger.LogInformation(
+            "User {UserName}: Get Project by Id {ProjectId}",
+            authUser.UserName,
+            request.ProjectId
         );
 
         await SendOkAsync(Response, cT);

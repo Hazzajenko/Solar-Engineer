@@ -3,7 +3,7 @@ using Infrastructure.Extensions;
 
 namespace Projects.Contracts.Requests.Projects;
 
-public class UpdateProjectMemberRequest
+public class UpdateProjectMemberRequest : IProjectRequest
 {
     public required string ProjectId { get; set; }
     public required string MemberId { get; set; }

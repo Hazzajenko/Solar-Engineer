@@ -73,11 +73,7 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
         var user = appUser.Adapt<AppUserDto>();
 
-        Logger.LogInformation(
-            "User {UserName} - ({UserId}): Returning User signed in",
-            user.UserName,
-            user.Id
-        );
+        Logger.LogInformation("User {UserName}: Returning User Signed In", user.UserName);
 
         Response.Token = token;
         Response.User = user;

@@ -32,9 +32,9 @@ public class LeaveProjectHandler : ICommandHandler<LeaveProjectCommand, bool>
 
     public async ValueTask<bool> Handle(LeaveProjectCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.LeaveProjectRequest.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
@@ -42,25 +42,15 @@ public class LeaveProjectHandler : ICommandHandler<LeaveProjectCommand, bool>
         if (appUserProject is null)
         {
             _logger.LogError(
-                "User {User} tried to delete project {Project} without being a member",
-                command.User.ToAuthUserLog(),
+                "User {UserName}: Tried to delete Project {Project} without being a member",
+                command.User.UserName,
                 projectId
             );
-            var message = "You are not a member of this project";
+            const string message = "You are not a member of this project";
             throw new ValidationException(message, message.ToValidationFailure<AppUserProject>());
         }
 
-        var project = await _unitOfWork.ProjectsRepository.GetByIdAsync(projectId);
-        if (project is null)
-        {
-            _logger.LogError(
-                "User {User} tried to delete project {Project} without project existing",
-                command.User.ToAuthUserLog(),
-                projectId
-            );
-            var message = "Project doesnt exist";
-            throw new ValidationException(message, message.ToValidationFailure<AppUserProject>());
-        }
+        Project project = appUserProject.Project;
 
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(projectId);
@@ -77,9 +67,9 @@ public class LeaveProjectHandler : ICommandHandler<LeaveProjectCommand, bool>
                 .Users(appUserId.ToString())
                 .ProjectDeleted(projectDeletedResponse);
             _logger.LogInformation(
-                "{User} deleted {Project}",
-                command.User.ToAuthUserLog(),
-                project.GetProjectLoggingString()
+                "User {UserName}: Deleted Project {ProjectName}",
+                command.User.UserName,
+                project.Name
             );
             return true;
         }
@@ -104,9 +94,9 @@ public class LeaveProjectHandler : ICommandHandler<LeaveProjectCommand, bool>
             .Users(projectMembersExceptUser)
             .UserLeftProject(userLeftProjectResponse);
         _logger.LogInformation(
-            "{User} left {Project}",
-            command.User.ToAuthUserLog(),
-            project.GetProjectLoggingString()
+            "User {UserName}: Left Project {ProjectName}",
+            command.User.UserName,
+            project.Name
         );
 
         return true;

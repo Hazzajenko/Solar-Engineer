@@ -39,7 +39,7 @@ public class OnDisconnectedHandler : ICommandHandler<OnDisconnectedCommand, bool
         if (userConnections.Any() is false)
         {
             _logger.LogWarning(
-                "User {UserName} disconnected with no active connections",
+                "User {UserName}: Disconnected From UsersHub With No Active Connections",
                 authUser.UserName
             );
             return true;
@@ -52,7 +52,7 @@ public class OnDisconnectedHandler : ICommandHandler<OnDisconnectedCommand, bool
         {
             var connectionsCount = existingConnections.Count();
             _logger.LogInformation(
-                "User {UserName} disconnected with ConnectionId: {ConnectionId}. Remaining connections: {ConnectionsCount}",
+                "User {UserName}: Disconnected From UsersHub With ConnectionId: {ConnectionId}. Remaining Connections: {ConnectionsCount}",
                 authUser.UserName,
                 command.AuthUser.ConnectionId,
                 connectionsCount
@@ -64,7 +64,7 @@ public class OnDisconnectedHandler : ICommandHandler<OnDisconnectedCommand, bool
 
         await _hubContext.Clients.AllExcept(userId.ToString()).UserIsOffline(userIsOfflineResponse);
 
-        _logger.LogInformation("User {UserName} disconnected", authUser.UserName);
+        _logger.LogInformation("User {UserName}: Disconnected From UsersHub", authUser.UserName);
 
         return true;
     }

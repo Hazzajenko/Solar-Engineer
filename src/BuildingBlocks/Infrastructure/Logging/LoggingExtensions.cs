@@ -48,18 +48,11 @@ public static partial class LoggingExtensions
                     .Enrich.WithProcessId()
                     .Enrich.WithThreadId()
                     .AddApplicationInsightsLogging(config, environment)
-                    .Filter.ByExcluding(
-                        @event =>
-                            @event.Properties.TryGetValue("SourceContext", out var ctxProp)
-                            && ctxProp
-                                .ToString()
-                                .Contains("Microsoft.AspNetCore.Cors.Infrastructure.CorsService")
-                    )
+                    .ExcludeSources()
                     .WriteTo.Console();
 
                 var seqUrl = environment.IsDevelopment() ? "http://localhost:5341" : "http://seq";
                 loggerConfig.WriteTo.Seq(seqUrl);
-
                 // loggerConfig.WriteTo.OpenTelemetry(options =>
                 // {
                 //     options.Endpoint = "http://localhost:5341/ingest/otlp/v1/logs";
@@ -81,6 +74,27 @@ public static partial class LoggingExtensions
         );
 
         return builder;
+    }
+
+    private static LoggerConfiguration ExcludeSources(this LoggerConfiguration loggerConfiguration)
+    {
+        var excludedSources = new[]
+        {
+            "Microsoft.AspNetCore.Cors.Infrastructure.CorsService",
+            "Microsoft.AspNetCore.Hosting.Diagnostics",
+            "Microsoft.AspNetCore.Routing.EndpointMiddleware"
+        };
+
+        foreach (var source in excludedSources)
+            loggerConfiguration.Filter.ByExcluding(
+                @event =>
+                    @event.Properties.TryGetValue(
+                        "SourceContext",
+                        out LogEventPropertyValue? ctxProp
+                    ) && ctxProp.ToString().Contains(source)
+            );
+
+        return loggerConfiguration;
     }
 
     private static LoggerConfiguration AddApplicationInsightsLogging(

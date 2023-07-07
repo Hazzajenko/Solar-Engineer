@@ -32,9 +32,9 @@ public class KickProjectMemberHandler : ICommandHandler<KickProjectMemberCommand
 
     public async ValueTask<bool> Handle(KickProjectMemberCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.Request.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
@@ -42,27 +42,28 @@ public class KickProjectMemberHandler : ICommandHandler<KickProjectMemberCommand
         if (appUserProject is null)
         {
             _logger.LogError(
-                "{User}  tried to kick member from project {Project} without a App User Project Link",
-                command.User.ToAuthUserLog(),
+                "User {UserName}: Tried to kick member from Project {ProjectId} without a App User Project",
+                command.User.UserName,
                 projectId
             );
-            var message = "You are not a member of this project";
+            const string message = "You are not a member of this project";
             throw new ValidationException(message, message.ToValidationFailure<AppUserProject>());
         }
 
         if (appUserProject.Role.EqualsOneOf("Owner", "Admin") is false)
         {
             _logger.LogError(
-                "{User} tried to kick member from {Project} without permission",
-                command.User.ToAuthUserLog(),
-                appUserProject.Project.GetProjectLoggingString()
+                "User {UserName}: Tried to kick member from project {ProjectName} without permissions. User role: {UserRole}",
+                command.User.UserName,
+                appUserProject.Project.Name,
+                appUserProject.Role
             );
-            var message = "You do not have permission to delete this project";
+            const string message = "You do not have permission to delete this project";
             throw new ValidationException(message, message.ToValidationFailure<AppUserProject>());
         }
 
         var recipientId = command.Request.MemberId.ToGuid();
-        var memberToKick =
+        AppUserProject? memberToKick =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 recipientId,
                 projectId
@@ -71,12 +72,12 @@ public class KickProjectMemberHandler : ICommandHandler<KickProjectMemberCommand
         if (memberToKick is null)
         {
             _logger.LogError(
-                "{User} tried to kick member {Member} from {Project} without a App User Project Link",
-                command.User.ToAuthUserLog(),
+                "User {UserName}: Tried to kick member {MemberId} from Project {ProjectName} without a App User Project",
+                command.User.UserName,
                 recipientId,
-                appUserProject.Project.GetProjectLoggingString()
+                appUserProject.Project.Name
             );
-            var message = "Member doesnt exist";
+            const string message = "Member does not exist";
             throw new ValidationException(message, message.ToValidationFailure<AppUserProject>());
         }
 
@@ -108,10 +109,10 @@ public class KickProjectMemberHandler : ICommandHandler<KickProjectMemberCommand
             .Users(projectMembersExceptKickedUser)
             .ProjectMemberKicked(memberKickedResponse);
         _logger.LogInformation(
-            "{User} kicked Member {Member} from project {Project}",
-            command.User.ToAuthUserLog(),
+            "User {UserName}: Kicked member {MemberId} from Project {ProjectName}",
+            command.User.UserName,
             command.Request.MemberId,
-            appUserProject.Project.GetProjectLoggingString()
+            appUserProject.Project.Name
         );
 
         return true;

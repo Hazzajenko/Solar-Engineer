@@ -5,6 +5,7 @@ using Infrastructure.Mapping;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
+using Projects.Contracts.Requests.Projects;
 using Projects.Contracts.Responses.Projects;
 using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Projects;
@@ -31,23 +32,22 @@ public class UpdateProjectHandler : ICommandHandler<UpdateProjectCommand, bool>
 
     public async ValueTask<bool> Handle(UpdateProjectCommand command, CancellationToken cT)
     {
-        ArgumentNullException.ThrowIfNull(command.User);
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.UpdateProjectRequest.ProjectId.ToGuid();
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
-        var projectChanges = command.UpdateProjectRequest.Changes;
+        ProjectChanges projectChanges = command.UpdateProjectRequest.Changes;
         if (appUserProject is null)
         {
             _logger.LogError(
-                "User {User} tried to update project {Project} without a App User Project Link",
-                command.User.ToAuthUserLog(),
+                "User {UserName}: Tried to update Project {ProjectId} without a App User Project",
+                command.User.UserName,
                 projectId
             );
-            var message = $"User {appUserId} is not apart of project {projectId}";
+            const string message = "You are not a member of this project";
             throw new ValidationException(message, message.ToValidationFailure<AppUserProject>());
         }
 
@@ -73,9 +73,9 @@ public class UpdateProjectHandler : ICommandHandler<UpdateProjectCommand, bool>
         await _hubContext.Clients.Users(projectMemberIds).ProjectUpdated(response);
 
         _logger.LogInformation(
-            "User {User} updated {Project}",
-            command.User.ToAuthUserLog(),
-            projectId.ToString()
+            "User {UserName}: Updated Project {ProjectName}",
+            command.User.UserName,
+            appUserProject.Project.Name
         );
 
         return true;

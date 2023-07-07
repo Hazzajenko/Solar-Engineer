@@ -3,7 +3,7 @@ using Infrastructure.Extensions;
 
 namespace Projects.Contracts.Requests.Projects;
 
-public class KickProjectMemberRequest
+public class KickProjectMemberRequest : IProjectRequest
 {
     public string ProjectId { get; set; } = default!;
     public string MemberId { get; set; } = default!;

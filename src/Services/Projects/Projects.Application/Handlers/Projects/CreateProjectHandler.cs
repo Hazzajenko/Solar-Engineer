@@ -77,10 +77,15 @@ public class CreateProjectHandler
 
         var projectCreatedResponse = new ProjectCreatedWithTemplateResponse() { Project = dataDto };
 
-        _logger.LogInformation(
-            "User {User} created project {Project}",
-            command.User.ToAuthUserLog(),
-            appUserProject.Project.Name
+        LogWithProjectScope(
+            project.Id,
+            project.Name,
+            logger =>
+                logger.LogInformation(
+                    "User {UserName}: Created project {ProjectName}",
+                    command.User.UserName,
+                    appUserProject.Project.Name
+                )
         );
 
         Guid projectId = project.Id;
@@ -97,11 +102,17 @@ public class CreateProjectHandler
 
         var userIds = command.CreateProjectRequest.MemberIds;
 
-        _logger.LogInformation(
-            "User {User} invited users {Users} to project {Project}",
-            command.User.ToAuthUserLog(),
-            userIds,
-            appUserProject.Project.Name
+        LogWithProjectScope(
+            project.Id,
+            project.Name,
+            logger =>
+                logger.LogInformation(
+                    "User {UserName}: Invited users {Users} to project {ProjectName} - ({ProjectId})",
+                    command.User.UserName,
+                    userIds,
+                    appUserProject.Project.Name,
+                    appUserProject.ProjectId
+                )
         );
 
         var projectName = project.Name;
@@ -176,5 +187,19 @@ public class CreateProjectHandler
             panelLinks,
             defaultPanelConfigs
         );
+    }
+
+    private void LogWithProjectScope(Guid projectId, string projectName, Action<ILogger> logAction)
+    {
+        using (
+            _logger.BeginScope(
+                new Dictionary<string, object?>
+                {
+                    ["ProjectId"] = projectId,
+                    ["ProjectName"] = projectName
+                }
+            )
+        )
+            logAction(_logger);
     }
 }

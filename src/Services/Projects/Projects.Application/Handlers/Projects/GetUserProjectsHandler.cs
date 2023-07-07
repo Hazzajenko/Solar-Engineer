@@ -34,7 +34,7 @@ public class GetUserProjectsHandler : IQueryHandler<GetUserProjectsQuery, IEnume
         Guid appUserId = query.User.Id;
 
         ProjectUser? projectUser = await _unitOfWork.ProjectUsersRepository.GetByIdAsync(appUserId);
-        projectUser.ThrowHubExceptionIfNull($"{appUserId.ToString()} project user not found");
+        projectUser.ThrowHubExceptionIfNull("Project user not found");
 
         var selectedProjectId = projectUser.SelectedProjectId;
 
@@ -52,7 +52,11 @@ public class GetUserProjectsHandler : IQueryHandler<GetUserProjectsQuery, IEnume
         await _hubContext.Clients
             .User(appUserId.ToString())
             .GetManyProjects(getManyProjectsResponse);
-        _logger.LogInformation("User {User} get projects", query.User.ToAuthUserLog());
+        _logger.LogDebug(
+            "User {UserName}: Get User Projects. {ProjectsCount} Projects",
+            query.User.UserName,
+            projects.Count()
+        );
 
         return projects;
     }

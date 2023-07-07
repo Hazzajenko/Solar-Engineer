@@ -21,7 +21,6 @@ public class HttpRequestLoggingMiddleware
         ILogger<HttpRequestLoggingMiddleware> logger
     )
     {
-        // httpContextAccessor.
         IIdentity? identity = httpContext.User.Identity;
         if (identity is null || !identity.IsAuthenticated)
         {
@@ -37,15 +36,10 @@ public class HttpRequestLoggingMiddleware
         }
 
         var authUser = httpContext.User.ToAuthUser();
-        if (authUser.UserName is null)
-        {
-            logger.LogError("User {UserId} has no username", authUser.Id);
-        }
 
         logger.LogInformation(
-            "User {UserName} - ({UserId}): executing endpoint {EndPoint}",
+            "User {UserName}: executing endpoint {EndPoint}",
             authUser.UserName,
-            authUser.Id,
             httpContext.Request.Path
         );
         using (

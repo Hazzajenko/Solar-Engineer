@@ -6,6 +6,7 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Extensions;
+using Projects.Contracts.Requests.Projects;
 using Projects.Contracts.Responses.Projects;
 using Projects.Domain.Entities;
 using Projects.SignalR.Commands.Projects;
@@ -32,11 +33,10 @@ public class UpdateProjectMemberHandler : ICommandHandler<UpdateProjectMemberCom
 
     public async ValueTask<bool> Handle(UpdateProjectMemberCommand command, CancellationToken cT)
     {
-        ArgumentNullException.ThrowIfNull(command.User);
-        var appUserId = command.User.Id;
+        Guid appUserId = command.User.Id;
         var projectId = command.Request.ProjectId.ToGuid();
 
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
@@ -44,29 +44,29 @@ public class UpdateProjectMemberHandler : ICommandHandler<UpdateProjectMemberCom
         if (appUserProject is null)
         {
             _logger.LogError(
-                "User {User} tried to update project {Project} without a App User Project Link",
-                command.User.ToAuthUserLog(),
+                "User {UserName}: Tried to update Project {ProjectId} without a App User Project",
+                command.User.UserName,
                 projectId
             );
-            var message = $"User {appUserId} is not apart of project {projectId}";
+            const string message = "You are not a member of this project";
             throw new ValidationException(message, message.ToValidationFailure<AppUserProject>());
         }
 
         if (appUserProject.Role.EqualsOneOf("Owner", "Admin") is false)
         {
             _logger.LogError(
-                "User {User} tried to update project {Project} without permission",
-                command.User.ToAuthUserLog(),
-                projectId
+                "User {UserName}: Tried to update Project {ProjectName} without permissions. User role: {UserRole}",
+                command.User.UserName,
+                appUserProject.Project.Name,
+                appUserProject.Role
             );
-            var message =
-                $"User {appUserId} does not have permission to update project {projectId}";
+            const string message = "You do not have permission to update this project";
             throw new ValidationException(message, message.ToValidationFailure<AppUserProject>());
         }
-        var request = command.Request;
+        UpdateProjectMemberRequest request = command.Request;
         var recipientUserId = request.MemberId.ToGuid();
 
-        var recipientAppUserProject =
+        AppUserProject? recipientAppUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 recipientUserId,
                 projectId
@@ -75,26 +75,26 @@ public class UpdateProjectMemberHandler : ICommandHandler<UpdateProjectMemberCom
         if (recipientAppUserProject is null)
         {
             _logger.LogError(
-                "User {User} tried to update project {Project} for user {Recipient} without a App User Project Link",
-                command.User.ToAuthUserLog(),
-                projectId,
+                "User {UserName}: Tried to update Project {ProjectName} for User {RecipientId} without a App User Project",
+                command.User.UserName,
+                appUserProject.Project.Name,
                 recipientUserId
             );
-            var message = $"User {request.MemberId} is not apart of project {projectId}";
+            const string message = "User is not a member of this project";
             throw new ValidationException(message, message.ToValidationFailure<AppUserProject>());
         }
 
         var changesResp = new Dictionary<string, object>();
-        var changes = request.Changes;
+        ProjectMemberChanges changes = request.Changes;
 
         if (changes.Role is not null)
         {
             if (changes.Role.EqualsOneOf("Owner", "Admin", "Member") is false)
             {
                 _logger.LogError(
-                    "User {User} tried to update project {Project} with invalid role {Role}",
-                    command.User.ToAuthUserLog(),
-                    projectId,
+                    "User {UserName}: Tried to update Project {ProjectName} with invalid role {Role}",
+                    command.User.UserName,
+                    appUserProject.Project.Name,
                     changes.Role
                 );
                 var message = $"Role {changes.Role} is not valid";
@@ -157,9 +157,9 @@ public class UpdateProjectMemberHandler : ICommandHandler<UpdateProjectMemberCom
             .ProjectMemberUpdated(projectMemberUpdatedResponse);
 
         _logger.LogInformation(
-            "{User} updated a Project Member in {Project}",
-            command.User.ToAuthUserLog(),
-            appUserProject.Project.GetProjectLoggingString()
+            "User {UserName}: Updated a Project Member in Project {ProjectName}",
+            command.User.UserName,
+            appUserProject.Project.Name
         );
 
         return true;

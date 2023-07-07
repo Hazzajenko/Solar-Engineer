@@ -32,7 +32,6 @@ public class UsersHub : Hub<IUsersHub>
 
     public override async Task OnConnectedAsync()
     {
-        _logger.LogInformation("OnConnectedAsync");
         var authUser = Context.ToAuthUser();
         await _mediator.Send(new OnConnectedCommand(authUser));
         await _mediator.Send(new GetUserFriendsCommand(authUser));
@@ -43,7 +42,6 @@ public class UsersHub : Hub<IUsersHub>
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        _logger.LogInformation("OnDisconnectedAsync");
         await _mediator.Send(new OnDisconnectedCommand(Context.ToAuthUser()));
 
         await base.OnDisconnectedAsync(exception);

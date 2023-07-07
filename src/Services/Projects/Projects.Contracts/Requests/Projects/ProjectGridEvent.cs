@@ -1,12 +1,12 @@
 ﻿namespace Projects.Contracts.Requests.Projects;
 
-public class ProjectGridEvent
+public class ProjectGridEvent : IProjectRequest
 {
-    public required string RequestId { get; init; }
-    public required string ProjectId { get; init; }
-    public required string Action { get; init; }
-    public required string Model { get; init; }
-    public required string Data { get; init; }
+    public required string RequestId { get; set; }
+    public required string ProjectId { get; set; }
+    public required string Action { get; set; }
+    public required string Model { get; set; }
+    public required string Data { get; set; }
 }
 
 public class ProjectsEventRequestValidator : AbstractValidator<ProjectGridEvent>

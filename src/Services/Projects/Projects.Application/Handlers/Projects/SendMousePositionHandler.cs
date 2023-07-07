@@ -63,14 +63,6 @@ public class SendMousePositionHandler : ICommandHandler<SendMousePositionCommand
 
         await _hubContext.Clients.Users(activeMemberIds).ReceiveUserMousePosition(response);
 
-        _logger.LogInformation(
-            "User {UserId} sent mouse position to project {ProjectId} at {X}, {Y}",
-            user.ToAuthUserLog(),
-            request.ProjectId,
-            request.X,
-            request.Y
-        );
-
         return true;
     }
 }

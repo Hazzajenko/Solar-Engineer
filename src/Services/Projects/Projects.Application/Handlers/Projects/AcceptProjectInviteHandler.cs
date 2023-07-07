@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Events;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Events;
 using ApplicationCore.Events.Projects;
 using ApplicationCore.Extensions;
 using FluentValidation;
@@ -44,9 +45,9 @@ public class AcceptProjectInviteHandler : ICommandHandler<AcceptProjectInviteCom
 
     public async ValueTask<bool> Handle(AcceptProjectInviteCommand command, CancellationToken cT)
     {
-        var appUser = command.User;
+        AuthUser appUser = command.User;
         var projectIdGuid = command.Request.ProjectId.ToGuid();
-        var existingAppUserProject =
+        AppUserProject? existingAppUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUser.Id,
                 projectIdGuid
@@ -55,8 +56,8 @@ public class AcceptProjectInviteHandler : ICommandHandler<AcceptProjectInviteCom
         if (existingAppUserProject is not null)
         {
             _logger.LogError(
-                "User {User} tried to accept a project invite to project {ProjectId} but is already apart of the project",
-                appUser.ToAuthUserLog(),
+                "User {UserName}: Tried to accept a project invite to project {ProjectId} but is already apart of the project",
+                appUser.UserName,
                 projectIdGuid
             );
             var message = $"User {appUser.Id} is already apart of project {projectIdGuid}";
@@ -69,7 +70,7 @@ public class AcceptProjectInviteHandler : ICommandHandler<AcceptProjectInviteCom
         await _unitOfWork.AppUserProjectsRepository.AddAsync(requestAppUserProject);
         await _unitOfWork.SaveChangesAsync();
 
-        var appUserProject =
+        AppUserProject? appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUser.Id,
                 projectIdGuid
@@ -78,8 +79,8 @@ public class AcceptProjectInviteHandler : ICommandHandler<AcceptProjectInviteCom
         appUserProject.ThrowHubExceptionIfNull();
 
         _logger.LogInformation(
-            "User {User} accepted a project invite to project {ProjectId}",
-            appUser.ToAuthUserLog(),
+            "User {UserName}: Accepted a project invite to project {ProjectId}",
+            appUser.UserName,
             projectIdGuid
         );
 
@@ -97,7 +98,6 @@ public class AcceptProjectInviteHandler : ICommandHandler<AcceptProjectInviteCom
         };
 
         var projectDto = appUserProject.Adapt<ProjectDto>();
-        // var projectDto = appUserProject.Project.ToDto();
 
         var invitedToProjectResponse = new InvitedToProjectResponse { Project = projectDto };
 
