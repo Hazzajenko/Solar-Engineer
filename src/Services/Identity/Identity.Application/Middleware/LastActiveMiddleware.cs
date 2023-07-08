@@ -5,7 +5,10 @@ using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
 using Identity.Domain;
 using Infrastructure.Extensions;
+using Infrastructure.OpenTelemetry;
 using JasperFx.CodeGeneration.Frames;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -27,7 +30,8 @@ public class LastActiveMiddleware
         ILogger<LastActiveMiddleware> logger,
         IIdentityUnitOfWork unitOfWork,
         IHttpContextAccessor httpContextAccessor,
-        IConnectionsService connectionsService
+        IConnectionsService connectionsService,
+        TelemetryClient telemetryClient
     )
     {
         IIdentity? identity = httpContext.User.Identity;
@@ -61,18 +65,11 @@ public class LastActiveMiddleware
             connectionsService.UpdateLastActiveTime(appUser.Id);
         }
 
-        using (
-            logger.BeginScope(
-                new Dictionary<string, object>
-                {
-                    ["UserId"] = appUser.Id,
-                    ["UserName"] = appUser.UserName
-                }
-            )
-        )
-        {
-            await _next(httpContext);
-        }
+        RequestTelemetry requestTelemetry = telemetryClient.GetRequestTelemetry(appUser);
+        using var operation = telemetryClient.StartOperation(requestTelemetry);
+        using IDisposable? scope = logger.BeginScope(appUser.GetUserDictionary());
+
+        await _next(httpContext);
     }
 }
 

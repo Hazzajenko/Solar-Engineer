@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using ApplicationCore.Events.AppUsers;
 using ApplicationCore.Exceptions;
+using ApplicationCore.Extensions;
 using Identity.Application.Commands;
 using Identity.Application.Extensions;
 using Identity.Application.Mapping;
@@ -10,8 +11,11 @@ using Identity.Contracts.Data;
 using Identity.Domain;
 using Infrastructure.Logging;
 using Infrastructure.Mapping;
+using Infrastructure.OpenTelemetry;
 using MassTransit;
 using Mediator;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -25,13 +29,15 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
     private readonly UserManager<AppUser> _userManager;
     private readonly IBus _bus;
     private readonly IAzureStorage _azureStorage;
+    private readonly TelemetryClient _telemetryClient;
 
     public AuthorizeHandler(
         UserManager<AppUser> userManager,
         ILogger<AuthorizeHandler> logger,
         SignInManager<AppUser> signInManager,
         IBus bus,
-        IAzureStorage azureStorage
+        IAzureStorage azureStorage,
+        TelemetryClient telemetryClient
     )
     {
         _userManager = userManager;
@@ -39,6 +45,7 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
         _signInManager = signInManager;
         _bus = bus;
         _azureStorage = azureStorage;
+        _telemetryClient = telemetryClient;
     }
 
     public async ValueTask<ExternalSigninResponse> Handle(
@@ -70,6 +77,7 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
         CancellationToken cT
     )
     {
+        using IDisposable? scope = _logger.BeginScope(existingAppUser.GetUserDictionary());
         var props = new AuthenticationProperties();
         props.StoreTokens(externalLogin.AuthenticationTokens!);
         props.IsPersistent = false;
@@ -96,6 +104,8 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
             externalLogin.LoginProvider
         );
 
+        _telemetryClient.TrackEventScopedAsUser("User Signed In", existingAppUser);
+
         await _bus.Publish(
             new UserLoggedIn(
                 existingAppUser.Id,
@@ -117,6 +127,7 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
     {
         var appUser = user.ToAppUser(externalLogin);
 
+        using IDisposable? scope = _logger.BeginScope(appUser.GetUserDictionary());
         IdentityResult createUserResult = await _userManager.CreateAsync(appUser);
 
         if (!createUserResult.Succeeded)
@@ -164,6 +175,12 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
             throw new UnauthorizedException();
         }
 
+        _telemetryClient.TrackEventScopedAsUser(
+            "User Registered",
+            appUser,
+            new Dictionary<string, string> { ["Provider"] = externalLogin.LoginProvider }
+        );
+
         var photoUrl = await UpdateUrlImageToCdn(appUser, cT);
 
         appUser.PhotoUrl = photoUrl;
@@ -180,6 +197,8 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, ExternalSignin
             new UserRegistered(appUser.Id, appUser.UserName, appUser.DisplayName, appUser.PhotoUrl),
             cT
         );
+
+        _telemetryClient.TrackEventScopedAsUser("User Signed In", appUser);
 
         return new() { AppUser = appUser, LoginProvider = externalLogin.LoginProvider };
     }

@@ -16,6 +16,7 @@ public interface IConnectionsService
     );
     bool IsUserOnline(Guid appUserId);
     DateTime GetLastActiveTime(Guid appUserId);
+    TimeSpan GetConnectionDurationByAppUserId(Guid appUserId);
 
     IEnumerable<string> GetConnections(Guid key);
     IEnumerable<Guid> GetAllConnectedUserIds();

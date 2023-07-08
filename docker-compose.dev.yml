@@ -38,15 +38,15 @@ services:
     ports:
       - "6379:6379"
 
-  seq:
-    container_name: seq
-    restart: unless-stopped
-    environment:
-      - ACCEPT_EULA=Y
-      - SEQ_FIRSTRUN_ADMINPASSWORDHASH=$SEQ_PS
-    volumes:
-      - ./seq-data/:/data/
-    ports:
-      - '5342:5342'
-    image: datalust/seq
+#  seq:
+#    container_name: seq
+#    restart: unless-stopped
+#    environment:
+#      - ACCEPT_EULA=Y
+#      - SEQ_FIRSTRUN_ADMINPASSWORDHASH=$SEQ_PS
+#    volumes:
+#      - ./seq-data/:/data/
+#    ports:
+#      - '5342:5342'
+#    image: datalust/seq
 

@@ -1,10 +1,10 @@
 ﻿using ApplicationCore.Extensions;
+using ApplicationCore.Interfaces;
 
 namespace ApplicationCore.Entities;
 
-public class AuthUser
+public class AuthUser : IUser
 {
-
     private AuthUser(Guid id, string userName)
     {
         Id = id;

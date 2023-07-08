@@ -51,6 +51,9 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
             cT
         );
         AppUser appUser = externalSigninResponse.AppUser;
+
+        using IDisposable? scope = Logger.BeginScope(appUser.GetUserDictionary());
+
         var loginProvider = externalSigninResponse.LoginProvider;
 
         var token = _jwtTokenGenerator.GenerateToken(appUser.Id.ToString(), appUser.UserName);

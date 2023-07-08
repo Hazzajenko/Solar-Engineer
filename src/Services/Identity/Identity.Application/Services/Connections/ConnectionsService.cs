@@ -1,7 +1,11 @@
-﻿using Identity.Contracts.Data;
+﻿using Identity.Application.OpenTelemetry;
+using Identity.Contracts.Data;
 using Identity.Domain;
 using Infrastructure.Logging;
 using Infrastructure.OpenTelemetry;
+using Infrastructure.SignalR;
+using Microsoft.Extensions.Logging;
+using OpenTelemetry.Metrics;
 using Serilog;
 
 namespace Identity.Application.Services.Connections;
@@ -9,9 +13,14 @@ namespace Identity.Application.Services.Connections;
 public class ConnectionsService : IConnectionsService
 {
     private readonly Dictionary<Guid, AppUserConnectionDto> _connections = new();
-    private int _connectedUsersCount = 0;
 
-    public int ConnectedUsersCount => _connectedUsersCount;
+    public int ConnectedUsersCount { get; private set; } = 0;
+    private readonly ILogger<ConnectionsService> _logger;
+
+    public ConnectionsService(ILogger<ConnectionsService> logger)
+    {
+        _logger = logger;
+    }
 
     public void Add(Guid appUserId, string connectionId)
     {
@@ -22,7 +31,7 @@ public class ConnectionsService : IConnectionsService
             if (_connections.TryGetValue(appUserId, out userConnection!))
             {
                 userConnection.Connections.Add(new SocketConnection(connectionId));
-                Log.Logger.Information(
+                _logger.LogInformation(
                     "User {AppUserId} has {ConnectionsCount} connections",
                     appUserId,
                     userConnection.Connections.Count
@@ -33,14 +42,14 @@ public class ConnectionsService : IConnectionsService
             userConnection = new AppUserConnectionDto(appUserId, connectionId);
             _connections.Add(appUserId, userConnection);
 
-            _connectedUsersCount++;
+            ConnectedUsersCount++;
 
             var actionKeyValuePair = new KeyValuePair<string, object?>("Action", nameof(Add));
             var connectionCountKeyValuePair = new KeyValuePair<string, object?>(
                 "ConnectionsCount",
-                _connectedUsersCount
+                ConnectedUsersCount
             );
-            DiagnosticsConfig.SignalRConnectionCounter.Add(
+            IdentityDiagnosticsConfig.SignalRConnectionCounter.Add(
                 1,
                 actionKeyValuePair,
                 connectionCountKeyValuePair
@@ -79,36 +88,45 @@ public class ConnectionsService : IConnectionsService
         DeviceInfoDto deviceInfo
     )
     {
-        var appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
+        AppUserConnectionDto? appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
         if (appUserConnection is not null)
             return appUserConnection.AddDeviceInfoToConnectionId(connectionId, deviceInfo);
 
-        Log.Logger.Error("UserConnection is null, AppUserId: {AppUserId}", appUserId);
+        _logger.LogError("UserConnection is null, AppUserId: {AppUserId}", appUserId);
         return false;
     }
 
     public bool IsUserOnline(Guid appUserId)
     {
-        var appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
+        AppUserConnectionDto? appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
         return appUserConnection is not null;
     }
 
     public DateTime GetLastActiveTime(Guid appUserId)
     {
-        var appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
+        AppUserConnectionDto? appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
         if (appUserConnection is not null)
             return appUserConnection.LastActiveTime;
 
-        Log.Logger.Error("UserConnection is null, AppUserId: {AppUserId}", appUserId);
+        _logger.LogError("UserConnection is null, AppUserId: {AppUserId}", appUserId);
         return DateTime.MinValue;
+    }
+
+    public TimeSpan GetConnectionDurationByAppUserId(Guid appUserId)
+    {
+        AppUserConnectionDto? appUserConnection = GetAppUserConnectionByAppUserId(appUserId);
+        appUserConnection.ThrowHubExceptionIfNull(
+            "GetConnectionDuration: AppUserConnection is null",
+            appUserId.ToString()
+        );
+        return DateTime.UtcNow - appUserConnection.InitialConnectedTime;
     }
 
     public IEnumerable<string> GetConnections(Guid key)
     {
-        if (_connections.TryGetValue(key, out var userConnection))
-            return userConnection.Connections.Select(x => x.ConnectionId);
-
-        return Enumerable.Empty<string>();
+        return _connections.TryGetValue(key, out AppUserConnectionDto? userConnection)
+            ? userConnection.Connections.Select(x => x.ConnectionId)
+            : Enumerable.Empty<string>();
     }
 
     public IEnumerable<Guid> GetAllConnectedUserIds()
@@ -160,7 +178,7 @@ public class ConnectionsService : IConnectionsService
                 "ConnectionsCount",
                 _connections.Count
             );
-            DiagnosticsConfig.SignalRConnectionCounter.Add(
+            IdentityDiagnosticsConfig.SignalRConnectionCounter.Add(
                 -1,
                 actionKeyValuePair,
                 connectionCountKeyValuePair

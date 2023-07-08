@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 using ApplicationCore.Entities;
@@ -100,19 +101,23 @@ public static class SignalRExtensions
         return context.User.GetUserName();
     }
 
-    public static AuthUser ToAuthUser(this HubCallerContext context)
-    {
-        Guid userId = context.GetGuidUserId();
-        var userName = context.GetUserName();
-        return AuthUser.Create(userId, userName, context.ConnectionId);
-    }
+    // public static AuthUser ToAuthUser(this HubCallerContext context)
+    // {
+    //     Guid userId = context.GetGuidUserId();
+    //     var userName = context.GetUserName();
+    //     return AuthUser.Create(userId, userName, context.ConnectionId);
+    // }
 
     public static string ToAuthUserLog(this AuthUser user)
     {
         return $"User: {user.UserName} ({user.Id})";
     }
 
-    public static T ThrowHubExceptionIfNull<T>([NotNull] this T? item, string? message = null)
+    public static T ThrowHubExceptionIfNull<T>(
+        [NotNull] this T? item,
+        string? message = null,
+        string? id = null
+    )
     {
         if (item is not null)
             return item;
@@ -121,11 +126,12 @@ public static class SignalRExtensions
         var callingClassName = previousFrame?.GetMethod()?.DeclaringType?.Name;
         var callingMethodName = previousFrame?.GetMethod()?.Name;
         Log.Logger.Error(
-            "{CallingClassName}.{CallingMethodName}: {Item} is null : {Message}",
+            "{CallingClassName}.{CallingMethodName}: {Item} is null : {Message} : {Id}",
             callingClassName,
             callingMethodName,
             nameof(T),
-            message
+            message,
+            id
         );
         throw new HubException(message);
     }

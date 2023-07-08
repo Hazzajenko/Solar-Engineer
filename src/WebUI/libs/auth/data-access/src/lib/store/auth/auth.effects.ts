@@ -106,7 +106,7 @@ export const signInSuccess$ = createEffect(
 				const deviceInfo = { device, deviceType, os }
 				usersSignalr.init(token, deviceInfo)
 				appInsightsService.setAuthenticatedUserContext(user.id)
-				appInsightsService.logEvent('User Signed In', { user: user.id })
+				appInsightsService.logEvent('User Signed In Client', { UserId: user.id })
 				// messagesSignalr.init(token)
 			}),
 			map(() => {

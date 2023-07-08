@@ -49,7 +49,7 @@ public class ProjectsUnitOfWork : UnitOfWorkFactory<ProjectsContext>, IProjectsU
             }
 
             project.LastModifiedTime = DateTime.UtcNow;
-            Log.Logger.Information(
+            Log.Logger.Debug(
                 "Project with id {ProjectId} updated, LastModifiedTime: {DateTime}",
                 projectId,
                 DateTime.UtcNow

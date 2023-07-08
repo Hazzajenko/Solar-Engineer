@@ -55,6 +55,7 @@ public static partial class LoggingExtensions
                 loggerConfig.WriteTo.Seq(seqUrl);
                 // loggerConfig.WriteTo.OpenTelemetry(options =>
                 // {
+                //     options.
                 //     options.Endpoint = "http://localhost:5341/ingest/otlp/v1/logs";
                 //     options.Protocol = OtlpProtocol.HttpProtobuf;
                 // });

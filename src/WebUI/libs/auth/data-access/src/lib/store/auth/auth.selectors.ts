@@ -19,6 +19,8 @@ export const selectUserIdAndSignInTime = createSelector(
 	},
 )
 
+export const isLoggedIn = createSelector(selectAuthState, (auth) => !!auth.user)
+
 // export const selectError = createSelector(selectAuthState, (auth) => auth.error)
 // export const isLoggedIn = createSelector(selectAuthState, (auth) => !!auth.user)
 // export const isLoggedOut = createSelector(isLoggedIn, (loggedIn) => !loggedIn)

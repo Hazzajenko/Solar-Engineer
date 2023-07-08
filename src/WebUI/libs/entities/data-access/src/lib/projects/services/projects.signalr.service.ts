@@ -323,13 +323,13 @@ export class ProjectsSignalrService implements ILogger {
 			new Date(event.serverTime).getTime() - new Date(existingEvent.timeStamp).getTime()
 
 		console.log('timeDiff', timeDiff)
-		this._insightsService.logEvent('signalrEvent', {
+		this._insightsService.logEvent('User Dispatched Projects Event', {
 			action: event.action,
 			model: event.model,
 			timeDiff,
 		})
 
-		this._insightsService.logMetric('signalrEventTimeDiff', timeDiff)
+		this._insightsService.logMetric('projects.signalr.client-to-client.duration', timeDiff)
 
 		if (event.appending) {
 			const appendedUpdate = {

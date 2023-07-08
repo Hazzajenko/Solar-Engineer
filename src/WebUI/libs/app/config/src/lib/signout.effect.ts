@@ -48,7 +48,7 @@ export const onSignOut$ = createEffect(
 
 				const { userId, signInTime } = userIdAndSignInTime
 
-				insightsService.logEvent('signOut', {
+				insightsService.logEvent('User Signed Out Client', {
 					userId,
 					signInTime,
 					duration: Date.now() - signInTime.getTime(),

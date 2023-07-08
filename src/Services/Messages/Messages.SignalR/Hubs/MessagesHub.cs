@@ -1,3 +1,4 @@
+using ApplicationCore.Extensions;
 using Infrastructure.SignalR;
 using Mediator;
 using Messages.Contracts.Requests;

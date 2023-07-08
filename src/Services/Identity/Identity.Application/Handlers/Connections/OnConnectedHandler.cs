@@ -6,8 +6,10 @@ using Identity.Contracts.Responses.Connections;
 using Identity.Domain;
 using Identity.SignalR.Commands.Connections;
 using Identity.SignalR.Hubs;
+using Infrastructure.OpenTelemetry;
 using Infrastructure.SignalR;
 using Mediator;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
@@ -18,22 +20,26 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
     private readonly IConnectionsService _connections;
     private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
     private readonly ILogger<OnConnectedHandler> _logger;
+    private readonly TelemetryClient _telemetryClient;
 
     public OnConnectedHandler(
         ILogger<OnConnectedHandler> logger,
         IHubContext<UsersHub, IUsersHub> hubContext,
-        IConnectionsService connections
+        IConnectionsService connections,
+        TelemetryClient telemetryClient
     )
     {
         _logger = logger;
         _hubContext = hubContext;
         _connections = connections;
+        _telemetryClient = telemetryClient;
     }
 
     public async ValueTask<bool> Handle(OnConnectedCommand command, CancellationToken cT)
     {
         AuthUser user = command.AuthUser;
         Guid userId = user.Id;
+        // _telemetryClient.Context.User.Id = userId.ToString();
         var userConnections = _connections.GetConnections(userId);
 
         if (userConnections.Any())
@@ -44,7 +50,7 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
             _connections.Add(userId, command.AuthUser.ConnectionId!);
             var connectionsCount = userConnections.Count();
             _logger.LogInformation(
-                "User {UserName} Connected To UsersHub With ConnectionId: {ConnectionId}. Total Connections: {ConnectionsCount}",
+                "User {UserName}: Connected to UsersHub with ConnectionId: {ConnectionId}. Total connections: {ConnectionsCount}",
                 user.UserName,
                 command.AuthUser.ConnectionId,
                 connectionsCount
@@ -54,7 +60,7 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
 
         _connections.Add(userId, command.AuthUser.ConnectionId!);
         _logger.LogInformation(
-            "User {UserName}: Connected To UsersHub With ConnectionId: {ConnectionId}",
+            "User {UserName}: Connected to UsersHub with ConnectionId: {ConnectionId}",
             user.UserName,
             command.AuthUser.ConnectionId
         );
@@ -67,6 +73,12 @@ public class OnConnectedHandler : ICommandHandler<OnConnectedCommand, bool>
         };
 
         await _hubContext.Clients.User(userId.ToString()).GetOnlineUsers(getOnlineUsersResponse);
+
+        _telemetryClient.TrackEventScopedAsUser(
+            "User Connected to UsersHub",
+            user,
+            new Dictionary<string, string> { ["ConnectionId"] = command.AuthUser.ConnectionId! }
+        );
 
         return true;
     }

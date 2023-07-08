@@ -5,6 +5,7 @@ using Infrastructure.Data;
 using Infrastructure.Health;
 using Infrastructure.Logging;
 using Infrastructure.OpenTelemetry;
+using Infrastructure.Settings;
 using Infrastructure.Swagger;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -14,6 +15,7 @@ using Projects.Application.Extensions;
 
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.HubFilters;
+using Projects.Application.OpenTelemetry;
 using Projects.Contracts.Data;
 using Projects.SignalR.Hubs;
 
@@ -26,29 +28,25 @@ var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 var environment = builder.Environment;
 
-builder.Services.InitOpenTelemetry(config, environment);
+builder.Services.InitOpenTelemetry(
+    config,
+    environment,
+    new MeterServiceConfiguration(
+        ProjectsDiagnosticsConfig.ActivitySource,
+        ProjectsDiagnosticsConfig.Meter
+    )
+);
 
 builder.Services.InitHealthChecks(config, environment);
 builder.Services.AddCoreServices(environment);
 
-// builder.Services.AddApplicationServices(config, environment);
-
-// var jwtKey = await environment.GetSymmetricSecurityKey(config);
-var jwtSettings = await config.GetJwtSettings(environment);
+JwtSettings jwtSettings = await config.GetJwtSettings(environment);
 
 builder.Services.ConfigureJwtAuthentication(config, jwtSettings);
 builder.Services.AddAuthorization();
 
 builder.Services.InitDbContext<ProjectsContext>(config, environment, "Projects.Application");
 
-// builder.Services.ConfigureSignalRWithRedis(
-//     environment,
-//     options =>
-//     {
-//         options.PayloadSerializerOptions.Converters.Add(new ProjectTemplateKeyConverter());
-//     },
-//     new List<JsonConverter> { new ProjectTemplateKeyConverter() }
-// );
 builder.Services
     .AddSignalR(options =>
     {
@@ -74,7 +72,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 
 builder.Services.InitSwaggerDocs(config);
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 app.ConfigurePipeline();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

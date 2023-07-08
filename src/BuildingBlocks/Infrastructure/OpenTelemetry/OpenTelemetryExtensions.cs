@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using ApplicationCore.Interfaces;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,8 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 namespace Infrastructure.OpenTelemetry;
+
+public record MeterServiceConfiguration(ActivitySource ActivitySource, Meter Meter);
 
 public static class OpenTelemetryExtensions
 {
@@ -25,7 +28,8 @@ public static class OpenTelemetryExtensions
     public static IServiceCollection InitOpenTelemetry(
         this IServiceCollection services,
         IConfiguration config,
-        IWebHostEnvironment environment
+        IWebHostEnvironment environment,
+        MeterServiceConfiguration? meterServiceConfiguration = null
     )
     {
         var serviceName = environment.IsDevelopment()
@@ -44,8 +48,25 @@ public static class OpenTelemetryExtensions
             return services;
         }
 
-        ActivitySource activitySource = new(serviceName);
-        Meter meter = new(serviceName);
+        // if (meterServiceConfiguration is not null)
+        // {
+        //     services.AddSingleton(meterServiceConfiguration.ActivitySource);
+        //     services.AddSingleton(meterServiceConfiguration.Meter);
+        // }
+        // else
+        // {
+        //     services.AddSingleton(new ActivitySource(serviceName));
+        //     services.AddSingleton(new Meter(serviceName));
+        // }
+
+
+
+        // ActivitySource activitySource = new(serviceName);
+        // Meter meter = new(serviceName);
+
+        ActivitySource activitySource =
+            meterServiceConfiguration?.ActivitySource ?? new(serviceName);
+        Meter meter = meterServiceConfiguration?.Meter ?? new(serviceName);
 
         services
             .AddOpenTelemetry()
@@ -67,6 +88,17 @@ public static class OpenTelemetryExtensions
                         serviceName
                     )
             );
+
+        services.AddApplicationInsightsTelemetry();
+
+        services.AddAppMetrics();
+        // services.AddMetrics(
+        //     new MetricsBuilder()
+        //         .OutputMetrics.AsPrometheusPlainText()
+        //         .Build());
+        // services.AddMetricsEndpoints(options => options.MetricsEndpointOutputFormatter = new MetricsPrometheusTextOutputFormatter());
+
+
         return services;
     }
 
@@ -83,6 +115,19 @@ public static class OpenTelemetryExtensions
             .ConfigureResource(resource => resource.AddService(serviceName))
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
+            // .AddJaegerExporter(options =>
+            // {
+            //     options.Endpoint = new Uri("http://localhost:14268/api/traces");
+            //     // options.AgentHost = config["Jaeger:Host"];
+            //     // options.AgentPort = int.Parse(config["Jaeger:Port"]);
+            //
+            //     // options.Endpoint = new Uri(config["Jaeger:Endpoint"]);
+            // })
+
+            .AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri("http://localhost:4317");
+            })
             .AddAzureMonitorTraceExporterIfEnabled(config, applicationInsightsConnectionString)
             .AddZipkinExporterIfEnabled(config);
     }
@@ -126,6 +171,18 @@ public static class OpenTelemetryExtensions
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddMeter(meter.Name)
+            .AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri("http://localhost:4317");
+            })
+            .AddPrometheusExporter()
+            // .AddPrometheusExporter(opt =>
+            // {
+            //     opt.ScrapeEndpointPath = "/metrics";
+            //     // opt.ToString() = 9184;
+            //     // opt.StartHttpListener = true;
+            //     // opt.HttpListenerPrefixes = new[] { "http://+:9184/" };
+            // })
             .AddAzureMonitorMetricExporterIfEnabled(config, applicationInsightsConnectionString);
     }
 

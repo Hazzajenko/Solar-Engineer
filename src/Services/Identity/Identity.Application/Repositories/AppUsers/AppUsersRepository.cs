@@ -1,3 +1,4 @@
+using ApplicationCore.Extensions;
 using Identity.Application.Data;
 using Identity.Application.Mapping;
 using Identity.Contracts.Data;

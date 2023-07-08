@@ -25,7 +25,7 @@ public class HttpRequestLoggingMiddleware
         if (identity is null || !identity.IsAuthenticated)
         {
             logger.LogInformation(
-                "UnAuthenticated Request: {RequestPath}",
+                "UnAuthenticated request: {RequestPath}",
                 httpContext.Request.Path
             );
             using (
@@ -35,24 +35,29 @@ public class HttpRequestLoggingMiddleware
             return;
         }
 
+        if (httpContext.Request.Path.StartsWithSegments("/authorize") && httpContext.Request.Method == "POST")
+        {
+            await _next(httpContext);
+            return;
+        }
+        
         var authUser = httpContext.User.ToAuthUser();
 
         logger.LogInformation(
-            "User {UserName}: executing endpoint {EndPoint}",
+            "User {UserName}: Executing endpoint {EndPoint}",
             authUser.UserName,
             httpContext.Request.Path
         );
-        using (
-            logger.BeginScope(
-                new Dictionary<string, object>
-                {
-                    ["UserId"] = authUser.Id,
-                    ["UserName"] = authUser.UserName,
-                    ["IsAuthenticated"] = true
-                }
-            )
-        )
-            await _next(httpContext);
+        using IDisposable? scope = logger.BeginScope(
+            new Dictionary<string, object>
+            {
+                ["UserId"] = authUser.Id,
+                ["UserName"] = authUser.UserName,
+                ["IsAuthenticated"] = true
+            }
+        );
+
+        await _next(httpContext);
     }
 }
 

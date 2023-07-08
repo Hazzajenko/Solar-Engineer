@@ -1,5 +1,8 @@
 ﻿using System.Security.Principal;
 using ApplicationCore.Extensions;
+using Infrastructure.OpenTelemetry;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Projects.Application.Data.UnitOfWork;
@@ -19,7 +22,8 @@ public class ProjectRequestLoggingMiddleware
     public async Task InvokeAsync(
         HttpContext httpContext,
         ILogger<ProjectRequestLoggingMiddleware> logger,
-        IProjectsUnitOfWork unitOfWork
+        IProjectsUnitOfWork unitOfWork,
+        TelemetryClient telemetryClient
     )
     {
         IIdentity? identity = httpContext.User.Identity;
@@ -41,18 +45,20 @@ public class ProjectRequestLoggingMiddleware
             return;
         }
 
-        using (
-            logger.BeginScope(
-                new Dictionary<string, object>
-                {
-                    ["UserId"] = authUser.Id,
-                    ["UserName"] = authUser.UserName,
-                    ["SelectedProjectId"] = projectUser.SelectedProjectId.ToString() ?? "null"
-                }
-            )
-        )
+        var state = new Dictionary<string, object>
         {
-            await _next(httpContext);
-        }
+            ["UserId"] = authUser.Id,
+            ["UserName"] = authUser.UserName,
+            ["IsAuthenticated"] = true,
+            ["SelectedProjectId"] = projectUser.SelectedProjectId.ToString() ?? "null"
+        };
+        RequestTelemetry? requestTelemetry = telemetryClient?.GetRequestTelemetry(
+            authUser,
+            state.ToStringDictionary()
+        );
+        using var operation = telemetryClient.StartOperation(requestTelemetry);
+        using IDisposable? scope = logger.BeginScope(state);
+
+        await _next(httpContext);
     }
 }

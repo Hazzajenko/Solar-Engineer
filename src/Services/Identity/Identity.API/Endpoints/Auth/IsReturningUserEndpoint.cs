@@ -12,6 +12,7 @@ using Infrastructure.Logging;
 using Mapster;
 using MassTransit;
 using Mediator;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Identity;
 using Serilog.Core;
 
@@ -24,17 +25,21 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
     private readonly IMediator _mediator;
     private readonly UserManager<AppUser> _userManager;
 
+    private readonly TelemetryClient _telemetryClient;
+
     public IsReturningUserEndpoint(
         IMediator mediator,
         IJwtTokenGenerator jwtTokenGenerator,
         IBus bus,
-        UserManager<AppUser> userManager
+        UserManager<AppUser> userManager,
+        TelemetryClient telemetryClient
     )
     {
         _mediator = mediator;
         _jwtTokenGenerator = jwtTokenGenerator;
         _bus = bus;
         _userManager = userManager;
+        _telemetryClient = telemetryClient;
     }
 
     public override void Configure()
@@ -73,7 +78,17 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
         var user = appUser.Adapt<AppUserDto>();
 
+        using IDisposable? scope = Logger.BeginScope(appUser.GetUserDictionary());
         Logger.LogInformation("User {UserName}: Returning User Signed In", user.UserName);
+
+        _telemetryClient.TrackEvent(
+            "UserLoggedIn",
+            new Dictionary<string, string>
+            {
+                { "UserId", appUser.Id.ToString() },
+                { "UserName", appUser.UserName },
+            }
+        );
 
         Response.Token = token;
         Response.User = user;

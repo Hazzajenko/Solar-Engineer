@@ -191,15 +191,14 @@ public class CreateProjectHandler
 
     private void LogWithProjectScope(Guid projectId, string projectName, Action<ILogger> logAction)
     {
-        using (
-            _logger.BeginScope(
-                new Dictionary<string, object?>
-                {
-                    ["ProjectId"] = projectId,
-                    ["ProjectName"] = projectName
-                }
-            )
-        )
-            logAction(_logger);
+        using IDisposable? scope = _logger.BeginScope(
+            new Dictionary<string, object>
+            {
+                ["ProjectId"] = projectId,
+                ["ProjectName"] = projectName
+            }
+        );
+
+        logAction(_logger);
     }
 }

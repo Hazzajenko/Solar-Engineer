@@ -2,7 +2,7 @@
 
 namespace ApplicationCore.Entities;
 
-public class User : IAppUser
+public class User : IAppUser, IUser
 {
     public Guid Id { get; set; }
     public string FirstName { get; init; } = default!;

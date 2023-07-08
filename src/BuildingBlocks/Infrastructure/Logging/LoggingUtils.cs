@@ -11,19 +11,16 @@ public static class LoggingUtils
         Action<ILogger> action
     )
     {
-        using (
-            logger.BeginScope(
-                new Dictionary<string, object>
-                {
-                    ["UserId"] = appUser.Id,
-                    ["UserName"] = appUser.UserName,
-                    ["DisplayName"] = appUser.DisplayName
-                }
-            )
-        )
-        {
-            action(logger);
-            return logger;
-        }
+        using IDisposable? scope = logger.BeginScope(
+            new Dictionary<string, object>
+            {
+                ["UserId"] = appUser.Id,
+                ["UserName"] = appUser.UserName,
+                ["DisplayName"] = appUser.DisplayName
+            }
+        );
+
+        action(logger);
+        return logger;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Identity.Contracts.Data;
+﻿using ApplicationCore.Extensions;
+using Identity.Contracts.Data;
 using Identity.Contracts.Requests.Users;
 using Identity.Contracts.Responses.Friends;
 using Identity.Domain;

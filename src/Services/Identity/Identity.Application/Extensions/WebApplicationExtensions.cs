@@ -8,6 +8,7 @@ using Identity.Application.Data.Seed;
 using Identity.Application.Middleware;
 using Identity.SignalR.Hubs;
 using Infrastructure.Logging;
+using Infrastructure.OpenTelemetry;
 using Infrastructure.Validation;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.Builder;
@@ -65,6 +66,19 @@ public static partial class WebApplicationExtensions
         // app.ConfigureSerilogRequestLogging();
 
         app.UseCors(CorsConfig.CorsPolicy);
+        app.Use(
+            (context, next) =>
+            {
+                if (context.Request.Path.StartsWithSegments("/metrics"))
+                {
+                    // Skip HTTPS redirection for /metrics
+                    context.Request.Scheme = "http";
+                }
+
+                return next();
+            }
+        );
+        app.UseAppMetrics();
         app.UseHttpsRedirection();
 
         app.UseAuthentication();
@@ -78,6 +92,8 @@ public static partial class WebApplicationExtensions
         app.UseMiddleware<LastActiveMiddleware>();
 
         IdentityContextSeed.InitializeDatabase(app);
+
+
 
         return app;
     }

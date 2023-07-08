@@ -5,6 +5,7 @@ using Identity.API.Extensions;
 using Identity.Application.Data;
 using Identity.Application.Extensions;
 using Identity.Application.HubFilters;
+using Identity.Application.OpenTelemetry;
 using Identity.Domain;
 using Identity.SignalR.Hubs;
 using Infrastructure.Authentication;
@@ -30,7 +31,14 @@ var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 
 var environment = builder.Environment;
-builder.Services.InitOpenTelemetry(config, environment);
+builder.Services.InitOpenTelemetry(
+    config,
+    environment,
+    new MeterServiceConfiguration(
+        IdentityDiagnosticsConfig.ActivitySource,
+        IdentityDiagnosticsConfig.Meter
+    )
+);
 
 builder.Services.InitHealthChecks(config, environment);
 var jwtSettings = await config.GetJwtSettings(environment);
@@ -108,13 +116,16 @@ builder.Services.InitSwaggerDocs(
     }
 );
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // MethodTimeLogger.Logger = app.Logger;
 app.ConfigurePipeline();
+app.UseOpenTelemetryPrometheusScrapingEndpoint();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-var loginEndpoints = app.MapGroup("login");
+
+RouteGroupBuilder loginEndpoints = app.MapGroup("login");
+
 
 /*loginEndpoints.MapGet(
     "/github",
