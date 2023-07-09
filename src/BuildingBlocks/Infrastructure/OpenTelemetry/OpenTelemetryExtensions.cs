@@ -16,11 +16,6 @@ public record MeterServiceConfiguration(ActivitySource ActivitySource, Meter Met
 
 public static class OpenTelemetryExtensions
 {
-    // public const string ServiceName = "IdentityService";
-
-    // public static readonly ActivitySource ActivitySource = new(ServiceName);
-    // public static Meter Meter = new(ServiceName);
-
     /// <summary>
     ///     This method is used to initialize the OpenTelemetry.
     ///     It is called from the Program class.
@@ -32,6 +27,8 @@ public static class OpenTelemetryExtensions
         MeterServiceConfiguration? meterServiceConfiguration = null
     )
     {
+        services.AddApplicationInsightsTelemetry();
+
         var serviceName = environment.IsDevelopment()
             ? config["App:ServiceName"]
             : GetEnvironmentVariable("APP_SERVICE_NAME");
@@ -47,22 +44,6 @@ public static class OpenTelemetryExtensions
             Console.WriteLine("ApplicationInsights is not configured.");
             return services;
         }
-
-        // if (meterServiceConfiguration is not null)
-        // {
-        //     services.AddSingleton(meterServiceConfiguration.ActivitySource);
-        //     services.AddSingleton(meterServiceConfiguration.Meter);
-        // }
-        // else
-        // {
-        //     services.AddSingleton(new ActivitySource(serviceName));
-        //     services.AddSingleton(new Meter(serviceName));
-        // }
-
-
-
-        // ActivitySource activitySource = new(serviceName);
-        // Meter meter = new(serviceName);
 
         ActivitySource activitySource =
             meterServiceConfiguration?.ActivitySource ?? new(serviceName);
@@ -89,15 +70,7 @@ public static class OpenTelemetryExtensions
                     )
             );
 
-        services.AddApplicationInsightsTelemetry();
-
         services.AddAppMetrics();
-        // services.AddMetrics(
-        //     new MetricsBuilder()
-        //         .OutputMetrics.AsPrometheusPlainText()
-        //         .Build());
-        // services.AddMetricsEndpoints(options => options.MetricsEndpointOutputFormatter = new MetricsPrometheusTextOutputFormatter());
-
 
         return services;
     }
@@ -115,15 +88,6 @@ public static class OpenTelemetryExtensions
             .ConfigureResource(resource => resource.AddService(serviceName))
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
-            // .AddJaegerExporter(options =>
-            // {
-            //     options.Endpoint = new Uri("http://localhost:14268/api/traces");
-            //     // options.AgentHost = config["Jaeger:Host"];
-            //     // options.AgentPort = int.Parse(config["Jaeger:Port"]);
-            //
-            //     // options.Endpoint = new Uri(config["Jaeger:Endpoint"]);
-            // })
-
             .AddOtlpExporter(options =>
             {
                 options.Endpoint = new Uri("http://localhost:4317");
@@ -176,13 +140,6 @@ public static class OpenTelemetryExtensions
                 options.Endpoint = new Uri("http://localhost:4317");
             })
             .AddPrometheusExporter()
-            // .AddPrometheusExporter(opt =>
-            // {
-            //     opt.ScrapeEndpointPath = "/metrics";
-            //     // opt.ToString() = 9184;
-            //     // opt.StartHttpListener = true;
-            //     // opt.HttpListenerPrefixes = new[] { "http://+:9184/" };
-            // })
             .AddAzureMonitorMetricExporterIfEnabled(config, applicationInsightsConnectionString);
     }
 
