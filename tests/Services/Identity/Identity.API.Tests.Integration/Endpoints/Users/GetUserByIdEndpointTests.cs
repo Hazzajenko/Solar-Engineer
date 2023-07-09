@@ -23,6 +23,7 @@ public class GetUserByIdEndpointTests : IClassFixture<ApiWebFactory>
 {
     private readonly ApiWebFactory _apiWebFactory;
     private readonly HttpClient _client;
+    private readonly HttpClient _authenticatedClient;
 
     private readonly Faker<AppUser> _userRequestGenerator = new Faker<AppUser>()
         .RuleFor(x => x.Id, faker => Guid.NewGuid())
@@ -36,19 +37,23 @@ public class GetUserByIdEndpointTests : IClassFixture<ApiWebFactory>
     {
         _apiWebFactory = apiWebFactory;
         _client = apiWebFactory.CreateClient();
+        _authenticatedClient = apiWebFactory
+            .CreateAuthenticatedHttpClient()
+            .GetAwaiter()
+            .GetResult();
     }
 
     [Fact]
     public async Task HandleGetUserByIdEndpoint_WhenUserIdIsValid_ShouldReturnUserDto()
     {
         // Arrange
-        _client.DefaultRequestHeaders.Authorization = await CreateAuthenticatedUserAsync();
+        // await _client.CreateAuthenticatedHttpClient();
 
         AppUser otherUser = await CreateOtherUserAsync();
         var otherUserId = otherUser.Id.ToString();
 
         // Act
-        HttpResponseMessage response = await _client.GetAsync($"/user/{otherUserId}");
+        HttpResponseMessage response = await _authenticatedClient.GetAsync($"/user/{otherUserId}");
         var result = await response.Content.ReadFromJsonAsync<AppUserDto?>();
 
         // Assert
@@ -65,10 +70,12 @@ public class GetUserByIdEndpointTests : IClassFixture<ApiWebFactory>
     public async Task HandleGetUserByIdEndpoint_WhenUserIdIsNotValid_ShouldReturnNotFound()
     {
         // Arrange
-        _client.DefaultRequestHeaders.Authorization = await CreateAuthenticatedUserAsync();
+        // await _client.CreateAuthenticatedHttpClient();
 
         // Act
-        HttpResponseMessage response = await _client.GetAsync($"/user/{Guid.NewGuid()}");
+        HttpResponseMessage response = await _authenticatedClient.GetAsync(
+            $"/user/{Guid.NewGuid()}"
+        );
         AppUserDto? result = null;
         if (response.IsSuccessStatusCode)
         {
@@ -84,10 +91,10 @@ public class GetUserByIdEndpointTests : IClassFixture<ApiWebFactory>
     public async Task HandleGetUserByIdEndpoint_WhenUserIdIsNull_ShouldReturnNotFound()
     {
         // Arrange
-        _client.DefaultRequestHeaders.Authorization = await CreateAuthenticatedUserAsync();
+        // await _client.CreateAuthenticatedHttpClient();
 
         // Act
-        HttpResponseMessage response = await _client.GetAsync("/user/");
+        HttpResponseMessage response = await _authenticatedClient.GetAsync("/user/");
         AppUserDto? result = null;
         if (response.IsSuccessStatusCode)
         {
@@ -99,32 +106,9 @@ public class GetUserByIdEndpointTests : IClassFixture<ApiWebFactory>
         result.Should().BeNull();
     }
 
-    private async Task<AuthenticationHeaderValue> CreateAuthenticatedUserAsync()
-    {
-        AppUser user = await CreateUserAsync();
-        var token = await GetAccessTokenAsync(user.Id.ToString(), user.UserName);
-        return new AuthenticationHeaderValue("Bearer", token);
-    }
-
-    private async Task<AppUser> CreateUserAsync()
-    {
-        AppUser? user = _userRequestGenerator.Generate();
-
-        using IServiceScope scope = _apiWebFactory.Services.CreateScope();
-
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-        ArgumentNullException.ThrowIfNull(userManager);
-        IdentityResult createUserResult = await userManager.CreateAsync(user);
-
-        if (!createUserResult.Succeeded)
-            throw new Exception("Unable to create user");
-
-        return user;
-    }
-
     private async Task<AppUser> CreateOtherUserAsync()
     {
-        AppUser? user = _userRequestGenerator.Generate();
+        AppUser? user = UserRequestGenerator.Generate();
 
         using IServiceScope scope = _apiWebFactory.Services.CreateScope();
 
@@ -136,21 +120,6 @@ public class GetUserByIdEndpointTests : IClassFixture<ApiWebFactory>
             throw new Exception("Unable to create user");
 
         return user;
-    }
-
-    private async Task<string> GetAccessTokenAsync(string id, string userName)
-    {
-        var services = new ServiceCollection();
-        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
-        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        var config = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
-        services.Configure<JwtSettings>(config.GetSection("Jwt"));
-
-        var serviceProvider = services.BuildServiceProvider();
-        var jwtTokenGenerator = serviceProvider.GetService<IJwtTokenGenerator>();
-        ArgumentNullException.ThrowIfNull(jwtTokenGenerator);
-        await Task.CompletedTask;
-        return jwtTokenGenerator.GenerateToken(id, userName);
     }
 
     private static string GetInvalidAccessTokenAsync()
@@ -165,10 +134,5 @@ public class GetUserByIdEndpointTests : IClassFixture<ApiWebFactory>
         var jwtTokenGenerator = serviceProvider.GetService<IJwtTokenGenerator>();
         ArgumentNullException.ThrowIfNull(jwtTokenGenerator);
         return jwtTokenGenerator.GenerateToken(Guid.NewGuid(), "invalid-user");
-    }
-
-    private string CreateUrl(string? userId = null)
-    {
-        return $"https://localhost:5000/user/{userId}";
     }
 }

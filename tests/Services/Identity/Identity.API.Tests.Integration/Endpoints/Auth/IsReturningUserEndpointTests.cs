@@ -18,10 +18,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Identity.API.Tests.Integration.Endpoints.Auth;
 
-public class IsReturningUserEndpointTests : IClassFixture<ApiWebFactory>
+public class IsReturningUserEndpointTests : IClassFixture<ApiWebFactoryWithRabbitMq>
 {
-    private readonly ApiWebFactory _apiWebFactory;
+    private readonly ApiWebFactoryWithRabbitMq _apiWebFactory;
     private readonly HttpClient _client;
+    private readonly HttpClient _authenticatedClient;
 
     private readonly Faker<AppUser> _userRequestGenerator = new Faker<AppUser>()
         .RuleFor(x => x.Id, faker => Guid.NewGuid())
@@ -31,10 +32,14 @@ public class IsReturningUserEndpointTests : IClassFixture<ApiWebFactory>
         .RuleFor(x => x.LastName, faker => faker.Name.LastName())
         .RuleFor(x => x.PhotoUrl, faker => faker.Internet.Url());
 
-    public IsReturningUserEndpointTests(ApiWebFactory apiWebFactory)
+    public IsReturningUserEndpointTests(ApiWebFactoryWithRabbitMq apiWebFactory)
     {
         _apiWebFactory = apiWebFactory;
         _client = apiWebFactory.CreateClient();
+        _authenticatedClient = apiWebFactory
+            .CreateAuthenticatedHttpClient()
+            .GetAwaiter()
+            .GetResult();
     }
 
     [Fact]

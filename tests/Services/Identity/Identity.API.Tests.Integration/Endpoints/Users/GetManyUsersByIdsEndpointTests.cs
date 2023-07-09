@@ -7,6 +7,7 @@ using Bogus;
 using FastEndpoints;
 using FluentAssertions;
 using Identity.API.Endpoints.Users;
+using Identity.API.Tests.Integration.TestUtils;
 using Identity.Application.Handlers.AppUsers;
 using Identity.Application.Services.Jwt;
 using Identity.Contracts.Data;
@@ -23,26 +24,23 @@ public class GetManyUsersByIdsEndpointTests : IClassFixture<ApiWebFactory>
 {
     private readonly ApiWebFactory _apiWebFactory;
     private readonly HttpClient _client;
-
-    private readonly Faker<AppUser> _userRequestGenerator = new Faker<AppUser>()
-        .RuleFor(x => x.Id, faker => Guid.NewGuid())
-        .RuleFor(x => x.UserName, faker => faker.Internet.UserName())
-        .RuleFor(x => x.Email, faker => faker.Internet.Email())
-        .RuleFor(x => x.FirstName, faker => faker.Name.FirstName())
-        .RuleFor(x => x.LastName, faker => faker.Name.LastName())
-        .RuleFor(x => x.PhotoUrl, faker => faker.Internet.Url());
+    private readonly HttpClient _authenticatedClient;
 
     public GetManyUsersByIdsEndpointTests(ApiWebFactory apiWebFactory)
     {
         _apiWebFactory = apiWebFactory;
         _client = apiWebFactory.CreateClient();
+        _authenticatedClient = apiWebFactory
+            .CreateAuthenticatedHttpClient()
+            .GetAwaiter()
+            .GetResult();
     }
 
     [Fact]
     public async Task HandleGetManyUsersByIdsEndpoint_WhenUserIdsAreValid_ShouldReturnWebUserDtoList()
     {
         // Arrange
-        _client.DefaultRequestHeaders.Authorization = await CreateAuthenticatedUserAsync();
+        // await _client.CreateAuthenticatedHttpClient();
         var otherUsers = await CreateManyUsersAsync();
         var request = new GetManyUsersByIdsRequest
         {
@@ -50,11 +48,12 @@ public class GetManyUsersByIdsEndpointTests : IClassFixture<ApiWebFactory>
         };
 
         // Act
-        (HttpResponseMessage response, GetManyUsersByIdsResponse? result) = await _client.POSTAsync<
-            GetManyUsersByIdsEndpoint,
-            GetManyUsersByIdsRequest,
-            GetManyUsersByIdsResponse
-        >(request);
+        (HttpResponseMessage response, GetManyUsersByIdsResponse? result) =
+            await _authenticatedClient.POSTAsync<
+                GetManyUsersByIdsEndpoint,
+                GetManyUsersByIdsRequest,
+                GetManyUsersByIdsResponse
+            >(request);
 
         // Assert
         response.Should().NotBeNull();
@@ -77,16 +76,19 @@ public class GetManyUsersByIdsEndpointTests : IClassFixture<ApiWebFactory>
     public async Task HandleGetManyUsersByIdsEndpoint_WhenUserIdsAreNotValid_ShouldReturnBadRequest()
     {
         // Arrange
-        _client.DefaultRequestHeaders.Authorization = await CreateAuthenticatedUserAsync();
+        // HttpClient client = await _apiWebFactory.CreateAuthenticatedHttpClientV2();
+        // HttpClient client = await _apiWebFactory.CreateAuthenticatedHttpClientV2();
+        // await _client.CreateAuthenticatedHttpClient();
         var invalidUserIds = Enumerable.Range(0, 5).Select(_ => Guid.NewGuid().ToString()).ToList();
         var request = new GetManyUsersByIdsRequest { AppUserIds = invalidUserIds };
 
         // Act
-        (HttpResponseMessage response, ErrorResponse? result) = await _client.POSTAsync<
-            GetManyUsersByIdsEndpoint,
-            GetManyUsersByIdsRequest,
-            ErrorResponse
-        >(request);
+        (HttpResponseMessage response, ErrorResponse? result) =
+            await _authenticatedClient.POSTAsync<
+                GetManyUsersByIdsEndpoint,
+                GetManyUsersByIdsRequest,
+                ErrorResponse
+            >(request);
 
         // Assert
         response.Should().NotBeNull();
@@ -95,32 +97,9 @@ public class GetManyUsersByIdsEndpointTests : IClassFixture<ApiWebFactory>
         result!.Errors.Keys.Should().Contain(nameof(request.AppUserIds));
     }
 
-    private async Task<AuthenticationHeaderValue> CreateAuthenticatedUserAsync()
-    {
-        AppUser user = await CreateUserAsync();
-        var token = await GetAccessTokenAsync(user.Id.ToString(), user.UserName);
-        return new AuthenticationHeaderValue("Bearer", token);
-    }
-
-    private async Task<AppUser> CreateUserAsync()
-    {
-        AppUser? user = _userRequestGenerator.Generate();
-
-        using IServiceScope scope = _apiWebFactory.Services.CreateScope();
-
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-        ArgumentNullException.ThrowIfNull(userManager);
-        IdentityResult createUserResult = await userManager.CreateAsync(user);
-
-        if (!createUserResult.Succeeded)
-            throw new Exception("Unable to create user");
-
-        return user;
-    }
-
     private async Task<IEnumerable<AppUser>> CreateManyUsersAsync()
     {
-        IEnumerable<AppUser>? appUsers = _userRequestGenerator.Generate(5);
+        IEnumerable<AppUser>? appUsers = UserRequestGenerator.Generate(5);
 
         using IServiceScope scope = _apiWebFactory.Services.CreateScope();
 
@@ -135,34 +114,5 @@ public class GetManyUsersByIdsEndpointTests : IClassFixture<ApiWebFactory>
         }
 
         return appUsers;
-    }
-
-    private async Task<string> GetAccessTokenAsync(string id, string userName)
-    {
-        var services = new ServiceCollection();
-        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
-        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        var config = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
-        services.Configure<JwtSettings>(config.GetSection("Jwt"));
-
-        var serviceProvider = services.BuildServiceProvider();
-        var jwtTokenGenerator = serviceProvider.GetService<IJwtTokenGenerator>();
-        ArgumentNullException.ThrowIfNull(jwtTokenGenerator);
-        await Task.CompletedTask;
-        return jwtTokenGenerator.GenerateToken(id, userName);
-    }
-
-    private static string GetInvalidAccessTokenAsync()
-    {
-        var services = new ServiceCollection();
-        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
-        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        var config = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
-        services.Configure<JwtSettings>(config.GetSection("Jwt"));
-
-        var serviceProvider = services.BuildServiceProvider();
-        var jwtTokenGenerator = serviceProvider.GetService<IJwtTokenGenerator>();
-        ArgumentNullException.ThrowIfNull(jwtTokenGenerator);
-        return jwtTokenGenerator.GenerateToken(Guid.NewGuid(), "invalid-user");
     }
 }

@@ -21,7 +21,9 @@ using StackExchange.Redis;
 
 namespace Identity.API.Tests.Integration;
 
-public class ApiWebFactory : WebApplicationFactory<IIdentityApiAssemblyMarker>, IAsyncLifetime
+public class ApiWebFactoryWithRabbitMq
+    : WebApplicationFactory<IIdentityApiAssemblyMarker>,
+        IAsyncLifetime
 {
     private readonly IContainer _dbContainer = new ContainerBuilder()
         .WithName($"postgres-test-container-{Guid.NewGuid()}")
@@ -33,21 +35,38 @@ public class ApiWebFactory : WebApplicationFactory<IIdentityApiAssemblyMarker>, 
         .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(5432))
         .Build();
 
+    private readonly IContainer _rabbitMqContainer = new ContainerBuilder()
+        .WithName($"rabbitmq-test-container-{Guid.NewGuid()}")
+        .WithImage("rabbitmq:3-management")
+        .WithEnvironment("RABBITMQ_DEFAULT_USER", "guest")
+        .WithEnvironment("RABBITMQ_DEFAULT_PASS", "guest")
+        .WithPortBinding(5672, true)
+        .WithPortBinding(15672, true)
+        .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(5672))
+        .Build();
+
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
+        await _rabbitMqContainer.StartAsync();
     }
 
     public new async Task DisposeAsync()
     {
         await _dbContainer.DisposeAsync();
+        await _rabbitMqContainer.DisposeAsync();
         await base.DisposeAsync();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         Environment.SetEnvironmentVariable("IS_TEST_ENVIRONMENT", "true");
-        Environment.SetEnvironmentVariable("IS_RABBITMQ_ENABLED", "false");
+        Environment.SetEnvironmentVariable("IS_RABBITMQ_ENABLED", "true");
+        Environment.SetEnvironmentVariable("TEST_RABBITMQ_HOST", _rabbitMqContainer.Hostname);
+        Environment.SetEnvironmentVariable(
+            "TEST_RABBITMQ_PORT",
+            _rabbitMqContainer.GetMappedPublicPort(5672).ToString()
+        );
 
         builder.ConfigureLogging(logging => logging.ClearProviders());
 
