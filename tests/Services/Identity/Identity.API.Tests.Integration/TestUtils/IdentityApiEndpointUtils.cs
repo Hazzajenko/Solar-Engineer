@@ -21,31 +21,22 @@ public static class IdentityApiEndpointUtils
         .RuleFor(x => x.LastName, faker => faker.Name.LastName())
         .RuleFor(x => x.PhotoUrl, faker => faker.Internet.Url());
 
-    // private static readonly ApiWebFactory ApiWebFactory = new ApiWebFactory();
-
-    public static async Task<HttpClient> CreateAuthenticatedHttpClient<T>(
-        this WebApplicationFactory<T> apiWebFactory
+    public static async Task<HttpClient> CreateAuthenticatedHttpClient<TFactory>(
+        this WebApplicationFactory<TFactory> apiWebFactory
     )
-        where T : class
+        where TFactory : class
     {
-        AppUser user = await apiWebFactory.CreateUserAsync2();
+        AppUser user = await apiWebFactory.CreateUserAsync();
         string token = GetAccessTokenAsync(user.Id.ToString(), user.UserName);
         HttpClient client = apiWebFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return client;
     }
 
-    // public static async Task CreateAuthenticatedHttpClient(this HttpClient client)
-    // {
-    //     AppUser user = await CreateUserAsync();
-    //     string token = GetAccessTokenAsync(user.Id.ToString(), user.UserName);
-    //     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-    // }
-
-    private static async Task<AppUser> CreateUserAsync2<T>(
-        this WebApplicationFactory<T> apiWebFactory
+    private static async Task<AppUser> CreateUserAsync<TFactory>(
+        this WebApplicationFactory<TFactory> apiWebFactory
     )
-        where T : class
+        where TFactory : class
     {
         AppUser? user = UserRequestGenerator.Generate();
         using IServiceScope scope = apiWebFactory.Services.CreateScope();
@@ -58,20 +49,6 @@ public static class IdentityApiEndpointUtils
 
         return user;
     }
-
-    // private static async Task<AppUser> CreateUserAsync()
-    // {
-    //     AppUser? user = UserRequestGenerator.Generate();
-    //     using IServiceScope scope = ApiWebFactory.Services.CreateScope();
-    //     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-    //     ArgumentNullException.ThrowIfNull(userManager);
-    //     IdentityResult createUserResult = await userManager.CreateAsync(user);
-    //
-    //     if (!createUserResult.Succeeded)
-    //         throw new Exception("Unable to create user");
-    //
-    //     return user;
-    // }
 
     private static string GetAccessTokenAsync(string id, string userName)
     {

@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿/*
+using System.Net;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using ApplicationCore.Extensions;
 using Bogus;
 using FastEndpoints;
@@ -12,9 +14,12 @@ using Identity.Domain;
 using Infrastructure.Extensions;
 using Infrastructure.Services;
 using Infrastructure.Settings;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace Identity.API.Tests.Integration.Endpoints.Auth;
 
@@ -42,6 +47,10 @@ public class AuthorizeEndpointTests : IClassFixture<ApiWebFactory>
     {
         // Arrange
 
+        // var ep = Factory.Create<AuthorizeEndpoint>(
+        //     A.Fake<ILogger<AdminLogin>>(), //mock dependencies for injecting to the constructor
+        //     A.Fake<IEmailService>(),
+        //     fakeConfig);
         var userManager = _apiWebFactory.Services.GetService<UserManager<AppUser>>();
         ArgumentNullException.ThrowIfNull(userManager);
         AppUser? user = _userRequestGenerator.Generate();
@@ -57,6 +66,7 @@ public class AuthorizeEndpointTests : IClassFixture<ApiWebFactory>
             "Bearer",
             token
         );
+        // _client.
         
         // Act
         (HttpResponseMessage response, AuthorizeResponse? result) = await _client.POSTAsync<AuthorizeEndpoint, AuthorizeResponse>();
@@ -102,4 +112,67 @@ public class AuthorizeEndpointTests : IClassFixture<ApiWebFactory>
         await Task.CompletedTask;
         return jwtTokenGenerator.GenerateToken(id, userName);
     }
+    
+    private HttpContext CreateHttpContext(string token)
+    {
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, "GoogleId"),
+            new Claim(ClaimTypes.Name, "Test User"),
+            //... any other claims
+        };
+
+        var claimsIdentity = new ClaimsIdentity(claims, "AuthenticationTypes.Federation");
+        var authProperties = new AuthenticationProperties();
+        var authTicket = new AuthenticationTicket(new ClaimsPrincipal(claimsIdentity), authProperties, "Google");
+
+        var authResult = AuthenticateResult.Success(authTicket);
+        // A.Fake<IEmailService>(),
+        var authHandlerMock = new Mock<IAuthenticationService>();
+        authHandlerMock
+            .Setup(x => x.AuthenticateAsync(It.IsAny<HttpContext>(), It.IsAny<string>()))
+            .ReturnsAsync(authResult);
+
+        var serviceProviderMock = new Mock<IServiceProvider>();
+        serviceProviderMock
+            .Setup(x => x.GetService(typeof(IAuthenticationService)))
+            .Returns(authHandlerMock.Object);
+
+        return new DefaultHttpContext { RequestServices = serviceProviderMock.Object };
+
+// Now the httpContext should act as if the user was authenticated via Google.
+
+        // var context = new DefaultHttpContext();
+        // context.Request.Headers["Authorization"] = $"Bearer {token}";
+        // return context;
+    }
+
+    private void Http2()
+    {
+        var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, "User Id"),
+            new Claim(ClaimTypes.Name, "User name"),
+            // other claims as needed
+        }, IdentityConstants.ExternalScheme));
+
+        var httpContext = new DefaultHttpContext
+        {
+            User = claimsPrincipal
+        };
+
+        var authManagerMock = new Mock<IAuthenticationService>();
+        authManagerMock
+            .Setup(am => am.AuthenticateAsync(It.IsAny<HttpContext>(), IdentityConstants.ExternalScheme))
+            .ReturnsAsync(AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, IdentityConstants.ExternalScheme)));
+
+        // _apiWebFactory.Services.AddSingleton(authManagerMock.Object);
+        var services = new ServiceCollection();
+        services.AddSingleton(authManagerMock.Object);
+        services.AddSingleton<IHttpContextAccessor>(new HttpContextAccessor { HttpContext = httpContext });
+
+// create your HttpClient using TestServer, which will be configured with these services
+
+    }
 }
+*/

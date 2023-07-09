@@ -1,5 +1,6 @@
+$location = [string](Get-Location)
 function PublishWebUi {
-    Push-Location C:/Users/jenki/source/app/solar-engineer/src/WebUI
+    Push-Location ${location}/src/WebUI
     Write-Host "Running nx build web-app --configuration=production"
     nx build web-app --configuration=production
     Write-Host "Running docker build -f ./apps/web-app/Dockerfile . -t solarengineer-web-ui:${version}"
@@ -22,7 +23,7 @@ if ($selection -eq "Q") {
 
 $version = Read-Host "Please enter a version/tag for the docker image(s)"
 
-$location = [string](Get-Location)
+
 foreach ($service in $options[$selection]) {
     if ($service -eq "WebUi") {
         PublishWebUi
