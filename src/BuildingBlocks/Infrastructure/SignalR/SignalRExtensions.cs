@@ -77,6 +77,9 @@ public static class SignalRExtensions
         IWebHostEnvironment env
     )
     {
+        var isTestEnvironment = Environment.GetEnvironmentVariable("IS_TEST_ENVIRONMENT");
+        if (isTestEnvironment is not null && isTestEnvironment.Equals("true"))
+            return services;
         var redisConnectionString = env.IsDevelopment() ? "localhost" : "redis";
         builder.AddStackExchangeRedis(redisConnectionString);
         return services;

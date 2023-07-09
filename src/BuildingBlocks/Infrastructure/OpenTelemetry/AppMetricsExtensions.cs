@@ -2,6 +2,7 @@
 using App.Metrics.Formatters.Prometheus;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Prometheus;
 
 namespace Infrastructure.OpenTelemetry;
 
@@ -28,9 +29,10 @@ public static class AppMetricsExtensions
 
     public static WebApplication UseAppMetrics(this WebApplication app)
     {
-    app.UseHttpMetrics();
-        app.UseMetricsAllMiddleware();
-        app.UseMetricsAllEndpoints();
+        app.UseHttpMetrics();
+        app.MapMetrics();
+        // app.UseMetricsAllMiddleware();
+        // app.UseMetricsAllEndpoints();
 
         // app.Use(
         //     (context, next) =>

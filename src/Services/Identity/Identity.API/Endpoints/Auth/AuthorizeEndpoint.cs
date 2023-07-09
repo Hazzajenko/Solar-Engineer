@@ -2,8 +2,7 @@
 using FastEndpoints;
 using Identity.Application.Commands;
 using Identity.Application.Logging;
-using Identity.Application.Mapping;
-using Identity.Application.Queries.AppUsers;
+using Identity.Application.Repositories.AppUsers;
 using Identity.Application.Services.Jwt;
 using Identity.Contracts.Data;
 using Identity.Contracts.Responses;
@@ -19,16 +18,19 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IMediator _mediator;
     private readonly UserManager<AppUser> _userManager;
+    private readonly IAppUsersRepository _appUsersRepository;
 
     public AuthorizeEndpoint(
         IMediator mediator,
         UserManager<AppUser> userManager,
-        IJwtTokenGenerator jwtTokenGenerator
+        IJwtTokenGenerator jwtTokenGenerator,
+        IAppUsersRepository appUsersRepository
     )
     {
         _mediator = mediator;
         _userManager = userManager;
         _jwtTokenGenerator = jwtTokenGenerator;
+        _appUsersRepository = appUsersRepository;
     }
 
     public override void Configure()
@@ -76,7 +78,7 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
             foreach (IdentityError tokenResultError in tokenResult.Errors)
                 Logger.LogError("{@E}", tokenResultError);
 
-        AppUserDto? user = await _mediator.Send(new GetAppUserDtoByIdQuery(appUser.Id), cT);
+        AppUserDto? user = await _appUsersRepository.GetAppUserDtoByIdAsync(appUser.Id);
         if (user is null)
         {
             Logger.LogUserNotFound(appUser.Id.ToString(), appUser.UserName);

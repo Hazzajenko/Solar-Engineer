@@ -16,6 +16,7 @@
       <PackageReference Include="Azure.Storage.Blobs" Version="12.16.0" />
       <PackageReference Include="Bogus" Version="34.0.2" />
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
+      <PackageReference Include="LanguageExt.Core" Version="4.4.3" />
       <PackageReference Include="Mapster" Version="7.3.0" />
       <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
       <PackageReference Include="Mediator.SourceGenerator" Version="2.1.1">

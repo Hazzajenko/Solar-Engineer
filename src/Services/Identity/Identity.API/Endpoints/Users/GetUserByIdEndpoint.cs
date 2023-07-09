@@ -2,14 +2,9 @@
 using ApplicationCore.Extensions;
 using FastEndpoints;
 using Identity.Application.Logging;
-using Identity.Application.Mapping;
-using Identity.Application.Queries.AppUsers;
 using Identity.Application.Repositories.AppUsers;
 using Identity.Contracts.Data;
-using Identity.Contracts.Responses;
 using Identity.Domain;
-using Infrastructure.Extensions;
-using Mediator;
 using Microsoft.AspNetCore.Identity;
 
 namespace Identity.API.Endpoints.Users;
@@ -50,7 +45,8 @@ public class GetUserByIdEndpoint : EndpointWithoutRequest<AppUserDto>
         {
             Logger.LogError("Unable to find appUserId in route");
             ThrowError("Unable to find appUserId in route");
-            await SendNoContentAsync(cT);
+            await SendNotFoundAsync(cT);
+            // await SendNoContentAsync(cT);
             return;
         }
 
@@ -60,7 +56,7 @@ public class GetUserByIdEndpoint : EndpointWithoutRequest<AppUserDto>
         if (userByQuery is null)
         {
             Logger.LogUserNotFound(userQueryId);
-            await SendNoContentAsync(cT);
+            await SendNotFoundAsync(cT);
             return;
         }
 

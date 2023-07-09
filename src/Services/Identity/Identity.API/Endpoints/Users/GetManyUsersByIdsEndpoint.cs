@@ -1,17 +1,14 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Exceptions;
 using ApplicationCore.Extensions;
 using FastEndpoints;
 using Identity.Application.Handlers.AppUsers;
 using Identity.Application.Logging;
-using Identity.Application.Mapping;
-using Identity.Application.Queries.AppUsers;
-using Identity.Application.Services.Connections;
 using Identity.Contracts.Data;
-using Identity.Contracts.Responses;
 using Identity.Domain;
-using Infrastructure.Extensions;
+using LanguageExt;
 using Mediator;
-using MethodTimer;
+using Microsoft.AspNetCore.Identity;
 
 namespace Identity.API.Endpoints.Users;
 
@@ -29,10 +26,12 @@ public class GetManyUsersByIdsEndpoint
     : Endpoint<GetManyUsersByIdsRequest, GetManyUsersByIdsResponse>
 {
     private readonly IMediator _mediator;
+    private readonly UserManager<AppUser> _userManager;
 
-    public GetManyUsersByIdsEndpoint(IMediator mediator)
+    public GetManyUsersByIdsEndpoint(IMediator mediator, UserManager<AppUser> userManager)
     {
         _mediator = mediator;
+        _userManager = userManager;
     }
 
     public override void Configure()
@@ -43,7 +42,7 @@ public class GetManyUsersByIdsEndpoint
 
     public override async Task HandleAsync(GetManyUsersByIdsRequest request, CancellationToken cT)
     {
-        AppUser? appUser = await _mediator.Send(new GetAppUserQuery(User), cT);
+        AppUser? appUser = await _userManager.GetUserAsync(User);
         if (appUser is null)
         {
             NonAuthenticatedUser nonAuthUser = User.TryGetUserIdAndName();
@@ -53,10 +52,18 @@ public class GetManyUsersByIdsEndpoint
         }
 
         var queryUserIds = request.AppUserIds.Select(Guid.Parse);
-        var userByQuery = await _mediator.Send(
-            new GetManyWebUserDtosByIdsQuery(appUser, queryUserIds),
+
+        var userByQueryResult = await _mediator.Send(
+            new GetManyWebUserDtosByIdsV2Query(appUser, queryUserIds),
             cT
         );
+
+        userByQueryResult.IfFail(exception =>
+        {
+            ThrowError(x => x.AppUserIds, "Invalid user ids");
+        });
+
+        var userByQuery = userByQueryResult.Match(res => res, _ => Enumerable.Empty<WebUserDto>());
 
         Logger.LogTrace(
             "User {UserName} - ({UserId}) requested {UserCount} users",

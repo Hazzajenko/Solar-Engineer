@@ -9,6 +9,8 @@ seq-data/**
 **/seq-data/**
 ./seq-data
 
+
+prometheus.remote.yml
 README-V2.md
 
 

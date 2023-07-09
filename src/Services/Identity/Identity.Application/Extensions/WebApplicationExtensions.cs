@@ -29,10 +29,8 @@ public static partial class WebApplicationExtensions
 
         app.UseFastEndpoints(options =>
         {
-            options.Errors.StatusCode = StatusCodes.Status422UnprocessableEntity;
+            // options.Errors.StatusCode = StatusCodes.Status422UnprocessableEntity;
             options.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            // options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
-            // options.Serializer.Options.ReferenceHandler = ReferenceHandler.Preserve;
             options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             options.Endpoints.Filter = ep => ep.EndpointTags?.Contains("Deprecated") is not true;
             options.Errors.ResponseBuilder = (failures, ctx, statusCode) =>
@@ -66,20 +64,9 @@ public static partial class WebApplicationExtensions
         // app.ConfigureSerilogRequestLogging();
 
         app.UseCors(CorsConfig.CorsPolicy);
-        app.Use(
-            (context, next) =>
-            {
-                if (context.Request.Path.StartsWithSegments("/metrics"))
-                {
-                    // Skip HTTPS redirection for /metrics
-                    context.Request.Scheme = "http";
-                }
 
-                return next();
-            }
-        );
         app.UseAppMetrics();
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
 
         app.UseAuthentication();
         app.UseAuthorization();
@@ -92,8 +79,6 @@ public static partial class WebApplicationExtensions
         app.UseMiddleware<LastActiveMiddleware>();
 
         IdentityContextSeed.InitializeDatabase(app);
-
-
 
         return app;
     }

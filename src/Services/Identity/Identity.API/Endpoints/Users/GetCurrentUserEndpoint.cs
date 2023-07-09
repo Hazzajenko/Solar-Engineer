@@ -12,18 +12,16 @@ namespace Identity.API.Endpoints.Users;
 
 public class GetCurrentUserEndpoint : EndpointWithoutRequest<UserResponse>
 {
-    private readonly IMediator _mediator;
     private readonly UserManager<AppUser> _userManager;
 
-    public GetCurrentUserEndpoint(IMediator mediator, UserManager<AppUser> userManager)
+    public GetCurrentUserEndpoint(UserManager<AppUser> userManager)
     {
-        _mediator = mediator;
         _userManager = userManager;
     }
 
     public override void Configure()
     {
-        Get("/user");
+        Get("/current-user");
         AuthSchemes("bearer");
     }
 

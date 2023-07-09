@@ -44,8 +44,8 @@ public class AuthorizeEndpointTests : IClassFixture<ApiWebFactory>
 
         var userManager = _apiWebFactory.Services.GetService<UserManager<AppUser>>();
         ArgumentNullException.ThrowIfNull(userManager);
-        var user = _userRequestGenerator.Generate();
-        var createUserResult = await userManager.CreateAsync(user);
+        AppUser? user = _userRequestGenerator.Generate();
+        IdentityResult createUserResult = await userManager.CreateAsync(user);
         if (!createUserResult.Succeeded)
             throw new Exception("Failed to create test user.");
 
@@ -59,7 +59,7 @@ public class AuthorizeEndpointTests : IClassFixture<ApiWebFactory>
         );
         
         // Act
-        var (response, result) = await _client.POSTAsync<AuthorizeEndpoint, AuthorizeResponse>();
+        (HttpResponseMessage response, AuthorizeResponse? result) = await _client.POSTAsync<AuthorizeEndpoint, AuthorizeResponse>();
 
         // Assert
         response.Should().NotBeNull();
@@ -73,15 +73,15 @@ public class AuthorizeEndpointTests : IClassFixture<ApiWebFactory>
 
     private async Task<AppUser> CreateUserAsync()
     {
-        var user = _userRequestGenerator.Generate();
+        AppUser? user = _userRequestGenerator.Generate();
         var userManager = _apiWebFactory.Services.GetService<UserManager<AppUser>>();
         ArgumentNullException.ThrowIfNull(userManager);
-        var createUserResult = await userManager.CreateAsync(user);
+        IdentityResult createUserResult = await userManager.CreateAsync(user);
 
         if (!createUserResult.Succeeded)
             throw new Exception("Unable to create user");
 
-        var addRoleResult = await userManager.AddToRoleAsync(user, AppRoles.User);
+        IdentityResult addRoleResult = await userManager.AddToRoleAsync(user, AppRoles.User);
         if (!addRoleResult.Succeeded)
             throw new Exception("Unable to add role to user");
 
@@ -93,10 +93,10 @@ public class AuthorizeEndpointTests : IClassFixture<ApiWebFactory>
         var services = new ServiceCollection();
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        var config = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
+        IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
         services.Configure<JwtSettings>(config.GetSection("Jwt"));
 
-        var serviceProvider = services.BuildServiceProvider();
+        ServiceProvider serviceProvider = services.BuildServiceProvider();
         var jwtTokenGenerator = serviceProvider.GetService<IJwtTokenGenerator>();
         ArgumentNullException.ThrowIfNull(jwtTokenGenerator);
         await Task.CompletedTask;

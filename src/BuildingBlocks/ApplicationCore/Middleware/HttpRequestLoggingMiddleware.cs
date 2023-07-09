@@ -21,6 +21,17 @@ public class HttpRequestLoggingMiddleware
         ILogger<HttpRequestLoggingMiddleware> logger
     )
     {
+        if (httpContext.Request.Path.StartsWithSegments("/health"))
+        {
+            await _next(httpContext);
+            return;
+        }
+
+        if (httpContext.Request.Path.StartsWithSegments("/metrics"))
+        {
+            await _next(httpContext);
+            return;
+        }
         IIdentity? identity = httpContext.User.Identity;
         if (identity is null || !identity.IsAuthenticated)
         {
@@ -35,12 +46,15 @@ public class HttpRequestLoggingMiddleware
             return;
         }
 
-        if (httpContext.Request.Path.StartsWithSegments("/authorize") && httpContext.Request.Method == "POST")
+        if (
+            httpContext.Request.Path.StartsWithSegments("/authorize")
+            && httpContext.Request.Method == "POST"
+        )
         {
             await _next(httpContext);
             return;
         }
-        
+
         var authUser = httpContext.User.ToAuthUser();
 
         logger.LogInformation(

@@ -13,9 +13,10 @@ namespace Identity.Application.Services.Connections;
 public class ConnectionsService : IConnectionsService
 {
     private readonly Dictionary<Guid, AppUserConnectionDto> _connections = new();
-
-    public int ConnectedUsersCount { get; private set; } = 0;
     private readonly ILogger<ConnectionsService> _logger;
+    private int _connectedUsersCount = 0;
+
+    public int ConnectedUsersCount => _connectedUsersCount;
 
     public ConnectionsService(ILogger<ConnectionsService> logger)
     {
@@ -42,13 +43,14 @@ public class ConnectionsService : IConnectionsService
             userConnection = new AppUserConnectionDto(appUserId, connectionId);
             _connections.Add(appUserId, userConnection);
 
-            ConnectedUsersCount++;
+            _connectedUsersCount++;
 
             var actionKeyValuePair = new KeyValuePair<string, object?>("Action", nameof(Add));
             var connectionCountKeyValuePair = new KeyValuePair<string, object?>(
                 "ConnectionsCount",
-                ConnectedUsersCount
+                _connections.Count
             );
+            _logger.LogInformation("ConnectionsCount {ConnectionsCount}", _connections.Count);
             IdentityDiagnosticsConfig.SignalRConnectionCounter.Add(
                 1,
                 actionKeyValuePair,
@@ -172,7 +174,6 @@ public class ConnectionsService : IConnectionsService
         lock (_connections)
         {
             _connections.Remove(appUserId);
-
             var actionKeyValuePair = new KeyValuePair<string, object?>("Action", nameof(Remove));
             var connectionCountKeyValuePair = new KeyValuePair<string, object?>(
                 "ConnectionsCount",

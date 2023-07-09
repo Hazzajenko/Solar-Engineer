@@ -38,10 +38,10 @@ public class IsReturningUserEndpointTests : IClassFixture<ApiWebFactory>
     }
 
     [Fact]
-    public async Task Should_Return_Success_With_Valid_Authentication()
+    public async Task HandleIsReturningUserEndpoint_WhenAuthenticatedUserIsReturning_ShouldReturnSuccess()
     {
         // Arrange
-        var user = await CreateUserAsync();
+        AppUser user = await CreateUserAsync();
         var token = await GetAccessTokenAsync(user.Id.ToString(), user.UserName);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
             "Bearer",
@@ -49,7 +49,7 @@ public class IsReturningUserEndpointTests : IClassFixture<ApiWebFactory>
         );
 
         // Act
-        var (response, result) = await _client.POSTAsync<
+        (HttpResponseMessage response, AuthorizeResponse? result) = await _client.POSTAsync<
             IsReturningUserEndpoint,
             AuthorizeResponse
         >();
@@ -65,13 +65,20 @@ public class IsReturningUserEndpointTests : IClassFixture<ApiWebFactory>
     }
 
     [Fact]
-    public async Task Should_Return_Unauthorized_Without_Authentication()
+    public async Task HandleIsReturningUserEndpoint_WhenNotValidUserIsReturning_ShouldReturnUnauthorized()
     {
         // Arrange
-        var request = new HttpRequestMessage(HttpMethod.Post, "/auth/returning-user");
+        var invalidToken = GetInvalidAccessTokenAsync();
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            invalidToken
+        );
 
         // Act
-        var response = await _client.SendAsync(request);
+        (HttpResponseMessage response, AuthorizeResponse? result) = await _client.POSTAsync<
+            IsReturningUserEndpoint,
+            AuthorizeResponse
+        >();
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -79,17 +86,16 @@ public class IsReturningUserEndpointTests : IClassFixture<ApiWebFactory>
 
     private async Task<AppUser> CreateUserAsync()
     {
-        var user = _userRequestGenerator.Generate();
-        var userManager = _apiWebFactory.Services.GetService<UserManager<AppUser>>();
+        AppUser? user = _userRequestGenerator.Generate();
+
+        using IServiceScope scope = _apiWebFactory.Services.CreateScope();
+
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
         ArgumentNullException.ThrowIfNull(userManager);
-        var createUserResult = await userManager.CreateAsync(user);
+        IdentityResult createUserResult = await userManager.CreateAsync(user);
 
         if (!createUserResult.Succeeded)
             throw new Exception("Unable to create user");
-
-        var addRoleResult = await userManager.AddToRoleAsync(user, AppRoles.User);
-        if (!addRoleResult.Succeeded)
-            throw new Exception("Unable to add role to user");
 
         return user;
     }
@@ -99,13 +105,31 @@ public class IsReturningUserEndpointTests : IClassFixture<ApiWebFactory>
         var services = new ServiceCollection();
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        var config = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
+        IConfigurationRoot config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.Development.json")
+            .Build();
         services.Configure<JwtSettings>(config.GetSection("Jwt"));
 
-        var serviceProvider = services.BuildServiceProvider();
+        ServiceProvider serviceProvider = services.BuildServiceProvider();
         var jwtTokenGenerator = serviceProvider.GetService<IJwtTokenGenerator>();
         ArgumentNullException.ThrowIfNull(jwtTokenGenerator);
         await Task.CompletedTask;
         return jwtTokenGenerator.GenerateToken(id, userName);
+    }
+
+    private static string GetInvalidAccessTokenAsync()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        IConfigurationRoot config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.Development.json")
+            .Build();
+        services.Configure<JwtSettings>(config.GetSection("Jwt"));
+
+        ServiceProvider serviceProvider = services.BuildServiceProvider();
+        var jwtTokenGenerator = serviceProvider.GetService<IJwtTokenGenerator>();
+        ArgumentNullException.ThrowIfNull(jwtTokenGenerator);
+        return jwtTokenGenerator.GenerateToken(Guid.NewGuid(), "invalid-user");
     }
 }
