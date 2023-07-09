@@ -2,22 +2,13 @@
 using DotNet.Testcontainers.Containers;
 using Identity.Application.Data;
 using Identity.Application.Services.Jwt;
-using Identity.Domain;
-using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
-using Npgsql;
-using Polly;
-using RabbitMQ.Client;
-using StackExchange.Redis;
 
 namespace Identity.API.Tests.Integration;
 

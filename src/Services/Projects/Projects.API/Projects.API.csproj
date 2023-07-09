@@ -13,30 +13,26 @@
     <ItemGroup>
         <PackageReference Include="Bogus" Version="34.0.2" />
         <PackageReference Include="ErrorOr" Version="1.2.1" />
-        <PackageReference Include="FastEndpoints" Version="5.11.0" />
-        <PackageReference Include="FastEndpoints.ClientGen" Version="5.8.1" />
-        <PackageReference Include="FastEndpoints.Generator" Version="5.11.0">
+        <PackageReference Include="FastEndpoints" Version="5.13.0" />
+        <PackageReference Include="FastEndpoints.ClientGen" Version="5.13.0" />
+        <PackageReference Include="FastEndpoints.Generator" Version="5.13.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="FastEndpoints.Swagger" Version="5.11.0" />
+        <PackageReference Include="FastEndpoints.Swagger" Version="5.13.0" />
         <PackageReference Include="Mapster" Version="7.3.0" />
         <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
         <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
-        <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.5" />
-        <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="7.0.5" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
+        <PackageReference Include="Mediator.Abstractions" Version="2.1.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.8" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.8">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Build.Containers" Version="7.0.302" />
+        <PackageReference Include="Microsoft.NET.Build.Containers" Version="7.0.305" />
         <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-        <PackageReference Include="WolverineFx" Version="0.9.15" />
-        <PackageReference Include="WolverineFx.RabbitMQ" Version="0.9.15" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Duende.IdentityServer.Models;
 using Infrastructure.Data;
 using Messages.Domain.Entities;
 using Microsoft.EntityFrameworkCore;

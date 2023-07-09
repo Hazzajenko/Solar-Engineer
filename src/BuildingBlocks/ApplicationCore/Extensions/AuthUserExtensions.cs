@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using System.Security.Principal;
 using ApplicationCore.Entities;
 using Microsoft.AspNetCore.SignalR;
 

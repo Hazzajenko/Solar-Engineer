@@ -2,7 +2,6 @@
 using Identity.Contracts.Data;
 using Identity.Domain;
 using Infrastructure.Authentication;
-using JasperFx.Core;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualBasic;

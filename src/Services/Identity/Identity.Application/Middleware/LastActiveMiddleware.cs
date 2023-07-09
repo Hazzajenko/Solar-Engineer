@@ -1,18 +1,14 @@
-﻿using System.Security.Claims;
-using System.Security.Principal;
+﻿using System.Security.Principal;
 using ApplicationCore.Extensions;
 using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Services.Connections;
 using Identity.Domain;
-using Infrastructure.Extensions;
 using Infrastructure.OpenTelemetry;
-using JasperFx.CodeGeneration.Frames;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Serilog;
 
 namespace Identity.Application.Middleware;
 

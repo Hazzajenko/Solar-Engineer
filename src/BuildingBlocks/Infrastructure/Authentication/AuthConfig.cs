@@ -20,7 +20,7 @@ public static class AuthConfig
         IConfiguration config
     )
     {
-        services
+        /*services
             // .AddAuthentication("cookie")
             .AddAuthentication(options =>
             {
@@ -80,7 +80,7 @@ public static class AuthConfig
                     ctx.Properties.StoreTokens(tokens);
 
                     return Task.CompletedTask;
-                };*/
+                };#1#
             })
             .AddOAuth("github", options =>
             {
@@ -148,7 +148,7 @@ public static class AuthConfig
 
                     return CookieAuthenticationDefaults.AuthenticationScheme;
                 };
-            });
+            });*/
 
 
         return services;

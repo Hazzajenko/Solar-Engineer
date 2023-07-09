@@ -1,4 +1,5 @@
-﻿using EventBus.Domain;
+﻿using Ardalis.Specification;
+using EventBus.Domain;
 using Microsoft.Extensions.Logging;
 
 namespace EventBus.Services;
@@ -15,6 +16,7 @@ public class OutboxSenderService
     public async Task PublishAsync<T>(T eventBase)
         where T : IEventBase
     {
+        await Task.CompletedTask;
         /*_logger.LogInformation("Sending Event {EventType}", eventBase.EventType);
         var uriList = _queues.Value.AppUserEvent.Select(queue => new Uri($"rabbitmq://localhost/{eventBase.EventType}-{queue}"));
         // var endpoints = await uriList.SelectAsync(async (uri) => await _bus.GetSendEndpoint(uri));

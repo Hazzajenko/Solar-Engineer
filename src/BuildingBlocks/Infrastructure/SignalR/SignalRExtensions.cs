@@ -23,9 +23,9 @@ public static class SignalRExtensions
 {
     public static IServiceCollection ConfigureSignalRWithRedis(
         this IServiceCollection services,
-        IWebHostEnvironment env,
-        Action<JsonHubProtocolOptions>? configureJsonProtocol = null,
-        List<JsonConverter>? jsonConverters = default!
+        IWebHostEnvironment env
+        // Action<JsonHubProtocolOptions>? configureJsonProtocol = null,
+        // List<JsonConverter>? jsonConverters = default!
     )
     {
         var redisConnectionString = env.IsDevelopment() ? "localhost" : "redis";
@@ -38,17 +38,17 @@ public static class SignalRExtensions
 
                 options.AddFilter<HubLoggerFilter>();
             })
-            .AddJsonProtocol(options =>
-            {
-                configureJsonProtocol?.Invoke(options);
-                if (jsonConverters is not null)
-                {
-                    foreach (var jsonConverter in jsonConverters)
-                    {
-                        options.PayloadSerializerOptions.Converters.Add(jsonConverter);
-                    }
-                }
-            })
+            // .AddJsonProtocol(options =>
+            // {
+            //     configureJsonProtocol?.Invoke(options);
+            //     if (jsonConverters is not null)
+            //     {
+            //         foreach (var jsonConverter in jsonConverters)
+            //         {
+            //             options.PayloadSerializerOptions.Converters.Add(jsonConverter);
+            //         }
+            //     }
+            // })
             .AddStackExchangeRedis(redisConnectionString);
 
         // ISignalRServerBuilder builder = services
